@@ -3,8 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { colors } from '../../../colors';
-import AvatarBack from '../avatar/back/AvatarBack';
-import AvatarFront from '../avatar/front/AvatarFront';
+import AvatarFemaleBack from '../avatar/female/back/AvatarFemaleBack';
 
 const Exercises = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
@@ -25,8 +24,10 @@ const Exercises = () => {
           <Text className="text-primary-100 text-5xl font-bold ">בחר אזור</Text>
         </View>
         <View className="justify-center items-center flex-2 relative">
-          {sideAvatar === 'front' && <AvatarFront />}
-          {sideAvatar === 'back' && <AvatarBack />}
+          {/* {sideAvatar === 'front' && <AvatarFront />}
+          {sideAvatar === 'back' && <AvatarBack />} */}
+          {/* <AvatarFemaleFront/> */}
+          <AvatarFemaleBack />
           <Pressable
             className="absolute bottom-32 left-8 font-bold"
             onPress={() => setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front'))}
