@@ -1,6 +1,6 @@
-import { BodyPart } from '@/src/types';
+import { BodyPart, partsBodyHebrew } from '@/src/types';
 import { useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, Text, View } from 'react-native';
 import Svg from 'react-native-svg';
 import { Chest } from './Chest';
 import { General } from './General';
@@ -21,11 +21,12 @@ const svgHeight = svgWidth * ASPECT_RATIO;
 const AvatarFemaleFront = () => {
   const [selectedPart, setSelectedPart] = useState<BodyPart | null>(null);
   return (
-    <View className="">
+    <View className="relative bd">
+      
       <Svg
         width={svgWidth}
         height={svgHeight}
-        viewBox={`-50 0 ${FIGMA_WIDTH} ${FIGMA_HEIGHT}`}
+        viewBox={`-60 0 ${FIGMA_WIDTH} ${FIGMA_HEIGHT}`}
         preserveAspectRatio="xMidYMax meet"
       >
         <General />

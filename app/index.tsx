@@ -1,20 +1,23 @@
 import Exercises from '@/src/Features/exercises/Exercises';
-import { Image } from 'expo-image';
-import { SafeAreaView } from 'react-native';
+import React from 'react';
+import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler'; // חובה לעטוף בזה
+
 export default function Page() {
   return (
-    <SafeAreaView className="bg-primary-100 flex-1 justify-center items-center w-full">
-      {/* <StatusBar style="auto" /> */}
-      {/* <Text className="">Welcome to BodyBuddy!</Text> */}
-      <Exercises />
-      {/* <Image
-        source={'https://static.exercisedb.dev/media/LMGXZn8.gif'}
-        style={{ width: 200, height: 200 }}
-        cachePolicy={'disk'}
-        priority={'high'}
-      />  */}
-      {/* <AvatarFront /> */}
-      {/* <AvatarBack /> */}
-    </SafeAreaView>
+    // GestureHandlerRootView חייב להיות בדרגה הכי גבוהה כדי שהגרירה תעבוד
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full">
+        {/* <StatusBar /> */}
+        <Exercises />
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    // flex: 1,
+    // direction: 'rtl', // שים לב: באנדרואיד זה עלול לעשות בעיות עם מודלים, עדיף להשתמש ב-textAlign
+  },
+});

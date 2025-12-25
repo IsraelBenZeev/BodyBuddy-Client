@@ -21,51 +21,51 @@ export const UpperLegs = ({ selectedPart, setSelectedPart }: UpperLegsProps) => 
     >
       <Path
         d="M333.2 774C348.2 785.2 395 844.7 410.3 919.3C410.3 919.3 402.3 946 391.6 943.7C389.2 943.2 354.8 833.6 327.4 782.7C319.5 768.1 319 760.4 319 760.4L333.3 773.9L333.2 774Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M310.6 774.4C329.2 836.5 391.3 1072.1 390.2 1108.7C408.8 1055.3 393.6 985.2 370.6 917.8C351.4 861.4 310.6 774.4 310.6 774.4Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M300.8 787.7C312.5 842.3 352.5 930.3 357.6 1006.4C362.5 1079.8 353.8 1154.2 340.2 1160C326.5 1165.9 303.3 1069.2 299.4 1052.9C289.3 1011.6 267.1 936.2 269.6 897.3C271.7 863.7 277.4 846.1 281.9 830.5C288 809.6 300.9 787.6 300.9 787.6L300.8 787.7Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M274.8 976.2C277.2 998.1 292 1070 310.6 1116.4C319.3 1138 321.8 1161.3 315 1168.6C308.2 1175.9 300.4 1135.4 289.6 1118.4C278.8 1101.4 269.9 1046.2 269.3 1024C268.5 995 263.7 972.3 266.2 964.5C268.6 956.7 274.7 976.2 274.7 976.2H274.8Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M363.1 1023.3C370.6 1107.3 349.7 1148.2 360.9 1165.7C372 1183.3 380.8 1175.6 379.4 1165.9C377 1148.7 390 1120.7 379.4 1071C373.8 1044.7 363.1 1023.2 363.1 1023.2V1023.3Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M414.2 930.1C405.2 943.5 393 956 393.2 960.2C393.4 964.4 405.9 1028.8 405.1 1036.1C412.7 1028.8 419.7 941 419.2 932.9C418.7 924.9 414.1 930 414.1 930L414.2 930.1Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M537.8 774C522.8 785.2 476 844.7 460.7 919.3C460.7 919.3 468.7 946 479.4 943.7C481.8 943.2 516.2 833.6 543.6 782.7C551.5 768.1 552 760.4 552 760.4L537.7 773.9L537.8 774Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M560.3 774.4C541.7 836.5 479.6 1072.1 480.7 1108.7C462.1 1055.3 477.3 985.2 500.3 917.8C519.5 861.4 560.3 774.4 560.3 774.4Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M570.1 787.7C558.4 842.3 518.4 930.3 513.3 1006.4C508.4 1079.8 517.1 1154.2 530.7 1160C544.4 1165.9 567.6 1069.2 571.5 1052.9C581.6 1011.6 603.8 936.2 601.3 897.3C599.2 863.7 593.5 846.1 589 830.5C582.9 809.6 570 787.6 570 787.6L570.1 787.7Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M596.2 976.2C593.8 998.1 579 1070 560.4 1116.4C551.7 1138 549.2 1161.3 556 1168.6C562.8 1175.9 570.6 1135.4 581.4 1118.4C592.2 1101.4 601.1 1046.2 601.7 1024C602.5 995 607.3 972.3 604.8 964.5C602.3 956.7 596.3 976.2 596.3 976.2H596.2Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M507.9 1023.3C500.4 1107.3 521.3 1148.2 510.1 1165.7C499 1183.3 490.2 1175.6 491.6 1165.9C494 1148.7 481 1120.7 491.6 1071C497.2 1044.7 507.9 1023.2 507.9 1023.2V1023.3Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         d="M456.7 930.1C465.7 943.5 477.9 956 477.7 960.2C477.5 964.4 465 1028.8 465.8 1036.1C458.2 1028.8 451.2 941 451.7 932.9C452.2 924.9 456.8 930 456.8 930L456.7 930.1Z"
-        fill={selectedPart === 'upper_leg' ? colors.primary[900] : '#3F3F3F'}
+        fill={selectedPart === 'upper_leg' ? colors.lime[600] : '#3F3F3F'}
       />
     </G>
   );
