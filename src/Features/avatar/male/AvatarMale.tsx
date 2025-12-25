@@ -11,7 +11,7 @@ const AvatarMale = ({ avatarSide, selectedPart, setSelectedPart }: AvatarMalePro
   return avatarSide === 'front' ? (
     <AvatarMaleFront selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
   ) : (
-    <AvatarMaleBack />
+    <AvatarMaleBack selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
   );
 };
 

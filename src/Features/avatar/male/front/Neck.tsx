@@ -1,5 +1,6 @@
+import { useExercises } from '@/src/hooks/useEcercises';
 import { BodyPart } from '@/src/types';
-import { Dispatch } from 'react';
+import { Dispatch, useState } from 'react';
 import { G, Path } from 'react-native-svg';
 import { colors } from '../../../../../colors';
 interface NeckProps {
@@ -7,6 +8,8 @@ interface NeckProps {
   setSelectedPart: Dispatch<React.SetStateAction<BodyPart | null>>;
 }
 export const Neck = ({ selectedPart, setSelectedPart }: NeckProps) => {
+ 
+
   return (
     <G
       id="neck"

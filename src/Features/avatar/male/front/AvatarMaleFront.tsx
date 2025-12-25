@@ -1,6 +1,5 @@
-import CardAreaBody from '@/src/Features/exercises/CardAreaBody';
 import { BodyPart } from '@/src/types';
-import { Dispatch, useState } from 'react';
+import { Dispatch } from 'react';
 import { Dimensions, View } from 'react-native';
 import Svg from 'react-native-svg';
 import { Chest } from './Chest';

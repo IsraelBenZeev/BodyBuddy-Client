@@ -1,6 +1,4 @@
-import CardAreaBody from '@/src/Features/exercises/CardAreaBody';
 import { BodyPart } from '@/src/types';
-import { useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import Svg from 'react-native-svg';
 import Back from './Back';
@@ -16,12 +14,13 @@ const FIGMA_HEIGHT = 1726;
 const ASPECT_RATIO = FIGMA_HEIGHT / FIGMA_WIDTH;
 const svgWidth = screenWidth * 0.75;
 const svgHeight = svgWidth * ASPECT_RATIO;
-const AvatarMaleBack = () => {
-  const [selectedPart, setSelectedPart] = useState<BodyPart | null>(null);
+interface AvatarMaleBackProps {
+  selectedPart: BodyPart | null;
+  setSelectedPart: React.Dispatch<React.SetStateAction<BodyPart | null>>;
+}
+const AvatarMaleBack = ({ selectedPart, setSelectedPart }: AvatarMaleBackProps) => {
   return (
     <View className="relative ">
-      <CardAreaBody selectedPart={selectedPart} />
-
       <Svg
         width={svgWidth}
         height={svgHeight}
