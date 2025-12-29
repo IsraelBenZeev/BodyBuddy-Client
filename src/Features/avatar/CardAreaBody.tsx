@@ -6,7 +6,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 interface CardAreaBodyProps {
   selectedPart: BodyPart | null;
@@ -14,10 +14,17 @@ interface CardAreaBodyProps {
 }
 
 const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const { data, isLoading } = useExercises(selectedPart ?? '', page);
   const router = useRouter();
-  const exercises: Exercise[] | undefined = data?.data;
+  const exercises: Exercise[] | undefined = data?.exercises;
+
+  useEffect(() => {
+    console.log('--- UI SYNC ---');
+    console.log('Current selectedPart:', selectedPart);
+    console.log('Current page:', page);
+    console.log('Data exercises length:', data?.exercises?.length);
+  }, [data, selectedPart, page]);
   return (
     <View className="w-full items-end gap-8">
       <View className="flex-row items-center gap-3 ">

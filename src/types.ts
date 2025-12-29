@@ -16,30 +16,32 @@ export const partsBodyHebrew = {
   shoulders: 'כתפיים',
   'upper arms': 'יד עליונה',
   'lower arms': 'יד תחתונה',
-  waist: 'מותן',
+  waist: 'בטן ומותניים',
   'upper legs': 'רגל עליונה',
   'lower legs': 'רגל תחתונה',
   back: 'גב',
   general: 'כללי',
 };
 export interface Exercise {
-  exerciseId: string;
-  name: string;
-  gifUrl: string;
-  targetMuscles: string[];
-  bodyParts: BodyPart;
-  equipments: string[];
-  secondaryMuscles: string[];
-  instructions: string[];
+  exerciseId: string; // ה-ID הייחודי (למשל: "84RyJf8")
+  name: string; // שם התרגיל באנגלית
+  name_he: string; // שם התרגיל בעברית
+  bodyParts: string[]; // מערך של חלקי גוף (למשל: ["shoulders"])
+  bodyParts_he: string[]; // מערך חלקי גוף בעברית
+  targetMuscles: string[]; // שרירי מטרה
+  targetMuscles_he: string[]; // שרירי מטרה בעברית
+  secondaryMuscles: string[]; // שרירים משניים
+  secondaryMuscles_he: string[];
+  equipments: string[]; // ציוד נדרש
+  equipments_he: string[];
+  instructions: string[]; // מערך של שלבי ביצוע (ה-Step:1, Step:2 שראינו)
+  instructions_he: string[]; // הוראות בעברית
+  gifUrl: string; // לינק לאנימציה
+  created_at: string; // תאריך יצירה (ISO String)
 }
-export interface ExerciseApiResponse {
-  success: boolean;
-  metadata: {
-    totalPages: number;
-    totalExercises: number;
-    currentPage: number;
-    previousPage: string | null;
-    nextPage: string | null;
-  };
-  data: Exercise[];
+
+// טיפוס נוסף עבור התגובה שחוזרת מהפונקציה שלך
+export interface FetchExercisesResponse {
+  exercises: Exercise[];
+  totalCount: number;
 }

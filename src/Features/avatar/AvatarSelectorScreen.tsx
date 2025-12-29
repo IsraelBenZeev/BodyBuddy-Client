@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { colors } from '../../../colors';
 
-import { useExercises } from '@/src/hooks/useEcercises';
 import { BodyPart } from '@/src/types';
 import BackGround from '@/src/ui/BackGround';
 import CardAreaBody from './CardAreaBody';
@@ -29,7 +28,7 @@ const fakeUser2 = {
 const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
   const [selectedPart, setSelectedPart] = useState<BodyPart | null>(null);
- 
+
   const sheetRef = useRef<any>(null);
   const openSheet = () => {
     sheetRef.current?.snapToIndex(selectedPart ? 1 : -1);
@@ -71,7 +70,7 @@ const AvatarSelectorScreen = () => {
         </View>
       </View>
       <ModalButtom ref={sheetRef}>
-        <CardAreaBody selectedPart={selectedPart}  />
+        <CardAreaBody selectedPart={selectedPart} />
       </ModalButtom>
     </BackGround>
   );

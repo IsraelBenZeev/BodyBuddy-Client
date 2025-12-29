@@ -1,16 +1,27 @@
-import axios from 'axios';
-const BASE_API_URL = 'https://www.exercisedb.dev/api/v1/bodyparts/';
-const bodyPart = 'upper%20arms/exercises';
-const LIMIT = 25;
+import { supabase } from '../../supabase_client';
+import { Exercise } from '../types';
+export const getExercisesByBodyPart = async (bodyPart: string, page: number, limit: number) => {
+  console.log('limit: ', limit);
 
-export const getExercisesByBodyPart = async (bodyPart: string, page: number) => {
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  const cleanedBodyPart = bodyPart.trim().toLowerCase();
   try {
-    const response = await axios.get(
-      `${BASE_API_URL}${bodyPart}/exercises?offset=${page * LIMIT}&limit=${LIMIT}`
+    const { data, error, count } = await supabase
+      .from('exercises')
+      .select('*', { count: 'exact' })
+      .contains('bodyParts', [cleanedBodyPart])
+      .range(from, to);
+    // בתוך ה-Service
+    console.log(
+      `DEBUG: page=${page}, limit=${limit}, from=${from}, to=${to}, part=${cleanedBodyPart}`
     );
-    return response.data;
+    // console.log('data_service: ', data);
+
+    if (error) throw error;
+    return { exercises: data as Exercise[], totalCount: count || 0 };
   } catch (error) {
-    console.error('Error fetching exercises:', error);
+    console.error(error);
     throw error;
   }
 };
