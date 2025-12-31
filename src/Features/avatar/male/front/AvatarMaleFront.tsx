@@ -23,7 +23,7 @@ interface AvatarMaleFrontProps {
 }
 const AvatarMaleFront = ({ selectedPart, setSelectedPart }: AvatarMaleFrontProps) => {
   return (
-    <View className="relative">
+    <View className="">
       <Svg
         width={svgWidth}
         height={svgHeight}

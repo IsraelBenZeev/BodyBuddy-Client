@@ -39,11 +39,17 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
   return (
     <BackGround>
       <View className="items-center w-full ">
-        <View className="items-center  w-full flex-row flex-row-reverse justify-between px-4 pt-8">
+        <View className="flex-row items-center justify-between w-full  px-2">
+          <Image
+            style={{ width: 40, height: 40, borderRadius: 20 }}
+            source={require('../../../assets/images/user.png')}
+            contentFit="cover"
+            className=""
+          />
+          <ButtonBack />
+        </View>
+        <View className="">
           <Text className="text-lime-500 text-3xl font-bold text-center">{exercise?.name_he}</Text>
-          <View className="">
-            <ButtonBack />
-          </View>
         </View>
         <View
           style={styles.imageContainer}
@@ -63,19 +69,19 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           className="flex-row justify-center gap-8 px-4"
         >
           <IconButton text="סמן כאהבתי" classNameText="text-white text-sm">
-            <IconlikeBG size={22} color={'white'} />
+            <IconlikeBG size={22} color={colors.lime[500]} />
           </IconButton>
           <IconButton text="לא אהבתי" classNameText="text-white text-sm">
-            <IconDislikeBG size={22} color={'white'} />
+            <IconDislikeBG size={22} color={colors.lime[500]} />
           </IconButton>
           <IconButton text="שתף לחברים" classNameText="text-white text-sm">
-            <IconShare size={22} color={'white'} />
+            <IconShare size={22} color={colors.lime[500]} />
           </IconButton>
           <IconButton text="הוסף לרשימה" classNameText="text-white text-sm">
-            <IconAddToList size={22} color={'white'} />
+            <IconAddToList size={22} color={colors.lime[500]} />
           </IconButton>
           <IconButton text="חפש בגוגל" classNameText="text-white text-sm">
-            <IconSearchGoogle size={22} color={'white'} />
+            <IconSearchGoogle size={22} color={colors.lime[500]} />
           </IconButton>
         </View>
         <View style={styles.sectionInfo}>
@@ -116,7 +122,13 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           </View>
         </View>
       </View>
-      <ModalButtom ref={sheetRef} InitialIndex={1} initialView="30%" title="הוראות">
+      <ModalButtom
+        ref={sheetRef}
+        InitialIndex={1}
+        minimumView="7%"
+        initialView="20%"
+        title="הוראות"
+      >
         <View className="px-2 py-1">
           {exercise?.instructions_he.map((el: string, i) => (
             <View style={styles.rowInstruction} key={i}>

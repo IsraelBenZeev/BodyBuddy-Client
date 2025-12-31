@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
-    backgroundColor: colors.lime[500],
+    // backgroundColor: colors.lime[500],
+    backgroundColor: colors.background[700],
     // marginHorizontal: 16,
   },
     text: {

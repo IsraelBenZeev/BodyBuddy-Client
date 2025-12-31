@@ -1,8 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { QueryClientManager } from 'reactotron-react-query';
 import Reactotron from '../ReactotronConfig';
 import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
@@ -29,8 +28,21 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full">
-          {/* <StatusBar /> */}
-          <Stack screenOptions={{ headerShown: false }} />
+          <StatusBar />
+          {/* <Stack screenOptions={{ headerShown: false }} /> */}
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              gestureEnabled: true,
+              // האנימציה הזו גורמת למסך החדש להיכנס מימין,
+              // מה שבדרך כלל הופך את כיוון מחוות החזרה ב-iOS
+              animation: 'slide_from_right',
+              // contentStyle: { direction: 'rtl' }, // מנחה את הסטאק לעבוד ב-RTL
+            }}
+          >
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="exercise/[id]" />
+          </Stack>
         </SafeAreaView>
       </QueryClientProvider>
     </GestureHandlerRootView>

@@ -5,12 +5,19 @@ import { Text, View } from 'react-native';
 interface ModalButtomProps {
   children?: ReactNode;
   InitialIndex?: number;
+  minimumView?: string;
   initialView?: string;
   title?: string;
 }
 // הוספת ה-Ref Type -TSX
 const ModalButtom = forwardRef<BottomSheet, ModalButtomProps>((props, ref) => {
-  const snapPoints = useMemo(() => [props.initialView ? props.initialView : '1%', '40%'], []);
+  const snapPoints = useMemo(
+    () => [
+      props.minimumView ? props.minimumView : '10%',
+      props.initialView ? props.initialView : '40%',
+    ],
+    []
+  );
   const renderHandle = () => (
     <View
       style={{
@@ -47,7 +54,7 @@ const ModalButtom = forwardRef<BottomSheet, ModalButtomProps>((props, ref) => {
   return (
     <BottomSheet
       ref={ref}
-      index={props.InitialIndex ?? -1} // מתחיל סגור
+      index={props.InitialIndex ?? 0} // מתחיל סגור
       snapPoints={snapPoints}
       enablePanDownToClose={false}
       backgroundStyle={{ backgroundColor: '#282c34' }}

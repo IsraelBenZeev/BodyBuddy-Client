@@ -19,14 +19,21 @@ const ExercisesScreen = ({ bodyPart, page }: ExercisesScreenProps) => {
   const router = useRouter();
   return (
     <BackGround>
+      <View className="flex-row items-center justify-between w-full  px-2">
+        <Image
+          style={{ width: 40, height: 40, borderRadius: 20 }}
+          source={require('../../../assets/images/user.png')}
+          contentFit="cover"
+          className=""
+        />
+        <ButtonBack />
+      </View>
       <Text className="text-white font-bold text-5xl mb-6 text-center">
         {typeof bodyPart === 'string'
           ? partsBodyHebrew[bodyPart as keyof typeof partsBodyHebrew]
           : ''}
       </Text>
-      <View className="absolute top-2 right-4">
-        <ButtonBack />
-      </View>
+
       <FlatList
         // numColumns={2}
         // columnWrapperStyle={{ justifyContent: 'space-around', gap: 0 }}

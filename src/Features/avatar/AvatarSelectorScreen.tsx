@@ -1,10 +1,10 @@
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { colors } from '../../../colors';
 
 import { BodyPart } from '@/src/types';
 import BackGround from '@/src/ui/BackGround';
+import { IconSwithBody } from '@/src/ui/IconsSVG';
 import ModalButtom from '../../ui/ModalButtom';
 import CardAreaBody from './CardAreaBody';
 import AvatarFemale from './female/AvatarFemale';
@@ -59,17 +59,19 @@ const AvatarSelectorScreen = () => {
         <View className="justify-center items-center flex-2 relative self-center pr-2">
           {Avatar}
           <Pressable
-            className="absolute bottom-32 left-8 font-bold"
+            className="absolute bottom-32 left-12 font-bold items-center justify-center"
             onPress={() => {
               setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front'));
               setSelectedPart(null);
             }}
           >
-            <MaterialIcons name="3d-rotation" size={38} color={colors.lime[300]} />
+            <IconSwithBody size={26} color={colors.lime[700]} />
+            <Text className="text-lime-700 text-xs">סובב</Text>
+            {/* <MaterialIcons name="3d-rotation" size={38} color={colors.lime[300]} /> */}
           </Pressable>
         </View>
       </View>
-      <ModalButtom ref={sheetRef} InitialIndex={-1} initialView="6%">
+      <ModalButtom ref={sheetRef} InitialIndex={-1} minimumView="6%">
         <CardAreaBody selectedPart={selectedPart} />
       </ModalButtom>
     </BackGround>
