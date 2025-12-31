@@ -1,6 +1,6 @@
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text } from 'react-native';
-
 const ButtonBack = () => {
   const router = useRouter();
   return (
@@ -10,7 +10,8 @@ const ButtonBack = () => {
         router.back();
       }}
     >
-      <Text style={styles.text}>Back</Text>
+      {/* <Text style={styles.text}>Back</Text> */}
+      <AntDesign name="arrow-right" size={40} color="white"  className=''/>
     </Pressable>
   );
 };

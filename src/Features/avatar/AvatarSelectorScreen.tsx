@@ -5,10 +5,10 @@ import { colors } from '../../../colors';
 
 import { BodyPart } from '@/src/types';
 import BackGround from '@/src/ui/BackGround';
+import ModalButtom from '../../ui/ModalButtom';
 import CardAreaBody from './CardAreaBody';
 import AvatarFemale from './female/AvatarFemale';
 import AvatarMaleFront from './male/AvatarMale';
-import ModalButtom from './ModalButtom';
 const fakeUser = {
   gender: 'female',
   name: 'Alice',
@@ -69,7 +69,7 @@ const AvatarSelectorScreen = () => {
           </Pressable>
         </View>
       </View>
-      <ModalButtom ref={sheetRef}>
+      <ModalButtom ref={sheetRef} InitialIndex={-1} initialView="6%">
         <CardAreaBody selectedPart={selectedPart} />
       </ModalButtom>
     </BackGround>
