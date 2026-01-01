@@ -1,4 +1,4 @@
-import { BodyPart } from '@/src/types';
+import { BodyPart } from '@/src/types/bodtPart';
 import { Dimensions, View } from 'react-native';
 import Svg from 'react-native-svg';
 import Back from './Back';
@@ -15,25 +15,26 @@ const ASPECT_RATIO = FIGMA_HEIGHT / FIGMA_WIDTH;
 const svgWidth = screenWidth * 0.75;
 const svgHeight = svgWidth * ASPECT_RATIO;
 interface AvatarMaleBackProps {
-  selectedPart: BodyPart | null;
-  setSelectedPart: React.Dispatch<React.SetStateAction<BodyPart | null>>;
+  isSelected: (partName: BodyPart) => boolean;
+  handleTogglePart: (partName: BodyPart) => void;
 }
-const AvatarMaleBack = ({ selectedPart, setSelectedPart }: AvatarMaleBackProps) => {
+const AvatarMaleBack = ({ isSelected, handleTogglePart }: AvatarMaleBackProps) => {
   return (
-    <View className="relative ">
+    <View className="relative " pointerEvents="auto">
       <Svg
-         width={svgWidth * 0.90}
-        height={svgHeight * 0.90}
+        width={svgWidth * 0.9}
+        height={svgHeight * 0.9}
         viewBox={`0 0 ${FIGMA_WIDTH} ${FIGMA_HEIGHT}`}
         preserveAspectRatio="xMidYMax meet"
+        pointerEvents="auto"
       >
         <General />
-        <Back selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Shoulders selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <UpperArm selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <LowerArm selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <UpperLeg selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <LowerLeg selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
+        <Back isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Shoulders isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <UpperArm isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <LowerArm isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <UpperLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <LowerLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
       </Svg>
     </View>
   );

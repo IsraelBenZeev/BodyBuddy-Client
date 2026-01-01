@@ -1,22 +1,20 @@
 import { colors } from '@/colors';
-import { useExercises } from '@/src/hooks/useEcercises';
-import { BodyPart, Exercise, partsBodyHebrew } from '@/src/types';
+import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
+import { modeType } from '@/src/types/mode';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
 interface CardAreaBodyProps {
-  selectedPart: BodyPart | null;
+  selectedPart: BodyPart[];
   isLoading?: boolean;
 }
 
 const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useExercises(selectedPart ?? '', page);
   const router = useRouter();
-  const exercises: Exercise[] | undefined = data?.exercises;
+  console.log('selectesPart: ', selectedPart);
 
   return (
     <View className="">
@@ -25,12 +23,17 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
           <View style={styles.iconCircleMain}>
             <Ionicons name="body" size={24} color="black" />
           </View>
-          <View className="w-full">
+          <View className="w-full flex-1">
             <Text className="text-zinc-500 text-xs font-bold text-right uppercase tracking-tighter">
               האזור הנבחר
             </Text>
-            <Text className="text-white text-4xl font-black text-right">
-              {selectedPart ? partsBodyHebrew[selectedPart] : 'בחר אזור'}
+            <Text className="text-white text-2xl font-black text-right">
+              {selectedPart.map((part, index) => (
+                <Text key={part}>
+                  {partsBodyHebrew[part]}
+                  {index < selectedPart.length - 1 ? ', ' : ''}
+                </Text>
+              ))}
             </Text>
           </View>
         </View>
@@ -40,10 +43,14 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
         className=""
         activeOpacity={0.8}
         onPress={() => {
-          if (selectedPart) {
+          if (selectedPart.length > 0) {
             router.push({
-              pathname: '/exercises/[part]',
-              params: { part: selectedPart, page: page.toString() },
+              pathname: '/exercises/[parts]',
+              params: {
+                parts: JSON.stringify(selectedPart),
+                page: page.toString(),
+                mode: 'view' as modeType,
+              },
             });
           }
         }}
@@ -68,30 +75,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(255,255,255,0.03)',
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
-  },
-  iconCircleSmall: {
-    backgroundColor: 'rgba(163, 230, 53, 0.1)',
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 12,
-  },
-  infoText: {
-    color: '#a1a1aa', // zinc-400
-    fontSize: 15,
-    textAlign: 'right',
   },
   mainButton: {
     backgroundColor: colors.lime[500],

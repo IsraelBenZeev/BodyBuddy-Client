@@ -1,72 +1,64 @@
 import { colors } from '@/colors';
-import { BodyPart } from '@/src/types';
-import React, { Dispatch } from 'react';
+import { BodyPart } from '@/src/types/bodtPart';
+import React from 'react';
 import { G, Path } from 'react-native-svg';
 
 interface UpperLegProps {
-  selectedPart: BodyPart | null;
-  setSelectedPart: Dispatch<React.SetStateAction<BodyPart | null>>;
+  isSelected: (partName: BodyPart) => boolean;
+  handleTogglePart: (partName: BodyPart) => void;
 }
 
-export const UpperLeg = ({ selectedPart, setSelectedPart }: UpperLegProps) => {
+export const UpperLeg = ({ isSelected, handleTogglePart }: UpperLegProps) => {
+  const bodyPart = 'upper legs';
   return (
-    <G
-      id="upper legs"
-      onPress={() => {
-        if (selectedPart === 'upper legs') {
-          setSelectedPart(null);
-          return;
-        }
-        setSelectedPart('upper legs');
-      }}
-    >
+    <G id="upper legs" onPress={handleTogglePart.bind(this, bodyPart)}>
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M509.01 738.798C490.21 801.998 467.611 872.398 447.711 929.398C439.211 992.398 439.21 1076.1 446.31 1133.6C446.91 1136.3 449.711 1142.6 450.411 1143.1C452.711 1143.6 455.011 1143.2 457.211 1143.1C459.411 1142.8 462.11 1141.8 462.61 1139C461.81 1111.7 462.01 1086 462.61 1060.1C475.91 1026.7 546.31 866.898 508.91 738.898L509.01 738.798Z"
-        fill={selectedPart === 'upper legs' ? colors.lime[600] : '#3F3F3F'}
+        fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M289.81 838.098C311.51 896.798 326.21 937.398 332.01 951.098C338.11 971.798 344.21 989.398 351.11 1012.4C353.61 1023.5 357.21 1035.4 359.31 1042.3C359.81 1034.1 358.41 1018.5 357.91 1009.6C357.11 994.098 354.91 977.198 352.51 963.298C351.51 948.598 348.91 936.998 348.41 934.698C342.01 915.498 338.91 905.198 318.51 852.998C310.81 833.298 297.01 808.998 283.11 775.398C276.71 759.898 271.21 742.998 265.41 722.298C264.61 767.798 281.61 807.698 289.91 837.998L289.81 838.098Z"
-        fill={selectedPart === 'upper legs' ? colors.lime[600] : '#3F3F3F'}
+        fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M409.61 963.298C407.21 977.198 405.011 993.998 404.211 1009.6C403.711 1018.5 402.41 1034.1 402.81 1042.3C404.91 1035.3 408.41 1023.4 411.01 1012.4C417.91 989.398 424.01 971.798 430.11 951.098C435.91 937.398 450.61 896.798 472.31 838.098C480.61 807.798 497.61 767.898 496.81 722.398C491.01 743.098 485.51 759.998 479.11 775.498C465.21 809.098 451.411 833.398 443.711 853.098C423.311 905.198 420.11 915.498 413.81 934.798C413.31 937.098 410.711 948.698 409.711 963.398L409.61 963.298Z"
-        fill={selectedPart === 'upper legs' ? colors.lime[600] : '#3F3F3F'}
+        fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M421.91 1152.5C424.21 1152 427.81 1151.6 430.11 1151.1C438.21 1129.5 432.01 1095.6 427.41 1061.3C427.41 1055.8 427.11 1046.7 427.41 1040.9C428.51 1016.9 435.01 989.598 431.51 971.498C418.61 999.298 405.01 1042.3 404.31 1084.5C403.91 1108.1 404.31 1133.6 417.91 1151.2C419.31 1151.7 420.61 1152.1 422.01 1152.6L421.91 1152.5Z"
-        fill={selectedPart === 'upper legs' ? colors.lime[600] : '#3F3F3F'}
+        fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M490.01 1005.5C484.51 1020.6 479.61 1036.5 475.01 1055.9C472.91 1083.9 472.31 1112.1 473.61 1130.8C474.41 1134.1 476.61 1136.6 479.01 1137.6C509.31 1059.5 543.51 950.198 523.91 855.798C521.81 896.798 505.01 950.198 489.91 1005.5H490.01Z"
-        fill={selectedPart === 'upper legs' ? colors.lime[600] : '#3F3F3F'}
+        fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M299.411 1060C300.011 1085.9 300.211 1111.7 299.411 1138.9C299.911 1141.7 302.61 1142.7 304.81 1143C307.01 1143.1 309.31 1143.5 311.61 1143C312.31 1142.4 315.111 1136.2 315.711 1133.5C322.811 1076 322.91 992.298 314.31 929.298C294.51 872.298 271.91 801.898 253.01 738.698C215.61 866.698 286.01 1026.5 299.31 1059.9L299.411 1060Z"
-        fill={selectedPart === 'upper legs' ? colors.lime[600] : '#3F3F3F'}
+        fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M357.91 1084.5C357.21 1042.3 343.51 999.398 330.71 971.498C327.21 989.598 333.71 1016.9 334.81 1040.9C335.11 1046.7 334.81 1055.8 334.81 1061.3C330.21 1095.7 324.01 1129.5 332.11 1151.1C334.41 1151.6 338.01 1152 340.31 1152.5C341.71 1152 343.01 1151.6 344.41 1151.1C358.01 1133.5 358.41 1108 358.01 1084.4L357.91 1084.5Z"
-        fill={selectedPart === 'upper legs' ? colors.lime[600] : '#3F3F3F'}
+        fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}
       />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M288.51 1130.8C289.81 1112.1 289.21 1084 287.11 1055.9C282.61 1036.5 277.71 1020.6 272.11 1005.5C256.91 950.198 240.21 896.798 238.11 855.798C218.51 950.198 252.71 1059.4 283.01 1137.6C285.41 1136.6 287.71 1134 288.41 1130.8H288.51Z"
-        fill={selectedPart === 'upper legs' ? colors.lime[600] : '#3F3F3F'}
+        fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}
       />
     </G>
   );

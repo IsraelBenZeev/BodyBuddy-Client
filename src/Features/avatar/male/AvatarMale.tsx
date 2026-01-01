@@ -1,17 +1,17 @@
-import { BodyPart } from '@/src/types';
 import { Dispatch } from 'react';
 import AvatarMaleBack from './back/AvatarMaleBack';
 import AvatarMaleFront from './front/AvatarMaleFront';
+import { BodyPart } from '@/src/types/bodtPart';
 interface AvatarMaleProps {
   avatarSide: 'front' | 'back';
-  selectedPart: BodyPart | null;
-  setSelectedPart: Dispatch<React.SetStateAction<BodyPart | null>>;
+  isSelected: (partName: BodyPart) => boolean;
+  handleTogglePart: (partName: BodyPart) => void;
 }
-const AvatarMale = ({ avatarSide, selectedPart, setSelectedPart }: AvatarMaleProps) => {
+const AvatarMale = ({ avatarSide, isSelected, handleTogglePart }: AvatarMaleProps) => {
   return avatarSide === 'front' ? (
-    <AvatarMaleFront selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
+    <AvatarMaleFront isSelected={isSelected} handleTogglePart={handleTogglePart} />
   ) : (
-    <AvatarMaleBack selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
+    <AvatarMaleBack isSelected={isSelected} handleTogglePart={handleTogglePart} />
   );
 };
 

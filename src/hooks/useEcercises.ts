@@ -1,19 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { getExerciseByIds, getExercisesByBodyPart } from '../service/exercisesService';
-
-export const useExercises = (bodyPart: string, page: number) => {
+import { getExercisesByBodyParts } from '../service/exercisesService';
+import { BodyPart } from '../types/bodtPart';
+const limit = 80;
+export const useExercises = (bodyParts: BodyPart[], page: number) => {
   return useQuery({
-    queryKey: ['exercises', bodyPart, page],
-    queryFn: () => getExercisesByBodyPart(bodyPart, page, 30),
+    queryKey: ['exercises', [...bodyParts].sort(), page],
+    queryFn: () => getExercisesByBodyParts(bodyParts, page, limit),
     staleTime: Infinity,
-    enabled: !!bodyPart,
+    enabled: !!bodyParts,
   });
 };
-export const useExerciseByIds = (exerciseIds: string[]) => {
-  return useQuery({
-    queryKey: ['exercises', 'workout', exerciseIds],
-    queryFn: () => getExerciseByIds(exerciseIds),
-    staleTime: Infinity,
-    enabled: !!exerciseIds.length,
-  });
-};
+// export const useExerciseByIds = (exerciseIds: string[]) => {
+//   return useQuery({
+//     queryKey: ['exercises', 'workout', exerciseIds],
+//     queryFn: () => getExerciseByIds(exerciseIds),
+//     staleTime: Infinity,
+//     enabled: !!exerciseIds.length,
+//   });
+// };

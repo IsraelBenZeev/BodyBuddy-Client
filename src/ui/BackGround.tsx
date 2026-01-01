@@ -4,17 +4,21 @@ import { ReactNode } from 'react';
 import { ImageBackground } from 'react-native';
 interface BackGroundProps {
   children: ReactNode;
+  colorA?: string;
+  colorB?: string;
+  colorC?: string;
+  colorD?: string;
 }
-const BackGround = ({ children }: BackGroundProps) => {
+const BackGround = ({ children, colorA, colorB, colorC, colorD }: BackGroundProps) => {
   return (
     <LinearGradient
       className=""
-      style={{ flex: 1, width: '100%', height: '100%', paddingBottom: 50 }}
+      style={{ flex: 1, width: '100%', height: '100%', paddingBottom: 50}}
       colors={[
-        colors.background[900],
-        colors.background[950],
-        colors.background[800],
-        colors.background[700],
+        colorA || colors.background[900],
+        colorB || colors.background[950],
+        colorC || colors.background[800],
+        colorD || colors.background[700],
       ]}
     >
       <ImageBackground

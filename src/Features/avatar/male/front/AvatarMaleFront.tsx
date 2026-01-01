@@ -1,5 +1,4 @@
-import { BodyPart } from '@/src/types';
-import { Dispatch } from 'react';
+import { BodyPart } from '@/src/types/bodtPart';
 import { Dimensions, View } from 'react-native';
 import Svg from 'react-native-svg';
 import { Chest } from './Chest';
@@ -18,27 +17,28 @@ const ASPECT_RATIO = FIGMA_HEIGHT / FIGMA_WIDTH;
 const svgWidth = screenWidth * 0.75;
 const svgHeight = svgWidth * ASPECT_RATIO;
 interface AvatarMaleFrontProps {
-  selectedPart: BodyPart | null;
-  setSelectedPart: Dispatch<React.SetStateAction<BodyPart | null>>;
+  isSelected: (partName: BodyPart) => boolean;
+  handleTogglePart: (partName: BodyPart) => void;
 }
-const AvatarMaleFront = ({ selectedPart, setSelectedPart }: AvatarMaleFrontProps) => {
+const AvatarMaleFront = ({ isSelected, handleTogglePart }: AvatarMaleFrontProps) => {
   return (
-    <View className="">
+    <View className="" style={{ flex: 1 }} pointerEvents="auto">
       <Svg
-        width={svgWidth * 0.90}
-        height={svgHeight * 0.90}
+        width={svgWidth * 0.9}
+        height={svgHeight * 0.9}
         viewBox={`0 0 ${FIGMA_WIDTH} ${FIGMA_HEIGHT}`}
         preserveAspectRatio="xMidYMax meet"
+        pointerEvents="auto"
       >
         <General />
-        <Neck selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Chest selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Shoulders selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <UpperArms selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <LowerArms selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Waist selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <UpperLegs selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <LowerLegs selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
+        <Neck isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Chest isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Shoulders isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <UpperArms isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <LowerArms isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Waist isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <UpperLegs isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <LowerLegs isSelected={isSelected} handleTogglePart={handleTogglePart} />
       </Svg>
     </View>
   );

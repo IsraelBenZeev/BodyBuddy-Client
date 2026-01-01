@@ -1,5 +1,5 @@
 import { colors } from '@/colors';
-import { BodyPart } from '@/src/types';
+import { BodyPart } from '@/src/types/bodtPart';
 import { Dispatch } from 'react';
 import { G, Path } from 'react-native-svg';
 
@@ -26,13 +26,12 @@ const LowerLeg = ({ selectedPart, setSelectedPart }: LowerLegProps) => {
         clip-rule="evenodd"
         d="M323.91 1486C322.31 1473.9 320.51 1459.8 319.81 1443.8C317.41 1404.1 309.81 1344.9 303.51 1319.9C294.11 1281.8 287.11 1262.3 284.41 1254.6C281.51 1271.6 278.81 1302.6 285.81 1321.3C290.51 1341.4 299.61 1379.8 307.61 1419.3C313.01 1451.4 317.71 1486.1 322.61 1510.5C325.41 1524.8 327.51 1540.2 330.81 1543.2C332.11 1540.1 336.21 1540.2 332.41 1524.2C332.11 1521.5 327.71 1507.3 324.01 1486H323.91Z"
         fill={selectedPart === 'lower legs' ? colors.lime[600] : '#3F3F3F'}
-        />
+      />
       <Path
         fill-rule="evenodd"
         clip-rule="evenodd"
         d="M321.11 1520C312.11 1495.2 306.71 1437 302.01 1404.3C297.01 1384.8 283.21 1316.2 276.11 1298.1C263.91 1352.5 269.111 1394.6 288.411 1435.6C297.511 1475.8 313.91 1524.7 323.81 1535C323.51 1529 322.31 1526 321.11 1520Z"
         fill={selectedPart === 'lower legs' ? colors.lime[600] : '#3F3F3F'}
-            
       />
       <Path
         fill-rule="evenodd"

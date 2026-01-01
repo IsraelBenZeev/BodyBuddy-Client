@@ -1,27 +1,16 @@
 import { colors } from '@/colors';
-import { IconAddToListFitness } from '@/src/ui/IconsSVG';
+import { daysInHebrew, WorkoutPlan } from '@/src/types/workout';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface CardProps {
-  title: string;
-  description?: string;
-  duration?: string;
-  difficulty?: string;
-  muscles?: string[];
+  plan: WorkoutPlan;
 }
 
-const CardPlan = ({
-  title,
-  description = 'תכנית אימונים מקיפה המתמקדת בכוח וסיבולת לב ריאה.',
-  duration = "45 דק'",
-  difficulty = 'Advanced',
-  muscles = ['חזה', 'כתפיים', 'יד אחורית'],
-}: CardProps) => {
+const CardPlan = ({ plan }: CardProps) => {
   return (
     <View className="m-2">
-      
       <View
         style={{ height: 480, width: 280, backgroundColor: '#18181b' }}
         className="rounded-[40px] border border-zinc-800 shadow-2xl overflow-hidden"
@@ -44,22 +33,22 @@ const CardPlan = ({
               Workout Plan
             </Text>
             <Text numberOfLines={2} className="text-white text-2xl font-bold text-right leading-7">
-              {title}
+              {plan.title}
             </Text>
 
             <Text numberOfLines={3} className="text-zinc-400 text-sm text-right mt-3 leading-5">
-              {description}
+              {plan?.description}
             </Text>
           </View>
 
-          {/* 3. שרירים מושפעים (ממלא את החלל הריק) */}
+          {/* 3. ימיםבשבוע (ממלא את החלל הריק) */}
           <View className="flex-row-reverse flex-wrap gap-2 mt-4">
-            {muscles.map((muscle, index) => (
+            {plan?.days_per_week.map((day, index) => (
               <View
                 key={index}
                 className="bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700"
               >
-                <Text className="text-zinc-300 text-[10px]">{muscle}</Text>
+                <Text className="text-zinc-300 text-[10px]">{daysInHebrew[day]}</Text>
               </View>
             ))}
           </View>
@@ -69,11 +58,11 @@ const CardPlan = ({
             <View className="flex-row-reverse justify-between items-center mb-4 px-1">
               <View className="flex-row-reverse items-center">
                 <MaterialCommunityIcons name="clock-fast" size={16} color={colors.lime[500]} />
-                <Text className="text-white text-xs mr-1 font-bold">{duration}</Text>
+                <Text className="text-white text-xs mr-1 font-bold">{plan.time} דק'</Text>
               </View>
               <View className="flex-row-reverse items-center">
                 <MaterialCommunityIcons name="trending-up" size={16} color={colors.lime[500]} />
-                <Text className="text-white text-xs mr-1 font-bold">{difficulty}</Text>
+                <Text className="text-white text-xs mr-1 font-bold">{plan.difficulty}</Text>
               </View>
             </View>
 

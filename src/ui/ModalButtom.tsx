@@ -1,4 +1,5 @@
-import { BodyPart } from '@/src/types';
+import { colors } from '@/colors';
+import { BodyPart } from '@/src/types/exercise';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { forwardRef, ReactNode, useMemo } from 'react';
 import { Text, View } from 'react-native';
@@ -9,7 +10,6 @@ interface ModalButtomProps {
   initialView?: string;
   title?: string;
 }
-// הוספת ה-Ref Type -TSX
 const ModalButtom = forwardRef<BottomSheet, ModalButtomProps>((props, ref) => {
   const snapPoints = useMemo(
     () => [
@@ -22,8 +22,8 @@ const ModalButtom = forwardRef<BottomSheet, ModalButtomProps>((props, ref) => {
     <View
       style={{
         alignItems: 'center',
-        paddingVertical: 10, // ריווח קטן שתמיד יהיה
-        backgroundColor: '#282c34',
+        paddingVertical: 10,
+        backgroundColor: colors.background[900],
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
       }}
@@ -33,14 +33,14 @@ const ModalButtom = forwardRef<BottomSheet, ModalButtomProps>((props, ref) => {
         style={{
           width: 40,
           height: 4,
-          backgroundColor: '#d5ff5f',
+          backgroundColor: colors.lime[400],
           borderRadius: 2,
         }}
       />
       {props.title && (
         <Text
           style={{
-            color: '#d5ff5f',
+            color: colors.lime[400],
             fontSize: 18,
             fontWeight: 'bold',
             marginTop: 8,
@@ -57,8 +57,8 @@ const ModalButtom = forwardRef<BottomSheet, ModalButtomProps>((props, ref) => {
       index={props.InitialIndex ?? 0} // מתחיל סגור
       snapPoints={snapPoints}
       enablePanDownToClose={false}
-      backgroundStyle={{ backgroundColor: '#282c34' }}
-      handleIndicatorStyle={{ backgroundColor: '#d5ff5f' }}
+      backgroundStyle={{ backgroundColor: colors.background[900] }}
+      handleIndicatorStyle={{ backgroundColor: colors.lime[400] }}
       handleComponent={renderHandle} // כאן הקסם קורה
     >
       <BottomSheetView style={{ padding: 20, alignItems: 'center' }}>

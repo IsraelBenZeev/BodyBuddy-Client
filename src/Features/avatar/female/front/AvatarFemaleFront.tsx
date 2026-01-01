@@ -1,5 +1,4 @@
-import { BodyPart } from '@/src/types';
-import { useState } from 'react';
+import { BodyPart } from '@/src/types/bodtPart';
 import { Dimensions, View } from 'react-native';
 import Svg from 'react-native-svg';
 import { Chest } from './Chest';
@@ -17,9 +16,17 @@ const FIGMA_HEIGHT = 1726;
 const ASPECT_RATIO = FIGMA_HEIGHT / FIGMA_WIDTH;
 const svgWidth = screenWidth * 0.75;
 const svgHeight = svgWidth * ASPECT_RATIO;
-
-const AvatarFemaleFront = () => {
-  const [selectedPart, setSelectedPart] = useState<BodyPart | null>(null);
+interface AvatarFemaleFrontProps {
+ isSelected: (partName: BodyPart) => boolean;
+//  handle
+}
+const AvatarFemaleFront = ({
+  selectedPart,
+  setSelectedPart,
+}: {
+  selectedPart: BodyPart | null;
+  setSelectedPart: React.Dispatch<React.SetStateAction<BodyPart | null>>;
+}) => {
   return (
     <View className="relative">
       <Svg

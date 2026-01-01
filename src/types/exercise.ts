@@ -1,27 +1,3 @@
-export type BodyPart =
-  | 'neck'
-  | 'shoulders'
-  | 'chest'
-  | 'upper arms'
-  | 'lower arms'
-  | 'waist'
-  | 'upper legs'
-  | 'lower legs'
-  | 'general'
-  | 'back';
-
-export const partsBodyHebrew = {
-  neck: 'צוואר',
-  chest: 'חזה',
-  shoulders: 'כתפיים',
-  'upper arms': 'יד עליונה',
-  'lower arms': 'יד תחתונה',
-  waist: 'בטן ומותניים',
-  'upper legs': 'רגל עליונה',
-  'lower legs': 'רגל תחתונה',
-  back: 'גב',
-  general: 'כללי',
-};
 export interface Exercise {
   exerciseId: string; // ה-ID הייחודי (למשל: "84RyJf8")
   name: string; // שם התרגיל באנגלית
@@ -39,19 +15,8 @@ export interface Exercise {
   gifUrl: string; // לינק לאנימציה
   created_at: string; // תאריך יצירה (ISO String)
 }
-
-// טיפוס נוסף עבור התגובה שחוזרת מהפונקציה שלך
 export interface FetchExercisesResponse {
   exercises: Exercise[];
   totalCount: number;
 }
-export interface WorkoutPlan {
-  id: string;
-  user_id: string;
-  title: string;
-  description: string;
-  created_at: string;
-  exerciseIds: string[]; // מערך של מזהי תרגילים
-  time: number; // זמן משוער בדקות
-  difficulty: number; // רמת קושי מ-1 עד 5
-}
+

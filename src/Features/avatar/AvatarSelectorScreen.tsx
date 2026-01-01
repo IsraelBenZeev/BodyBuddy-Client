@@ -1,14 +1,3 @@
-// import { useEffect, useRef, useState } from 'react';
-// import { Pressable, Text, View } from 'react-native';
-// import { colors } from '../../../colors';
-
-// import { BodyPart } from '@/src/types';
-// import BackGround from '@/src/ui/BackGround';
-// import { IconSwithBody } from '@/src/ui/IconsSVG';
-// import ModalButtom from '../../ui/ModalButtom';
-// import CardAreaBody from './CardAreaBody';
-// import AvatarFemale from './female/AvatarFemale';
-// import AvatarMaleFront from './male/AvatarMale';
 const fakeUser = {
   gender: 'female',
   name: 'Alice',
@@ -25,94 +14,42 @@ const fakeUser2 = {
   weight: 75,
   mail: 'bob@example.com',
 };
-// const AvatarSelectorScreen = () => {
-//   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
-//   const [selectedPart, setSelectedPart] = useState<BodyPart | null>(null);
-
-//   const sheetRef = useRef<any>(null);
-//   const openSheet = () => {
-//     sheetRef.current?.snapToIndex(selectedPart ? 1 : -1);
-//   };
-//   useEffect(() => {
-//     if (!selectedPart) {
-//       sheetRef.current?.close();
-//       return;
-//     }
-//     sheetRef.current?.snapToIndex(selectedPart ? 1 : -1);
-//   }, [selectedPart]);
-//   let Avatar =
-//     fakeUser2.gender === 'female' ? (
-//       <AvatarFemale avatarSide={sideAvatar} />
-//     ) : (
-//       <AvatarMaleFront
-//         avatarSide={sideAvatar}
-//         selectedPart={selectedPart}
-//         setSelectedPart={setSelectedPart}
-//       />
-//     );
-//   return (
-//     <BackGround>
-//       <View className="flex-1 w-full h-full items-center justify-between">
-//         <View className="flex-1 justify-center items-center px-4">
-//           <Text className="text-primary-50 text-5xl font-bold ">גע לבחירת אזור</Text>
-//         </View>
-//         <View className="justify-center items-center flex-2 relative self-center pr-2">
-//           {Avatar}
-//           <Pressable
-//             className="absolute bottom-32 left-12 font-bold items-center justify-center"
-//             onPress={() => {
-//               setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front'));
-//               setSelectedPart(null);
-//             }}
-//           >
-//             <IconSwithBody size={26} color={colors.lime[700]} />
-//             <Text className="text-lime-700 text-xs">סובב</Text>
-//             {/* <MaterialIcons name="3d-rotation" size={38} color={colors.lime[300]} /> */}
-//           </Pressable>
-//         </View>
-//       </View>
-//       <ModalButtom ref={sheetRef} InitialIndex={-1} minimumView="6%" initialView='45%'>
-//         <CardAreaBody selectedPart={selectedPart} />
-//       </ModalButtom>
-//     </BackGround>
-//   );
-// };
-
-// export default AvatarSelectorScreen;
-import React, { useEffect, useRef, useState } from 'react';
-import { Pressable, Text, View, StyleSheet, Dimensions, Platform } from 'react-native';
-import { colors } from '../../../colors';
-import { BodyPart } from '@/src/types';
-
-// UI Components
+import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import { colors } from '../../../colors';
 import ModalButtom from '../../ui/ModalButtom';
 import CardAreaBody from './CardAreaBody';
-
-// Avatars
-import AvatarFemale from './female/AvatarFemale';
-import AvatarMaleFront from './male/AvatarMale';
+import AvatarMale from './male/AvatarMale';
 
 const { width, height } = Dimensions.get('window');
 
 const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
-  const [selectedPart, setSelectedPart] = useState<BodyPart | null>(null);
-
+  const [selectedParts, setSelectedParts] = useState<BodyPart[]>([]);
   const sheetRef = useRef<any>(null);
-
   useEffect(() => {
-    if (!selectedPart) {
+    if (!selectedParts.length) {
       sheetRef.current?.close();
     } else {
       sheetRef.current?.snapToIndex(1);
     }
-  }, [selectedPart]);
-
+  }, [selectedParts.length]);
+  const handleTogglePart = (partName: BodyPart) => {
+    console.log('partName: ', partName);
+    setSelectedParts(
+      (prev) =>
+        prev.includes(partName)
+          ? prev.filter((p) => p !== partName) // מסיר
+          : [...prev, partName] // מוסיף
+    );
+  };
+  const isSelected = (partName: BodyPart) => selectedParts.includes(partName);
   return (
     <BackGround>
-      <View style={styles.mainContainer} className=''>
+      <View style={styles.mainContainer} className="">
         {/* --- Header: כותרת עליונה --- */}
         <View style={styles.headerSection}>
           <Text style={styles.subTitle}>Target Area</Text>
@@ -120,30 +57,38 @@ const AvatarSelectorScreen = () => {
           <View style={styles.titleLine} />
         </View>
         {/* --- Content: אזור האווטאר --- */}
-        <View style={styles.avatarSection} className=''>
+        <View style={styles.avatarSection} className="">
           {/* אפקט הילה מאחורי המודל */}
           <View style={styles.glowEffect} />
           <View style={styles.avatarScaleWrapper}>
-            {fakeUser2.gender === 'female' ? (
-              <AvatarFemale avatarSide={sideAvatar} />
-            ) : (
-              <AvatarMaleFront
+            <AvatarMale
+              isSelected={isSelected}
+              handleTogglePart={handleTogglePart}
+              avatarSide={sideAvatar}
+            />
+            {/* {fakeUser2.gender === 'female' ? (
+              <AvatarFemale
                 avatarSide={sideAvatar}
                 selectedPart={selectedPart}
                 setSelectedPart={setSelectedPart}
               />
-            )}
+            ) : (
+              <AvatarMale
+                avatarSide={sideAvatar}
+                
+              />
+            )} */}
           </View>
           {/* כפתור סיבוב צף - Glassmorphism */}
           <View style={styles.controlsWrapper}>
             <Pressable
               style={({ pressed }) => [
                 styles.rotateButton,
-                pressed && { opacity: 0.7, transform: [{ scale: 0.95 }] }
+                pressed && { opacity: 0.7, transform: [{ scale: 0.95 }] },
               ]}
               onPress={() => {
                 setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front'));
-                setSelectedPart(null);
+                // setSelectedParts([]);
               }}
             >
               <View style={styles.rotateIconContainer}>
@@ -162,18 +107,17 @@ const AvatarSelectorScreen = () => {
         </View>
 
         {/* --- Footer: הנחיה למשתמש --- */}
-        <View style={styles.footerSection} className=''>
+        <View style={styles.footerSection} className="">
           <Text style={styles.instructionText}>
             לחץ על חלקי הגוף במודל כדי לראות תרגילים רלוונטיים
           </Text>
         </View>
-
       </View>
 
       {/* מודאל תחתון */}
       <ModalButtom ref={sheetRef} InitialIndex={-1} minimumView="6%" initialView="30%">
         <View style={{ padding: 0 }}>
-          <CardAreaBody selectedPart={selectedPart} />
+          <CardAreaBody selectedPart={selectedParts} />
         </View>
       </ModalButtom>
     </BackGround>
@@ -219,7 +163,7 @@ const styles = StyleSheet.create({
   },
   avatarScaleWrapper: {
     // כאן אנחנו שולטים בגודל האווטאר שלא יברח
-    height: height * 0.5, 
+    height: height * 0.5,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 5,

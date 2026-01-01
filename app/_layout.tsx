@@ -42,6 +42,14 @@ export default function RootLayout() {
           >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="exercise/[id]" />
+            <Stack.Screen
+              name="form_create_Workout/[params]"
+              options={{
+                presentation: 'modal',
+                headerShown: false,
+                // headerTitle: 'יצירת תכנית אימון חדשה',
+              }}
+            />
           </Stack>
         </SafeAreaView>
       </QueryClientProvider>

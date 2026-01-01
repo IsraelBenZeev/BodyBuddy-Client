@@ -1,5 +1,5 @@
 import { colors } from '@/colors';
-import { BodyPart } from '@/src/types';
+import { BodyPart } from '@/src/types/bodtPart';
 import React, { Dispatch } from 'react';
 import { G, Path } from 'react-native-svg';
 

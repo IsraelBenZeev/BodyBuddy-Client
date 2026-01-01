@@ -188,7 +188,7 @@
 //   },
 // });
 import { colors } from '@/colors';
-import { Exercise, FetchExercisesResponse } from '@/src/types';
+import { Exercise, FetchExercisesResponse } from '@/src/types/exercise';
 import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import React, { useRef } from 'react';
