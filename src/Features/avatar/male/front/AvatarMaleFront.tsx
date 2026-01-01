@@ -25,8 +25,8 @@ const AvatarMaleFront = ({ selectedPart, setSelectedPart }: AvatarMaleFrontProps
   return (
     <View className="">
       <Svg
-        width={svgWidth}
-        height={svgHeight}
+        width={svgWidth * 0.90}
+        height={svgHeight * 0.90}
         viewBox={`0 0 ${FIGMA_WIDTH} ${FIGMA_HEIGHT}`}
         preserveAspectRatio="xMidYMax meet"
       >

@@ -1,11 +1,7 @@
-import { Text, View } from 'react-native';
+import WorkoutList from '@/src/Features/workout/WorkoutList';
 
 const MyWorkouts = () => {
-  return (
-    <View>
-      <Text>MyWorkout</Text>
-    </View>
-  );
+  return <WorkoutList />;
 };
 
 export default MyWorkouts;

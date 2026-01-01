@@ -20,13 +20,13 @@ const svgHeight = svgWidth * ASPECT_RATIO;
 const AvatarFemaleBack = () => {
   const [selectedPart, setSelectedPart] = useState<BodyPart | null>(null);
   return (
-    <View className="relative bd">
+    <View className="relative">
       <Text className="absolute text-primary-900">
         {selectedPart ? partsBodyHebrew[selectedPart] : ''}
       </Text>
       <Svg
-        width={svgWidth}
-        height={svgHeight}
+         width={svgWidth * 0.90}
+        height={svgHeight * 0.90}
         viewBox={`-60 0 ${FIGMA_WIDTH} ${FIGMA_HEIGHT}`}
         preserveAspectRatio="xMidYMax meet"
       >

@@ -45,3 +45,13 @@ export interface FetchExercisesResponse {
   exercises: Exercise[];
   totalCount: number;
 }
+export interface WorkoutPlan {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  exerciseIds: string[]; // מערך של מזהי תרגילים
+  time: number; // זמן משוער בדקות
+  difficulty: number; // רמת קושי מ-1 עד 5
+}

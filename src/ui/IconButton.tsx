@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
     text: {
         position: 'absolute',
-        bottom: -38,
+        bottom: -18,
         textAlign: 'center',
         width: '100%',
     }
