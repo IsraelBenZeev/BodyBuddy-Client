@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getExercisesByBodyParts } from '../service/exercisesService';
 import { BodyPart } from '../types/bodtPart';
-const limit = 80;
+const limit = 30;
 export const useExercises = (bodyParts: BodyPart[], page: number) => {
   return useQuery({
     queryKey: ['exercises', [...bodyParts].sort(), page],

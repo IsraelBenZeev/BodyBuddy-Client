@@ -1,98 +1,91 @@
 import { colors } from '@/colors';
 import { useExercises } from '@/src/hooks/useEcercises';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
+import { modeType } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
 import ButtonBack from '@/src/ui/ButtonBack';
 import Loading from '@/src/ui/Loading';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import CardExercise from './CardExercise';
+import Filters from './Filters';
 
 interface ExercisesScreenProps {
   bodyParts: string | string[] | undefined;
-  page?: string | string[] | undefined;
   mode: string | string[] | undefined;
 }
+const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
+  console.log('mode: ', mode, 'bodyParts_4: ', bodyParts);
 
-const ExercisesScreen = ({ bodyParts, page, mode }: ExercisesScreenProps) => {
-  const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
-  const { data, isLoading } = useExercises(selectedPartsArray, parseInt(page as string, 10));
-  const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
-  const [favorites, setFavorites] = useState<string[]>([]);
   const router = useRouter();
-  // 1. חילוץ כל חלקי הגוף הייחודיים מהתוצאות
+  const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
+  const [page, setPage] = useState<number>(1);
+  const { data, isLoading } = useExercises(selectedPartsArray, page);
+  const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
+  const [favorites, setFavorites] = useState<string[]>([]);
+
   const uniqueBodyParts = useMemo(() => {
     if (!data?.exercises) return [];
     const partsSet = new Set(data.exercises.flatMap((ex) => ex.bodyParts || []));
     return Array.from(partsSet) as BodyPart[];
   }, [data?.exercises]);
 
-  const bodyPartsCount = uniqueBodyParts.length;
-
-  console.log('mode: ', mode);
-  useEffect(() => {
-    // console.log('bodyParts: ', bodyParts);
-    // console.log('data: ', data?.exercises.at(0));
-    data?.exercises.map((exercise) => {
-      console.log('exercise.bodyParts: ', exercise.bodyParts[0]);
-    });
-    console.log('מספר חלקי גוף שונים בתוצאות:', bodyPartsCount);
-    console.log('הרשימה:', uniqueBodyParts); // ידפיס למשל: ["waist", "back"]
-  }, [isLoading]);
   const toggleFavorite = (id: string) => {
     setFavorites((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
   };
-  const [localFilter, setLocalFilter] = useState<BodyPart | 'all'>('all');
+  const filteredExercises = useMemo(() => {
+    if (!data?.exercises.length) return [];
+    if (selectedFilter === 'all') return data.exercises;
+    return data.exercises.filter((ex) => ex.bodyParts.includes(selectedFilter));
+  }, [data?.exercises.length, selectedFilter]);
   return (
     <BackGround>
       {/* Header */}
-      <View className="flex-row items-center justify-between w-full px-6 pt-4 mb-4">
-        <Image
-          style={styles.avatar}
-          source={require('../../../assets/images/user.png')}
-          contentFit="cover"
-        />
-        <ButtonBack />
-      </View>
-
-      {/* כותרת קטגוריה */}
-      <View className="px-6 mb-6">
-        <Text className="text-lime-50 text-right text-sm font-bold uppercase tracking-widest">
-          מתאמן על
-        </Text>
-        <Text className="text-white font-black text-3xl text-right">
-          {selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', ')}
-        </Text>
-      </View>
+      {mode === 'view' && (
+        <View>
+          <View className="flex-row items-center justify-between w-full px-6 pt-4 mb-4">
+            <Image
+              style={styles.avatar}
+              source={require('../../../assets/images/user.png')}
+              contentFit="cover"
+            />
+            <ButtonBack />
+          </View>
+          <View className="px-6 mb-6">
+            <Text className="text-lime-50 text-right text-sm font-bold uppercase tracking-widest">
+              מתאמן על
+            </Text>
+            <Text className="text-white font-black text-3xl text-right">
+              {selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', ')}
+            </Text>
+          </View>
+        </View>
+      )}
 
       {isLoading ? (
         <Loading />
       ) : (
-        <View className="bd">
-          <View className='bd'>
-            <TouchableOpacity>
-              <Text className="text-white">הכל</Text>
-            </TouchableOpacity>
-            {uniqueBodyParts.map((part: BodyPart) => (
-              <TouchableOpacity>
-                <Text className="text-white" key={part}>
-                  {partsBodyHebrew[part]}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
+        <View className="">
+          <Filters
+            uniqueBodyParts={uniqueBodyParts}
+            selectedFilter={selectedFilter}
+            setSelectedFilter={setSelectedFilter}
+          />
           <FlatList
-            data={data?.exercises || []}
+            data={filteredExercises}
             renderItem={({ item }) => (
-              <CardExercise item={item} favorites={favorites} toggleFavorite={toggleFavorite} />
+              <CardExercise
+                item={item}
+                favorites={favorites}
+                toggleFavorite={toggleFavorite}
+                mode={mode as modeType}
+              />
             )}
             keyExtractor={(item) => item.exerciseId}
             contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
             showsVerticalScrollIndicator={false}
-            // אפקט כניסה נקי
             initialNumToRender={10}
           />
         </View>

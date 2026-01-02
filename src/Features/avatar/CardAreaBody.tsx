@@ -12,7 +12,6 @@ interface CardAreaBodyProps {
 }
 
 const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
-  const [page, setPage] = useState(1);
   const router = useRouter();
   console.log('selectesPart: ', selectedPart);
 
@@ -48,7 +47,6 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
               pathname: '/exercises/[parts]',
               params: {
                 parts: JSON.stringify(selectedPart),
-                page: page.toString(),
                 mode: 'view' as modeType,
               },
             });

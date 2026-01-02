@@ -22,7 +22,7 @@ interface AvatarMaleFrontProps {
 }
 const AvatarMaleFront = ({ isSelected, handleTogglePart }: AvatarMaleFrontProps) => {
   return (
-    <View className="" style={{ flex: 1 }} pointerEvents="auto">
+    <View className="" pointerEvents="auto" >
       <Svg
         width={svgWidth * 0.9}
         height={svgHeight * 0.9}

@@ -321,7 +321,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
       </ScrollView>
 
       {/* הוראות ב-Bottom Sheet */}
-      <ModalButtom ref={sheetRef} InitialIndex={1} title="איך מבצעים?">
+      <ModalButtom ref={sheetRef} InitialIndex={1} title="איך מבצעים?" initialView='6%'>
         <View className="px-5 py-4 w-full">
           {exercise?.instructions_he.map((step, i) => (
             <View key={i} style={styles.instructionStep}>

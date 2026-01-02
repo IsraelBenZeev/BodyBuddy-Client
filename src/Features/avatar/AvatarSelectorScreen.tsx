@@ -60,7 +60,7 @@ const AvatarSelectorScreen = () => {
         <View style={styles.avatarSection} className="">
           {/* אפקט הילה מאחורי המודל */}
           <View style={styles.glowEffect} />
-          <View style={styles.avatarScaleWrapper}>
+          <View style={styles.avatarScaleWrapper} >
             <AvatarMale
               isSelected={isSelected}
               handleTogglePart={handleTogglePart}
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    paddingTop: 40,
   },
   avatarScaleWrapper: {
     // כאן אנחנו שולטים בגודל האווטאר שלא יברח
@@ -167,6 +168,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 5,
+
   },
   glowEffect: {
     position: 'absolute',
