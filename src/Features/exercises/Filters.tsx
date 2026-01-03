@@ -1,12 +1,14 @@
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
+import { modeType } from '@/src/types/mode';
 import { router } from 'expo-router';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 interface FiltersProps {
   uniqueBodyParts: BodyPart[];
   selectedFilter: string | 'all';
   setSelectedFilter: (filter: string | 'all') => void;
+  mode:modeType
 }
-const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter }: FiltersProps) => {
+const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: FiltersProps) => {
   return (
     <View className="py-4">
       <ScrollView
@@ -38,12 +40,14 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter }: Filters
             <Text className="text-white font-medium">{partsBodyHebrew[part] || part}</Text>
           </TouchableOpacity>
         ))}
-        <TouchableOpacity
-          className="bg-zinc-700 w-10 h-10 rounded-full items-center justify-center border border-zinc-600"
-          onPress={() => router.back()}
-        >
-          <Text className="text-white text-lg">+</Text>
-        </TouchableOpacity>
+        {mode === 'view' && (
+          <TouchableOpacity
+            className="bg-zinc-700 w-10 h-10 rounded-full items-center justify-center border border-zinc-600"
+            onPress={() => router.back()}
+          >
+            <Text className="text-white text-lg">+</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );

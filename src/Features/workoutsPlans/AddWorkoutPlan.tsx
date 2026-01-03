@@ -2,7 +2,7 @@ import { colors } from '@/colors';
 import { Ionicons } from '@expo/vector-icons'; // ספרייה שמגיעה עם Expo
 import { useRouter } from 'expo-router';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import Form from './Form';
+import Form from './form/Form';
 
 const AddWorkoutPlan = () => {
   const router = useRouter();

@@ -72,6 +72,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             uniqueBodyParts={uniqueBodyParts}
             selectedFilter={selectedFilter}
             setSelectedFilter={setSelectedFilter}
+            mode={mode as modeType}
           />
           <FlatList
             data={filteredExercises}
