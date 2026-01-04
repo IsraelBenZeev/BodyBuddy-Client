@@ -17,7 +17,9 @@ const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker,
       className=""
     >
       {selectedExercisesData.length === 0 ? (
-        <View className="items-center justify-center py-10 border border-dashed border-zinc-800 rounded-2xl">
+        <View
+          className='items-center'
+        >
           <MaterialCommunityIcons name="dumbbell" size={40} color="#3f3f46" />
           <Text className="text-zinc-500 mt-2">טרם נבחרו תרגילים</Text>
           {/* <TouchableOpacity
@@ -81,7 +83,7 @@ const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker,
           onPress={navigateToPicker}
           className="bg-zinc-900 py-3 rounded-xl mt-2 mb-4 border border-zinc-800"
         >
-          <Text className="text-lime-400 text-center font-bold">+ הוסף תרגיל נוסף</Text>
+          <Text className="text-lime-400 text-center font-bold">הוסף תרגילים נוספים +</Text>
         </TouchableOpacity>
       )}
     </ScrollView>

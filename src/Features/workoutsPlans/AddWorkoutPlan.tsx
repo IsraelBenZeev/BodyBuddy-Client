@@ -3,12 +3,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
 import Form from './form/Form';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const AddWorkoutPlan = () => {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-background-1200">
+    <View className="flex-1 bg-background-1200/90">
       <View className="bg-background-1100 rounded-t-3xl border-b border-white/10">
         <View className="items-center pt-2 pb-1">
           <View className="w-10 h-1.5 bg-lime-500 rounded-full" />
@@ -21,9 +22,9 @@ const AddWorkoutPlan = () => {
         </View>
       </View>
 
-      <View className='flex-1'>
+      {/* <View className='flex-1'> */}
         <Form />
-      </View>
+      {/* </View> */}
     </View>
   );
 };

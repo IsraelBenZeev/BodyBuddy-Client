@@ -1,7 +1,5 @@
-import { colors } from '@/colors';
 import { Exercise } from '@/src/types/exercise';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 interface HeaderProps {
   navigateToPicker: () => void;
   selectedExercisesData: Exercise[];
@@ -9,8 +7,8 @@ interface HeaderProps {
 
 const HeaderForm = ({ navigateToPicker, selectedExercisesData }: HeaderProps) => {
   return (
-    <View className="flex-row justify-between items-center " >
-      <View>
+    <View className="flex-row items-end">
+      <View className='flex-1 items-end justify-center'>
         <Text className="text-white text-2xl font-bold tracking-tight">תרגילים באימון</Text>
         <Text className="text-zinc-500 text-sm">{selectedExercisesData.length} תרגילים נבחרו</Text>
       </View>
