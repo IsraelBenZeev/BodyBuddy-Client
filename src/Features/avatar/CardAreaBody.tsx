@@ -12,7 +12,6 @@ interface CardAreaBodyProps {
 
 const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
   const router = useRouter();
-  console.log('selectesPart: ', selectedPart);
 
   return (
     <View className="">

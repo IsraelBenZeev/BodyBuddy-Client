@@ -38,7 +38,6 @@ const AvatarSelectorScreen = () => {
     }
   }, [selectedParts.length]);
   const handleTogglePart = (partName: BodyPart) => {
-    console.log('partName: ', partName);
     setSelectedParts(
       (prev) =>
         prev.includes(partName)

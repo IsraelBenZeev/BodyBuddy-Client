@@ -6,7 +6,6 @@ interface ButtonLabelTimeProps {
     isPendingCreate: boolean;
 }
 const ButtonLabelTime = ({ totalMinutes, setVisible, isPendingCreate }: ButtonLabelTimeProps) => {
-    console.log("totalMinutes", totalMinutes);
 
     return (
         <View className="mb-6">

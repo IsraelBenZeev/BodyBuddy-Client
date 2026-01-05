@@ -48,7 +48,6 @@ const Form = ({ mode }: { mode: modeAddWorkoutPlan }) => {
     }
     data.user_id = user_id;
     data.exercise_ids = selectedIds;
-    console.log(data);
     createWorkoutPlan(data)
   };
   useEffect(() => {

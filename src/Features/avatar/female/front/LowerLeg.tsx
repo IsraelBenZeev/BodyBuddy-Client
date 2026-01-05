@@ -13,7 +13,6 @@ const LowerLeg = ({ selectedPart, setSelectedPart }: LowerLegProps) => {
     <G
       id="lower legs"
       onPress={() => {
-        console.log('lower leg pressed');
         if (selectedPart === 'lower legs') {
           setSelectedPart(null);
           return;

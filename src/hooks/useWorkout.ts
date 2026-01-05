@@ -15,7 +15,6 @@ export const useCreateWorkoutPlan = (user_id: string) => {
   return useMutation({
     mutationFn: (newWorkoutPlan: WorkoutPlan) => createNewWorkoutPlan(newWorkoutPlan),
     onSuccess: () => {
-      console.log('אימון נוסף בהצלחה');
       queryClient.invalidateQueries({ queryKey: ['workoutsPlans', user_id] });
     },
   });

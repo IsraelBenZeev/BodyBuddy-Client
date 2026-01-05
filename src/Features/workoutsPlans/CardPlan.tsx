@@ -10,7 +10,7 @@ interface CardProps {
 }
 
 const CardPlan = ({ plan, isActive }: CardProps) => {
-  console.log("isActive", isActive);
+  console.log("isActive: ", plan.title, " ", isActive);
 
   return (
     <View
@@ -73,27 +73,29 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View
-        style={{ position: 'absolute', right: -44, bottom: 20 }}
-        className="justify-end items-center gap-4">
-        <TouchableOpacity
-          // onPress={handleDelete}
-          style={{ backgroundColor: "rgba(255, 0, 0, 0.4)" }}
-          className="p-2 rounded-full"
-        >
-          <MaterialCommunityIcons name="trash-can-outline" size={20} color="#ef4444" />
-          {/* <Text className="text-white text-xs">מחק</Text>   */}
-        </TouchableOpacity>
+      {isActive && (
+        <View
+          style={{ position: 'absolute', right: -40, bottom: 20 }}
+          className="justify-end items-center gap-4">
+          <TouchableOpacity
+            // onPress={handleDelete}
+            style={{ backgroundColor: "rgba(255, 0, 0, 0.4)" }}
+            className="p-2 rounded-full"
+          >
+            <MaterialCommunityIcons name="trash-can-outline" size={20} color="#ef4444" />
+            {/* <Text className="text-white text-xs">מחק</Text>   */}
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          // onPress={handleEdit}
-          style={{ backgroundColor: 'rgba(163, 230, 53, 0.5)' }}
-          className="bg-black/40 p-2 rounded-full "
-        >
-          <MaterialCommunityIcons name="pencil-outline" size={20} color={colors.lime[500]} />
-          {/* <Text className="text-white text-xs">ערוך</Text>   */}
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            // onPress={handleEdit}
+            style={{ backgroundColor: 'rgba(163, 230, 53, 0.5)' }}
+            className="bg-black/40 p-2 rounded-full "
+          >
+            <MaterialCommunityIcons name="pencil-outline" size={20} color={colors.lime[500]} />
+            {/* <Text className="text-white text-xs">ערוך</Text>   */}
+          </TouchableOpacity>
+        </View>
+      )}
 
     </View>
   );

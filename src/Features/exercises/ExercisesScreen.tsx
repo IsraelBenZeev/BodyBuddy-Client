@@ -17,8 +17,6 @@ interface ExercisesScreenProps {
   mode: string | string[] | undefined;
 }
 const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
-  console.log('mode: ', mode, 'bodyParts_4: ', bodyParts);
-
   const router = useRouter();
   const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
   const [page, setPage] = useState<number>(1);

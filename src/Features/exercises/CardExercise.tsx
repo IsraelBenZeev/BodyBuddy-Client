@@ -33,7 +33,6 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
             params: { exerciseId: item.exerciseId },
           });
         } else {
-          console.log(item.exerciseId, ' pressed');
 
           toggleExercise(item.exerciseId);
         }

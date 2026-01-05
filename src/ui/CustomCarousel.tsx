@@ -8,18 +8,19 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
   const [activeId, setActiveId] = useState<string | number | null>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  
-  
+
+
   const ITEM_SPACING = (width - widthCard) / 2;
   // 2. זו ה"עין" של הקרוסלה. היא בודקת בכל רגע מה נמצא במרכז ומעדכנת את ה-State
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     if (viewableItems.length > 0) {
-      // viewableItems[0] הוא הפריט שהכי "בולט" כרגע במסך
-      const currentId = viewableItems[0].item.id;
-      setActiveId(currentId); // כאן ה-activeId מקבל את הערך שלו!
+      // אנחנו מחפשים את הפריט שהכי "נראה" (itemVisiblePercentThreshold)
+      const centeredItem = viewableItems[0].item;
+      if (centeredItem) {
+        setActiveId(centeredItem.id);
+      }
     }
   }).current;
-
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50, // פריט נחשב "פעיל" כשרואים לפחות 50% ממנו
   }).current;
@@ -41,6 +42,15 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
           useNativeDriver: true,
         })}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        initialNumToRender={3}
+        keyExtractor={(item) => item.id.toString()} // חשוב מאוד להתאמת ה-ID
+        onLayout={() => {
+          if (data && data.length > 0 && !activeId) {
+            setActiveId(data[0].id);
+          }
+        }}
         // renderItem={({ item, index }) => {
         //   // 3. כשהרשימה הפוכה (inverted), ערכי ה-inputRange צריכים להישאר חיוביים
         //   const inputRange = [
@@ -93,7 +103,7 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
                 justifyContent: 'center',
               }}
             >
-              {renderItem(item)}
+              {renderItem(item, isActive)}
             </Animated.View>
           );
         }}
