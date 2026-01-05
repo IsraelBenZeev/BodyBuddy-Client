@@ -1,7 +1,7 @@
 import { colors } from '@/colors';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { Exercise } from '@/src/types/exercise';
-import { modeType } from '@/src/types/mode';
+import { modeListExercises } from '@/src/types/mode';
 import { ButtonAddFavorit, ButtonRemoveFavorit } from '@/src/ui/ButtonsFavorit';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -12,7 +12,7 @@ interface CardExerciseProps {
   item: Exercise;
   favorites: string[];
   toggleFavorite: (id: string) => void;
-  mode: modeType;
+  mode: modeListExercises;
 }
 
 const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExerciseProps) => {

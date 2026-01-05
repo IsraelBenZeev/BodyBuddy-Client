@@ -3,8 +3,9 @@ import { Pressable, Text, View } from "react-native";
 interface ButtonLabelTimeProps {
     totalMinutes: number;
     setVisible: (visible: boolean) => void;
+    isPendingCreate: boolean;
 }
-const ButtonLabelTime = ({ totalMinutes, setVisible }: ButtonLabelTimeProps) => {
+const ButtonLabelTime = ({ totalMinutes, setVisible, isPendingCreate }: ButtonLabelTimeProps) => {
     console.log("totalMinutes", totalMinutes);
 
     return (
@@ -13,7 +14,12 @@ const ButtonLabelTime = ({ totalMinutes, setVisible }: ButtonLabelTimeProps) => 
                 משך התרגיל
             </Text>
             <Pressable
-                onPress={() => setVisible(true)}
+                onPress={() => {
+                    if(isPendingCreate){
+                        return;
+                    }
+                    setVisible(true)
+                }}
                 className="flex-row-reverse items-center justify-between p-4 bg-background-800 border border-background-700 rounded-2xl active:opacity-70"
                 style={{ height: 56 }}
             >

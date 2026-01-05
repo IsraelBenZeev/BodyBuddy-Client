@@ -21,6 +21,7 @@ interface FormInputProps<T extends FieldValues> extends TextInputProps {
   inputStyle?: StyleProp<TextStyle>;
   errorStyle?: StyleProp<TextStyle>;
   labelStyle?: StyleProp<TextStyle>; // סטייל נפרד ללייבל
+  isPendingCreate?: boolean;
 }
 
 // שים לב להוספת ה- <T extends FieldValues> לפני הסוגריים של הפונקציה
@@ -33,6 +34,7 @@ const FormInput = <T extends FieldValues>({
   errorStyle,
   containerStyle,
   labelStyle,
+  isPendingCreate,
   ...rest
 }: FormInputProps<T>) => {
   // כאן משתמשים ב-T ולא ב-FieldValues הכללי
@@ -42,7 +44,7 @@ const FormInput = <T extends FieldValues>({
     <View style={containerStyle}>
       {/* <View style={containerStyle}> */}
       {label && (
-        <TouchableOpacity onPress={() => inputRef.current?.focus()} activeOpacity={0.7}>
+        <TouchableOpacity onPress={() => inputRef.current?.focus()} disabled={isPendingCreate} activeOpacity={0.7}>
           <Text style={labelStyle}>{label}</Text>
         </TouchableOpacity>
       )}
@@ -51,9 +53,11 @@ const FormInput = <T extends FieldValues>({
         control={control}
         rules={rules}
         name={name}
+        disabled={isPendingCreate}
         render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
           <View>
             <TextInput
+              editable={!isPendingCreate}
               {...rest}
               ref={inputRef}
               // שילוב של סטייל בסיסי עם הסטייל שהועבר ב-props

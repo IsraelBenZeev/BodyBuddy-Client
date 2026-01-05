@@ -1,10 +1,9 @@
 import { colors } from '@/colors';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
-import { modeType } from '@/src/types/mode';
+import { modeListExercises } from '@/src/types/mode';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 interface CardAreaBodyProps {
   selectedPart: BodyPart[];
@@ -47,7 +46,7 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
               pathname: '/exercises/[parts]',
               params: {
                 parts: JSON.stringify(selectedPart),
-                mode: 'view' as modeType,
+                mode: 'view' as modeListExercises,
               },
             });
           }

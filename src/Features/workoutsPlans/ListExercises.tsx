@@ -7,8 +7,9 @@ interface CardExerciseProps {
   toggleExercise: (id: string) => void;
   navigateToPicker: () => void;
   selectedIds: string[];
+  isPendingCreate: boolean;
 }
-const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker, selectedIds }: CardExerciseProps) => {
+const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker, selectedIds, isPendingCreate }: CardExerciseProps) => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -32,6 +33,7 @@ const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker,
             </View> */}
           <TouchableOpacity
             activeOpacity={0.7}
+            disabled={isPendingCreate}
             onPress={navigateToPicker}
             className="bg-lime-400 h-12 w-12 rounded-full items-center justify-center shadow-lg shadow-lime-400/20 mt-4 "
           >
@@ -82,6 +84,7 @@ const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker,
         <TouchableOpacity
           onPress={navigateToPicker}
           className="bg-zinc-900 py-3 rounded-xl mt-2 mb-4 border border-zinc-800"
+          disabled={isPendingCreate}
         >
           <Text className="text-lime-400 text-center font-bold">הוסף תרגילים נוספים +</Text>
         </TouchableOpacity>

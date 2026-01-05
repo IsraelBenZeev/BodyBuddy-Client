@@ -6,6 +6,7 @@ export const getWorkoutsByUserId = async (user_id: string) => {
     const { data, error } = await supabase
       .from('workouts_plans')
       .select('*')
+      .order('created_at', { ascending: false })
       .eq('user_id', user_id);
     if (error) throw error;
     return data as WorkoutPlan[];

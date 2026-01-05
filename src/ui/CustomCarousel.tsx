@@ -1,12 +1,28 @@
-import React, { useRef } from 'react';
-import { Animated, Dimensions, StyleSheet, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { Animated, Dimensions, StyleSheet, View, ViewToken } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const widthCard = 280;
 
 const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderItem: any; widthCard: number }) => {
+  const [activeId, setActiveId] = useState<string | number | null>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  
+  
   const ITEM_SPACING = (width - widthCard) / 2;
+  // 2. זו ה"עין" של הקרוסלה. היא בודקת בכל רגע מה נמצא במרכז ומעדכנת את ה-State
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    if (viewableItems.length > 0) {
+      // viewableItems[0] הוא הפריט שהכי "בולט" כרגע במסך
+      const currentId = viewableItems[0].item.id;
+      setActiveId(currentId); // כאן ה-activeId מקבל את הערך שלו!
+    }
+  }).current;
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50, // פריט נחשב "פעיל" כשרואים לפחות 50% ממנו
+  }).current;
 
   return (
     <View style={styles.container}>
@@ -25,8 +41,27 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
           useNativeDriver: true,
         })}
+        // renderItem={({ item, index }) => {
+        //   // 3. כשהרשימה הפוכה (inverted), ערכי ה-inputRange צריכים להישאר חיוביים
+        //   const inputRange = [
+        //     (index - 1) * widthCard,
+        //     index * widthCard,
+        //     (index + 1) * widthCard,
+        //   ];
+
+        //   const scale = scrollX.interpolate({
+        //     inputRange,
+        //     outputRange: [0.9, 1, 0.9],
+        //     extrapolate: 'clamp',
+        //   });
+
+        //   const opacity = scrollX.interpolate({
+        //     inputRange,
+        //     outputRange: [0.4, 1, 0.4],
+        //     extrapolate: 'clamp',
+        //   });
         renderItem={({ item, index }) => {
-          // 3. כשהרשימה הפוכה (inverted), ערכי ה-inputRange צריכים להישאר חיוביים
+          // --- האנימציה ששאלת עליה (גודל ושקיפות) ---
           const inputRange = [
             (index - 1) * widthCard,
             index * widthCard,
@@ -45,6 +80,9 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
             extrapolate: 'clamp',
           });
 
+          // --- הלוגיקה החדשה של ה-ID הפעיל ---
+          // אנחנו בודקים האם ה-ID של הפריט הנוכחי הוא זה ששמור ב-State כ"פעיל"
+          const isActive = item.id === activeId;
           return (
             <Animated.View
               style={{

@@ -1,13 +1,13 @@
 import { colors } from '@/colors';
 import { useExercises } from '@/src/hooks/useEcercises';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
-import { modeType } from '@/src/types/mode';
+import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
 import ButtonBack from '@/src/ui/ButtonBack';
 import Loading from '@/src/ui/Loading';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
@@ -72,7 +72,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             uniqueBodyParts={uniqueBodyParts}
             selectedFilter={selectedFilter}
             setSelectedFilter={setSelectedFilter}
-            mode={mode as modeType}
+            mode={mode as modeListExercises}
           />
           <FlatList
             data={filteredExercises}
@@ -81,7 +81,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 item={item}
                 favorites={favorites}
                 toggleFavorite={toggleFavorite}
-                mode={mode as modeType}
+                mode={mode as modeListExercises}
               />
             )}
             keyExtractor={(item) => item.exerciseId}
