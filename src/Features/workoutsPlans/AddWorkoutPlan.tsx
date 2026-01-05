@@ -1,12 +1,13 @@
 import { colors } from '@/colors';
+import { modeAddWorkoutPlan } from '@/src/types/mode';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
 import Form from './form/Form';
-import { ScrollView } from 'react-native-gesture-handler';
 
-const AddWorkoutPlan = () => {
+const AddWorkoutPlan = ({ mode }: { mode: modeAddWorkoutPlan }) => {
   const router = useRouter();
+  console.log("mode", mode);
 
   return (
     <View className="flex-1 bg-background-1200/90">
@@ -23,7 +24,7 @@ const AddWorkoutPlan = () => {
       </View>
 
       {/* <View className='flex-1'> */}
-        <Form />
+      <Form mode={mode} />
       {/* </View> */}
     </View>
   );

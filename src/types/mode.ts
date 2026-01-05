@@ -1,1 +1,2 @@
-export type modeType = 'picker' | 'view';
+export type modeListExercises = 'picker' | 'view';
+export type modeAddWorkoutPlan = 'create' | 'edit';

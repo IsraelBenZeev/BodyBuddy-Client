@@ -1,12 +1,12 @@
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
-import { modeType } from '@/src/types/mode';
+import { modeListExercises } from '@/src/types/mode';
 import { router } from 'expo-router';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 interface FiltersProps {
   uniqueBodyParts: BodyPart[];
   selectedFilter: string | 'all';
   setSelectedFilter: (filter: string | 'all') => void;
-  mode:modeType
+  mode: modeListExercises
 }
 const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: FiltersProps) => {
   return (
@@ -18,9 +18,8 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: F
       >
         <TouchableOpacity
           onPress={() => setSelectedFilter('all')}
-          className={`px-5 py-2 rounded-full border ${
-            selectedFilter === 'all' ? 'bg-white border-white' : 'bg-transparent border-gray-500'
-          }`}
+          className={`px-5 py-2 rounded-full border ${selectedFilter === 'all' ? 'bg-white border-white' : 'bg-transparent border-gray-500'
+            }`}
         >
           <Text className={selectedFilter === 'all' ? 'text-black font-bold' : 'text-white'}>
             הכל
@@ -31,11 +30,10 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: F
           <TouchableOpacity
             key={part}
             onPress={() => setSelectedFilter(part)}
-            className={`px-5 py-2 rounded-full border ${
-              selectedFilter === part
+            className={`px-5 py-2 rounded-full border ${selectedFilter === part
                 ? 'bg-lime-500 border-lime-500'
                 : 'bg-background-1000 border-background-100'
-            }`}
+              }`}
           >
             <Text className="text-white font-medium">{partsBodyHebrew[part] || part}</Text>
           </TouchableOpacity>

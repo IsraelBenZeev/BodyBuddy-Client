@@ -1,5 +1,6 @@
 import { Exercise } from '@/src/types/exercise';
 import { Text, View } from 'react-native';
+
 interface HeaderProps {
   navigateToPicker: () => void;
   selectedExercisesData: Exercise[];
@@ -7,19 +8,15 @@ interface HeaderProps {
 
 const HeaderForm = ({ navigateToPicker, selectedExercisesData }: HeaderProps) => {
   return (
-    <View className="flex-row items-end">
-      <View className='flex-1 items-end justify-center'>
-        <Text className="text-white text-2xl font-bold tracking-tight">תרגילים באימון</Text>
-        <Text className="text-zinc-500 text-sm">{selectedExercisesData.length} תרגילים נבחרו</Text>
+    <View className="flex-row items-center justify-between mb-4 mt-2">
+      <View className='flex-1 items-end'>
+        <Text className="text-background-50 text-3xl font-black tracking-tight">יצירת אימון</Text>
+        <Text className="text-background-400 text-sm font-medium mt-1">
+          {selectedExercisesData.length > 0
+            ? `${selectedExercisesData.length} תרגילים נבחרו לאימון`
+            : "התחל בבחירת תרגילים לאימון"}
+        </Text>
       </View>
-
-      {/* <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={navigateToPicker}
-        className="bg-lime-400 h-12 w-12 rounded-full items-center justify-center shadow-lg shadow-lime-400/20"
-      >
-        <MaterialCommunityIcons name="plus" size={28} color="black" />
-      </TouchableOpacity> */}
     </View>
   );
 };
