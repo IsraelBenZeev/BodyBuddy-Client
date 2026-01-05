@@ -102,7 +102,6 @@ interface Props {
 
 const TimeInput = ({ control, name }: Props) => {
     const [visible, setVisible] = useState(false);
-    // tempTime משמש רק לשינויים בתוך המודאל לפני הלחיצה על "אישור"
     const [tempTime, setTempTime] = useState<time>({ hours: 0, minutes: 0 });
 
     return (
