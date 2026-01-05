@@ -2,28 +2,25 @@ import { colors } from '@/colors';
 import { daysInHebrew, WorkoutPlan } from '@/src/types/workout';
 import { IconCalendar } from '@/src/ui/IconsSVG';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface CardProps {
   plan: WorkoutPlan;
   isActive: boolean;
 }
-
 const CardPlan = ({ plan, isActive }: CardProps) => {
-  console.log("isActive: ", plan.title, " ", isActive);
-
   return (
     <View
-      style={{ height: 480, width: 280, backgroundColor: '#18181b' }}
+      style={{ height: 470, width: 265, backgroundColor: '#18181b' }}
       className="rounded-[40px] border border-zinc-800 shadow-2xl "
     >
-      {/* 1. תמונה עליונה (תופסת כ-40% מהגובה) */}
-      <View className="h-40 bg-zinc-800 w-full relative">
+      <View className="h-40 bg-zinc-800 w-full relative rounded-t-[40px]">
         <Image
           source={{
             uri: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=400',
           }}
-          className="w-full h-full opacity-60"
+          className="w-full h-full opacity-60 rounded-t-[40px]"
         />
         <View className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-zinc-900" />
       </View>
@@ -75,23 +72,28 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
       </View>
       {isActive && (
         <View
-          style={{ position: 'absolute', right: -40, bottom: 20 }}
-          className="justify-end items-center gap-4">
+          style={{ position: 'absolute', right: -35, bottom: 20 }}
+          className="justify-end items-center gap-2">
           <TouchableOpacity
             // onPress={handleDelete}
-            style={{ backgroundColor: "rgba(255, 0, 0, 0.4)" }}
-            className="p-2 rounded-full"
+            style={{ backgroundColor: "rgba(255, 0, 0, 0.3)" }}
+            className="p-1 rounded-full"
           >
-            <MaterialCommunityIcons name="trash-can-outline" size={20} color="#ef4444" />
+            <MaterialCommunityIcons name="trash-can-outline" size={22} color="red" />
             {/* <Text className="text-white text-xs">מחק</Text>   */}
           </TouchableOpacity>
 
           <TouchableOpacity
-            // onPress={handleEdit}
-            style={{ backgroundColor: 'rgba(163, 230, 53, 0.5)' }}
-            className="bg-black/40 p-2 rounded-full "
+            onPress={() => {
+              router.push({
+                pathname: '/form_create_Workout/[mode]',
+                params: { mode: 'edit', workout_plan_id: plan.workout_plan_id },
+              });
+            }}
+            style={{ backgroundColor: 'rgba(163, 230, 53, 0.3)' }}
+            className="p-1 rounded-full "
           >
-            <MaterialCommunityIcons name="pencil-outline" size={20} color={colors.lime[500]} />
+            <MaterialCommunityIcons name="pencil-outline" size={22} color={colors.lime[500]} />
             {/* <Text className="text-white text-xs">ערוך</Text>   */}
           </TouchableOpacity>
         </View>

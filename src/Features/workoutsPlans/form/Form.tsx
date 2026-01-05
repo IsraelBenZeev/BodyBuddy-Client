@@ -1,18 +1,19 @@
 import { colors } from '@/colors';
-import { useGetExercisesFromCache } from '@/src/hooks/useCash';
+import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import { useCreateWorkoutPlan } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
+import { modeAddWorkoutPlan } from '@/src/types/mode';
+import { formFailds } from '@/src/types/workout';
 import FormInput from '@/src/ui/FormInput';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ListExercise from '../ListExercises';
 import Days from './Days';
 import HeaderForm from './HeaderForm';
+import ListExercise from './ListExercises';
 import Slider from './Slider';
 import TimeInput from './TimeInput';
-import { modeAddWorkoutPlan } from '@/src/types/mode';
 const bodyParts = [
   'neck',
   'lower arms',
@@ -26,13 +27,38 @@ const bodyParts = [
   'waist',
   'chest',
 ];
+interface FormProps {
+  mode: modeAddWorkoutPlan;
+  workout_plan_id?: string;
+}
 const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
-const Form = ({ mode }: { mode: modeAddWorkoutPlan }) => {
+const Form = ({ mode, workout_plan_id }: FormProps) => {
   const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-  const { control, handleSubmit, formState: { errors } } = useForm();
+  const initialValues = useMemo(() => {
+    if (mode !== "edit") return undefined;
+    return {
+      user_id: user_id,
+      title: 'test',
+      description: 'test',
+      exercise_ids: [
+        "gSw59a4",
+        "RSOsp5d",
+        "hoXt6wv"
+      ],
+      time: 90,
+      difficulty: 3,
+      days_per_week: ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'],
+      workout_plan_id: workout_plan_id,
+    } as formFailds;
+  }, [mode, workout_plan_id]);
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<formFailds>({
+    defaultValues: initialValues,
+  });
   const selectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
-  const selectedExercisesData = useGetExercisesFromCache(selectedIds);
+  const { data: selectedExercisesData = [], isLoading } = useGetExercisesByIds(
+    mode === "edit" ? (initialValues?.exercise_ids || []) : selectedIds
+  );
   const router = useRouter();
   const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user_id)
   const navigateToPicker = () => {
@@ -41,8 +67,7 @@ const Form = ({ mode }: { mode: modeAddWorkoutPlan }) => {
       params: { parts: JSON.stringify(bodyParts), mode: 'picker' },
     });
   };
-
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: formFailds) => {
     if (!data.description) {
       data.description = '';
     }
@@ -50,6 +75,7 @@ const Form = ({ mode }: { mode: modeAddWorkoutPlan }) => {
     data.exercise_ids = selectedIds;
     createWorkoutPlan(data)
   };
+
   useEffect(() => {
     if (isSuccessCreate) {
       router.replace('/workouts')
@@ -130,8 +156,8 @@ const Form = ({ mode }: { mode: modeAddWorkoutPlan }) => {
           <Text className="font-bold text-background-950 text-xl tracking-wide">{isPendingCreate ?
             <View className='flex-row items-center gap-2'>
               <ActivityIndicator color={colors.background[950]} />
-              <Text className="text-background-950">יוצר עבורך את האימון...</Text>
-            </View> : 'צור אימון חדש'}</Text>
+              <Text className="text-background-950">{mode === "create" ? "יוצר עבורך את האימון..." : "מעדכן את האימון..."}</Text>
+            </View> : mode === "create" ? 'צור אימון חדש' : 'עדכן את האימון'}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

@@ -193,14 +193,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import React, { useRef } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-
-// UI Components
 import BackGround from '@/src/ui/BackGround';
 import ButtonBack from '@/src/ui/ButtonBack';
 import IconButton from '@/src/ui/IconButton';
 import ModalButtom from '@/src/ui/ModalButtom';
-
-// Icons
 import {
   IconAddToListFitness,
   IconDislikeBG,
@@ -322,7 +318,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
 
       {/* הוראות ב-Bottom Sheet */}
       <ModalButtom ref={sheetRef} InitialIndex={1} title="איך מבצעים?" initialView='6%'>
-        <View className="px-5 py-4 w-full">
+        <View className="px-5 py-4 w-full ">
           {exercise?.instructions_he.map((step, i) => (
             <View key={i} style={styles.instructionStep}>
               <View className="bg-lime-500 w-6 h-6 rounded-full items-center justify-center ml-3">

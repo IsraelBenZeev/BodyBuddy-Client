@@ -31,8 +31,11 @@ const TimeInput = ({ control, name, isPendingCreate }: Props) => {
             control={control}
             name={name}
             disabled={isPendingCreate}
+            
             rules={{
-                required: 'חובה להזין זמן',
+                validate: {
+                    required: (value) => value > 0 || 'חובה להזין זמן',
+                },
             }}
             defaultValue={0}
             render={({ field: { onChange, value }, fieldState: { error } }) => {
@@ -111,7 +114,7 @@ const TimeInput = ({ control, name, isPendingCreate }: Props) => {
                                 </View>
                             </View>
                         </Modal>
-                        {error && <Text className="text-red-500">{error.message}</Text>}
+                        {error && <Text className="text-red-500 text-right">{error.message}</Text>}
                     </View>
                 );
             }}

@@ -34,20 +34,21 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
               gestureEnabled: true,
-              // האנימציה הזו גורמת למסך החדש להיכנס מימין,
-              // מה שבדרך כלל הופך את כיוון מחוות החזרה ב-iOS
-              animation: 'slide_from_right',
-              // contentStyle: { direction: 'rtl' }, // מנחה את הסטאק לעבוד ב-RTL
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+              // gestureDirection: 'vertical',
+              // animationDuration: 500,
+              // freezeOnBlur: true,
+              // headerBackTitle: 'Back',
             }}
           >
             <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="exercise/[id]" />
+            <Stack.Screen name="exercise/[exerciseId]" />
             <Stack.Screen
-              name="form_create_Workout/[params]"
+              name="form_create_Workout/[mode]"
               options={{
                 presentation: 'modal',
                 headerShown: false,
-                // headerTitle: 'יצירת תכנית אימון חדשה',
               }}
             />
           </Stack>

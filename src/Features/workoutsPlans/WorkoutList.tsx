@@ -36,7 +36,7 @@ const WorkoutList = () => {
               params: { mode: 'create' },
             });
           }}
-          className="bg-lime-500 absolute -bottom-4 left-10 items-center justify-center rounded-full p-3 w-24 h-24 shadow-xl"
+          className="bg-lime-500 absolute -bottom-4 left-10 items-center justify-center rounded-full p-3 w-16 h-16 shadow-xl"
           style={{
             elevation: 8,
             shadowColor: colors.lime[500],

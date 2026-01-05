@@ -1,28 +1,151 @@
+// import { useRef, useState } from 'react';
+// import { Animated, Dimensions, StyleSheet, View, ViewToken } from 'react-native';
+
+// const { width } = Dimensions.get('window');
+// const widthCard = 280;
+
+// const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderItem: any; widthCard: number }) => {
+//   const [activeId, setActiveId] = useState<string | number | null>(null);
+//   const scrollX = useRef(new Animated.Value(0)).current;
+
+
+
+//   const ITEM_SPACING = (width - widthCard) / 2;
+//   // 2. זו ה"עין" של הקרוסלה. היא בודקת בכל רגע מה נמצא במרכז ומעדכנת את ה-State
+//   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+//     if (viewableItems.length > 0) {
+//       // אנחנו מחפשים את הפריט שהכי "נראה" (itemVisiblePercentThreshold)
+//       const centeredItem = viewableItems[0].item;
+//       if (centeredItem) {
+//         setActiveId(centeredItem.id);
+//       }
+//     }
+//   }).current;
+//   const viewabilityConfig = useRef({
+//     itemVisiblePercentThreshold: 50, // פריט נחשב "פעיל" כשרואים לפחות 50% ממנו
+//   }).current;
+
+//   return (
+//     <View style={styles.container}>
+//       <Animated.FlatList
+//         data={data}
+//         horizontal
+//         // 1. זה הפרופ החשוב ביותר: הוא הופך את כיוון הגלילה פיזית (האצבע והסדר)
+//         inverted={true}
+//         showsHorizontalScrollIndicator={false}
+//         snapToInterval={widthCard}
+//         decelerationRate="fast"
+//         // 2. בגלל שהפכנו (inverted), ה-padding צריך להיות בתוך הסטייל
+//         contentContainerStyle={{
+//           paddingHorizontal: ITEM_SPACING,
+//         }}
+//         onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+//           useNativeDriver: true,
+//         })}
+//         onViewableItemsChanged={onViewableItemsChanged}
+//         viewabilityConfig={viewabilityConfig}
+//         initialNumToRender={3}
+//         keyExtractor={(item) => item.id.toString()} // חשוב מאוד להתאמת ה-ID
+//         onLayout={() => {
+//           if (data && data.length > 0 && !activeId) {
+//             setActiveId(data[0].id);
+//           }
+//         }}
+//         // renderItem={({ item, index }) => {
+//         //   // 3. כשהרשימה הפוכה (inverted), ערכי ה-inputRange צריכים להישאר חיוביים
+//         //   const inputRange = [
+//         //     (index - 1) * widthCard,
+//         //     index * widthCard,
+//         //     (index + 1) * widthCard,
+//         //   ];
+
+//         //   const scale = scrollX.interpolate({
+//         //     inputRange,
+//         //     outputRange: [0.9, 1, 0.9],
+//         //     extrapolate: 'clamp',
+//         //   });
+
+//         //   const opacity = scrollX.interpolate({
+//         //     inputRange,
+//         //     outputRange: [0.4, 1, 0.4],
+//         //     extrapolate: 'clamp',
+//         //   });
+//         renderItem={({ item, index }) => {
+//           // --- האנימציה ששאלת עליה (גודל ושקיפות) ---
+//           const inputRange = [
+//             (index - 1) * widthCard,
+//             index * widthCard,
+//             (index + 1) * widthCard,
+//           ];
+
+//           const scale = scrollX.interpolate({
+//             inputRange,
+//             outputRange: [0.9, 1, 0.9],
+//             extrapolate: 'clamp',
+//           });
+
+//           const opacity = scrollX.interpolate({
+//             inputRange,
+//             outputRange: [0.4, 1, 0.4],
+//             extrapolate: 'clamp',
+//           });
+
+//           // --- הלוגיקה החדשה של ה-ID הפעיל ---
+//           // אנחנו בודקים האם ה-ID של הפריט הנוכחי הוא זה ששמור ב-State כ"פעיל"
+//           const isActive = item.id === activeId;
+//           return (
+//             <Animated.View
+//               style={{
+//                 width: widthCard,
+//                 opacity,
+//                 transform: [{ scale }],
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//               }}
+//             >
+//               {renderItem(item, isActive)}
+//             </Animated.View>
+//           );
+//         }}
+//       />
+//     </View>
+//   );
+// };
+// const styles = StyleSheet.create({
+//   container: {
+//     paddingVertical: 20,
+//   },
+// });
+
+// export default CustomCarousel;
 import { useRef, useState } from 'react';
 import { Animated, Dimensions, StyleSheet, View, ViewToken } from 'react-native';
 
 const { width } = Dimensions.get('window');
-const widthCard = 280;
+
+const GAP = 15; 
 
 const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderItem: any; widthCard: number }) => {
   const [activeId, setActiveId] = useState<string | number | null>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
 
-
-
+  // 2. החישוב החדש: כל "תחנה" בגלילה היא רווח הכרטיסייה + המרווח
+  const TOTAL_ITEM_SIZE = widthCard + GAP;
+  
+  // ITEM_SPACING דואג שהכרטיסייה הראשונה תתחיל בדיוק באמצע
   const ITEM_SPACING = (width - widthCard) / 2;
-  // 2. זו ה"עין" של הקרוסלה. היא בודקת בכל רגע מה נמצא במרכז ומעדכנת את ה-State
+
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     if (viewableItems.length > 0) {
-      // אנחנו מחפשים את הפריט שהכי "נראה" (itemVisiblePercentThreshold)
       const centeredItem = viewableItems[0].item;
       if (centeredItem) {
         setActiveId(centeredItem.id);
       }
     }
   }).current;
+
   const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 50, // פריט נחשב "פעיל" כשרואים לפחות 50% ממנו
+    itemVisiblePercentThreshold: 50,
   }).current;
 
   return (
@@ -30,14 +153,13 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
       <Animated.FlatList
         data={data}
         horizontal
-        // 1. זה הפרופ החשוב ביותר: הוא הופך את כיוון הגלילה פיזית (האצבע והסדר)
         inverted={true}
         showsHorizontalScrollIndicator={false}
-        snapToInterval={widthCard}
+        // 3. חשוב: הגלילה קופצת לפי הגודל הכולל (כרטיסייה + רווח)
+        snapToInterval={TOTAL_ITEM_SIZE} 
         decelerationRate="fast"
-        // 2. בגלל שהפכנו (inverted), ה-padding צריך להיות בתוך הסטייל
         contentContainerStyle={{
-          paddingHorizontal: ITEM_SPACING,
+          paddingHorizontal: ITEM_SPACING - (GAP / 2), // תיקון קל למרכוז מושלם
         }}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
           useNativeDriver: true,
@@ -45,37 +167,18 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         initialNumToRender={3}
-        keyExtractor={(item) => item.id.toString()} // חשוב מאוד להתאמת ה-ID
+        keyExtractor={(item) => item.id.toString()}
         onLayout={() => {
           if (data && data.length > 0 && !activeId) {
             setActiveId(data[0].id);
           }
         }}
-        // renderItem={({ item, index }) => {
-        //   // 3. כשהרשימה הפוכה (inverted), ערכי ה-inputRange צריכים להישאר חיוביים
-        //   const inputRange = [
-        //     (index - 1) * widthCard,
-        //     index * widthCard,
-        //     (index + 1) * widthCard,
-        //   ];
-
-        //   const scale = scrollX.interpolate({
-        //     inputRange,
-        //     outputRange: [0.9, 1, 0.9],
-        //     extrapolate: 'clamp',
-        //   });
-
-        //   const opacity = scrollX.interpolate({
-        //     inputRange,
-        //     outputRange: [0.4, 1, 0.4],
-        //     extrapolate: 'clamp',
-        //   });
         renderItem={({ item, index }) => {
-          // --- האנימציה ששאלת עליה (גודל ושקיפות) ---
+          // 4. עדכון ה-inputRange שיכיר ברווחים החדשים
           const inputRange = [
-            (index - 1) * widthCard,
-            index * widthCard,
-            (index + 1) * widthCard,
+            (index - 1) * TOTAL_ITEM_SIZE,
+            index * TOTAL_ITEM_SIZE,
+            (index + 1) * TOTAL_ITEM_SIZE,
           ];
 
           const scale = scrollX.interpolate({
@@ -90,13 +193,13 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
             extrapolate: 'clamp',
           });
 
-          // --- הלוגיקה החדשה של ה-ID הפעיל ---
-          // אנחנו בודקים האם ה-ID של הפריט הנוכחי הוא זה ששמור ב-State כ"פעיל"
           const isActive = item.id === activeId;
+
           return (
             <Animated.View
               style={{
                 width: widthCard,
+                marginHorizontal: GAP / 2, // 5. הוספת הרווח הפיזי בין הכרטיסיות
                 opacity,
                 transform: [{ scale }],
                 alignItems: 'center',
@@ -111,6 +214,7 @@ const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderIt
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,

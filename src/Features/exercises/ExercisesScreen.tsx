@@ -3,12 +3,11 @@ import { useExercises } from '@/src/hooks/useEcercises';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
-import ButtonBack from '@/src/ui/ButtonBack';
+import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
 
@@ -42,15 +41,18 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     <BackGround>
       {/* Header */}
       {mode === 'view' && (
-        <View>
-          <View className="flex-row items-center justify-between w-full px-6 pt-4 mb-4">
+        <View className='pt-4'>
+          <View className='items-center'>
+            <Handle />
+          </View>
+          {/* <View className="flex-row items-center justify-between w-full px-6 pt-4 mb-4">
             <Image
               style={styles.avatar}
               source={require('../../../assets/images/user.png')}
               contentFit="cover"
             />
             <ButtonBack />
-          </View>
+          </View> */}
           <View className="px-6 mb-6">
             <Text className="text-lime-50 text-right text-sm font-bold uppercase tracking-widest">
               מתאמן על
@@ -65,28 +67,49 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       {isLoading ? (
         <Loading />
       ) : (
-        <View className="">
-          <Filters
-            uniqueBodyParts={uniqueBodyParts}
-            selectedFilter={selectedFilter}
-            setSelectedFilter={setSelectedFilter}
-            mode={mode as modeListExercises}
-          />
-          <FlatList
-            data={filteredExercises}
-            renderItem={({ item }) => (
-              <CardExercise
-                item={item}
-                favorites={favorites}
-                toggleFavorite={toggleFavorite}
-                mode={mode as modeListExercises}
-              />
-            )}
-            keyExtractor={(item) => item.exerciseId}
-            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
-            showsVerticalScrollIndicator={false}
-            initialNumToRender={10}
-          />
+        <View className="flex-1 pt-2 items-center">
+          {mode === 'picker' && <Handle />}
+          <View className="w-full">
+            <Filters
+              uniqueBodyParts={uniqueBodyParts}
+              selectedFilter={selectedFilter}
+              setSelectedFilter={setSelectedFilter}
+              mode={mode as modeListExercises}
+            />
+            <FlatList
+              data={filteredExercises}
+              renderItem={({ item }) => (
+                <CardExercise
+                  item={item}
+                  favorites={favorites}
+                  toggleFavorite={toggleFavorite}
+                  mode={mode as modeListExercises}
+                />
+              )}
+              keyExtractor={(item) => item.exerciseId}
+              contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
+              showsVerticalScrollIndicator={false}
+              initialNumToRender={10}
+            />
+          </View>
+          {mode === "picker" && <View className="absolute bottom-10 left-0 right-0 items-center px-10">
+            <Pressable
+              style={({ pressed }) => [
+                {
+                  transform: [{ scale: pressed ? 0.96 : 1 }], // אפקט לחיצה של פרימיום
+                  shadowColor: "#bef264",
+                  shadowOffset: { width: 0, height: 10 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 20,
+                  elevation: 10, // עבור אנדרואיד
+                }
+              ]}
+              className="bg-lime-500 w-full h-16 rounded-2xl items-center justify-center"
+              onPress={() => router.back()}
+            >
+              <Text className="text-black font-bold text-lg">שמור וסיים</Text>
+            </Pressable>
+          </View>}
         </View>
       )}
     </BackGround>

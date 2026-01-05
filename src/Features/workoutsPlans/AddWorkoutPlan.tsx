@@ -4,8 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
 import Form from './form/Form';
-
-const AddWorkoutPlan = ({ mode }: { mode: modeAddWorkoutPlan }) => {
+interface AddWorkoutPlanProps {
+  mode: modeAddWorkoutPlan;
+  workout_plan_id?: string;
+}
+const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
   const router = useRouter();
   console.log("mode", mode);
 
@@ -24,7 +27,7 @@ const AddWorkoutPlan = ({ mode }: { mode: modeAddWorkoutPlan }) => {
       </View>
 
       {/* <View className='flex-1'> */}
-      <Form mode={mode} />
+      <Form mode={mode} workout_plan_id={workout_plan_id} />
       {/* </View> */}
     </View>
   );

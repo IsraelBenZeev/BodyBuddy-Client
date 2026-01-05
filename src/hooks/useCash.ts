@@ -3,6 +3,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Exercise } from '../types/exercise';
 
 export const useGetExercisesFromCache = (ids: string[]) => {
+  console.log("ids", ids);
+  
   const queryClient = useQueryClient();
 
   return useMemo(() => {

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 import {
   StyleProp,
@@ -11,7 +11,6 @@ import {
   ViewStyle,
 } from 'react-native';
 
-// הוספתי ? לכל הסטיילים כדי שיהיו אופציונליים
 interface FormInputProps<T extends FieldValues> extends TextInputProps {
   control: Control<T>;
   name: Path<T>;
@@ -20,11 +19,10 @@ interface FormInputProps<T extends FieldValues> extends TextInputProps {
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
   errorStyle?: StyleProp<TextStyle>;
-  labelStyle?: StyleProp<TextStyle>; // סטייל נפרד ללייבל
+  labelStyle?: StyleProp<TextStyle>;
   isPendingCreate?: boolean;
 }
 
-// שים לב להוספת ה- <T extends FieldValues> לפני הסוגריים של הפונקציה
 const FormInput = <T extends FieldValues>({
   control,
   name,
@@ -37,12 +35,9 @@ const FormInput = <T extends FieldValues>({
   isPendingCreate,
   ...rest
 }: FormInputProps<T>) => {
-  // כאן משתמשים ב-T ולא ב-FieldValues הכללי
   const inputRef = useRef<TextInput>(null);
-
   return (
     <View style={containerStyle}>
-      {/* <View style={containerStyle}> */}
       {label && (
         <TouchableOpacity onPress={() => inputRef.current?.focus()} disabled={isPendingCreate} activeOpacity={0.7}>
           <Text style={labelStyle}>{label}</Text>
@@ -53,6 +48,9 @@ const FormInput = <T extends FieldValues>({
         control={control}
         rules={rules}
         name={name}
+        // @ts-ignore - פתרון מהיר אם אתה יודע שזה תמיד יהיה string
+        // או הפתרון ה"נכון" מבחינת Types:
+        // defaultValue={"test" as any}
         disabled={isPendingCreate}
         render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
           <View>
@@ -64,7 +62,7 @@ const FormInput = <T extends FieldValues>({
               //   style={[inputStyle, error && { borderColor: 'red' }]}
               onBlur={onBlur}
               onChangeText={onChange}
-              value={value}
+              value={value?.toString() ?? ''}
               style={inputStyle}
             />
             {error && (
