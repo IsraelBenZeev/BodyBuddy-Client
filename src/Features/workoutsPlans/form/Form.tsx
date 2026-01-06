@@ -1,9 +1,10 @@
 import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
-import { useCreateWorkoutPlan } from '@/src/hooks/useWorkout';
+import { useCreateWorkoutPlan, useGetWorkoutPlanById } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
-import { formFailds } from '@/src/types/workout';
+// import { formFailds } from '@/src/types/workout';
+import { WorkoutPlan } from '@/src/types/workout';
 import FormInput from '@/src/ui/FormInput';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
@@ -33,33 +34,28 @@ interface FormProps {
 }
 const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const Form = ({ mode, workout_plan_id }: FormProps) => {
+  const router = useRouter();
   const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+  const { data: workoutPlanData, isLoading: isLoadingWorkoutPlan } = useGetWorkoutPlanById(workout_plan_id);
   const initialValues = useMemo(() => {
     if (mode !== "edit") return undefined;
     return {
       user_id: user_id,
-      title: 'test',
-      description: 'test',
-      exercise_ids: [
-        "gSw59a4",
-        "RSOsp5d",
-        "hoXt6wv"
-      ],
-      time: 90,
-      difficulty: 3,
-      days_per_week: ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'],
-      workout_plan_id: workout_plan_id,
-    } as formFailds;
-  }, [mode, workout_plan_id]);
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<formFailds>({
+      title: workoutPlanData?.title,
+      description: workoutPlanData?.description,
+      exercise_ids: workoutPlanData?.exercise_ids,
+      time: workoutPlanData?.time,
+      difficulty: workoutPlanData?.difficulty,
+      days_per_week: workoutPlanData?.days_per_week,
+      id: workout_plan_id,
+    } as WorkoutPlan;
+  }, [mode, workout_plan_id, workoutPlanData]);
+  const { control, handleSubmit, reset } = useForm<WorkoutPlan>({
     defaultValues: initialValues,
   });
   const selectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
-  const { data: selectedExercisesData = [], isLoading } = useGetExercisesByIds(
-    mode === "edit" ? (initialValues?.exercise_ids || []) : selectedIds
-  );
-  const router = useRouter();
+  const { data: selectedExercisesData = [], isLoading: isLoadingExercises } = useGetExercisesByIds(selectedIds);
   const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user_id)
   const navigateToPicker = () => {
     router.push({
@@ -67,7 +63,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       params: { parts: JSON.stringify(bodyParts), mode: 'picker' },
     });
   };
-  const onSubmit = (data: formFailds) => {
+  const onSubmit = (data: WorkoutPlan) => {
     if (!data.description) {
       data.description = '';
     }
@@ -78,9 +74,14 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
 
   useEffect(() => {
     if (isSuccessCreate) {
-      router.replace('/workouts')
+      router.back()
     }
   }, [isSuccessCreate])
+  useEffect(() => {
+    if (mode === "edit") {
+      reset(initialValues)
+    }
+  }, [mode, initialValues, workoutPlanData, isLoadingWorkoutPlan])
 
   return (
     <KeyboardAvoidingView

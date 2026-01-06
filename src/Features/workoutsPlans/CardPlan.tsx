@@ -1,4 +1,5 @@
 import { colors } from '@/colors';
+import { useDeleteWorkoutPlan } from '@/src/hooks/useWorkout';
 import { daysInHebrew, WorkoutPlan } from '@/src/types/workout';
 import { IconCalendar } from '@/src/ui/IconsSVG';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,7 +10,9 @@ interface CardProps {
   plan: WorkoutPlan;
   isActive: boolean;
 }
+const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const CardPlan = ({ plan, isActive }: CardProps) => {
+  const { mutateAsync: deleteWorkoutPlanMutation } = useDeleteWorkoutPlan(user_id)
   return (
     <View
       style={{ height: 470, width: 265, backgroundColor: '#18181b' }}
@@ -75,26 +78,27 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
           style={{ position: 'absolute', right: -35, bottom: 20 }}
           className="justify-end items-center gap-2">
           <TouchableOpacity
-            // onPress={handleDelete}
+            onPress={() => {
+              console.log("plan id", plan?.id);
+              deleteWorkoutPlanMutation(plan?.id as string)
+            }}
             style={{ backgroundColor: "rgba(255, 0, 0, 0.3)" }}
             className="p-1 rounded-full"
           >
             <MaterialCommunityIcons name="trash-can-outline" size={22} color="red" />
-            {/* <Text className="text-white text-xs">מחק</Text>   */}
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => {
               router.push({
                 pathname: '/form_create_Workout/[mode]',
-                params: { mode: 'edit', workout_plan_id: plan.workout_plan_id },
+                params: { mode: 'edit', workout_plan_id: plan?.id },
               });
             }}
             style={{ backgroundColor: 'rgba(163, 230, 53, 0.3)' }}
             className="p-1 rounded-full "
           >
             <MaterialCommunityIcons name="pencil-outline" size={22} color={colors.lime[500]} />
-            {/* <Text className="text-white text-xs">ערוך</Text>   */}
           </TouchableOpacity>
         </View>
       )}

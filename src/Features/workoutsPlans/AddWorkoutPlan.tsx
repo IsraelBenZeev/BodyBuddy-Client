@@ -10,8 +10,6 @@ interface AddWorkoutPlanProps {
 }
 const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
   const router = useRouter();
-  console.log("mode", mode);
-
   return (
     <View className="flex-1 bg-background-1200/90">
       <View className="bg-background-1100 rounded-t-3xl border-b border-white/10">

@@ -1,6 +1,4 @@
 import { colors } from "@/colors";
-import { dayType } from "@/src/types/workout";
-import { useState } from "react";
 import { Control, Controller } from 'react-hook-form';
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -12,18 +10,6 @@ interface Props {
 
 const Days = ({ control, name, isPendingCreate }: Props) => {
     const days = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
-    // const [selectedDays, setSelectedDays] = useState<dayType[]>([]);
-
-    // const toggleDay = (day: dayType) => {
-    //     if (selectedDays.includes(day)) {
-    //         setSelectedDays(selectedDays.filter((d) => d !== day));
-    //     } else {
-    //         setSelectedDays([...selectedDays, day]);
-    //     }
-    // };
-    // console.log("selectedDays: ", selectedDays);
-
-
     return (
         <Controller
             control={control}
