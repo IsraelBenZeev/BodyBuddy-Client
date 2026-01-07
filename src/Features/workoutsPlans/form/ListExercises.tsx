@@ -23,14 +23,6 @@ const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker,
         >
           <MaterialCommunityIcons name="dumbbell" size={40} color="#3f3f46" />
           <Text className="text-zinc-500 mt-2">טרם נבחרו תרגילים</Text>
-          {/* <TouchableOpacity
-            onPress={navigateToPicker}
-            className="mt-4 bg-lime-400 px-4 py-2 rounded-lg"
-            >
-            <Text className="text-zinc-900 font-bold">הוסף תרגיל</Text>
-            </TouchableOpacity> */}
-          {/* <View>
-            </View> */}
           <TouchableOpacity
             activeOpacity={0.7}
             disabled={isPendingCreate}
@@ -46,7 +38,6 @@ const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker,
             key={exercise.exerciseId}
             className="flex-row items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
           >
-            {/* תמונה / GIF */}
             <View className="bg-white/5 rounded-xl overflow-hidden">
               <Image
                 source={{ uri: exercise.gifUrl }}
@@ -57,7 +48,6 @@ const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker,
               />
             </View>
 
-            {/* פרטי התרגיל */}
             <View className="flex-1 ml-4 mr-2">
               <Text className="text-white font-semibold text-base" numberOfLines={1}>
                 {exercise.name_he || exercise.name}

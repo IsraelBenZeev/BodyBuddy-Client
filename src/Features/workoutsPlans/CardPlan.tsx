@@ -21,72 +21,7 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);  // const handleDelete = (id: string) => {
   const handleDelete = (id: string) => {
-    setDeleteId(id)
-    Toast.show({
-      type: 'info',
-      text1: 'האימון יימחק בעוד 5 שניות',
-      visibilityTime: 5000,
-      autoHide: true,
-      props: {
-        mode: 'delete',
-        timeProgress: 5000,
-        iconCancel: <IconX size={20} color={colors.lime[500]} />,
-        iconDelete: <IconSuccess size={20} color={colors.lime[500]} />,
-        onPressCancel: () => {
-          if (timerRef.current) {
-            clearTimeout(timerRef.current);
-            timerRef.current = null;
-            setDeleteId("");
-            Toast.hide();
-          }
-        },
-        onPressDelete: () => {
-          deleteWorkoutPlanMutation(deleteId);
-          timerRef.current = null;
-
-          Toast.hide();
-          setDeleteId("")
-          Toast.show({
-            type: 'info',
-            text1: 'האימון נמחק בהצלחה',
-            visibilityTime: 1000,
-            props: {
-              mode: 'cancel',
-              icon: <IconSuccess size={20} color={colors.lime[500]} />,
-              timeProgress: 1000
-            }
-          });
-        }
-      },
-      onHide: () => {
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-          timerRef.current = null;
-          setDeleteId("");
-          Toast.hide();
-          setDeleteId("")
-          Toast.show({
-            type: 'info',
-            text1: 'המחיקה בוטלה',
-            visibilityTime: 1000,
-            props: {
-              mode: 'cancel',
-              icon: <IconX size={20} color={colors.lime[500]} />,
-              timeProgress: 1000
-            }
-          });
-        }
-      },
-      onPress: () => {
-        Toast.hide();
-      }
-    });
-
-    // 3. מפעילים את הטיימר
-    timerRef.current = setTimeout(() => {
-      deleteWorkoutPlanMutation(id); // רק עכשיו זה באמת נשלח לשרת!
-      timerRef.current = null;
-    }, 5000);
+    deleteWorkoutPlanMutation(id);
   }
   
   useEffect(() => {

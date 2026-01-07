@@ -12,9 +12,9 @@ import { useForm } from 'react-hook-form';
 import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Days from './Days';
 import HeaderForm from './HeaderForm';
-import ListExercise from './ListExercises';
 import Slider from './Slider';
 import TimeInput from './TimeInput';
+import ListExercise from './ListExercises';
 const bodyParts = [
   'neck',
   'lower arms',
