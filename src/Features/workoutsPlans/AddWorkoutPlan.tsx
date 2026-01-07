@@ -17,7 +17,7 @@ const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
           <View className="w-10 h-1.5 bg-lime-500 rounded-full" />
         </View>
         <View className="flex-row-reverse justify-between items-center px-5 pb-4">
-          <Text className="text-lime-400 text-xl font-bold">תוכנית חדשה</Text>
+          <Text className="text-lime-400 text-xl font-bold">{mode === "edit" ? "עריכה" : "תוכנית חדשה"}</Text>
           <TouchableOpacity onPress={() => router.back()} className="bg-white/10 p-2 rounded-full">
             <Ionicons name="close" size={20} color={colors.lime[400]} />
           </TouchableOpacity>

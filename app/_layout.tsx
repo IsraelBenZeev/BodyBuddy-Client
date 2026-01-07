@@ -5,6 +5,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientManager } from 'reactotron-react-query';
 import Reactotron from '../ReactotronConfig';
 import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
+import Toast from 'react-native-toast-message';
+import ToastConfig from '@/ToastConfig';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -22,37 +24,62 @@ if (__DEV__) {
   });
 }
 
+// export default function RootLayout() {
+//   return (
+//     // GestureHandlerRootView חייב להיות בדרגה הכי גבוהה כדי שהגרירה תעבוד
+//     <GestureHandlerRootView style={{ flex: 1 }}>
+//       <QueryClientProvider client={queryClient}>
+//         <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full">
+//           <StatusBar />
+//           {/* <Stack screenOptions={{ headerShown: false }} /> */}
+//           <Stack
+//             screenOptions={{
+//               headerShown: false,
+//               gestureEnabled: true,
+//               presentation: 'modal',
+//               animation: 'slide_from_bottom',
+//               // gestureDirection: 'vertical',
+//               // animationDuration: 500,
+//               // freezeOnBlur: true,
+//               // headerBackTitle: 'Back',
+//             }}
+//           >
+//             <Stack.Screen name="(tabs)" />
+//             <Stack.Screen name="exercise/[exerciseId]" />
+//             <Stack.Screen
+//               name="form_create_Workout/[mode]"
+//               options={{
+//                 presentation: 'modal',
+//                 headerShown: false,
+//               }}
+//             />
+//           </Stack>
+//           <Toast config={ToastConfig}/>
+//         </SafeAreaView>
+//       </QueryClientProvider>
+//     </GestureHandlerRootView>
+//   );
+// }
+
 export default function RootLayout() {
   return (
-    // GestureHandlerRootView חייב להיות בדרגה הכי גבוהה כדי שהגרירה תעבוד
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
+        {/* ה-SafeAreaView מקיף רק את התוכן, ה-Toast צריך להיות חופשי */}
         <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full">
           <StatusBar />
-          {/* <Stack screenOptions={{ headerShown: false }} /> */}
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              gestureEnabled: true,
-              presentation: 'modal',
-              animation: 'slide_from_bottom',
-              // gestureDirection: 'vertical',
-              // animationDuration: 500,
-              // freezeOnBlur: true,
-              // headerBackTitle: 'Back',
-            }}
-          >
+          <Stack screenOptions={{ headerShown: false, presentation: 'modal' }}>
             <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="exercise/[exerciseId]" />
-            <Stack.Screen
-              name="form_create_Workout/[mode]"
-              options={{
-                presentation: 'modal',
-                headerShown: false,
-              }}
-            />
+            {/* שאר המסכים... */}
           </Stack>
         </SafeAreaView>
+
+        {/* ה-Toast עובר לכאן - מחוץ ל-SafeAreaView */}
+        <Toast 
+          config={ToastConfig} 
+          topOffset={60} // דוחף אותו מתחת ל-StatusBar
+          position="top"
+        />
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

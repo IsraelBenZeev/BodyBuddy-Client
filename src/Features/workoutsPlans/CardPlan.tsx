@@ -1,24 +1,106 @@
 import { colors } from '@/colors';
 import { useDeleteWorkoutPlan } from '@/src/hooks/useWorkout';
+import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { daysInHebrew, WorkoutPlan } from '@/src/types/workout';
-import { IconCalendar } from '@/src/ui/IconsSVG';
+import { IconCalendar, IconSuccess, IconX } from '@/src/ui/IconsSVG';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-
+import Toast from 'react-native-toast-message';
 interface CardProps {
   plan: WorkoutPlan;
   isActive: boolean;
 }
+
 const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const CardPlan = ({ plan, isActive }: CardProps) => {
-  const { mutateAsync: deleteWorkoutPlanMutation } = useDeleteWorkoutPlan(user_id)
+  const [deleteId, setDeleteId] = useState<string>("");
+  const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user_id)
+  const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
+  const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);  // const handleDelete = (id: string) => {
+  const handleDelete = (id: string) => {
+    setDeleteId(id)
+    Toast.show({
+      type: 'info',
+      text1: 'האימון יימחק בעוד 5 שניות',
+      visibilityTime: 5000,
+      autoHide: true,
+      props: {
+        mode: 'delete',
+        timeProgress: 5000,
+        iconCancel: <IconX size={20} color={colors.lime[500]} />,
+        iconDelete: <IconSuccess size={20} color={colors.lime[500]} />,
+        onPressCancel: () => {
+          if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+            setDeleteId("");
+            Toast.hide();
+          }
+        },
+        onPressDelete: () => {
+          deleteWorkoutPlanMutation(deleteId);
+          timerRef.current = null;
+
+          Toast.hide();
+          setDeleteId("")
+          Toast.show({
+            type: 'info',
+            text1: 'האימון נמחק בהצלחה',
+            visibilityTime: 1000,
+            props: {
+              mode: 'cancel',
+              icon: <IconSuccess size={20} color={colors.lime[500]} />,
+              timeProgress: 1000
+            }
+          });
+        }
+      },
+      onHide: () => {
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+          setDeleteId("");
+          Toast.hide();
+          setDeleteId("")
+          Toast.show({
+            type: 'info',
+            text1: 'המחיקה בוטלה',
+            visibilityTime: 1000,
+            props: {
+              mode: 'cancel',
+              icon: <IconX size={20} color={colors.lime[500]} />,
+              timeProgress: 1000
+            }
+          });
+        }
+      },
+      onPress: () => {
+        Toast.hide();
+      }
+    });
+
+    // 3. מפעילים את הטיימר
+    timerRef.current = setTimeout(() => {
+      deleteWorkoutPlanMutation(id); // רק עכשיו זה באמת נשלח לשרת!
+      timerRef.current = null;
+    }, 5000);
+  }
+  
+  useEffect(() => {
+    if (deleteSuccess) {
+      setDeleteId("")
+    }
+  }, [deletePending, deleteSuccess])
   return (
     <View
-      style={{ height: 470, width: 265, backgroundColor: '#18181b' }}
-      className="rounded-[40px] border border-zinc-800 shadow-2xl "
+      style={{ height: 470, width: 265, backgroundColor: '#18181b', borderWidth: 1, borderRadius: 40 }}
+      className={`"rounded-[40px]  shadow-2xl " ${deleteId === plan?.id ? 'opacity-50' : ''}`}
     >
-      <View className="h-40 bg-zinc-800 w-full relative rounded-t-[40px]">
+    
+      <View className="h-40 w-full relative rounded-t-[40px]">
         <Image
           source={{
             uri: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=400',
@@ -79,8 +161,8 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
           className="justify-end items-center gap-2">
           <TouchableOpacity
             onPress={() => {
-              console.log("plan id", plan?.id);
-              deleteWorkoutPlanMutation(plan?.id as string)
+              console.log("plan id for delete ", plan?.title);
+              handleDelete(plan?.id as string)
             }}
             style={{ backgroundColor: "rgba(255, 0, 0, 0.3)" }}
             className="p-1 rounded-full"
@@ -90,6 +172,8 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
 
           <TouchableOpacity
             onPress={() => {
+              clearAllExercises();
+              toggleExercise(plan?.exercise_ids as string[])
               router.push({
                 pathname: '/form_create_Workout/[mode]',
                 params: { mode: 'edit', workout_plan_id: plan?.id },

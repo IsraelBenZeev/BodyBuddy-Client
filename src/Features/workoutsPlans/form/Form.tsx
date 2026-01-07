@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
-import { useCreateWorkoutPlan, useGetWorkoutPlanById } from '@/src/hooks/useWorkout';
+import { useCreateWorkoutPlan, useGetWorkoutFromCache,  } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
 // import { formFailds } from '@/src/types/workout';
@@ -36,7 +36,7 @@ const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const Form = ({ mode, workout_plan_id }: FormProps) => {
   const router = useRouter();
   const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-  const { data: workoutPlanData, isLoading: isLoadingWorkoutPlan } = useGetWorkoutPlanById(workout_plan_id);
+  const { data: workoutPlanData, isLoading: isLoadingWorkoutPlan } = useGetWorkoutFromCache(workout_plan_id, user_id);
   const initialValues = useMemo(() => {
     if (mode !== "edit") return undefined;
     return {
@@ -55,6 +55,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
   });
   const selectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
+  const resetExercise = useWorkoutStore((state) => state.clearAllExercises);
   const { data: selectedExercisesData = [], isLoading: isLoadingExercises } = useGetExercisesByIds(selectedIds);
   const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user_id)
   const navigateToPicker = () => {
@@ -70,6 +71,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
     data.user_id = user_id;
     data.exercise_ids = selectedIds;
     createWorkoutPlan(data)
+    resetExercise()
   };
 
   useEffect(() => {
@@ -77,8 +79,10 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       router.back()
     }
   }, [isSuccessCreate])
+
   useEffect(() => {
     if (mode === "edit") {
+      if (isLoadingWorkoutPlan) return;
       reset(initialValues)
     }
   }, [mode, initialValues, workoutPlanData, isLoadingWorkoutPlan])
