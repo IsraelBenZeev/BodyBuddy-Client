@@ -14,7 +14,7 @@ export const useWorkoutStore = create<WorkoutsState>((set, get) => ({
   //       ? state.selectedExerciseIds.filter((exId) => exId !== id)
   //       : [...state.selectedExerciseIds, id],
   //   })),
-  toggleExercise: (input) =>
+  toggleExercise: (input) => {
     set((state) => {
       const idsToToggle = Array.isArray(input) ? input : [input];
       let newSelectedIds = [...state.selectedExerciseIds];
@@ -30,7 +30,8 @@ export const useWorkoutStore = create<WorkoutsState>((set, get) => ({
       const uniqueIds = Array.from(new Set(newSelectedIds));
 
       return { selectedExerciseIds: uniqueIds };
-    }),
+    })
+  },
   isExerciseSelected: (id) => get().selectedExerciseIds.includes(id),
   clearAllExercises: () => set({ selectedExerciseIds: [] }),
 }));

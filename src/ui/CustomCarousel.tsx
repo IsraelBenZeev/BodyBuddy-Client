@@ -1,73 +1,204 @@
-import { useRef, useState } from 'react';
-import { Dimensions, StyleSheet, View, ViewToken } from 'react-native';
+// import { useRef, useState } from 'react';
+// import { Dimensions, StyleSheet, View, ViewToken } from 'react-native';
+// import Animated, {
+//   Extrapolation,
+//   interpolate,
+//   useAnimatedScrollHandler,
+//   useAnimatedStyle,
+//   useSharedValue
+// } from 'react-native-reanimated';
+
+// const { width } = Dimensions.get('window');
+// const GAP = 15;
+
+// const AnimatedCarouselItem = ({ item, index, scrollX, widthCard, TOTAL_ITEM_SIZE, renderItem, isActive }: any) => {
+//   const animatedStyle = useAnimatedStyle(() => {
+//     const inputRange = [
+//       (index - 1) * TOTAL_ITEM_SIZE,
+//       index * TOTAL_ITEM_SIZE,
+//       (index + 1) * TOTAL_ITEM_SIZE,
+//     ];
+
+//     const scale = interpolate(
+//       scrollX.value,
+//       inputRange,
+//       [0.9, 1, 0.9],
+//       Extrapolation.CLAMP
+//     );
+
+//     const opacity = interpolate(
+//       scrollX.value,
+//       inputRange,
+//       [0.5, 1, 0.5],
+//       Extrapolation.CLAMP
+//     );
+
+//     return {
+//       transform: [{ scale }],
+//       opacity,
+//     };
+//   });
+
+//   return (
+//     <Animated.View style={[{ width: widthCard, marginHorizontal: GAP / 2 }, animatedStyle]}>
+//       {renderItem(item, isActive)}
+//     </Animated.View>
+//   );
+// };
+
+// const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderItem: any; widthCard: number }) => {
+//   const [activeId, setActiveId] = useState<string | number | null>(null);
+//   const scrollX = useSharedValue(0);
+//   const TOTAL_ITEM_SIZE = widthCard + GAP;
+//   const ITEM_SPACING = (width - widthCard) / 2;
+
+//   const onScroll = useAnimatedScrollHandler({
+//     onScroll: (event) => {
+//       scrollX.value = event.contentOffset.x;
+//     },
+//   });
+
+//   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+//     if (viewableItems && viewableItems.length > 0) {
+//       const centeredItem = viewableItems[0].item;
+//       if (centeredItem) setActiveId(centeredItem.id);
+//     }
+//   }).current;
+
+//   return (
+//     <View style={styles.container}>
+//       <Animated.FlatList
+//         data={data}
+//         onScroll={onScroll}
+//         scrollEventThrottle={16}
+//         horizontal
+//         inverted
+//         showsHorizontalScrollIndicator={false}
+//         snapToInterval={TOTAL_ITEM_SIZE}
+//         decelerationRate="fast"
+//         contentContainerStyle={{
+//           paddingHorizontal: ITEM_SPACING - (GAP / 2),
+//         }}
+//         onViewableItemsChanged={onViewableItemsChanged}
+//         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+//         keyExtractor={(item) => item.id.toString()}
+//         renderItem={({ item, index }) => {
+//           return (
+//             <AnimatedCarouselItem
+//               item={item}
+//               index={index}
+//               scrollX={scrollX}
+//               widthCard={widthCard}
+//               TOTAL_ITEM_SIZE={TOTAL_ITEM_SIZE}
+//               renderItem={renderItem}
+//               isActive={item.id === activeId}
+//             />
+
+//           );
+//         }}
+//       />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     paddingVertical: 20,
+//     overflow: 'visible',
+//   },
+// });
+
+// export default CustomCarousel;
+
+import { useState } from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, {
+  Extrapolation,
+  interpolate,
+  runOnJS,
   useAnimatedScrollHandler,
+  useAnimatedStyle,
   useSharedValue
 } from 'react-native-reanimated';
-import CarouselItem from './CarouselItem';
 
 const { width } = Dimensions.get('window');
 const GAP = 15;
 
+const AnimatedCarouselItem = ({ item, index, scrollX, widthCard, TOTAL_ITEM_SIZE, renderItem, isActive }: any) => {
+  const animatedStyle = useAnimatedStyle(() => {
+    const inputRange = [
+      (index - 1) * TOTAL_ITEM_SIZE,
+      index * TOTAL_ITEM_SIZE,
+      (index + 1) * TOTAL_ITEM_SIZE,
+    ];
+
+    const scale = interpolate(scrollX.value, inputRange, [0.9, 1, 0.9], Extrapolation.CLAMP);
+    const opacity = interpolate(scrollX.value, inputRange, [0.5, 1, 0.5], Extrapolation.CLAMP);
+
+    return {
+      // transform: [{ scale }] + היפוך חזרה כדי שהטקסט לא יהיה בכתב ראי
+      transform: [{ scale }, { scaleX: -1 }], 
+      opacity,
+      zIndex: isActive ? 10 : 1,
+    };
+  });
+
+  return (
+    <Animated.View style={[{ width: widthCard, marginHorizontal: GAP / 2, overflow: 'visible' }, animatedStyle]}>
+      {renderItem(item, isActive)}
+    </Animated.View>
+  );
+};
+
 const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderItem: any; widthCard: number }) => {
-  const [activeId, setActiveId] = useState<string | number | null>(null);
-  const [swipedItemId, setSwipedItemId] = useState<string | number | null>(null);
+  const [activeId, setActiveId] = useState<string | number | null>(data[0]?.id || null);
   const scrollX = useSharedValue(0);
   const TOTAL_ITEM_SIZE = widthCard + GAP;
   const ITEM_SPACING = (width - widthCard) / 2;
+
+  const updateActiveId = (id: string | number) => {
+    if (activeId !== id) setActiveId(id);
+  };
+
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollX.value = event.contentOffset.x;
+      const index = Math.round(event.contentOffset.x / TOTAL_ITEM_SIZE);
+      if (data[index]) {
+        runOnJS(updateActiveId)(data[index].id);
+      }
     },
   });
 
-  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-    if (viewableItems.length > 0) {
-      const centeredItem = viewableItems[0].item;
-      if (centeredItem) setActiveId(centeredItem.id);
-    }
-  }).current;
-
   return (
     <View style={styles.container}>
-      <Animated.FlatList
-        data={data}
+      <Animated.ScrollView
+        horizontal
+        style={{ transform: [{ scaleX: -1 }] }} 
         onScroll={onScroll}
         scrollEventThrottle={16}
-        horizontal
-        inverted
         showsHorizontalScrollIndicator={false}
         snapToInterval={TOTAL_ITEM_SIZE}
         decelerationRate="fast"
-        style={{ overflow: 'visible' }}
+        disableIntervalMomentum={true}
         contentContainerStyle={{
           paddingHorizontal: ITEM_SPACING - (GAP / 2),
-          overflow: 'visible'
+          paddingBottom: 80,
         }}
-
-        {...({
-          delaysContentTouches: false,
-          canCancelContentTouches: true,
-        } as any)}
-
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item, index }) => (
-          <CarouselItem
+      >
+        {data.map((item, index) => (
+          <AnimatedCarouselItem
+            key={item.id.toString()}
             item={item}
             index={index}
-            activeId={activeId}
-            swipedItemId={swipedItemId}
-            setSwipedItemId={setSwipedItemId}
-            renderItem={renderItem}
-            widthCard={widthCard}
             scrollX={scrollX}
+            widthCard={widthCard}
             TOTAL_ITEM_SIZE={TOTAL_ITEM_SIZE}
-            GAP={GAP}
+            renderItem={renderItem}
+            isActive={item.id === activeId}
           />
-        )}
-      />
+        ))}
+      </Animated.ScrollView>
     </View>
   );
 };
@@ -78,5 +209,6 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
 });
+
 
 export default CustomCarousel;

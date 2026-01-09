@@ -1,3 +1,4 @@
+import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { Exercise } from '@/src/types/exercise';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -6,10 +7,12 @@ interface CardExerciseProps {
   selectedExercisesData: Exercise[];
   toggleExercise: (id: string) => void;
   navigateToPicker: () => void;
-  selectedIds: string[];
+  // selectedIds: string[];
   isPendingCreate: boolean;
 }
-const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker, selectedIds, isPendingCreate }: CardExerciseProps) => {
+const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker, isPendingCreate }: CardExerciseProps) => {
+  const selectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}

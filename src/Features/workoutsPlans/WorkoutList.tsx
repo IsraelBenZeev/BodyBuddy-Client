@@ -88,6 +88,7 @@ import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
 import Loading from '@/src/ui/Loading';
 import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { SharedValue } from 'react-native-reanimated';
 import CustomCarousel from '../../ui/CustomCarousel';
 import CardPlan from './CardPlan';
 
@@ -124,8 +125,8 @@ const WorkoutList = () => {
           <View className="w-full flex-1 justify-center">
             <CustomCarousel
               data={plansData}
-              renderItem={(item: any, isActive: boolean) => (
-                <CardPlan plan={item} isActive={isActive} />
+              renderItem={(item: any, isActive: boolean, isSwiped: boolean, translateY: SharedValue<number>) => (
+                <CardPlan plan={item} isActive={isActive} isSwiped={isSwiped} translateY={translateY} />
               )}
               widthCard={280}
             />

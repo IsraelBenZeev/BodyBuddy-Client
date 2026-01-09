@@ -15,6 +15,15 @@ export default function TabsLayout() {
           elevation: 0,
           height: 60,
           paddingBottom: 10,
+
+          position: 'absolute', // הופך את הטאב-בר לשכבה צפה שלא נדחפת
+          bottom: 0,            // מצמיד לתחתית
+          left: 0,
+          right: 0,
+          zIndex: 1000,         // מבטיח שהוא תמיד מעל התוכן
+          overflow: 'visible',
+
+
         },
         tabBarActiveTintColor: colors.lime[500], // הצבע הליים שלך כשטאב פעיל
         tabBarInactiveTintColor: colors.background[100], // אפור כשלא פעיל

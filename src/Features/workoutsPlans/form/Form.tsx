@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
-import { useCreateWorkoutPlan, useGetWorkoutFromCache,  } from '@/src/hooks/useWorkout';
+import { useCreateWorkoutPlan, useGetWorkoutFromCache, } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
 // import { formFailds } from '@/src/types/workout';
@@ -12,9 +12,9 @@ import { useForm } from 'react-hook-form';
 import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Days from './Days';
 import HeaderForm from './HeaderForm';
+import ListExercise from './ListExercises';
 import Slider from './Slider';
 import TimeInput from './TimeInput';
-import ListExercise from './ListExercises';
 const bodyParts = [
   'neck',
   'lower arms',
@@ -107,7 +107,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
             selectedExercisesData={selectedExercisesData}
             toggleExercise={toggleExercise}
             navigateToPicker={navigateToPicker}
-            selectedIds={selectedIds}
+            // selectedIds={selectedIds}
             isPendingCreate={isPendingCreate}
           />
         </View>

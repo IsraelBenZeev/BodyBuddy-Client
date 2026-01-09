@@ -114,7 +114,7 @@ const AvatarSelectorScreen = () => {
       </View>
 
       {/* מודאל תחתון */}
-      <ModalButtom ref={sheetRef} InitialIndex={-1} minimumView="6%" initialView="30%">
+      <ModalButtom ref={sheetRef} InitialIndex={-1} minimumView="13%" initialView="40%">
         <View style={{ padding: 0 }}>
           <CardAreaBody selectedPart={selectedParts} />
         </View>
@@ -225,6 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 40,
+    marginBottom: 20,
     zIndex: 10,
   },
   instructionText: {

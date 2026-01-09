@@ -2,17 +2,20 @@ import { colors } from '@/colors';
 import { useDeleteWorkoutPlan } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { daysInHebrew, WorkoutPlan } from '@/src/types/workout';
-import { IconCalendar, IconSuccess, IconX } from '@/src/ui/IconsSVG';
+import { IconCalendar } from '@/src/ui/IconsSVG';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-toast-message';
+import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Buttons from './Buttons';
 interface CardProps {
   plan: WorkoutPlan;
   isActive: boolean;
+  isSwiped: boolean;
+  translateY: SharedValue<number>;
 }
-
 const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const CardPlan = ({ plan, isActive }: CardProps) => {
   const [deleteId, setDeleteId] = useState<string>("");
@@ -20,21 +23,54 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);  // const handleDelete = (id: string) => {
-  const handleDelete = (id: string) => {
-    deleteWorkoutPlanMutation(id);
-  }
-  
+  const [isShowButtons, setIsShowButtons] = useState<boolean>(false);
+
+
   useEffect(() => {
     if (deleteSuccess) {
       setDeleteId("")
     }
   }, [deletePending, deleteSuccess])
+  const translateY = useSharedValue(0);
+  const handlePress = useCallback(() => {
+    const isOpening = translateY.value === 0;
+    const gentleConfig = {
+      damping: 18,
+      stiffness: 90,
+      mass: 1,
+      overshootClamping: true,
+    };
+
+    if (isOpening) {
+      translateY.value = withSpring(-100, gentleConfig);
+      setIsShowButtons(true);
+    } else {
+      translateY.value = withSpring(0, gentleConfig);
+      setIsShowButtons(false);
+    }
+  }, [translateY]);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        if (translateY.value !== 0) {
+          translateY.value = withTiming(0, { duration: 600 });
+          setIsShowButtons(false);
+        }
+      };
+    }, [])
+  );
+  useEffect(() => {
+    if (!isActive) {
+      translateY.value = withTiming(0);
+      setIsShowButtons(false); 
+    }
+  }, [isActive]);
+
   return (
-    <View
-      style={{ height: 470, width: 265, backgroundColor: '#18181b', borderWidth: 1, borderRadius: 40 }}
-      className={`"rounded-[40px]  shadow-2xl " ${deleteId === plan?.id ? 'opacity-50' : ''}`}
-    >
-    
+    <Animated.View style={[animatedStyle, { height: 470, width: 280, backgroundColor: '#18181b', borderWidth: 1, borderRadius: 40 }]}>
       <View className="h-40 w-full relative rounded-t-[40px]">
         <Image
           source={{
@@ -84,45 +120,35 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
               <Text className="text-white text-xs mr-1 font-bold">{plan.difficulty}</Text>
             </View>
           </View>
-
-          <TouchableOpacity className="bg-lime-500 w-full py-4 rounded-2xl items-center shadow-lg">
-            <Text className="text-black font-extrabold text-base">התחל אימון</Text>
-          </TouchableOpacity>
+          <View className="flex-row-reverse items-center justify-center gap-4">
+            <View className='flex-1'>
+              <TouchableOpacity className="bg-lime-500 w-full py-4 rounded-2xl items-center shadow-lg">
+                <Text className="text-black font-extrabold text-base">התחל אימון</Text>
+              </TouchableOpacity>
+            </View>
+            <View className='flex-col items-center gap-1'>
+              <TouchableOpacity
+                className='items-center justify-center border border-lime-500 rounded-full p-1'
+                onPress={() => {
+                  if (isActive) {
+                    // קורא לפונקציה אחת בלבד שמנהלת הכל!
+                    handlePress();
+                  }
+                }}>
+                <SimpleLineIcons name="options" size={24} color={colors.lime[500]} />
+              </TouchableOpacity>
+              {/* <Text className='text-lime-500 text-xs'>אפשרויות</Text> */}
+            </View>
+          </View>
         </View>
       </View>
-      {isActive && (
-        <View
-          style={{ position: 'absolute', right: -35, bottom: 20 }}
-          className="justify-end items-center gap-2">
-          <TouchableOpacity
-            onPress={() => {
-              console.log("plan id for delete ", plan?.title);
-              handleDelete(plan?.id as string)
-            }}
-            style={{ backgroundColor: "rgba(255, 0, 0, 0.3)" }}
-            className="p-1 rounded-full"
-          >
-            <MaterialCommunityIcons name="trash-can-outline" size={22} color="red" />
-          </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => {
-              clearAllExercises();
-              toggleExercise(plan?.exercise_ids as string[])
-              router.push({
-                pathname: '/form_create_Workout/[mode]',
-                params: { mode: 'edit', workout_plan_id: plan?.id },
-              });
-            }}
-            style={{ backgroundColor: 'rgba(163, 230, 53, 0.3)' }}
-            className="p-1 rounded-full "
-          >
-            <MaterialCommunityIcons name="pencil-outline" size={22} color={colors.lime[500]} />
-          </TouchableOpacity>
-        </View>
+      {isActive && isShowButtons && (
+        <Buttons plan={plan} />
       )}
 
-    </View>
+
+    </Animated.View>
   );
 };
 
