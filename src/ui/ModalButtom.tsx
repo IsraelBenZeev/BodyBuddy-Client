@@ -1,79 +1,91 @@
 import { colors } from '@/colors';
-import { BodyPart } from '@/src/types/exercise';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { forwardRef, ReactNode, useMemo } from 'react';
-import { Text, View } from 'react-native';
-interface ModalButtomProps {
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'; // הסרנו את ה-Backdrop מהייבוא
+import { forwardRef, ReactNode, useCallback, useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+interface ModalBottomProps {
   children?: ReactNode;
-  InitialIndex?: number;
-  minimumView?: string;
-  initialView?: string;
+  initialIndex?: number;
+  minHeight?: string | number;
+  maxHeight?: string | number;
   title?: string;
+  enablePanDownToClose?: boolean;
 }
-const ModalButtom = forwardRef<BottomSheet, ModalButtomProps>((props, ref) => {
+
+const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
+  const {
+    children,
+    initialIndex = 0,
+    minHeight = '10%',
+    maxHeight = '40%',
+    title,
+    enablePanDownToClose = false
+  } = props;
+
   const snapPoints = useMemo(
-    () => [
-      props.minimumView ? props.minimumView : '10%',
-      props.initialView ? props.initialView : '40%',
-    ],
-    []
+    () => [minHeight, maxHeight],
+    [minHeight, maxHeight]
   );
-  const renderHandle = () => (
-    <View
-      style={{
-        alignItems: 'center',
-        paddingVertical: 10,
-        backgroundColor: colors.background[900],
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-      }}
-    >
-      {/* הפס הצהוב שתמיד מופיע */}
-      <View
-        style={{
-          width: 40,
-          height: 4,
-          backgroundColor: colors.lime[400],
-          borderRadius: 2,
-        }}
-      />
-      {props.title && (
-        <Text
-          style={{
-            color: colors.lime[400],
-            fontSize: 18,
-            fontWeight: 'bold',
-            marginTop: 8,
-          }}
-        >
-          {props.title}
+
+  const renderHandle = useCallback(() => (
+    <View style={styles.handleContainer}>
+      <View style={styles.indicator} />
+      {title && (
+        <Text style={styles.titleText}>
+          {title}
         </Text>
       )}
     </View>
-  );
+  ), [title]);
+
   return (
     <BottomSheet
       ref={ref}
-      index={props.InitialIndex ?? 0} // מתחיל סגור
+      index={initialIndex}
       snapPoints={snapPoints}
-      enablePanDownToClose={false}
+      enablePanDownToClose={enablePanDownToClose}
+      handleComponent={renderHandle}
       backgroundStyle={{ backgroundColor: colors.background[900] }}
-      handleIndicatorStyle={{ backgroundColor: colors.lime[400] }}
-      handleComponent={renderHandle} // כאן הקסם קורה
+      activeOffsetY={[-1, 1]}
+      // תיקון קריטי: תמיד מאפשר לנגיעות לעבור דרך השטח הריק, לא משנה מה האינדקס
+      containerStyle={{ pointerEvents: 'box-none' }}
+      // הסרנו את ה-backdropComponent לחלוטין
     >
-      <BottomSheetView style={{ padding: 20, alignItems: 'center' }}>
-        <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>{props.children}</Text>
+      <BottomSheetView style={styles.contentContainer}>
+        {children}
       </BottomSheetView>
     </BottomSheet>
   );
 });
 
-// חשוב ב-forwardRef כדי לזהות את הקומפוננטה בדיאגר
-ModalButtom.displayName = 'MuscleInfoSheet';
+const styles = StyleSheet.create({
+  handleContainer: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    backgroundColor: colors.background[900],
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  indicator: {
+    width: 40,
+    height: 4,
+    backgroundColor: colors.lime[400],
+    borderRadius: 2,
+  },
+  titleText: {
+    color: colors.lime[400],
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+});
 
-export default ModalButtom;
-interface ButtonOPenModalSheet {
-  selctedPart: BodyPart | null;
-  openSheet: () => void;
-  title: string;
-}
+ModalBottom.displayName = 'ModalBottom';
+
+export default ModalBottom;

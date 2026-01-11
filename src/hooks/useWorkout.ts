@@ -2,12 +2,30 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createNewWorkoutPlan, deleteWorkoutPlan, getWorkoutsByUserUserId } from '../service/workoutService';
 import { WorkoutPlan } from '../types/workout';
 
-export const useWorkoutsPlans = (user_id: string) => {
+// export const useWorkoutsPlans = (user_id: string) => {
+//   return useQuery({
+//     queryKey: ['workoutsPlans', user_id],
+//     queryFn: () => getWorkoutsByUserUserId(user_id),
+//     staleTime: Infinity,
+//     enabled: !!user_id,
+//   });
+// };
+export const useWorkoutsPlans = (user_id: string, onlyNames: boolean = false) => {
   return useQuery({
     queryKey: ['workoutsPlans', user_id],
     queryFn: () => getWorkoutsByUserUserId(user_id),
     staleTime: Infinity,
     enabled: !!user_id,
+    select: (data) => {
+      if (!data) return [];
+      if (onlyNames) {
+        return data.map((plan: any) => ({
+          id: plan.id,
+          name: plan.title
+        }));
+      }
+      return data;
+    }
   });
 };
 export const useGetWorkoutFromCache = (id: string | undefined, user_id: string) => {

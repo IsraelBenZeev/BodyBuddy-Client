@@ -17,10 +17,10 @@ const fakeUser2 = {
 import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../colors';
-import ModalButtom from '../../ui/ModalButtom';
+import ModalBottom from '../../ui/ModalButtom';
 import CardAreaBody from './CardAreaBody';
 import AvatarMale from './male/AvatarMale';
 
@@ -114,11 +114,11 @@ const AvatarSelectorScreen = () => {
       </View>
 
       {/* מודאל תחתון */}
-      <ModalButtom ref={sheetRef} InitialIndex={-1} minimumView="13%" initialView="40%">
+      <ModalBottom ref={sheetRef} title="hello" initialIndex={-1} minHeight="40%" maxHeight="40%">
         <View style={{ padding: 0 }}>
           <CardAreaBody selectedPart={selectedParts} />
         </View>
-      </ModalButtom>
+      </ModalBottom>
     </BackGround>
   );
 };

@@ -1,26 +1,23 @@
 import { colors } from '@/colors';
 import { Exercise, FetchExercisesResponse } from '@/src/types/exercise';
-import { useQueryClient } from '@tanstack/react-query';
-import { Image } from 'expo-image';
-import React, { useRef } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import BackGround from '@/src/ui/BackGround';
 import ButtonBack from '@/src/ui/ButtonBack';
-import IconButton from '@/src/ui/IconButton';
-import ModalButtom from '@/src/ui/ModalButtom';
 import {
-  IconAddToListFitness,
-  IconDislikeBG,
-  IconlikeBG,
-  IconSearchGoogle,
   IconSecondaryMuscle,
   IconsFitnessTools,
-  IconShare,
-  IconTargetMuscle,
+  IconTargetMuscle
 } from '@/src/ui/IconsSVG';
-
+import ModalBottom from '@/src/ui/ModalButtom';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { useQueryClient } from '@tanstack/react-query';
+import { Image } from 'expo-image';
+import { useRef } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Buttons from './Buttons';
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
-  const sheetRef = useRef<any>(null);
+
+  const sheetRefModalInstractions = useRef<any>(null);
+  const sheetRefAddToList = useRef<any>(null);
   const queryClient = useQueryClient();
 
   const findExerciseInCache = () => {
@@ -34,7 +31,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
     return null;
   };
 
-  const exercise = findExerciseInCache() as Exercise | null;
+  const exercise = findExerciseInCache() as Exercise;
 
   return (
     <BackGround>
@@ -72,23 +69,8 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
         </View>
 
         {/* שורת כפתורי פעולה */}
-        <View className="flex-row justify-center gap-4 px-4 my-8 w-full">
-          {[
-            { icon: <IconlikeBG size={20} color={colors.lime[500]} />, text: 'אהבתי' },
-            { icon: <IconDislikeBG size={20} color={colors.lime[500]} />, text: 'לא אהבתי' },
-            { icon: <IconShare size={20} color={colors.lime[500]} />, text: 'שתף' },
-            { icon: <IconAddToListFitness size={20} color={colors.lime[500]} />, text: 'הוסף' },
-            { icon: <IconSearchGoogle size={20} color={colors.lime[500]} />, text: 'גוגל' },
-          ].map((btn, i) => (
-            <IconButton
-              key={i}
-              text={btn.text}
-              classNameText="text-zinc-500 text-[10px] mt-1 font-medium"
-            >
-              <View style={styles.actionButtonInner}>{btn.icon}</View>
-            </IconButton>
-          ))}
-        </View>
+        <Buttons exerciseId={exercise?.exerciseId} sheetRefAddToList={sheetRefAddToList} />
+
 
         {/* כרטיסיות מידע */}
         <View style={styles.infoSection}>
@@ -128,7 +110,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
       </ScrollView>
 
       {/* הוראות ב-Bottom Sheet */}
-      <ModalButtom ref={sheetRef} InitialIndex={1} title="איך מבצעים?" initialView='6%'>
+      <ModalBottom title="איך מבצעים?" ref={sheetRefModalInstractions} initialIndex={0} minHeight="10%" maxHeight="80%">
         <View className="px-5 py-4 w-full ">
           {exercise?.instructions_he.map((step, i) => (
             <View key={i} style={styles.instructionStep}>
@@ -139,7 +121,19 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             </View>
           ))}
         </View>
-      </ModalButtom>
+      </ModalBottom>
+      <ModalBottom ref={sheetRefAddToList} title="" initialIndex={-1} minHeight="40%" maxHeight="60%" enablePanDownToClose={true}>
+        <View className="flex-row-reverse justify-between items-center mb-4">
+          <Text className="text-lime-400 font-bold text-lg">בחר את האימון שלך</Text>
+          <Pressable
+            onPress={() => sheetRefAddToList.current?.close()}
+            className="bg-zinc-800 p-2 rounded-full"
+          >
+            <AntDesign name="close" size={18} color="white" />
+          </Pressable>
+        </View>
+      </ModalBottom>
+
     </BackGround>
   );
 };
@@ -168,13 +162,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  actionButtonInner: {
-    backgroundColor: '#1f1f1f',
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#333',
-  },
+
   infoSection: {
     width: '90%',
     backgroundColor: 'rgba(255, 255, 255, 0.05)',

@@ -1,18 +1,19 @@
 import { colors } from '@/colors';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, Pressable } from 'react-native';
 interface IconButtonProps {
   children: React.ReactNode;
   text?: string;
   classNameText?: string;
+  onPress?: () => void;
 }
-const IconButton = ({ children, text, classNameText }: IconButtonProps) => {
+const IconButton = ({ children, text, classNameText, onPress }: IconButtonProps) => {
   return (
-    <TouchableOpacity style={styles.button} className="gap-2 items-center">
+    <Pressable style={styles.button} className="gap-2 items-center" onPress={onPress}>
       {children}
       {text && <Text
       style={styles.text}
        className={classNameText ? classNameText : ''}>{text}</Text>}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
