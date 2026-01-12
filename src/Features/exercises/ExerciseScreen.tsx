@@ -13,6 +13,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { useRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import PlanSelector from '../workoutsPlans/PlansSelector';
 import Buttons from './Buttons';
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
 
@@ -40,12 +41,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
         showsVerticalScrollIndicator={false}
       >
         {/* Header - פרופיל וכפתור חזור */}
-        <View className="flex-row items-center justify-between w-full px-6 mt-4 mb-6">
-          <Image
-            style={styles.userAvatar}
-            source={require('../../../assets/images/user.png')}
-            contentFit="cover"
-          />
+        <View className="items-end justify-between w-full px-6 py-4  mb-6">
           <ButtonBack />
         </View>
 
@@ -122,8 +118,17 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           ))}
         </View>
       </ModalBottom>
-      <ModalBottom ref={sheetRefAddToList} title="" initialIndex={-1} minHeight="40%" maxHeight="60%" enablePanDownToClose={true}>
-        <View className="flex-row-reverse justify-between items-center mb-4">
+      <ModalBottom
+        ref={sheetRefAddToList}
+        title=""
+        initialIndex={-1}
+        minHeight="40%"
+        maxHeight="80%"
+        enablePanDownToClose={true}
+        useScrollView={false}
+      >
+        {/* Header קבוע */}
+        <View className="flex-row-reverse justify-between items-center px-5 py-4 w-full bg-background-900">
           <Text className="text-lime-400 font-bold text-lg">בחר את האימון שלך</Text>
           <Pressable
             onPress={() => sheetRefAddToList.current?.close()}
@@ -132,6 +137,9 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             <AntDesign name="close" size={18} color="white" />
           </Pressable>
         </View>
+
+        {/* רשימה עם גלילה */}
+        <PlanSelector />
       </ModalBottom>
 
     </BackGround>

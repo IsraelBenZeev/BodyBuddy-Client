@@ -10,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Buttons from './Buttons';
+import { CalendarClock } from 'lucide-react-native';
 interface CardProps {
   plan: WorkoutPlan;
   isActive: boolean;
@@ -97,7 +98,7 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
         </Text>
 
         <View className="flex-row-reverse flex-wrap gap-2 mt-4">
-          <IconCalendar size={18} color={colors.lime[500]} />
+          <CalendarClock size={18} color={colors.lime[500]}   strokeWidth={1.25}/>
           {plan?.days_per_week.map((day, index) => (
             <View
               key={index}

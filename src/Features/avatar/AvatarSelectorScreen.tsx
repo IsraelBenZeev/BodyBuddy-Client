@@ -17,7 +17,7 @@ const fakeUser2 = {
 import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../colors';
 import ModalBottom from '../../ui/ModalButtom';
@@ -34,7 +34,7 @@ const AvatarSelectorScreen = () => {
     if (!selectedParts.length) {
       sheetRef.current?.close();
     } else {
-      sheetRef.current?.snapToIndex(1);
+      sheetRef.current?.snapToIndex(0);
     }
   }, [selectedParts.length]);
   const handleTogglePart = (partName: BodyPart) => {
@@ -45,6 +45,7 @@ const AvatarSelectorScreen = () => {
           : [...prev, partName] // מוסיף
     );
   };
+
   const isSelected = (partName: BodyPart) => selectedParts.includes(partName);
   return (
     <BackGround>
@@ -59,24 +60,24 @@ const AvatarSelectorScreen = () => {
         <View style={styles.avatarSection} className="">
           {/* אפקט הילה מאחורי המודל */}
           <View style={styles.glowEffect} />
-          <View style={styles.avatarScaleWrapper} >
+          <View style={styles.avatarScaleWrapper}>
             <AvatarMale
               isSelected={isSelected}
               handleTogglePart={handleTogglePart}
               avatarSide={sideAvatar}
             />
             {/* {fakeUser2.gender === 'female' ? (
-              <AvatarFemale
-                avatarSide={sideAvatar}
-                selectedPart={selectedPart}
-                setSelectedPart={setSelectedPart}
-              />
-            ) : (
-              <AvatarMale
-                avatarSide={sideAvatar}
-                
-              />
-            )} */}
+                <AvatarFemale
+                  avatarSide={sideAvatar}
+                  selectedPart={selectedPart}
+                  setSelectedPart={setSelectedPart}
+                />
+              ) : (
+                <AvatarMale
+                  avatarSide={sideAvatar}
+                  
+                />
+              )} */}
           </View>
           {/* כפתור סיבוב צף - Glassmorphism */}
           <View style={styles.controlsWrapper}>
@@ -114,8 +115,16 @@ const AvatarSelectorScreen = () => {
       </View>
 
       {/* מודאל תחתון */}
-      <ModalBottom ref={sheetRef} title="hello" initialIndex={-1} minHeight="40%" maxHeight="40%">
-        <View style={{ padding: 0 }}>
+      <ModalBottom
+        ref={sheetRef}
+        title="האזורים שנבחרו"
+        initialIndex={-1}
+        minHeight="40%"
+        maxHeight="40%"
+        enablePanDownToClose={true}
+        // onClose={()=> setSelectedParts([])}
+      >
+        <View style={{ paddingBottom: 100 }}>
           <CardAreaBody selectedPart={selectedParts} />
         </View>
       </ModalBottom>
@@ -167,7 +176,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 5,
-
   },
   glowEffect: {
     position: 'absolute',

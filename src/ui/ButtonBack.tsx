@@ -1,6 +1,7 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { colors } from '@/colors';
 import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { CircleX } from 'lucide-react-native';
+import { Pressable, StyleSheet } from 'react-native';
 const ButtonBack = () => {
   const router = useRouter();
   return (
@@ -11,7 +12,7 @@ const ButtonBack = () => {
       }}
     >
       {/* <Text style={styles.text}>Back</Text> */}
-      <AntDesign name="arrow-right" size={40} color="white"  className=''/>
+      <CircleX size={36} strokeWidth={1.25} color={colors.lime[500]} />
     </Pressable>
   );
 };

@@ -21,9 +21,9 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
             <Ionicons name="body" size={24} color="black" />
           </View>
           <View className="w-full flex-1">
-            <Text className="text-zinc-500 text-xs font-bold text-right uppercase tracking-tighter">
+            {/* <Text className="text-zinc-500 text-xs font-bold text-right uppercase tracking-tighter">
               האזור הנבחר
-            </Text>
+            </Text> */}
             <Text className="text-white text-2xl font-black text-right">
               {selectedPart.map((part, index) => (
                 <Text key={part}>

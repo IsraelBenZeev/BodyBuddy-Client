@@ -16,6 +16,7 @@ interface ExercisesScreenProps {
   mode: string | string[] | undefined;
 }
 const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
+  
   const router = useRouter();
   const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
   const [page, setPage] = useState<number>(1);
@@ -68,14 +69,16 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
         <Loading />
       ) : (
         <View className="flex-1 pt-2 items-center">
-          {mode === 'picker' && <Handle />}
+          {(mode === 'picker') && <Handle />}
           <View className="w-full">
-            <Filters
-              uniqueBodyParts={uniqueBodyParts}
-              selectedFilter={selectedFilter}
-              setSelectedFilter={setSelectedFilter}
-              mode={mode as modeListExercises}
-            />
+            {selectedPartsArray.length > 0 && (
+              <Filters
+                uniqueBodyParts={uniqueBodyParts}
+                selectedFilter={selectedFilter}
+                setSelectedFilter={setSelectedFilter}
+                mode={mode as modeListExercises}
+              />
+            )}
             <FlatList
               data={filteredExercises}
               renderItem={({ item }) => (

@@ -5,8 +5,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientManager } from 'reactotron-react-query';
 import Reactotron from '../ReactotronConfig';
 import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
-import Toast from 'react-native-toast-message';
-import ToastConfig from '@/ToastConfig';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -38,6 +36,7 @@ export default function RootLayout() {
               gestureEnabled: true,
               presentation: 'modal',
               animation: 'slide_from_bottom',
+              // gestureEnabled: false,
               // gestureDirection: 'vertical',
               // animationDuration: 500,
               // freezeOnBlur: true,
@@ -45,12 +44,13 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="exercise/[exerciseId]" />
+            <Stack.Screen name="exercise/[exerciseId]"
+              options={{ gestureEnabled: false }} />
             <Stack.Screen
               name="form_create_Workout/[mode]"
               options={{
                 presentation: 'modal',
-                headerShown: false,
+                // headerShown: false,
               }}
             />
           </Stack>

@@ -11,8 +11,6 @@ const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const Buttons = ({ exerciseId, sheetRefAddToList }: ButtonsProps) => {
     const { data: plansData } = useWorkoutsPlans(user_id)
     const handleAdd = () => {
-        console.log('Added: ', exerciseId)
-        console.log("plansData", plansData)
         sheetRefAddToList.current?.snapToIndex(0);
     }
     return (

@@ -24,7 +24,7 @@ export const useWorkoutsPlans = (user_id: string, onlyNames: boolean = false) =>
           name: plan.title
         }));
       }
-      return data;
+      return data as WorkoutPlan[];
     }
   });
 };
