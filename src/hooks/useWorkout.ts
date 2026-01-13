@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createNewWorkoutPlan, deleteWorkoutPlan, getWorkoutsByUserUserId } from '../service/workoutService';
+import { addExerciseToPlan, createNewWorkoutPlan, deleteWorkoutPlan, getWorkoutsByUserUserId } from '../service/workoutService';
 import { WorkoutPlan } from '../types/workout';
 
 // export const useWorkoutsPlans = (user_id: string) => {
@@ -49,6 +49,23 @@ export const useCreateWorkoutPlan = (user_id: string) => {
         queryKey: ['workoutsPlans', user_id]
       });
     },
+  });
+};
+export const useAddExerciseToPlan = (user_id: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ idExercise, planIds }: { idExercise: string, planIds: string[] }) =>
+      addExerciseToPlan(idExercise, planIds),
+    onSuccess: async () => {
+      console.log("Exercises added, invalidating cache...");
+      return await queryClient.invalidateQueries({
+        queryKey: ['workoutsPlans', user_id]
+      });
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+    }
   });
 };
 // export const useDeleteWorkoutPlan = () => {

@@ -11,12 +11,12 @@ import ModalBottom from '@/src/ui/ModalButtom';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import PlanSelector from '../workoutsPlans/PlansSelector';
 import Buttons from './Buttons';
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
-
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const sheetRefModalInstractions = useRef<any>(null);
   const sheetRefAddToList = useRef<any>(null);
   const queryClient = useQueryClient();
@@ -118,29 +118,27 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           ))}
         </View>
       </ModalBottom>
-      <ModalBottom
-        ref={sheetRefAddToList}
-        title=""
-        initialIndex={-1}
-        minHeight="40%"
-        maxHeight="80%"
-        enablePanDownToClose={true}
-        useScrollView={false}
-      >
-        {/* Header קבוע */}
-        <View className="flex-row-reverse justify-between items-center px-5 py-4 w-full bg-background-900">
-          <Text className="text-lime-400 font-bold text-lg">בחר את האימון שלך</Text>
-          <Pressable
-            onPress={() => sheetRefAddToList.current?.close()}
-            className="bg-zinc-800 p-2 rounded-full"
-          >
-            <AntDesign name="close" size={18} color="white" />
-          </Pressable>
-        </View>
-
-        {/* רשימה עם גלילה */}
-        <PlanSelector />
-      </ModalBottom>
+        <ModalBottom
+          ref={sheetRefAddToList}
+          title=""
+          initialIndex={-1}
+          minHeight="40%"
+          maxHeight="80%"
+          enablePanDownToClose={true}
+          useScrollView={false}
+          onClose={() => setSelectedIds([])}
+        >
+          <View className="flex-row-reverse justify-between items-center px-5 py-4 w-full bg-background-900">
+            <Text className="text-lime-400 font-bold text-lg">בחר את האימון שלך</Text>
+            <Pressable
+              onPress={() => sheetRefAddToList.current?.close()}
+              className="bg-zinc-800 p-2 rounded-full"
+            >
+              <AntDesign name="close" size={18} color="white" />
+            </Pressable>
+          </View>
+          <PlanSelector selectedIds={selectedIds} setSelectedIds={setSelectedIds} idExercise={exercise?.exerciseId} />
+        </ModalBottom>
 
     </BackGround>
   );

@@ -25,6 +25,19 @@ export const createNewWorkoutPlan = async (newPlan: WorkoutPlan) => {
     throw error;
   }
 };
+export const addExerciseToPlan = async (idExercise: string, planIds: string[]) => {
+  try {
+    const { error, data } = await supabase.rpc('add_exercise_to_plans', {
+      plan_ids: planIds,           
+      new_exercise_id: idExercise 
+    });
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 // export const getWorkoutPlanById = async (id: string) => {
 //   try {
 //     const { data, error } = await supabase
