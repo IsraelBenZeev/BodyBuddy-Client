@@ -30,7 +30,7 @@ const ListExercise = ({ selectedExercisesData, toggleExercise, navigateToPicker,
             activeOpacity={0.7}
             disabled={isPendingCreate}
             onPress={navigateToPicker}
-            className="bg-lime-400 h-12 w-12 rounded-full items-center justify-center shadow-lg shadow-lime-400/20 mt-4 "
+            className="bg-lime-400 h-12 w-12 rounded-full items-center justify-center mt-4 "
           >
             <MaterialCommunityIcons name="plus" size={28} color="black" />
           </TouchableOpacity>

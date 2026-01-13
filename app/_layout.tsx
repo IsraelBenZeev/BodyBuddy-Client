@@ -1,10 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientManager } from 'reactotron-react-query';
 import Reactotron from '../ReactotronConfig';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
+import { colors } from '@/colors';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -23,38 +25,39 @@ if (__DEV__) {
 }
 
 export default function RootLayout() {
+  const insets = useSafeAreaInsets();
   return (
     // GestureHandlerRootView חייב להיות בדרגה הכי גבוהה כדי שהגרירה תעבוד
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background[1200] }} >
       <QueryClientProvider client={queryClient}>
-        <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full">
-          <StatusBar />
-          {/* <Stack screenOptions={{ headerShown: false }} /> */}
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              gestureEnabled: true,
+        {/* <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full"> */}
+        <StatusBar />
+        {/* <Stack screenOptions={{ headerShown: false }} /> */}
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            gestureEnabled: true,
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+            // gestureEnabled: false,
+            // gestureDirection: 'vertical',
+            // animationDuration: 500,
+            // freezeOnBlur: true,
+            // headerBackTitle: 'Back',
+          }}
+        >
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="exercise/[exerciseId]"
+            options={{ gestureEnabled: false }} />
+          <Stack.Screen
+            name="form_create_Workout/[mode]"
+            options={{
               presentation: 'modal',
-              animation: 'slide_from_bottom',
-              // gestureEnabled: false,
-              // gestureDirection: 'vertical',
-              // animationDuration: 500,
-              // freezeOnBlur: true,
-              // headerBackTitle: 'Back',
+              // headerShown: false,
             }}
-          >
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="exercise/[exerciseId]"
-              options={{ gestureEnabled: false }} />
-            <Stack.Screen
-              name="form_create_Workout/[mode]"
-              options={{
-                presentation: 'modal',
-                // headerShown: false,
-              }}
-            />
-          </Stack>
-        </SafeAreaView>
+          />
+        </Stack>
+        {/* </SafeAreaView> */}
       </QueryClientProvider>
     </GestureHandlerRootView>
   );
