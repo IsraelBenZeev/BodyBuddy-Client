@@ -1,26 +1,31 @@
 import { colors } from '@/colors';
 import { Exercise, FetchExercisesResponse } from '@/src/types/exercise';
 import BackGround from '@/src/ui/BackGround';
-import ButtonBack from '@/src/ui/ButtonBack';
 import {
   IconSecondaryMuscle,
   IconsFitnessTools,
   IconTargetMuscle
 } from '@/src/ui/IconsSVG';
+import Loading from '@/src/ui/Loading';
 import ModalBottom from '@/src/ui/ModalButtom';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
-import { useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import PlanSelector from '../workoutsPlans/PlansSelector';
 import Buttons from './Buttons';
+import Handle from '@/src/ui/Handle';
+
+
+
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
+  const [isAnySheetOpen, setIsAnySheetOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const sheetRefModalInstractions = useRef<any>(null);
   const sheetRefAddToList = useRef<any>(null);
   const queryClient = useQueryClient();
-
+  const navigation = useNavigation();
   const findExerciseInCache = () => {
     const allQueries = queryClient.getQueriesData<FetchExercisesResponse>({
       queryKey: ['exercises'],
@@ -34,18 +39,39 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
 
   const exercise = findExerciseInCache() as Exercise;
 
+  const onClose = () => {
+    setSelectedIds([]);
+    sheetRefAddToList.current?.close();
+  };
+  useEffect(() => {
+    console.log("isAnySheetOpen", isAnySheetOpen);
+    
+    navigation.setOptions({
+      gestureEnabled: isAnySheetOpen,
+      // gestureResponseDistance: isAnySheetOpen ? 0 : 50,
+      // fullScreenGestureEnabled: false
+    });
+  }, [isAnySheetOpen, navigation]);
+  const handleAddToListChange = (isOpen: boolean) => {
+    // 1. מעדכן את מצב הגרירה של האפליקציה (מה שעשינו קודם)
+    setIsAnySheetOpen(isOpen);
+
+    // 2. אם המודל נסגר (isOpen הוא false), נאפס את הבחירה
+    if (!isOpen) {
+      setSelectedIds([]);
+      console.log("הבחירה אופסה");
+    }
+  };
   return (
     <BackGround>
+      <View className='items-center mt-3'>
+        <Handle />
+      </View>
       <ScrollView
         contentContainerStyle={{ alignItems: 'center', paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header - פרופיל וכפתור חזור */}
-        <View className="items-end justify-between w-full px-6 py-4  mb-6">
-          <ButtonBack />
-        </View>
 
-        {/* שם התרגיל */}
         <View className="px-6 mb-8 w-full">
           <Text className="text-white text-4xl font-black text-right leading-tight">
             {exercise?.name_he}
@@ -103,10 +129,16 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             </View>
           </View>
         </View>
+
       </ScrollView>
 
       {/* הוראות ב-Bottom Sheet */}
-      <ModalBottom title="איך מבצעים?" ref={sheetRefModalInstractions} initialIndex={0} minHeight="10%" maxHeight="80%">
+      <ModalBottom
+        title="איך מבצעים?"
+        ref={sheetRefModalInstractions}
+        initialIndex={0} minHeight="10%"
+        maxHeight="80%"
+        onChange={(isOpen) => setIsAnySheetOpen(isOpen)}>
         <View className="px-5 py-4 w-full ">
           {exercise?.instructions_he.map((step, i) => (
             <View key={i} style={styles.instructionStep}>
@@ -118,27 +150,18 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           ))}
         </View>
       </ModalBottom>
-        <ModalBottom
-          ref={sheetRefAddToList}
-          title=""
-          initialIndex={-1}
-          minHeight="40%"
-          maxHeight="80%"
-          enablePanDownToClose={true}
-          useScrollView={false}
-          onClose={() => setSelectedIds([])}
-        >
-          <View className="flex-row-reverse justify-between items-center px-5 py-4 w-full bg-background-900">
-            <Text className="text-lime-400 font-bold text-lg">בחר את האימון שלך</Text>
-            <Pressable
-              onPress={() => sheetRefAddToList.current?.close()}
-              className="bg-zinc-800 p-2 rounded-full"
-            >
-              <AntDesign name="close" size={18} color="white" />
-            </Pressable>
-          </View>
-          <PlanSelector selectedIds={selectedIds} setSelectedIds={setSelectedIds} idExercise={exercise?.exerciseId} />
-        </ModalBottom>
+      <ModalBottom
+        ref={sheetRefAddToList}
+        title=""
+        initialIndex={-1}
+        minHeight="40%"
+        maxHeight="80%"
+        enablePanDownToClose={true}
+        useScrollView={false}
+        onChange={handleAddToListChange}
+      >
+        <PlanSelector selectedIds={selectedIds} setSelectedIds={setSelectedIds} idExercise={exercise?.exerciseId} onClose={onClose} />
+      </ModalBottom>
 
     </BackGround>
   );

@@ -1,12 +1,12 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
-import { StatusBar, StyleSheet } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { QueryClientManager } from 'reactotron-react-query';
-import Reactotron from '../ReactotronConfig';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
 import { colors } from '@/colors';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { router, Stack } from 'expo-router';
+import { Button, StatusBar, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { QueryClientManager } from 'reactotron-react-query';
+import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
+import Reactotron from '../ReactotronConfig';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -36,24 +36,37 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            gestureEnabled: true,
-            presentation: 'modal',
-            animation: 'slide_from_bottom',
-            // gestureEnabled: false,
-            // gestureDirection: 'vertical',
-            // animationDuration: 500,
-            // freezeOnBlur: true,
-            // headerBackTitle: 'Back',
           }}
         >
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="exercise/[exerciseId]"
-            options={{ gestureEnabled: false }} />
+            options={{
+              presentation: 'pageSheet',
+              animation: 'fade_from_bottom',
+              animationDuration: 300,
+              
+            }} />
           <Stack.Screen
             name="form_create_Workout/[mode]"
             options={{
               presentation: 'modal',
               // headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="workout_plan/[paramse]"
+            options={{
+              presentation: 'containedModal',
+              animation: 'flip',
+              animationDuration: 100,
+              gestureEnabled: true,
+              headerShown: true, // וודא שזה true
+              headerLeft: () => (
+                <Button
+                  title="סגור"
+                  onPress={() => router.back()} // פקודת החזרה
+                />
+              ),
             }}
           />
         </Stack>

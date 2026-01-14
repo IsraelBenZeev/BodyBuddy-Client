@@ -3,7 +3,7 @@ import { modeAddWorkoutPlan } from '@/src/types/mode';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
-import Form from './form/Form';
+import Form from './Form';
 interface AddWorkoutPlanProps {
   mode: modeAddWorkoutPlan;
   workout_plan_id?: string;

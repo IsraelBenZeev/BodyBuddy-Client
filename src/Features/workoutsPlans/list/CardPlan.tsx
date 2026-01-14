@@ -2,15 +2,16 @@ import { colors } from '@/colors';
 import { useDeleteWorkoutPlan } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { daysInHebrew, WorkoutPlan } from '@/src/types/workout';
-import { IconCalendar } from '@/src/ui/IconsSVG';
+// import { IconCalendar } from '@/src/ui/IconsSVG';
+import ButtonPrimary from '@/src/ui/ButtonPrimary';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { CalendarClock } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Buttons from './Buttons';
-import { CalendarClock } from 'lucide-react-native';
 interface CardProps {
   plan: WorkoutPlan;
   isActive: boolean;
@@ -66,7 +67,7 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
   useEffect(() => {
     if (!isActive) {
       translateY.value = withTiming(0);
-      setIsShowButtons(false); 
+      setIsShowButtons(false);
     }
   }, [isActive]);
 
@@ -98,7 +99,7 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
         </Text>
 
         <View className="flex-row-reverse flex-wrap gap-2 mt-4">
-          <CalendarClock size={18} color={colors.lime[500]}   strokeWidth={1.25}/>
+          <CalendarClock size={18} color={colors.lime[500]} strokeWidth={1.25} />
           {plan?.days_per_week.map((day, index) => (
             <View
               key={index}
@@ -107,6 +108,7 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
               <Text className="text-zinc-300 text-[10px]">{daysInHebrew[day]}</Text>
             </View>
           ))}
+          <Text className="text-zinc-300 text-[10px]">{plan?.exercise_ids.length} תרגילים</Text>
         </View>
 
         {/* 4. חלק תחתון - כפתור ונתונים */}
@@ -123,9 +125,15 @@ const CardPlan = ({ plan, isActive }: CardProps) => {
           </View>
           <View className="flex-row-reverse items-center justify-center gap-4">
             <View className='flex-1'>
-              <TouchableOpacity className="bg-lime-500 w-full py-4 rounded-2xl items-center shadow-lg">
-                <Text className="text-black font-extrabold text-base">התחל אימון</Text>
-              </TouchableOpacity>
+              <ButtonPrimary title="התחל אימון" onPress={() => {
+                console.log("pressed: ", plan.title);
+                router.push({
+                  pathname: '/workout_plan/[paramse]',
+                  params: {
+                    paramse: plan.id || '',
+                  },
+                });
+              }} />
             </View>
             <View className='flex-col items-center gap-1'>
               <TouchableOpacity

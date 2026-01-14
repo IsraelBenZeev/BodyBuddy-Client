@@ -13,11 +13,12 @@ interface Props {
     selectedIds: string[];
     setSelectedIds: Dispatch<SetStateAction<string[]>>;
     idExercise: string;
+    onClose: () => void;
 }
 
-const PlanSelector = ({ selectedIds, setSelectedIds, idExercise }: Props) => {
+const PlanSelector = ({ selectedIds, setSelectedIds, idExercise, onClose }: Props) => {
     const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(userID);
-    const { mutateAsync: addExerciseToPlan } = useAddExerciseToPlan(userID);
+    const { mutateAsync: addExerciseToPlan, isPending: isPendingAddExerciseToPlan, isSuccess: isSuccessAddExerciseToPlan } = useAddExerciseToPlan(userID);
     const toggleSelection = (id: string) => {
         setSelectedIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
@@ -31,6 +32,12 @@ const PlanSelector = ({ selectedIds, setSelectedIds, idExercise }: Props) => {
     useEffect(() => {
         console.log('Selected IDs:', selectedIds);
     }, [selectedIds]);
+
+    useEffect(() => {
+        if (isSuccessAddExerciseToPlan) {
+            onClose();
+        }
+    }, [isSuccessAddExerciseToPlan]);
 
     if (isLoadingPlans) {
         return <Loading />;
@@ -122,11 +129,11 @@ const PlanSelector = ({ selectedIds, setSelectedIds, idExercise }: Props) => {
                         disabled={selectedIds.length === 0}
                         className={`py-4 rounded-2xl flex-row justify-center items-center ${selectedIds.length > 0 ? 'bg-lime-400' : 'bg-zinc-800 shadow-sm'}`}
                     >
-                        <Text
+                        {isPendingAddExerciseToPlan ? <Loading /> : <Text
                             className={`font-bold text-lg ${selectedIds.length > 0 ? 'text-black' : 'text-gray-500'}`}
                         >
                             {`הוסף ל-${selectedIds.length} אימונים`}
-                        </Text>
+                        </Text>}
                     </Pressable>
                 </View>
             )}

@@ -11,7 +11,8 @@ interface ModalBottomProps {
   title?: string;
   enablePanDownToClose?: boolean;
   useScrollView?: boolean; // prop חדש
-  onClose?: () => void; // prop חדש
+  onChange?: (isOpen: boolean) => void; // prop חדש
+
 }
 
 const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
@@ -23,7 +24,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     title,
     enablePanDownToClose = false,
     useScrollView = true, // ברירת מחדל true
-    onClose,
+    onChange,
   } = props;
 
   const snapPoints = useMemo(() => [minHeight, maxHeight], [minHeight, maxHeight]);
@@ -37,15 +38,27 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     ),
     [title]
   );
-  const handleSheetChange = useCallback(
-    
-    (index: number) => {
-      if (index === -1 && onClose) {
-        onClose();
-      }
-    },
-    [onClose]
-  );
+// const handleSheetChange = useCallback(
+//   (index: number) => {
+//     if (onChange) {
+//       // אם האינדקס הוא 1 (הנקודה הגבוהה - maxHeight), נחזיר true כדי לנעול את Expo.
+//       // אם האינדקס הוא 0 (הנקודה הנמוכה - minHeight), נחזיר false כדי לשחרר את הגרירה של Expo.
+//       onChange(index > 0); 
+//     }
+//   },
+//   [onChange]
+// );
+const handleSheetChange = useCallback(
+  (index: number) => {
+    if (onChange) {
+      // כאן התיקון:
+      // אנחנו מחשיבים את המודל כ"פתוח" (נועל את האפליקציה) 
+      // כל עוד האינדקס הוא לא 1- (סגור לגמרי)
+      onChange(index !== -1); 
+    }
+  },
+  [onChange]
+);
 
   return (
     <BottomSheet

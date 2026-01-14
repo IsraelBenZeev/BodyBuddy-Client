@@ -1,4 +1,4 @@
-import AddWorkoutPlan from '@/src/Features/workoutsPlans/AddWorkoutPlan';
+import AddWorkoutPlan from '@/src/Features/workoutsPlans/form/AddWorkoutPlan';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
 import { useLocalSearchParams } from 'expo-router';
 

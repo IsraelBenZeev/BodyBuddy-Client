@@ -43,9 +43,9 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       {/* Header */}
       {mode === 'view' && (
         <View className='pt-4'>
-          <View className='items-center'>
+          {/* <View className='items-center'>
             <Handle />
-          </View>
+          </View> */}
           {/* <View className="flex-row items-center justify-between w-full px-6 pt-4 mb-4">
             <Image
               style={styles.avatar}

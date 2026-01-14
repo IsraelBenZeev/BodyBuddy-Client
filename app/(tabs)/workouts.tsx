@@ -1,4 +1,4 @@
-import WorkoutList from '@/src/Features/workoutsPlans/WorkoutList';
+import WorkoutList from '@/src/Features/workoutsPlans/list/WorkoutList';
 
 const MyWorkouts = () => {
   return <WorkoutList />;

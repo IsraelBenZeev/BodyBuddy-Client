@@ -1,4 +1,5 @@
 import { colors } from '@/colors';
+import { useWorkoutsPlans } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import BackGround from '@/src/ui/BackGround';
 import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
@@ -6,10 +7,8 @@ import Loading from '@/src/ui/Loading';
 import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
-import CustomCarousel from '../../ui/CustomCarousel';
+import CustomCarousel from '../../../ui/CustomCarousel';
 import CardPlan from './CardPlan';
-import { useWorkoutsPlans } from '@/src/hooks/useWorkout';
-import { ListPlus } from 'lucide-react-native';
 
 const userID = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
