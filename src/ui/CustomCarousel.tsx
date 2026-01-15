@@ -1,115 +1,3 @@
-// import { useRef, useState } from 'react';
-// import { Dimensions, StyleSheet, View, ViewToken } from 'react-native';
-// import Animated, {
-//   Extrapolation,
-//   interpolate,
-//   useAnimatedScrollHandler,
-//   useAnimatedStyle,
-//   useSharedValue
-// } from 'react-native-reanimated';
-
-// const { width } = Dimensions.get('window');
-// const GAP = 15;
-
-// const AnimatedCarouselItem = ({ item, index, scrollX, widthCard, TOTAL_ITEM_SIZE, renderItem, isActive }: any) => {
-//   const animatedStyle = useAnimatedStyle(() => {
-//     const inputRange = [
-//       (index - 1) * TOTAL_ITEM_SIZE,
-//       index * TOTAL_ITEM_SIZE,
-//       (index + 1) * TOTAL_ITEM_SIZE,
-//     ];
-
-//     const scale = interpolate(
-//       scrollX.value,
-//       inputRange,
-//       [0.9, 1, 0.9],
-//       Extrapolation.CLAMP
-//     );
-
-//     const opacity = interpolate(
-//       scrollX.value,
-//       inputRange,
-//       [0.5, 1, 0.5],
-//       Extrapolation.CLAMP
-//     );
-
-//     return {
-//       transform: [{ scale }],
-//       opacity,
-//     };
-//   });
-
-//   return (
-//     <Animated.View style={[{ width: widthCard, marginHorizontal: GAP / 2 }, animatedStyle]}>
-//       {renderItem(item, isActive)}
-//     </Animated.View>
-//   );
-// };
-
-// const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderItem: any; widthCard: number }) => {
-//   const [activeId, setActiveId] = useState<string | number | null>(null);
-//   const scrollX = useSharedValue(0);
-//   const TOTAL_ITEM_SIZE = widthCard + GAP;
-//   const ITEM_SPACING = (width - widthCard) / 2;
-
-//   const onScroll = useAnimatedScrollHandler({
-//     onScroll: (event) => {
-//       scrollX.value = event.contentOffset.x;
-//     },
-//   });
-
-//   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-//     if (viewableItems && viewableItems.length > 0) {
-//       const centeredItem = viewableItems[0].item;
-//       if (centeredItem) setActiveId(centeredItem.id);
-//     }
-//   }).current;
-
-//   return (
-//     <View style={styles.container}>
-//       <Animated.FlatList
-//         data={data}
-//         onScroll={onScroll}
-//         scrollEventThrottle={16}
-//         horizontal
-//         inverted
-//         showsHorizontalScrollIndicator={false}
-//         snapToInterval={TOTAL_ITEM_SIZE}
-//         decelerationRate="fast"
-//         contentContainerStyle={{
-//           paddingHorizontal: ITEM_SPACING - (GAP / 2),
-//         }}
-//         onViewableItemsChanged={onViewableItemsChanged}
-//         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-//         keyExtractor={(item) => item.id.toString()}
-//         renderItem={({ item, index }) => {
-//           return (
-//             <AnimatedCarouselItem
-//               item={item}
-//               index={index}
-//               scrollX={scrollX}
-//               widthCard={widthCard}
-//               TOTAL_ITEM_SIZE={TOTAL_ITEM_SIZE}
-//               renderItem={renderItem}
-//               isActive={item.id === activeId}
-//             />
-
-//           );
-//         }}
-//       />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     paddingVertical: 20,
-//     overflow: 'visible',
-//   },
-// });
-
-// export default CustomCarousel;
-
 import { useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, {
@@ -151,6 +39,8 @@ const AnimatedCarouselItem = ({ item, index, scrollX, widthCard, TOTAL_ITEM_SIZE
 };
 
 const CustomCarousel = ({ data, renderItem, widthCard }: { data: any[]; renderItem: any; widthCard: number }) => {
+  console.log('data', data);
+  
   const [activeId, setActiveId] = useState<string | number | null>(data[0]?.id || null);
   const scrollX = useSharedValue(0);
   const TOTAL_ITEM_SIZE = widthCard + GAP;

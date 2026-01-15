@@ -2,17 +2,17 @@ import { colors } from "@/colors";
 import { useWorkoutsPlans } from "@/src/hooks/useWorkout";
 import IconButton from "@/src/ui/IconButton";
 import { IconAddToListFitness, IconDislikeBG, IconlikeBG, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
-import { StyleSheet, View } from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import PlanSelector from "../workoutsPlans/PlansSelector";
 interface ButtonsProps {
     exerciseId: string;
-    sheetRefAddToList: any;
 }
 const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
-const Buttons = ({ exerciseId, sheetRefAddToList }: ButtonsProps) => {
+const Buttons = ({ exerciseId }: ButtonsProps) => {
     const { data: plansData } = useWorkoutsPlans(user_id)
-    const handleAdd = () => {
-        sheetRefAddToList.current?.snapToIndex(0);
-    }
+    const [isShowListWorkoutsPlans, setIsShowListWorkoutsPlans] = useState<boolean>(false);
+
     return (
         <View>
             <View className="flex-row justify-center gap-4 px-4 my-8 w-full">
@@ -20,7 +20,11 @@ const Buttons = ({ exerciseId, sheetRefAddToList }: ButtonsProps) => {
                     { icon: <IconlikeBG size={20} color={colors.lime[500]} />, text: 'אהבתי', onPress: () => console.log('Liked') },
                     { icon: <IconDislikeBG size={20} color={colors.lime[500]} />, text: 'לא אהבתי', onPress: () => console.log('Disliked') },
                     { icon: <IconShare size={20} color={colors.lime[500]} />, text: 'שתף', onPress: () => console.log('Shared') },
-                    { icon: <IconAddToListFitness size={20} color={colors.lime[500]} />, text: 'הוסף', onPress: handleAdd },
+                    {
+                        icon: <IconAddToListFitness size={20} color={colors.lime[500]} />, text: 'הוסף', onPress: () => {
+                            setIsShowListWorkoutsPlans(prev => !prev)
+                        }
+                    },
                     { icon: <IconSearchGoogle size={20} color={colors.lime[500]} />, text: 'גוגל', onPress: () => console.log('Google') },
                 ].map((btn, i) => (
                     <IconButton
@@ -33,14 +37,11 @@ const Buttons = ({ exerciseId, sheetRefAddToList }: ButtonsProps) => {
                     </IconButton>
                 ))}
             </View>
-
-            {/* <View className="bd ">
-                <ModalBottom ref={sheetRef} title="hello" initialIndex={0} minHeight="1%" maxHeight="60%">
-                    <View style={{ padding: 0 }}>
-                        <Text>hello</Text>
-                    </View>
-                </ModalBottom>
-            </View> */}
+            {isShowListWorkoutsPlans && (
+                <View className="bd h-48">
+                    <PlanSelector idExercise={exerciseId} />
+                </View>
+            )}
         </View>
     )
 
