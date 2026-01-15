@@ -38,7 +38,7 @@ const Buttons = ({ exerciseId }: ButtonsProps) => {
                 ))}
             </View>
             {isShowListWorkoutsPlans && (
-                <View className="bd h-48">
+                <View className="bd p-1 h-48">
                     <PlanSelector idExercise={exerciseId} />
                 </View>
             )}

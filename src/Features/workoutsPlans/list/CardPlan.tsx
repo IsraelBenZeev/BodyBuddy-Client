@@ -12,14 +12,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Buttons from './Buttons';
-interface CardProps {
+interface CardPlanProps {
   plan: WorkoutPlan;
   isActive: boolean;
   isSwiped: boolean;
   translateY: SharedValue<number>;
 }
 const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
-const CardPlan = ({ plan, isActive }: CardProps) => {
+const CardPlan = ({ plan, isActive }: CardPlanProps) => {
   const [deleteId, setDeleteId] = useState<string>("");
   const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user_id)
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);

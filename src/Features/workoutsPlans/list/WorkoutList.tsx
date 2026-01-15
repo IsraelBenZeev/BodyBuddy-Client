@@ -43,6 +43,7 @@ const WorkoutList = () => {
           <View className="w-full flex-1 justify-center">
             <CustomCarousel
               data={plansData}
+              variant='center'
               renderItem={(item: any, isActive: boolean, isSwiped: boolean, translateY: SharedValue<number>) => (
                 <CardPlan plan={item} isActive={isActive} isSwiped={isSwiped} translateY={translateY} />
               )}
