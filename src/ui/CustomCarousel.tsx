@@ -118,7 +118,7 @@ const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chai
 };
 
 const styles = StyleSheet.create({
-  container: { width: '100%', paddingVertical: 10 },
+  container: { width: '100%', paddingVertical: 0 },
 });
 
 export default CustomCarousel;

@@ -51,7 +51,7 @@ const TabsManager = ({ instructions }: TabsManagerProps) => {
             >
                 <View>
                     {/* Tab Bar */}
-                    <View className="mx-6 mt-4 mb-2 bg-[#1A1A1A] rounded-full p-1 relative flex-row items-center h-12 border border-gray-800">
+                    <View className="mx-6 mt-4 mb-2 bg-background-850 rounded-full p-1 relative flex-row items-center h-12 border border-gray-800">
                         <Animated.View
                             style={{
                                 width: capsuleWidth,
@@ -64,21 +64,21 @@ const TabsManager = ({ instructions }: TabsManagerProps) => {
                                     },
                                 ],
                             }}
-                            className="absolute h-10 bg-[#D7FF00] rounded-full left-1"
+                            className="absolute h-10 bg-lime-500 rounded-full left-1"
                         />
 
                         <TouchableOpacity
                             onPress={() => animateTo(0)}
                             className="flex-1 items-center justify-center z-10"
                         >
-                            <Text className={`font-bold ${activeTab === 0 ? 'text-black' : 'text-gray-500'}`}>הוראות</Text>
+                            <Text className={`font-bold ${activeTab === 0 ? 'text-background-950' : 'text-gray-500'}`}>הוראות</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={() => animateTo(1)}
                             className="flex-1 items-center justify-center z-10"
                         >
-                            <Text className={`font-bold ${activeTab === 1 ? 'text-black' : 'text-gray-500'}`}>היסטוריה</Text>
+                            <Text className={`font-bold ${activeTab === 1 ? 'text-background-950' : 'text-gray-500'}`}>היסטוריה</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -92,7 +92,7 @@ const TabsManager = ({ instructions }: TabsManagerProps) => {
                             <View className="p-6">
                                 <View className="flex-row-reverse items-center gap-4 mb-4">
                                     <Hammer size={24} color={colors.lime[500]} />
-                                    <Text className="text-[#D7FF00] text-xl font-bold text-right">בהקמה</Text>
+                                    <Text className="text-lime-500 text-xl font-bold text-right">בהקמה</Text>
                                 </View>
                                 <Text className="text-white text-right text-lg leading-7">ההיסטוריה יופיע כאן...</Text>
                             </View>

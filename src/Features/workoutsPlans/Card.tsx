@@ -1,62 +1,75 @@
-// import { WorkoutPlan } from "@/src/types/workout";
-// import { Text, View } from "react-native";
-// interface Props {
-//     plan: WorkoutPlan;
-//     isActive?: boolean;
-// }
-// const Card = ({ plan, isActive }: Props) => {
-//     return (
-//         <View>
-//             <Text className="text-white font-bold">{plan.title}</Text>
-//             {isActive && <Text className="text-white text-xs">נבחר</Text>}
-//         </View>
-//     )
-// }
-// export default Card
+import { colors } from "@/colors";
 import { WorkoutPlan } from "@/src/types/workout";
-import { Text, View, StyleSheet } from "react-native";
+import { CheckCircle2, Circle, Clock, Dumbbell } from "lucide-react-native";
+import { Pressable, Text, View } from "react-native";
 
 interface Props {
     plan: WorkoutPlan;
+    selectedIds: string[];
+    toggleSelection: (id: string) => void;
     isActive?: boolean;
 }
 
-const Card = ({ plan, isActive }: Props) => {
+const Card = ({ plan, selectedIds, toggleSelection }: Props) => {
+    const isSelected = plan.id ? selectedIds.includes(plan.id) : false;
+
     return (
-        <View 
-            className={`p-4 h-32 rounded-3xl border-2 flex flex-col justify-between
-            ${isActive ? 'bg-blue-600 border-blue-400' : 'bg-slate-900 border-slate-800'}`}
-            style={isActive ? styles.activeShadow : null}
+        <Pressable
+            onPress={() => plan.id && toggleSelection(plan.id)}
+            // שימוש ב-Zinc-950 למראה עמוק ויוקרתי
+            className={`p-5 h-32 rounded-[30px] border-2 flex flex-col justify-between relative 
+        ${isSelected ? 'bg-zinc-900 border-lime-500' : 'bg-background-800 border-zinc-800'}`}
         >
-            <View>
-                <Text numberOfLines={1} className="text-lg font-bold text-white">
-                    {plan.title}
-                </Text>
-                <Text className={`text-xs ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>
-                    רמה: {plan.difficulty}/5
-                </Text>
+
+            {/* שורה עליונה: שם האימון וסימון הבחירה */}
+            <View className="flex-row justify-between items-center">
+                <View className="flex-1 pr-4">
+                    <Text
+                        numberOfLines={1}
+                        className="text-xl font-bold text-white tracking-tight leading-tight"
+                    >
+                        {plan.title}
+                    </Text>
+                </View>
+
+                {/* Radio Button מלוטש */}
+                <View>
+                    {isSelected ? (
+                        <CheckCircle2 size={22} color={colors.lime[500]} strokeWidth={2.5} />
+                    ) : (
+                        <Circle size={22} color={colors.background[1200]} strokeWidth={1.5} />
+                    )}
+                </View>
             </View>
 
-            <View className="flex-row items-center justify-between mt-2">
-                <Text className="text-white text-xs font-medium">
-                    ⏱️ {plan.time} דק׳
-                </Text>
-                <Text className="text-white text-xs font-medium">
-                    🏋️ {plan.exercise_ids.length} תרגילים
-                </Text>
+            {/* שורה תחתונה: נתונים תמציתיים (זמן וכמות) */}
+            <View className="flex-row items-center space-x-4">
+                {/* זמן אימון */}
+                <View className="flex-row items-center">
+                    <Clock size={14} color="#71717a" />
+                    <Text className="text-zinc-400 text-xs font-semibold ml-1.5">
+                        {plan.time} דק׳
+                    </Text>
+                </View>
+
+                {/* מפריד נקודה עדין */}
+                <View className="w-1 h-1 rounded-full bg-zinc-700" />
+
+                {/* כמות תרגילים */}
+                <View className="flex-row items-center">
+                    <Dumbbell size={14} color="#71717a" />
+                    <Text className="text-zinc-400 text-xs font-semibold ml-1.5">
+                        {plan.exercise_ids.length} תרגילים
+                    </Text>
+                </View>
             </View>
-        </View>
+
+            {/* שכבת צבע עדינה מאוד בבחירה */}
+            {isSelected && (
+                <View className="absolute inset-0 bg-emerald-500/5 rounded-[28px]" pointerEvents="none" />
+            )}
+        </Pressable>
     );
 };
-
-const styles = StyleSheet.create({
-    activeShadow: {
-        shadowColor: "#3b82f6",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.5,
-        shadowRadius: 8,
-        elevation: 5,
-    },
-});
 
 export default Card;

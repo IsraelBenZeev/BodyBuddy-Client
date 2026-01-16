@@ -3,7 +3,8 @@ import { useWorkoutsPlans } from "@/src/hooks/useWorkout";
 import IconButton from "@/src/ui/IconButton";
 import { IconAddToListFitness, IconDislikeBG, IconlikeBG, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {  StyleSheet, View } from "react-native";
+import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 import PlanSelector from "../workoutsPlans/PlansSelector";
 interface ButtonsProps {
     exerciseId: string;
@@ -38,9 +39,12 @@ const Buttons = ({ exerciseId }: ButtonsProps) => {
                 ))}
             </View>
             {isShowListWorkoutsPlans && (
-                <View className="bd p-1 h-48">
-                    <PlanSelector idExercise={exerciseId} />
-                </View>
+                <Animated.View className="px-6 h-52 mt-6"
+                entering={SlideInRight.duration(700).springify()}
+                exiting={SlideOutRight.duration(700).springify()}
+                >
+                    <PlanSelector idExercise={exerciseId} setIsShowListWorkoutsPlans={setIsShowListWorkoutsPlans}/>
+                </Animated.View>
             )}
         </View>
     )
