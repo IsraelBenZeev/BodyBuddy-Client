@@ -2,12 +2,11 @@ import { colors } from '@/colors';
 import { useAddExerciseToPlan, useWorkoutsPlans } from '@/src/hooks/useWorkout';
 import { WorkoutPlan } from '@/src/types/workout';
 import Success from '@/src/ui/Animations/Success';
-import CustomCarousel from '@/src/ui/CustomCarousel';
 import Loading from '@/src/ui/Loading';
 import PressableOpacity from '@/src/ui/PressableOpacity';
 import { Check, X } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
-import { Text, View, useWindowDimensions } from 'react-native';
+import { useState } from 'react';
+import { Text, View, useWindowDimensions, ScrollView } from 'react-native';
 import Card from './Card';
 
 const userID = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
@@ -17,7 +16,7 @@ interface PlansSelectorProps {
 }
 
 const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorProps) => {
-    const { width } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(userID);
     const { mutateAsync: addExerciseToPlan, isPending: isPendingAddExerciseToPlan, isSuccess: isSuccessAddExerciseToPlan } = useAddExerciseToPlan(userID);
@@ -40,10 +39,13 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
         return <Loading />;
     }
 
+
+
     return (
-        <View className='flex-1 bg-background-850 rounded-3xl relative overflow-hidden'>
+        <View
+            // style={{ height: height }}
+            className='flex-1 bg-background-850 rounded-3xl relative overflow-hidden'>
             <View
-                style={{ width: width * 0.5 }}
                 className='flex-row items-center justify-between relative gap-6 self-end mr-2'>
                 <Text className='text-center text-xl font-bold text-lime-500 mb-2'>בחר תוכנית</Text>
                 <PressableOpacity
@@ -55,15 +57,26 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                     <X color={colors.lime[500]} strokeWidth={3} size={16} />
                 </PressableOpacity>
             </View>
-            <View className="flex-1">
-                <CustomCarousel
-                    variant='chain'
-                    data={plansData || []}
-                    widthCard={160}
-                    renderItem={(item: WorkoutPlan, isActive: boolean) => (
-                        <Card plan={item} isActive={isActive} selectedIds={selectedIds} toggleSelection={toggleSelection} />
-                    )}
-                />
+            <View style={{}} className="mt-4 h-[80%]">
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                        paddingHorizontal: 8, // רווח מהצדדים של המסך
+                        paddingTop: 10,
+                        paddingBottom: 20,    // רווח גדול למטה כדי שהכפתור הצף לא יסתיר את הכרטיס האחרון
+                        gap: 16                // רווח בין הכרטיסים
+                    }}
+                    className="flex-1"
+                >
+                    {plansData?.map((plan: any) => (
+                        <Card
+                            key={plan.id}
+                            plan={plan as WorkoutPlan}
+                            selectedIds={selectedIds}
+                            toggleSelection={toggleSelection}
+                        />
+                    ))}
+                </ScrollView>
             </View>
             <View className="absolute bottom-2 left-8 items-center z-[999]" style={{ elevation: 10 }}>
                 <Success

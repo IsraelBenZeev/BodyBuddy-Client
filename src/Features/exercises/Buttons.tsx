@@ -3,7 +3,7 @@ import { useWorkoutsPlans } from "@/src/hooks/useWorkout";
 import IconButton from "@/src/ui/IconButton";
 import { IconAddToListFitness, IconDislikeBG, IconlikeBG, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
 import { useState } from "react";
-import {  StyleSheet, View } from "react-native";
+import {  StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 import PlanSelector from "../workoutsPlans/PlansSelector";
 interface ButtonsProps {
@@ -13,6 +13,7 @@ const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const Buttons = ({ exerciseId }: ButtonsProps) => {
     const { data: plansData } = useWorkoutsPlans(user_id)
     const [isShowListWorkoutsPlans, setIsShowListWorkoutsPlans] = useState<boolean>(false);
+    const { width, height } = useWindowDimensions();
 
     return (
         <View>
@@ -39,7 +40,10 @@ const Buttons = ({ exerciseId }: ButtonsProps) => {
                 ))}
             </View>
             {isShowListWorkoutsPlans && (
-                <Animated.View className="px-6 h-52 mt-6"
+                <Animated.View 
+                className="px-4 py-2"
+                style={{ height: height * 0.5 }}
+                
                 entering={SlideInRight.duration(700).springify()}
                 exiting={SlideOutRight.duration(700).springify()}
                 >
