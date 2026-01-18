@@ -125,7 +125,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           </View>
           <View className="flex-row-reverse items-center justify-center gap-4">
             <View className='flex-1'>
-              <ButtonPrimary title="התחל אימון" onPress={() => {
+              <ButtonPrimary title="הצג אימון" onPress={() => {
                 console.log("pressed: ", plan.title);
                 router.push({
                   pathname: '/workout_plan/[paramse]',

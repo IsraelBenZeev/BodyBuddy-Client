@@ -1,25 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { addExerciseToPlan, createNewWorkoutPlan, deleteWorkoutPlan, getWorkoutsByUserUserId } from '../service/workoutService';
+import { addExerciseToPlan, createNewWorkoutPlan, deleteWorkoutPlan, getWorkoutPlanById, getWorkoutsByUserUserId } from '../service/workoutService';
 import { WorkoutPlan } from '../types/workout';
 
-// export const useWorkoutsPlans = (user_id: string) => {
-//   return useQuery({
-//     queryKey: ['workoutsPlans', user_id],
-//     queryFn: () => getWorkoutsByUserUserId(user_id),
-//     staleTime: Infinity,
-//     enabled: !!user_id,
-//   });
-// };
 export const useWorkoutsPlans = (user_id: string, onlyNames: boolean = false) => {
+  console.log("useWorkoutsPlans");
+
   return useQuery({
-    queryKey: ['workoutsPlans', user_id],
+    queryKey: ['workoutPlans', user_id],
     queryFn: () => getWorkoutsByUserUserId(user_id),
     staleTime: Infinity,
     enabled: !!user_id,
     select: (data) => {
       if (!data) return [];
       if (onlyNames) {
-        return data.map((plan: any) => ({
+        return data.map((plan: WorkoutPlan) => ({
           id: plan.id,
           name: plan.title
         }));
@@ -28,9 +22,25 @@ export const useWorkoutsPlans = (user_id: string, onlyNames: boolean = false) =>
     }
   });
 };
+export const useWorkoutPlan = (planId: string, user_id: string) => {
+  const queryClient = useQueryClient();
+  return useQuery({
+    queryKey: ['workoutPlan', planId],
+    queryFn: () => getWorkoutPlanById(planId),
+    enabled: !!planId && !!user_id,
+    staleTime: Infinity,
+
+    initialData: () => {
+      const allPlans = queryClient.getQueryData<WorkoutPlan[]>(['workoutPlans', user_id]);
+      return allPlans?.find((p) => p.id === planId) as WorkoutPlan;
+    },
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(['workoutPlans', user_id])?.dataUpdatedAt,
+  });
+};
 export const useGetWorkoutFromCache = (id: string | undefined, user_id: string) => {
   return useQuery({
-    queryKey: ['workoutsPlans', user_id],
+    queryKey: ['workoutPlans', user_id],
     queryFn: () => getWorkoutsByUserUserId(user_id),
     select: (plans) => plans?.find((p) => p.id === id),
     staleTime: Infinity,
@@ -39,15 +49,33 @@ export const useGetWorkoutFromCache = (id: string | undefined, user_id: string) 
 };
 
 
+// export const useCreateWorkoutPlan = (user_id: string) => {
+//   const queryClient = useQueryClient();
+//   return useMutation({
+//     mutationFn: (newWorkoutPlan: WorkoutPlan) => createNewWorkoutPlan(newWorkoutPlan),
+//     onSuccess: async () => {
+//       console.log("Plan created/updated, refreshing cache...");
+//       return await queryClient.invalidateQueries({
+//         queryKey:  ['workoutPlans', user_id]
+//       });
+//     },
+//   });
+// };
+
 export const useCreateWorkoutPlan = (user_id: string) => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (newWorkoutPlan: WorkoutPlan) => createNewWorkoutPlan(newWorkoutPlan),
-    onSuccess: async () => {
-      console.log("Plan created/updated, refreshing cache...");
-      return await queryClient.invalidateQueries({
-        queryKey: ['workoutsPlans', user_id]
+    onSuccess: async (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['workoutPlans', user_id]
       });
+      if (variables.id) {
+        queryClient.invalidateQueries({
+          queryKey: ['workoutPlan', variables.id]
+        });
+      }
     },
   });
 };
@@ -60,7 +88,7 @@ export const useAddExerciseToPlan = (user_id: string) => {
     onSuccess: async () => {
       console.log("Exercises added, invalidating cache...");
       return await queryClient.invalidateQueries({
-        queryKey: ['workoutsPlans', user_id]
+        queryKey: ['workoutPlans', user_id]
       });
     },
     onError: (error) => {
@@ -86,7 +114,7 @@ export const useDeleteWorkoutPlan = (user_id: string) => {
       console.log("Plan deleted, invalidating main list...");
       queryClient.refetchQueries({ queryKey: ['workoutsPlans', user_id] });
       return await queryClient.invalidateQueries({
-        queryKey: ['workoutsPlans', user_id]
+        queryKey: ['workoutPlans', user_id]
       });
     },
   });

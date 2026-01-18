@@ -60,13 +60,13 @@ export default function RootLayout() {
               animation: 'flip',
               animationDuration: 100,
               gestureEnabled: true,
-              headerShown: true, // וודא שזה true
-              headerLeft: () => (
-                <Button
-                  title="סגור"
-                  onPress={() => router.back()} // פקודת החזרה
-                />
-              ),
+              // headerShown: true, // וודא שזה true
+              // headerLeft: () => (
+              //   <Button
+              //     title="סגור"
+              //     onPress={() => router.back()} // פקודת החזרה
+              //   />
+              // ),
             }}
           />
         </Stack>

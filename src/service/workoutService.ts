@@ -15,6 +15,18 @@ export const getWorkoutsByUserUserId = async (user_id: string) => {
     throw error;
   }
 };
+export const getWorkoutPlanById = async (id: string) => {
+  console.log("getWorkoutPlanById");
+
+  try {
+    const { data, error } = await supabase.from('workouts_plans').select('*').eq('id', id).maybeSingle();
+    if (error) throw error;
+    return data as WorkoutPlan;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 export const createNewWorkoutPlan = async (newPlan: WorkoutPlan) => {
   try {
     const { data, error } = await supabase.from('workouts_plans').upsert(newPlan).select().single();
@@ -28,8 +40,8 @@ export const createNewWorkoutPlan = async (newPlan: WorkoutPlan) => {
 export const addExerciseToPlan = async (idExercise: string, planIds: string[]) => {
   try {
     const { error, data } = await supabase.rpc('add_exercise_to_plans', {
-      plan_ids: planIds,           
-      new_exercise_id: idExercise 
+      plan_ids: planIds,
+      new_exercise_id: idExercise
     });
     if (error) throw error;
     return data;

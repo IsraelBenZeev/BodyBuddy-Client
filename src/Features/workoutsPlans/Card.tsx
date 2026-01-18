@@ -73,3 +73,55 @@ const Card = ({ plan, selectedIds, toggleSelection }: Props) => {
 };
 
 export default Card;
+
+// import { colors } from "@/colors";
+// import { WorkoutPlan } from "@/src/types/workout";
+// import { Check, Clock, Dumbbell, Trophy } from "lucide-react-native";
+// import { Pressable, Text, View } from "react-native";
+
+// interface Props {
+//     plan: WorkoutPlan;
+//     selectedIds: string[];
+//     toggleSelection: (id: string) => void;
+// }
+
+// const Card = ({ plan, selectedIds, toggleSelection }: Props) => {
+//     const isSelected = plan.id ? selectedIds.includes(plan.id) : false;
+
+//     return (
+//         <Pressable
+//             onPress={() => plan.id && toggleSelection(plan.id)}
+//             style={{
+//                 backgroundColor: isSelected ? colors.background[800] : colors.background[900],
+//                 borderColor: isSelected ? colors.lime[500] : colors.background[700],
+//             }}
+//             // הגובה חייב להיות תואם ל-View שעוטף את ה-ScrollView
+//             className={`p-5 h-40 rounded-[30px] border-[1.5px] flex-col justify-between relative`}
+//         >
+//             <View>
+//                 <View className="flex-row justify-between items-start">
+//                     <Text className="text-lime-500 text-[9px] font-black uppercase tracking-widest">Workout Plan</Text>
+//                     <View className={`w-5 h-5 rounded-full items-center justify-center ${isSelected ? 'bg-lime-500' : 'border border-zinc-700'}`}>
+//                         {isSelected && <Check size={12} color={colors.background[900]} strokeWidth={4} />}
+//                     </View>
+//                 </View>
+//                 <Text numberOfLines={1} className="text-xl font-black text-white mt-1 leading-7">
+//                     {plan.title}
+//                 </Text>
+//             </View>
+
+//             <View className="flex-row items-center gap-3">
+//                 <View className="flex-row items-center gap-1.5">
+//                     <Clock size={12} color={colors.background[500]} />
+//                     <Text className="text-zinc-400 text-[11px] font-bold">{plan.time} min</Text>
+//                 </View>
+//                 <View className="flex-row items-center gap-1.5">
+//                     <Dumbbell size={12} color={colors.background[500]} />
+//                     <Text className="text-zinc-400 text-[11px] font-bold">{plan.exercise_ids.length} EX</Text>
+//                 </View>
+//             </View>
+//         </Pressable>
+//     );
+// };
+
+// export default Card;
