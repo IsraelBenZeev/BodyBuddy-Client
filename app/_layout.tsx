@@ -1,7 +1,8 @@
 import { colors } from '@/colors';
+import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { router, Stack } from 'expo-router';
-import { Button, StatusBar, StyleSheet } from 'react-native';
+import { Stack } from 'expo-router';
+import { StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { QueryClientManager } from 'reactotron-react-query';
@@ -33,6 +34,7 @@ export default function RootLayout() {
         {/* <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full"> */}
         <StatusBar />
         {/* <Stack screenOptions={{ headerShown: false }} /> */}
+        <GlobalSuccess />
         <Stack
           screenOptions={{
             headerShown: false,
@@ -44,7 +46,7 @@ export default function RootLayout() {
               presentation: 'pageSheet',
               animation: 'fade_from_bottom',
               animationDuration: 300,
-              
+
             }} />
           <Stack.Screen
             name="form_create_Workout/[mode]"

@@ -1,6 +1,5 @@
-import { supabase } from '@/supabase_client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getExercisesByBodyParts } from '../service/exercisesService';
+import { getExerciseByIds, getExercisesByBodyParts } from '../service/exercisesService';
 import { BodyPart } from '../types/bodtPart';
 import { Exercise } from '../types/exercise';
 const limit = 30;
@@ -13,50 +12,70 @@ export const useExercises = (bodyParts: BodyPart[], page: number) => {
   });
 };
 
-
 export const useGetExercisesByIds = (ids: string[]) => {
   const queryClient = useQueryClient();
   return useQuery({
-    queryKey: ['exercises', 'selected', ids],
+    queryKey: ['exercises', 'byIds', ids],
     queryFn: async () => {
-      // 1. ננסה לאסוף כמה שיותר מהמטמון הקיים
-      const allCached = queryClient.getQueriesData({ queryKey: ['exercises'] });
-      const flattened = allCached.flatMap(([_, data]) => {
-        if (Array.isArray(data)) return data;
-        return (data as any)?.exercises || [];
+      const allCachedData = queryClient.getQueriesData<{ exercises: Exercise[] }>({
+        queryKey: ['exercises']
       });
-
-      const foundInCache = flattened.filter((ex: any) => ids.includes(ex.exerciseId));
-
-      // 2. נבדוק אילו IDs חסרים לנו
-      const foundIds = foundInCache.map((ex: any) => ex.exerciseId);
+      const flattenedExercises = allCachedData.flatMap(([_, data]) => data?.exercises || []);
+      const foundInCache = flattenedExercises.filter(ex => ids.includes(ex.exerciseId));
+      const foundIds = foundInCache.map(ex => ex.exerciseId);
       const missingIds = ids.filter(id => !foundIds.includes(id));
-
-      let fetchedData: Exercise[] = [];
-
-      // 3. אם יש חסרים - נביא את החסרים מה-DB
-      if (missingIds.length > 0) {
-        const { data, error } = await supabase
-          .from('exercises')
-          .select('*')
-          .in('exerciseId', missingIds);
-
-        if (error) throw error;
-        fetchedData = data || [];
+      if (missingIds.length === 0) {
+        return foundInCache;
       }
-
-      // 4. נחזיר את האיחוד של שניהם
-      const finalData = [...foundInCache, ...fetchedData];
-
-      // 5. מיון מחדש לפי הסדר המקורי של ה-IDs (ומניעת כפילויות)
-      return ids
-        .map(id => finalData.find(ex => ex.exerciseId === id))
-        .filter((ex): ex is Exercise => !!ex);
+      console.log("Fetching missing exercises from DB:", missingIds);
+      const fetchedFromDb = await getExerciseByIds(missingIds);
+      const finalData = [...foundInCache, ...fetchedFromDb];
+      return ids.map(id => finalData.find(ex => ex.exerciseId === id)).filter(Boolean) as Exercise[];
     },
-    enabled: ids.length > 0, // אל תרוץ אם המערך ריק
-    staleTime: 1000 * 60 * 5, // שמור את התוצאה ל-5 דקות
+    staleTime: Infinity,
+    enabled: ids.length > 0,
   });
 };
+
+
+// export const useGetExercisesByIds = (ids: string[]) => {
+//   const queryClient = useQueryClient();
+//   return useQuery({
+//     queryKey: ['exercises', 'selected', ids],
+//     queryFn: async () => {
+//       const allCached = queryClient.getQueriesData({ queryKey: ['exercises'] });
+//       const flattened = allCached.flatMap(([_, data]) => {
+//         if (Array.isArray(data)) return data;
+//         return (data as any)?.exercises || [];
+//       });
+
+//       const foundInCache = flattened.filter((ex: any) => ids.includes(ex.exerciseId));
+
+//       const foundIds = foundInCache.map((ex: any) => ex.exerciseId);
+//       const missingIds = ids.filter(id => !foundIds.includes(id));
+
+//       let fetchedData: Exercise[] = [];
+
+//       if (missingIds.length > 0) {
+//         const { data, error } = await supabase
+//           .from('exercises')
+//           .select('*')
+//           .in('exerciseId', missingIds);
+
+//         if (error) throw error;
+//         fetchedData = data || [];
+//       }
+
+//       const finalData = [...foundInCache, ...fetchedData];
+
+//       return ids
+//         .map(id => finalData.find(ex => ex.exerciseId === id))
+//         .filter((ex): ex is Exercise => !!ex);
+//     },
+//     enabled: ids.length > 0,
+//     staleTime: 1000 * 60 * 5,
+//   });
+// };
 
 
 // export const useExerciseByIds = (exerciseIds: string[]) => {

@@ -2,11 +2,13 @@ import { colors } from '@/colors';
 import { useAddExerciseToPlan, useWorkoutsPlans } from '@/src/hooks/useWorkout';
 import { WorkoutPlan } from '@/src/types/workout';
 import Success from '@/src/ui/Animations/Success';
+import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
 import Loading from '@/src/ui/Loading';
 import PressableOpacity from '@/src/ui/PressableOpacity';
+import { useRouter } from 'expo-router';
 import { Check, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { Text, View, useWindowDimensions, ScrollView } from 'react-native';
+import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import Card from './Card';
 
 const userID = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
@@ -16,6 +18,7 @@ interface PlansSelectorProps {
 }
 
 const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorProps) => {
+    const router = useRouter();
     const { width, height } = useWindowDimensions();
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(userID);
@@ -47,7 +50,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
             className='flex-1 bg-background-850 rounded-3xl relative overflow-hidden'>
             <View
                 className='flex-row items-center justify-between relative gap-6 self-end mr-2'>
-                <Text className='text-center text-xl font-bold text-lime-500 mb-2'>בחר תוכנית</Text>
+                {!!plansData?.length && <Text className='text-center text-xl font-bold text-lime-500 mb-2'>בחר תוכנית</Text>}
                 <PressableOpacity
                     onPress={() => setIsShowListWorkoutsPlans(false)}
                     bgColor="background-850"
@@ -58,37 +61,70 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                 </PressableOpacity>
             </View>
             <View style={{}} className="mt-4 h-[80%]">
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{
-                        paddingHorizontal: 8, // רווח מהצדדים של המסך
-                        paddingTop: 10,
-                        paddingBottom: 20,    // רווח גדול למטה כדי שהכפתור הצף לא יסתיר את הכרטיס האחרון
-                        gap: 16                // רווח בין הכרטיסים
-                    }}
-                    className="flex-1"
-                >
-                    {plansData?.map((plan: any) => (
-                        <Card
-                            key={plan.id}
-                            plan={plan as WorkoutPlan}
-                            selectedIds={selectedIds}
-                            toggleSelection={toggleSelection}
-                        />
-                    ))}
-                </ScrollView>
-            </View>
-            <View className="absolute bottom-2 left-8 items-center z-[999]" style={{ elevation: 10 }}>
-                <Success
-                    onPress={handleSave}                        // הפונקציה ששומרת
-                    isLoading={isPendingAddExerciseToPlan}      // מצב טעינה
-                    isSuccess={isSuccessAddExerciseToPlan}      // מצב הצלחה
-                    onDone={handleAnimationFinish}              // מה קורה כשהאנימציה נגמרת
-                    size={40}                                   // גודל האנימציה
-                    icon={<Check size={20} color={colors.background[850]} strokeWidth={3} />}
-                />
-            </View>
+                {plansData?.length ?
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{
+                            paddingHorizontal: 8, // רווח מהצדדים של המסך
+                            paddingTop: 10,
+                            paddingBottom: 20,    // רווח גדול למטה כדי שהכפתור הצף לא יסתיר את הכרטיס האחרון
+                            gap: 16                // רווח בין הכרטיסים
+                        }}
+                        className="flex-1"
+                    >
+                        {plansData?.map((plan: any) => (
+                            <Card
+                                key={plan.id}
+                                plan={plan as WorkoutPlan}
+                                selectedIds={selectedIds}
+                                toggleSelection={toggleSelection}
+                            />
+                        ))}
+                    </ScrollView>
+                    :
+                    <View className="mt-4 h-[80%] flex-1 items-center justify-center">
+                        <View className="bg-background-800 p-8 rounded-full mb-6 opacity-80">
+                            <IconsFitnessTools size={40} color={colors.lime[500]} />
+                        </View>
+                        <View className=''>
+                            <Text className="text-white text-md font-semibold text-center mb-2">
+                                עדיין אין לך תוכניות אימון
+                            </Text>
+                            <Text className="text-gray-400 text-center mb-8 text-sm">
+                                זה הזמן ליצור את האימון הראשון שלך ולהתחיל להתקדם למטרה!
+                            </Text>
 
+                        </View>
+                        <PressableOpacity
+                            bgColor="lime-500"
+                            activeOpacity="/60"
+                            onPress={() => {
+                                router.replace("/(tabs)/workouts");
+                                setIsShowListWorkoutsPlans(false);
+                            }}
+                            className="flex-row items-center px-8 py-4 rounded-2xl shadow-lg"
+                        >
+                            <Text className="text-background-900 font-bold text-lg mr-2">
+                                עבור ליצירת תוכנית
+                            </Text>
+                            <IconAddToList color={colors.background[900]} size={24} />
+                        </PressableOpacity>
+                    </View>
+                }
+            </View>
+            {!!plansData?.length && (
+                <View className="absolute bottom-2 left-8 items-center z-[999]" style={{ elevation: 10 }}>
+                    <Success
+                        onPress={handleSave}                        // הפונקציה ששומרת
+                        isLoading={isPendingAddExerciseToPlan}      // מצב טעינה
+                        isSuccess={isSuccessAddExerciseToPlan}      // מצב הצלחה
+                        onDone={handleAnimationFinish}              // מה קורה כשהאנימציה נגמרת
+                        size={40}                                   // גודל האנימציה
+                        icon={<Check size={20} color={colors.background[850]} strokeWidth={3} />}
+                    />
+                </View>
+
+            )}
         </View>
     );
 };

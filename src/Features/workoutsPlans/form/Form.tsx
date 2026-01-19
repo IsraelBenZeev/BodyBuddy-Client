@@ -1,5 +1,4 @@
 import { colors } from '@/colors';
-import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import { useCreateWorkoutPlan, useGetWorkoutFromCache, } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
@@ -15,7 +14,6 @@ import HeaderForm from './HeaderForm';
 import ListExercise from './ListExercises';
 import Slider from './Slider';
 import TimeInput from './TimeInput';
-import Success from '@/src/ui/Animations/Success';
 const bodyParts = [
   'neck',
   'lower arms',
@@ -57,8 +55,8 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
   const selectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
   const resetExercise = useWorkoutStore((state) => state.clearAllExercises);
-  
-  const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user_id)
+
+  const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user_id, mode)
   const navigateToPicker = () => {
     router.push({
       pathname: '/exercises/[parts]',
@@ -100,7 +98,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       >
         <HeaderForm
           navigateToPicker={navigateToPicker}
-          selectedIds={selectedIds||[]}
+          selectedIds={selectedIds || []}
         />
 
         <View className="mb-8" style={{ maxHeight: SCREEN_HEIGHT * 0.25 }}>
@@ -154,7 +152,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       </ScrollView>
 
       <View className="absolute bottom-0 left-0 right-0 p-5 bg-background-950/95 border-t border-background-800">
-        {/* <TouchableOpacity
+        <TouchableOpacity
           onPress={handleSubmit(onSubmit)}
           activeOpacity={0.8}
           className="bg-lime-500 p-4 rounded-2xl items-center flex-row justify-center shadow-lg shadow-lime-500/20"
@@ -164,17 +162,8 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
               <ActivityIndicator color={colors.background[950]} />
               <Text className="text-background-950">{mode === "create" ? "יוצר עבורך את האימון..." : "מעדכן את האימון..."}</Text>
             </View> : mode === "create" ? 'צור אימון חדש' : 'עדכן את האימון'}</Text>
-        </TouchableOpacity> */}
-        <Success
-          isLoading={isPendingCreate}
-          isSuccess={isSuccessCreate}
-          onPress={handleSubmit(onSubmit)}
-          onDone={() => router.back()}
-          label={mode === "create" ? "צור אימון חדש" : "עדכן את האימון"}
-          loadingLabel={mode === "create" ? "יוצר עבורך..." : "מעדכן..."}
-          size={60}
-          className="bg-lime-500 p-4 w-full shadow-lg shadow-lime-500/20" // עיצוב רחב ומרשים
-        />
+        </TouchableOpacity>
+
       </View>
     </KeyboardAvoidingView>
   );

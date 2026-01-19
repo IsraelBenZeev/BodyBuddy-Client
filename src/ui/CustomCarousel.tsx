@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import { Dimensions, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
   runOnJS,
+  SharedValue // הוספנו את הטיפוס הזה
+  ,
+
+
+
   useAnimatedScrollHandler,
   useAnimatedStyle,
-  useSharedValue,
-  SharedValue // הוספנו את הטיפוס הזה
+  useSharedValue
 } from 'react-native-reanimated';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -15,21 +19,23 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 interface CarouselProps {
   data: any[];
   renderItem: (
-    item: any, 
-    isActive: boolean, 
+    item: any,
+    isActive: boolean,
     isSwiped: boolean, // חובה לפי ה-CardPlan שלך
+    activeId: string,
     translateY: SharedValue<number> // חובה לפי ה-CardPlan שלך
   ) => React.ReactNode;
   widthCard: number;
   onSelect?: (id: any) => void;
   variant?: 'center' | 'chain';
   gap?: number;
+  keyField?: string;
 }
 
-const AnimatedCarouselItem = ({ 
-  item, index, scrollX, widthCard, TOTAL_ITEM_SIZE, renderItem, isActive, onPress, variant, gap 
+const AnimatedCarouselItem = ({
+  item, index, scrollX, widthCard, TOTAL_ITEM_SIZE, renderItem, isActive, onPress, variant, gap, activeId, itemId
 }: any) => {
-  
+
   // FIX: יצירת הערכים עבור ה-CardPlan בתוך כל אייטם
   const translateY = useSharedValue(0);
   const isSwiped = false; // כאן תוכל להוסיף לוגיקה עתידית
@@ -46,19 +52,19 @@ const AnimatedCarouselItem = ({
       zIndex: isActive ? 10 : 1,
     };
   });
-
+  const currentActiveId = activeId || "";
   return (
-    <TouchableOpacity onPress={() => onPress?.(item.id)} activeOpacity={0.8}>
+    <TouchableOpacity onPress={() => onPress?.(itemId)} activeOpacity={0.8}>
       <Animated.View style={[{ width: widthCard, marginRight: gap, overflow: 'visible' }, animatedStyle]}>
         {/* FIX: כאן אנחנו מעבירים את כל 4 הארגומנטים שה-renderItem מצפה להם */}
-        {renderItem(item, isActive, isSwiped, translateY)}
+        {renderItem(item, isActive, isSwiped, currentActiveId, translateY)}
       </Animated.View>
     </TouchableOpacity>
   );
 };
 
-const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chain', gap = 15 }: CarouselProps) => {
-  const [activeId, setActiveId] = useState<string | number | null>(data[0]?.id || null);
+const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chain', gap = 15, keyField = 'id' }: CarouselProps) => {
+  const [activeId, setActiveId] = useState<string | number | null>(data[0]?.[keyField] || null);
   const scrollX = useSharedValue(0);
 
   const TOTAL_ITEM_SIZE = widthCard + gap;
@@ -73,11 +79,15 @@ const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chai
       scrollX.value = event.contentOffset.x;
       const index = Math.round(event.contentOffset.x / TOTAL_ITEM_SIZE);
       if (data[index]) {
-        runOnJS(updateActiveId)(data[index].id);
+        runOnJS(updateActiveId)(data[index][keyField]);
       }
     },
   });
-
+  useEffect(() => {
+    if (data.length > 0 && activeId === null) {
+      setActiveId(data[0][keyField]);
+    }
+  }, [data]);
   return (
     <View style={styles.container}>
       <Animated.ScrollView
@@ -94,24 +104,29 @@ const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chai
           paddingBottom: variant === 'center' ? 80 : 20,
         }}
       >
-        {data.map((item, index) => (
-          <AnimatedCarouselItem
-            key={item.id.toString()}
-            item={item}
-            index={index}
-            scrollX={scrollX}
-            widthCard={widthCard}
-            TOTAL_ITEM_SIZE={TOTAL_ITEM_SIZE}
-            renderItem={renderItem} // מעבירים את הפונקציה המקורית
-            isActive={item.id === activeId}
-            variant={variant}
-            gap={gap}
-            onPress={(id: any) => {
-              setActiveId(id);
-              onSelect?.(id);
-            }}
-          />
-        ))}
+        {data.map((item, index) => {
+          const itemId = item?.[keyField];
+          return (
+            <AnimatedCarouselItem
+              key={itemId?.toString() || index}
+              item={item}
+              itemId={itemId}
+              index={index}
+              scrollX={scrollX}
+              widthCard={widthCard}
+              TOTAL_ITEM_SIZE={TOTAL_ITEM_SIZE}
+              renderItem={renderItem} // מעבירים את הפונקציה המקורית
+              isActive={itemId === activeId}
+              activeId={activeId as string}
+              variant={variant}
+              gap={gap}
+              onPress={(id: any) => {
+                setActiveId(id);
+                onSelect?.(id);
+              }}
+            />
+          )
+        })}
       </Animated.ScrollView>
     </View>
   );

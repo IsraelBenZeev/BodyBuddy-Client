@@ -16,7 +16,6 @@ export const getWorkoutsByUserUserId = async (user_id: string) => {
   }
 };
 export const getWorkoutPlanById = async (id: string) => {
-  console.log("getWorkoutPlanById");
 
   try {
     const { data, error } = await supabase.from('workouts_plans').select('*').eq('id', id).maybeSingle();

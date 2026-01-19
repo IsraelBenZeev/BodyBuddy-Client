@@ -1,13 +1,11 @@
 import { useWorkoutPlan } from "@/src/hooks/useWorkout";
-import SuccessAnimation from "@/src/ui/Animations/Success";
 import BackGround from "@/src/ui/BackGround";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Loading from "@/src/ui/Loading";
+import Header from "./review/Header";
 import { useState } from "react";
-import { Text, TouchableOpacity, useWindowDimensions } from "react-native";
-import { View } from "react-native-animatable";
-import ListExercise from "../form/ListExercises";
-import CardWorkouPlan from "./CardWorkouPlan";
-import Header from "./Header";
+import { useWindowDimensions } from "react-native";
+import ReviewWorkoutPlan from "./review/ReviewWorkoutPlan";
+import Session from "./active/Session";
 
 interface Props {
     id: string;
@@ -20,37 +18,19 @@ const SessionManager = ({ id }: Props) => {
     const { data: workoutPlan, isLoading: workoutPlanLoading } = useWorkoutPlan(id, user_id);
     const [isStart, setIsStart] = useState(false);
 
-    if (workoutPlanLoading) return null; // או Loading component
+    if (workoutPlanLoading) return (
+        <BackGround>
+            <Loading size="large" />
+        </BackGround>
+    );
 
     return (
         <BackGround>
             <Header workoutPlan={workoutPlan} />
-            <View
-                animation="fadeInUp"
-                duration={800}
-                className="px-4 mt-4"
-                style={{ maxHeight: height * 0.45 }}
-            >
-                <Text className="text-zinc-400 text-right mb-2 font-bold mr-2">תרגילים באימון</Text>
-                <ListExercise
-                    key={workoutPlan?.exercise_ids?.join(',')}
-                    mode="preview"
-                    selectExercisesIds={workoutPlan?.exercise_ids}
-                />
-            </View>
-            <CardWorkouPlan workoutPlan={workoutPlan} />
-            <View className="absolute bottom-10 left-0 right-0 items-center px-10">
-                <TouchableOpacity
-                    onPress={() => setIsStart(true)}
-                    activeOpacity={0.8}
-                    className="bg-lime-500 w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl shadow-lime-500/40"
-                    style={{ elevation: 10 }}
-                >
-                    <Text className="text-black font-black text-xl mr-2">התחל אימון</Text>
-                    <MaterialCommunityIcons name="play" size={28} color="black" />
-                </TouchableOpacity>
-            </View>
-            <SuccessAnimation />
+
+            {!isStart && <ReviewWorkoutPlan workoutPlan={workoutPlan} setIsStart={setIsStart} />}
+            {isStart && <Session setIsStart={setIsStart} workoutPlan={workoutPlan} />}
+
         </BackGround>
     );
 };
