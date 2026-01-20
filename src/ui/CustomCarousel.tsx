@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
   runOnJS,
-  SharedValue // הוספנו את הטיפוס הזה
-  ,
-
-
-
+  SharedValue, // הוספנו את הטיפוס הזה
   useAnimatedScrollHandler,
   useAnimatedStyle,
-  useSharedValue
+  useSharedValue,
 } from 'react-native-reanimated';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -30,21 +26,47 @@ interface CarouselProps {
   variant?: 'center' | 'chain';
   gap?: number;
   keyField?: string;
+  onIndexChange?: (index: number) => void;
 }
 
 const AnimatedCarouselItem = ({
-  item, index, scrollX, widthCard, TOTAL_ITEM_SIZE, renderItem, isActive, onPress, variant, gap, activeId, itemId
+  item,
+  index,
+  scrollX,
+  widthCard,
+  TOTAL_ITEM_SIZE,
+  renderItem,
+  isActive,
+  onPress,
+  variant,
+  gap,
+  activeId,
+  itemId,
+  onIndexChange,
 }: any) => {
-
   // FIX: יצירת הערכים עבור ה-CardPlan בתוך כל אייטם
   const translateY = useSharedValue(0);
   const isSwiped = false; // כאן תוכל להוסיף לוגיקה עתידית
 
   const animatedStyle = useAnimatedStyle(() => {
-    const inputRange = [(index - 1) * TOTAL_ITEM_SIZE, index * TOTAL_ITEM_SIZE, (index + 1) * TOTAL_ITEM_SIZE];
+    const inputRange = [
+      (index - 1) * TOTAL_ITEM_SIZE,
+      index * TOTAL_ITEM_SIZE,
+      (index + 1) * TOTAL_ITEM_SIZE,
+    ];
     const isCenter = variant === 'center';
-    const scale = interpolate(scrollX.value, inputRange, [isCenter ? 0.9 : 1, 1, isCenter ? 0.9 : 1], Extrapolation.CLAMP);
-    const opacity = interpolate(scrollX.value, inputRange, [isCenter ? 0.5 : 1, 1, isCenter ? 0.5 : 1], Extrapolation.CLAMP);
+    const scale = interpolate(
+      scrollX.value,
+      inputRange,
+      [isCenter ? 0.9 : 1, 1, isCenter ? 0.9 : 1],
+      Extrapolation.CLAMP
+    );
+    const opacity = interpolate(
+      scrollX.value,
+      inputRange,
+      [isCenter ? 0.5 : 1, 1, isCenter ? 0.5 : 1],
+      Extrapolation.CLAMP
+    );
 
     return {
       transform: [{ scale }, { scaleX: -1 }],
@@ -52,18 +74,27 @@ const AnimatedCarouselItem = ({
       zIndex: isActive ? 10 : 1,
     };
   });
-  const currentActiveId = activeId || "";
+  const currentActiveId = activeId || '';
   return (
-    <TouchableOpacity onPress={() => onPress?.(itemId)} activeOpacity={0.8}>
-      <Animated.View style={[{ width: widthCard, marginRight: gap, overflow: 'visible' }, animatedStyle]}>
-        {/* FIX: כאן אנחנו מעבירים את כל 4 הארגומנטים שה-renderItem מצפה להם */}
-        {renderItem(item, isActive, isSwiped, currentActiveId, translateY)}
-      </Animated.View>
-    </TouchableOpacity>
+    <Animated.View
+      style={[{ width: widthCard, marginRight: gap, overflow: 'visible', flex: 1 }, animatedStyle]}
+    >
+      {/* FIX: כאן אנחנו מעבירים את כל 4 הארגומנטים שה-renderItem מצפה להם */}
+      {renderItem(item, isActive, isSwiped, currentActiveId, translateY)}
+    </Animated.View>
   );
 };
 
-const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chain', gap = 15, keyField = 'id' }: CarouselProps) => {
+const CustomCarousel = ({
+  data,
+  renderItem,
+  widthCard,
+  onSelect,
+  variant = 'chain',
+  gap = 15,
+  keyField = 'id',
+  onIndexChange,
+}: CarouselProps) => {
   const [activeId, setActiveId] = useState<string | number | null>(data[0]?.[keyField] || null);
   const scrollX = useSharedValue(0);
 
@@ -92,13 +123,37 @@ const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chai
     <View style={styles.container}>
       <Animated.ScrollView
         horizontal
-        style={{ transform: [{ scaleX: -1 }] }}
+        style={{ transform: [{ scaleX: -1 }], flex: 1 }}
         onScroll={onScroll}
         scrollEventThrottle={16}
         showsHorizontalScrollIndicator={false}
         snapToInterval={TOTAL_ITEM_SIZE}
         decelerationRate="fast"
         disableIntervalMomentum={true}
+        onMomentumScrollEnd={(event) => {
+          // בגלל ה-transform scaleX: -1, לפעמים צריך Math.abs או חישוב הפוך
+          // נסה קודם ככה:
+          const offset = event.nativeEvent.contentOffset.x;
+          const index = Math.round(offset / TOTAL_ITEM_SIZE);
+
+          console.log("index: ", index);
+
+          if (data[index]) {
+            const id = data[index][keyField];
+
+            // 1. עדכון ה-ID הפנימי של הקרוסלה (במידה ויש runOnJS)
+            runOnJS(setActiveId)(id);
+
+            // 2. שליחת האינדקס וה-ID חזרה ל-Session
+            if (onIndexChange) {
+              runOnJS(onIndexChange)(index);
+            }
+
+            if (onSelect) {
+              runOnJS(onSelect)(id);
+            }
+          }
+        }}
         contentContainerStyle={{
           paddingHorizontal: ITEM_SPACING,
           paddingBottom: variant === 'center' ? 80 : 20,
@@ -125,7 +180,7 @@ const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chai
                 onSelect?.(id);
               }}
             />
-          )
+          );
         })}
       </Animated.ScrollView>
     </View>
@@ -133,7 +188,7 @@ const CustomCarousel = ({ data, renderItem, widthCard, onSelect, variant = 'chai
 };
 
 const styles = StyleSheet.create({
-  container: { width: '100%', paddingVertical: 0 },
+  container: { width: '100%', flex: 1, paddingVertical: 0 },
 });
 
 export default CustomCarousel;

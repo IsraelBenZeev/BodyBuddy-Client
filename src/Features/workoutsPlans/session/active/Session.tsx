@@ -7,9 +7,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Dimensions, Text, View } from "react-native";
 import Card from "./Card";
-import MyInput from "./MyInput";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const Session = ({ setIsStart, workoutPlan }: { setIsStart: any, workoutPlan: WorkoutPlan }) => {
     const { data: exercises, isLoading } = useGetExercisesByIds(workoutPlan.exercise_ids);
@@ -35,8 +34,8 @@ const Session = ({ setIsStart, workoutPlan }: { setIsStart: any, workoutPlan: Wo
         return () => clearInterval(interval);
     }, []);
     if (isLoading) return <View className="flex-1 bg-background-900 justify-center items-center"><Text className="text-white">טוען...</Text></View>;
+    const [activeIndex, setActiveIndex] = useState(0);
 
-    
     return (
         <View className="flex-1 bg-background-900">
             <View className="px-6 flex-row justify-between items-center py-4">
@@ -46,14 +45,34 @@ const Session = ({ setIsStart, workoutPlan }: { setIsStart: any, workoutPlan: Wo
                 </View>
             </View>
 
-            <View className="flex-1 justify-center">
+            {/* <View className="flex-1" style={{ height: SCREEN_HEIGHT * 0.85 }}>
                 <CustomCarousel
                     data={exercises || []}
-                    widthCard={SCREEN_WIDTH * 0.85}
+                    widthCard={SCREEN_WIDTH * 0.95}
                     variant="center"
                     keyField="exerciseId"
                     renderItem={(item, isActive, isSwiped, activeId) => (
-                        <Card item={item} isActive={isActive} activeId={activeId} control={control}/>
+                        <Card
+                            item={item}
+                            isActive={isActive}
+                            activeId={activeId}
+                            control={control}
+                        />
+                    )}
+                />
+            </View> */}
+            <View className="px-6">
+                <Text className="text-white text-2xl font-black">תרגיל {activeIndex+1} מתוך {exercises?.length}</Text>
+            </View>
+            <View className="flex-1" style={{ height: SCREEN_HEIGHT * 0.85 }}>
+                <CustomCarousel
+                    data={exercises || []}
+                    widthCard={SCREEN_WIDTH * 0.95}
+                    variant="center"
+                    keyField="exerciseId"
+                    onIndexChange={(index) => setActiveIndex(index)} // המשתנה onIndexChange מקבל את ה-index
+                    renderItem={(item, isActive, isSwiped, activeId) => (
+                        <Card item={item} isActive={isActive} activeId={activeId} control={control} />
                     )}
                 />
             </View>
