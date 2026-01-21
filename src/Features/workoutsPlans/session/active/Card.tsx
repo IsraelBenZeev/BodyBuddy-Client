@@ -1,5 +1,6 @@
 import { Exercise } from '@/src/types/exercise';
 import { Image } from 'expo-image';
+import { useRef } from 'react';
 import { Control } from 'react-hook-form';
 import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import Failds from './Failds';
@@ -47,6 +48,12 @@ interface CardProps {
 // };
 const Card = ({ item, isActive, activeId, control }: CardProps) => {
     const { width, height } = useWindowDimensions();
+    const scrollViewRef = useRef<ScrollView>(null);
+    const scrollToBottom = () => {
+        setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+    };
 
     return (
         <View className="bg-background-900 p-2">
@@ -54,8 +61,9 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
                 <Text className="text-lime-500 font-bold text-xs uppercase tracking-widest mb-2">{item.bodyParts_he}</Text>
                 <Text className="text-white text-3xl font-black mb-6 italic text-right">{item.name_he}</Text>
             </View>
-            
+
             <ScrollView
+                ref={scrollViewRef}
                 className=""
                 contentContainerStyle={{ paddingBottom: 20 }}
                 nestedScrollEnabled={true}
@@ -69,9 +77,9 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
                             contentFit="cover"
                         />
                     </View>
-                    <View className="w-full bd">
+                    <View className="w-full">
 
-                        <Failds control={control} item={item} />
+                        <Failds control={control} item={item} onScrollBottom={scrollToBottom} />
                     </View>
                 </View>
             </ScrollView>

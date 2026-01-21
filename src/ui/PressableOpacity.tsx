@@ -7,6 +7,8 @@ interface PressableOpacityProps extends PressableProps {
     bgColor?: string;         // צבע בסיס, למשל: "zinc-900" 
     activeOpacity?: string;   // רמת השקיפות, למשל: "/70"
     onPress?: () => void;
+    onPressIn?: () => void;
+    onPressOut?: () => void;
 }
 
 const PressableOpacity = ({
@@ -15,9 +17,11 @@ const PressableOpacity = ({
     bgColor = "zinc-900",
     activeOpacity = "/70",
     onPress,
+    onPressIn,
+    onPressOut
 }: PressableOpacityProps) => {
     return (
-        <Pressable onPress={onPress}>
+        <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
             {({ pressed }) => {
                 // חישוב ה-className בזמן ריצה
                 const dynamicBg = pressed ? `bg-${bgColor}${activeOpacity}` : `bg-${bgColor}`;

@@ -25,7 +25,7 @@ const Session = ({ setIsStart, workoutPlan }: { setIsStart: any, workoutPlan: Wo
     };
     const onSubmit = (data: any) => {
         data.totalTime = totalTime;
-        console.log("data from onSubmit: ", data);
+        console.log("data from onSubmit: ", JSON.stringify(data, null, 2));
     }
     useEffect(() => {
         const interval = setInterval(() => {
@@ -62,7 +62,7 @@ const Session = ({ setIsStart, workoutPlan }: { setIsStart: any, workoutPlan: Wo
                 />
             </View> */}
             <View className="px-6">
-                <Text className="text-white text-2xl font-black">תרגיל {activeIndex+1} מתוך {exercises?.length}</Text>
+                <Text className="text-white text-2xl font-black">תרגיל {activeIndex + 1} מתוך {exercises?.length}</Text>
             </View>
             <View className="flex-1" style={{ height: SCREEN_HEIGHT * 0.85 }}>
                 <CustomCarousel
@@ -83,7 +83,8 @@ const Session = ({ setIsStart, workoutPlan }: { setIsStart: any, workoutPlan: Wo
                 </View>
 
                 <PressableOpacity
-                    onPress={handleSubmit(onSubmit)}
+                    // onPress={handleSubmit(onSubmit)}
+                    onPress={handleSubmit(onSubmit, (errors) => console.log("Validation Errors:", errors))}
                     bgColor="lime-500"
                     className="w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl shadow-lime-500/40"
                 >
