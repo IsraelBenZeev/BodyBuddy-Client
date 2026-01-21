@@ -1,10 +1,12 @@
 import PressableOpacity from '@/src/ui/PressableOpacity';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import StepInput from './StepInput';
+import PremiumCheck from './PremiumCheck';
 
 const Failds = ({ control, item, onScrollBottom }: any) => {
+    const [isCompleted, setIsCompleted] = useState(false);
     const { fields, append } = useFieldArray({
         control,
         name: `exercises.${item.exerciseId}.sets`
@@ -80,6 +82,9 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                 {/* <MaterialCommunityIcons name="plus" size={20} color="#bef264" /> */}
                 <Text className="text-lime-500 font-bold ml-2">הוסף סט</Text>
             </PressableOpacity>
+            <View className="w-full flex-row justify-end bd">
+                <PremiumCheck checked={isCompleted} onPress={() => setIsCompleted(!isCompleted)} />
+            </View>
         </View>
     );
 };
