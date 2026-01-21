@@ -1,10 +1,11 @@
 import { colors } from '@/colors';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import { modeListExercises } from '@/src/types/mode';
+import AppButton from '@/src/ui/PressableOpacity';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 interface CardAreaBodyProps {
   selectedPart: BodyPart[];
   isLoading?: boolean;
@@ -36,9 +37,10 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
         </View>
       </View>
       {/* 3. כפתור הנעה לפעולה (CTA) */}
-      <TouchableOpacity
-        className=""
-        activeOpacity={0.8}
+      <AppButton
+        className="bg-lime-500 flex-row items-center justify-center py-[18px] rounded-[20px] gap-[12px] shadow-lime-500 shadow-offset-[0/8] shadow-opacity-30 shadow-radius-[15px] elevation-5"
+        haptic="medium"
+        animationType="opacity"
         onPress={() => {
           if (selectedPart.length > 0) {
             router.push({
@@ -50,11 +52,10 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
             });
           }
         }}
-        style={styles.mainButton}
       >
         <AntDesign name="arrow-left" size={20} color="black" />
         <Text style={styles.buttonText}>למעבר לתרגילים</Text>
-      </TouchableOpacity>
+      </AppButton>
     </View>
   );
 };
@@ -72,20 +73,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
   },
-  mainButton: {
-    backgroundColor: colors.lime[500],
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 18,
-    borderRadius: 20,
-    gap: 12,
-    shadowColor: colors.lime[500],
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
-    elevation: 5,
-  },
+ 
   buttonText: {
     color: 'black',
     fontSize: 18,

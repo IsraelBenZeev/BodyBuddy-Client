@@ -5,10 +5,11 @@ import BackGround from '@/src/ui/BackGround';
 import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
 import Loading from '@/src/ui/Loading';
 import { useRouter } from 'expo-router';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
 import CustomCarousel from '../../../ui/CustomCarousel';
 import CardPlan from './CardPlan';
+import AppButton from '@/src/ui/PressableOpacity';
 
 const userID = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
@@ -62,20 +63,24 @@ const WorkoutList = () => {
               זה הזמן ליצור את האימון הראשון שלך ולהתחיל להתקדם למטרה!
             </Text>
 
-            <TouchableOpacity
+            <AppButton
+              haptic="medium"
+              animationType="opacity"
               onPress={handleCreateNew}
               className="bg-lime-500 flex-row items-center px-8 py-4 rounded-2xl shadow-lg"
             >
               <Text className="text-background-900 font-bold text-lg mr-2">צור אימון חדש</Text>
               <IconAddToList color={colors.background[900]} size={24} />
-            </TouchableOpacity>
+            </AppButton>
           </View>
         )}
 
         {/* כפתור הוספה צף (רק כשיש אימונים) */}
         {plansData && plansData.length > 0 && (
           <View className="absolute -bottom-4 left-8">
-            <TouchableOpacity
+            <AppButton
+              haptic="medium"
+              animationType="opacity"
               onPress={handleCreateNew}
               className="bg-lime-500 items-center justify-center rounded-full w-16 h-16 shadow-2xl"
               style={{
@@ -87,7 +92,7 @@ const WorkoutList = () => {
               }}
             >
               <IconAddToList color={colors.background[900]} size={36} />
-            </TouchableOpacity>
+            </AppButton>
           </View>
         )}
       </View>

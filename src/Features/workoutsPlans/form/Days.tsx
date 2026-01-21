@@ -1,11 +1,12 @@
 import { colors } from "@/colors";
+import AppButton from "@/src/ui/PressableOpacity";
 import { Control, Controller } from 'react-hook-form';
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface Props {
     control: Control<any>;
     name: string;
-        isPendingCreate: boolean;
+    isPendingCreate: boolean;
 }
 
 const Days = ({ control, name, isPendingCreate }: Props) => {
@@ -37,29 +38,34 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
                         <View className="flex-row justify-between items-center bg-background-900/50 p-2 rounded-2xl border border-background-800">
                             {days.map((day, index) => {
                                 const isSelected = value.includes(day);
-                                const containerStyle = {
-                                    backgroundColor: isSelected ? colors.lime[500] : 'transparent',
-                                    shadowColor: isSelected ? colors.lime[500] : 'transparent',
-                                    shadowOpacity: isSelected ? 0.5 : 0,
-                                    shadowRadius: isSelected ? 4 : 0,
-                                    shadowOffset: { width: 0, height: 0 },
-                                };
                                 const textStyle = {
                                     color: isSelected ? colors.background[950] : colors.background[400],
                                     fontWeight: 'bold' as 'bold',
                                 };
                                 return (
-                                    <TouchableOpacity
+                                    <AppButton
                                         disabled={isPendingCreate}
                                         key={index}
+                                        animationType="opacity"
+                                        haptic="medium"
                                         activeOpacity={0.7}
                                         onPress={() => handleToggle(day)}
-                                        style={[styles.baseDay, containerStyle]}
+                                        className={`
+                                        w-10 h-10 items-center justify-center rounded-full
+                                        ${isSelected ? "bg-lime-500" : "bg-transparent"}
+                                    `}
+                                        style={isSelected ? {
+                                            shadowColor: "#bef264",
+                                            shadowOffset: { width: 0, height: 0 },
+                                            shadowOpacity: 0.5,
+                                            shadowRadius: 4,
+                                            elevation: 4
+                                        } : {}}
                                     >
-                                        <Text style={textStyle}>
+                                        <Text className={`font-bold ${isSelected ? "text-zinc-950" : "text-zinc-400"}`}>
                                             {day}
                                         </Text>
-                                    </TouchableOpacity>
+                                    </AppButton>
                                 )
                             })}
                         </View>
@@ -70,15 +76,4 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
         />
     )
 }
-
-const styles = StyleSheet.create({
-    baseDay: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 50,
-        width: 40,
-        height: 40,
-    }
-});
-
 export default Days;

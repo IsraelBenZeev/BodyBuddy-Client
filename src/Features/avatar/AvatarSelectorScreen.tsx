@@ -17,7 +17,7 @@ const fakeUser2 = {
 import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../colors';
 import ModalBottom from '../../ui/ModalButtom';
@@ -113,7 +113,7 @@ const AvatarSelectorScreen = () => {
           </Text>
         </View>
       </View>
-
+      
       {/* מודאל תחתון */}
       <ModalBottom
         ref={sheetRef}
@@ -122,7 +122,7 @@ const AvatarSelectorScreen = () => {
         minHeight="40%"
         maxHeight="40%"
         enablePanDownToClose={true}
-        // onClose={()=> setSelectedParts([])}
+      // onClose={()=> setSelectedParts([])}
       >
         <View style={{ paddingBottom: 100 }}>
           <CardAreaBody selectedPart={selectedParts} />

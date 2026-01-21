@@ -1,12 +1,11 @@
 import { WorkoutPlan } from "@/src/types/workout";
-import PressableOpacity from "@/src/ui/PressableOpacity";
+import AppButton from "@/src/ui/PressableOpacity";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Dispatch, SetStateAction } from "react";
 import { Text, useWindowDimensions, View } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import ListExercise from "../../form/ListExercises";
 import CardWorkouPlan from "./CardWorkouPlan";
-import Header from "./Header";
 
 interface Props {
     workoutPlan: WorkoutPlan;
@@ -31,16 +30,15 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
             </AnimatedView>
             <CardWorkouPlan workoutPlan={workoutPlan} />
             <View className="absolute bottom-10 left-0 right-0 px-10">
-                <PressableOpacity
+                <AppButton
                     onPress={() => setIsStart(true)}
-                    className="w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl"
-                    bgColor="lime-500"
-                    activeOpacity="0.8"
-                    style={{ elevation: 10 }}
+                    className="bg-lime-500 w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl"
+                    haptic="medium"
+                    animationType="both"
                 >
                     <Text className="text-black font-black text-xl mr-2">התחל אימון</Text>
                     <MaterialCommunityIcons name="play" size={28} color="black" />
-                </PressableOpacity>
+                </AppButton>
             </View>
         </View>
     );

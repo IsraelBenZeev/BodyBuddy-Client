@@ -2,8 +2,9 @@ import { colors } from '@/colors';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import Form from './Form';
+import AppButton from '@/src/ui/PressableOpacity';
 interface AddWorkoutPlanProps {
   mode: modeAddWorkoutPlan;
   workout_plan_id?: string;
@@ -18,9 +19,13 @@ const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
         </View>
         <View className="flex-row-reverse justify-between items-center px-5 pb-4">
           <Text className="text-lime-400 text-xl font-bold">{mode === "edit" ? "עריכה" : "תוכנית חדשה"}</Text>
-          <TouchableOpacity onPress={() => router.back()} className="bg-white/10 p-2 rounded-full">
+          <AppButton
+            animationType='opacity'
+            haptic='medium'
+            onPress={() => router.back()}
+            className="bg-white/10 p-2 rounded-full">
             <Ionicons name="close" size={20} color={colors.lime[400]} />
-          </TouchableOpacity>
+          </AppButton>
         </View>
       </View>
 

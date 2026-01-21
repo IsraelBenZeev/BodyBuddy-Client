@@ -1,7 +1,7 @@
 import { useGetExercisesByIds } from "@/src/hooks/useEcercises";
 import { WorkoutPlan, } from "@/src/types/workout";
 import CustomCarousel from "@/src/ui/CustomCarousel";
-import PressableOpacity from "@/src/ui/PressableOpacity";
+import AppButton from "@/src/ui/PressableOpacity";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -82,15 +82,15 @@ const Session = ({ setIsStart, workoutPlan }: { setIsStart: any, workoutPlan: Wo
                     {/* <MyInput control={control} name="note" label="הערה לאימון" /> */}
                 </View>
 
-                <PressableOpacity
-                    // onPress={handleSubmit(onSubmit)}
+                <AppButton
                     onPress={handleSubmit(onSubmit, (errors) => console.log("Validation Errors:", errors))}
-                    bgColor="lime-500"
-                    className="w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl shadow-lime-500/40"
+                    className="bg-lime-500 w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl shadow-lime-500/40"
+                    haptic="medium"
+                    animationType="both"
                 >
                     <Text className="text-black font-black text-xl mr-2">סיים אימון</Text>
                     <MaterialCommunityIcons name="flag-checkered" size={24} color="black" />
-                </PressableOpacity>
+                </AppButton>
             </View>
         </View>
     );

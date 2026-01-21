@@ -1,13 +1,13 @@
-import { colors } from '@/colors';
 import { useExercises } from '@/src/hooks/useEcercises';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
+import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
 
@@ -16,7 +16,7 @@ interface ExercisesScreenProps {
   mode: string | string[] | undefined;
 }
 const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
-  
+
   const router = useRouter();
   const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
   const [page, setPage] = useState<number>(1);
@@ -83,24 +83,19 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
               initialNumToRender={10}
             />
           </View>
-          {mode === "picker" && <View className="absolute bottom-10 left-0 right-0 items-center px-10">
-            <Pressable
-              style={({ pressed }) => [
-                {
-                  transform: [{ scale: pressed ? 0.96 : 1 }], // אפקט לחיצה של פרימיום
-                  shadowColor: "#bef264",
-                  shadowOffset: { width: 0, height: 10 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 20,
-                  elevation: 10, // עבור אנדרואיד
-                }
-              ]}
-              className="bg-lime-500 w-full h-16 rounded-2xl items-center justify-center"
-              onPress={() => router.back()}
-            >
-              <Text className="text-black font-bold text-lg">שמור וסיים</Text>
-            </Pressable>
-          </View>}
+          {mode === "picker" && (
+            <View className="absolute bottom-10 left-0 right-0 items-center px-10">
+              <AppButton
+                animationType="scale"
+                haptic="success"
+                onPress={() => router.back()}
+                // העברנו את כל העיצוב ל-ClassName אחד נקי
+                className="bg-lime-500 w-full h-16 rounded-2xl items-center justify-center shadow-lime-500 shadow-offset-[0/10] shadow-opacity-30 shadow-radius-[20px] elevation-10"
+              >
+                <Text className="text-zinc-950 font-bold text-lg">שמור וסיים</Text>
+              </AppButton>
+            </View>
+          )}
         </View>
       )}
     </BackGround>

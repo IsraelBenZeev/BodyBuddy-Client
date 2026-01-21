@@ -1,5 +1,5 @@
-import { colors } from '@/colors';
-import { StyleSheet, Text, Pressable } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import AppButton from './PressableOpacity';
 interface IconButtonProps {
   children: React.ReactNode;
   text?: string;
@@ -8,31 +8,27 @@ interface IconButtonProps {
 }
 const IconButton = ({ children, text, classNameText, onPress }: IconButtonProps) => {
   return (
-    <Pressable style={styles.button} className="gap-2 items-center" onPress={onPress}>
+    <AppButton
+      animationType="opacity"
+      haptic="medium"
+      style={styles.button}
+      className="gap-2 items-center w-[15%] h-10 justify-center rounded-lg"
+      onPress={onPress}>
+
       {children}
       {text && <Text
-      style={styles.text}
-       className={classNameText ? classNameText : ''}>{text}</Text>}
-    </Pressable>
+        style={styles.text}
+        className={classNameText ? classNameText : ''}>{text}</Text>}
+    </AppButton>
   );
 };
 
 export default IconButton;
 const styles = StyleSheet.create({
-  button: {
-    width: '15%',
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    // backgroundColor: colors.lime[500],
-    // backgroundColor: colors.background[700],
-    // marginHorizontal: 16,
-  },
-    text: {
-        position: 'absolute',
-        bottom: -18,
-        textAlign: 'center',
-        width: '100%',
-    }
+  text: {
+    position: 'absolute',
+    bottom: -18,
+    textAlign: 'center',
+    width: '100%',
+  }
 });
