@@ -82,9 +82,9 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                 {/* <MaterialCommunityIcons name="plus" size={20} color="#bef264" /> */}
                 <Text className="text-lime-500 font-bold ml-2">הוסף סט</Text>
             </PressableOpacity>
-            <View className="w-full flex-row justify-end bd">
+            {/* <View className="w-full flex-row justify-end bd">
                 <PremiumCheck checked={isCompleted} onPress={() => setIsCompleted(!isCompleted)} />
-            </View>
+            </View> */}
         </View>
     );
 };
