@@ -3,26 +3,28 @@ import { useDeleteWorkoutPlan } from "@/src/hooks/useWorkout";
 import { useWorkoutStore } from "@/src/store/workoutsStore";
 import { WorkoutPlan } from "@/src/types/workout";
 import Loading from "@/src/ui/Loading";
+import AppButton from "@/src/ui/PressableOpacity";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useRouter } from "expo-router";
-import { ReactNode, useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from "expo-router";
+import { ReactNode, useEffect, useState } from "react";
+import { Text, View } from "react-native";
 import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
 const Button = ({ text, onPress, icon }: { text: string, onPress: () => void, icon: ReactNode }) => {
     return (
         <View className="flex-col items-center" >
-            <TouchableOpacity
+            <AppButton
+                animationType="scale"
+                haptic="medium"
                 onPress={onPress}
-                style={{ backgroundColor: colors.background[900] }}
-                className="p-2 rounded-full"
+                className="p-2 rounded-full bg-background-900"
             >
                 {icon}
-            </TouchableOpacity>
+            </AppButton>
             <Text className="text-lime-500 text-xs">{text}</Text>
         </View >
     )
@@ -61,16 +63,22 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
                 className="flex-row w-full"
             >
                 <View className="flex-row items-center gap-6">
-                    <TouchableOpacity onPress={() => deleteWorkoutPlanMutation(plan?.id as string)}>
+                    <AppButton
+                        animationType="opacity"
+                        haptic="medium"
+                        onPress={() => deleteWorkoutPlanMutation(plan?.id as string)}>
                         <View className={`flex-row items-center order  rounded-full p-2 ${deletePending ? 'opacity-50 ' : 'border border-lime-500'}`}>
                             {deletePending ? <Loading size="small" /> : <AntDesign name="check" size={16} color={colors.lime[500]} />}
                         </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setIsShowButtonOkDelete(false)}>
+                    </AppButton>
+                    <AppButton
+                        animationType="opacity"
+                        haptic="medium"
+                        onPress={() => setIsShowButtonOkDelete(false)}>
                         <View className="flex-row items-center bd rounded-full p-2">
                             <AntDesign name="close" size={16} color="red" />
                         </View>
-                    </TouchableOpacity>
+                    </AppButton>
                 </View>
                 <Text className="text-lime-500 text-xl font-semibold">האם למחוק?</Text>
             </Animated.View>
@@ -112,18 +120,18 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
             <Button
                 text="שתף"
                 onPress={() => {
-                    
+
                 }}
                 icon={<Feather name="share" size={26} color={colors.lime[500]} />}
             />
             <Button
                 text="שכפל"
                 onPress={() => {
-                    
+
                 }}
                 icon={<Ionicons name="duplicate-outline" size={26} color={colors.lime[500]} />}
             />
-            
+
         </View>
     )
 }

@@ -3,10 +3,11 @@ import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { Exercise } from '@/src/types/exercise';
 import { modeListExercises } from '@/src/types/mode';
 import { ButtonAddFavorit, ButtonRemoveFavorit } from '@/src/ui/ButtonsFavorit';
+import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface CardExerciseProps {
   item: Exercise;
@@ -23,22 +24,36 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
   const isSelected = mode === 'picker' && isSelectedId;
 
-  return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={() => {
-        if (mode === 'view') {
-          router.push({
-            pathname: '/exercise/[exerciseId]',
-            params: { exerciseId: item.exerciseId },
-          });
-        } else {
+  // פונקציית ניווט/בחירה מרכזית
+  const handleMainPress = () => {
+    if (mode === 'view') {
+      router.push({
+        pathname: '/exercise/[exerciseId]',
+        params: { exerciseId: item.exerciseId },
+      });
+    } else {
+      toggleExercise(item.exerciseId);
+    }
+  };
 
-          toggleExercise(item.exerciseId);
-        }
-      }}
-      // משתמשים במערך סטיילים כדי למנוע כפל קוד ולשמור על ביצועים
-      style={[styles.exerciseCard, isSelected && styles.exerciseCardSelected]}
+  return (
+    <AppButton
+      animationType="scale"
+      haptic="medium"
+      onPress={handleMainPress}
+      // הסרנו צלליות מורכבות מה-className כדי למנוע קריסת Navigation
+      className={`
+        flex-row-reverse items-center mb-4 p-3 rounded-[24px] border-[1.5px]
+        ${isSelected ? "bg-zinc-800 border-lime-500" : "bg-zinc-900 border-zinc-800"}
+      `}
+      // העברנו את הצללית ל-style בטוח
+      style={isSelected ? {
+        shadowColor: colors.lime[500],
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4
+      } : {}}
     >
       {/* תמונה / GIF */}
       <View style={styles.imageContainer}>
@@ -47,21 +62,30 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
           style={styles.image}
           contentFit="cover"
           transition={400}
-          cachePolicy={'disk'}
         />
+        
+        {/* כפתור מועדפים - רק במצב VIEW */}
         {mode === 'view' && (
-          <Pressable style={styles.favoriteBadge} onPress={() => toggleFavorite(item.exerciseId)}>
-            {favorites.includes(item.exerciseId) ? <ButtonRemoveFavorit /> : <ButtonAddFavorit />}
-          </Pressable>
+          <View className="absolute top-1 right-1 z-50">
+             <AppButton
+                animationType="opacity"
+                haptic="light"
+                onPress={() => toggleFavorite(item.exerciseId)}
+                className="bg-zinc-950/70 rounded-lg p-1"
+                hitSlop={10} // מגדיל את אזור הלחיצה בלי להגדיל את הכפתור
+             >
+                {favorites.includes(item.exerciseId) ? <ButtonRemoveFavorit /> : <ButtonAddFavorit />}
+             </AppButton>
+          </View>
         )}
       </View>
 
       {/* מידע על התרגיל */}
-      <View style={styles.infoContainer}>
+      <View className="flex-1 pr-4 justify-center">
         <View>
           <Text
             numberOfLines={1}
-            style={[styles.exerciseTitle, isSelected && { color: colors.lime[400] }]}
+            className={`text-right text-[17px] font-bold ${isSelected ? "text-lime-400" : "text-white"}`}
           >
             {item.name_he}
           </Text>
@@ -71,39 +95,40 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
               size={14}
               color={isSelected ? colors.lime[400] : colors.background[400]}
             />
-            <Text style={styles.muscleText} numberOfLines={1}>
+            <Text className="text-zinc-400 text-[13px] mr-1 text-right" numberOfLines={1}>
               {item.targetMuscles_he.join(', ')}
             </Text>
           </View>
         </View>
 
-        {/* תגיות ציוד בתחתית הכרטיס */}
+        {/* תגיות ציוד */}
         <View className="flex-row-reverse flex-wrap gap-1 mt-3">
           {item.equipments_he.slice(0, 2).map((eq, i) => (
             <View
               key={i}
-              style={[styles.equipmentBadge, isSelected && styles.equipmentBadgeSelected]}
+              className={`px-2 py-1 rounded-md border ${isSelected ? "bg-lime-600 border-lime-500" : "bg-zinc-800 border-zinc-700"}`}
             >
-              <Text style={[styles.equipmentText, isSelected && { color: 'white' }]}>{eq}</Text>
+              <Text className={`text-[11px] font-semibold ${isSelected ? "text-white" : "text-zinc-400"}`}>
+                {eq}
+              </Text>
             </View>
           ))}
         </View>
       </View>
 
-      {/* אזור אינדיקטור שמאלי */}
-      <View style={styles.actionContainer}>
+      {/* אינדיקטור שמאלי */}
+      <View className="pl-1 items-center justify-center">
         {mode === 'picker' ? (
-          <View style={[styles.selectionCircle, isSelected && styles.selectionCircleActive]}>
+          <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${isSelected ? "bg-lime-400 border-lime-400" : "border-zinc-600"}`}>
             {isSelected && <MaterialCommunityIcons name="check" size={16} color="black" />}
           </View>
         ) : (
           <MaterialCommunityIcons name="chevron-left" size={24} color={colors.background[400]} />
         )}
       </View>
-    </TouchableOpacity>
+    </AppButton>
   );
 };
-
 export default CardExercise;
 
 const styles = StyleSheet.create({

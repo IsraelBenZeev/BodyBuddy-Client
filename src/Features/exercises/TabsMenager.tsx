@@ -1,9 +1,10 @@
+import { colors } from '@/colors';
+import AppButton from '@/src/ui/PressableOpacity';
 import { Hammer } from 'lucide-react-native';
 import { useRef, useState } from 'react';
-import { Animated, Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Text, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Instractions from './Instractions';
-import { colors } from '@/colors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 interface TabsManagerProps {
@@ -67,19 +68,23 @@ const TabsManager = ({ instructions }: TabsManagerProps) => {
                             className="absolute h-10 bg-lime-500 rounded-full left-1"
                         />
 
-                        <TouchableOpacity
+                        <AppButton
+                            animationType='opacity'
+                            haptic='medium'
                             onPress={() => animateTo(0)}
                             className="flex-1 items-center justify-center z-10"
                         >
                             <Text className={`font-bold ${activeTab === 0 ? 'text-background-950' : 'text-gray-500'}`}>הוראות</Text>
-                        </TouchableOpacity>
+                        </AppButton>
 
-                        <TouchableOpacity
+                        <AppButton
+                            animationType='opacity'
+                            haptic='medium'
                             onPress={() => animateTo(1)}
                             className="flex-1 items-center justify-center z-10"
                         >
                             <Text className={`font-bold ${activeTab === 1 ? 'text-background-950' : 'text-gray-500'}`}>היסטוריה</Text>
-                        </TouchableOpacity>
+                        </AppButton>
                     </View>
 
                     {/* תוכן - משתנה דינמית */}

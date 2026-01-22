@@ -6,10 +6,10 @@ import {
   TextInput,
   TextInputProps,
   TextStyle,
-  TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
+import AppButton from './PressableOpacity';
 
 interface FormInputProps<T extends FieldValues> extends TextInputProps {
   control: Control<T>;
@@ -39,9 +39,14 @@ const FormInput = <T extends FieldValues>({
   return (
     <View style={containerStyle}>
       {label && (
-        <TouchableOpacity onPress={() => inputRef.current?.focus()} disabled={isPendingCreate} activeOpacity={0.7}>
+        <AppButton
+          animationType="opacity"
+          haptic="medium"
+          onPress={() => inputRef.current?.focus()} disabled={isPendingCreate} activeOpacity={0.7}
+        >
+
           <Text style={labelStyle}>{label}</Text>
-        </TouchableOpacity>
+        </AppButton>
       )}
 
       <Controller

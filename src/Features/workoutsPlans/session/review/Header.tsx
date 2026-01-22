@@ -1,6 +1,6 @@
 import { colors } from "@/colors";
 import { WorkoutPlan } from "@/src/types/workout";
-import PressableOpacity from "@/src/ui/PressableOpacity";
+import AppButton from "@/src/ui/PressableOpacity";
 import { useRouter } from "expo-router";
 import { CircleX } from "lucide-react-native";
 import { Text, View } from "react-native-animatable";
@@ -21,9 +21,12 @@ const Header = ({ workoutPlan, }: Props) => {
                 </Text>
             </View>
             <View className="flex-1 items-end">
-                <PressableOpacity onPress={handleClose} className="p-2">
+                <AppButton
+                    haptic="light"
+                    animationType="opacity"
+                    onPress={handleClose} className="p-2">
                     <CircleX size={24} color={colors.lime[500]} strokeWidth={2} />
-                </PressableOpacity>
+                </AppButton>
             </View>
 
         </View>

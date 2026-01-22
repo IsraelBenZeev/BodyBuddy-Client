@@ -3,13 +3,13 @@ import { useDeleteWorkoutPlan } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { daysInHebrew, WorkoutPlan } from '@/src/types/workout';
 // import { IconCalendar } from '@/src/ui/IconsSVG';
-import ButtonPrimary from '@/src/ui/ButtonPrimary';
+import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { router, useFocusEffect } from 'expo-router';
 import { CalendarClock } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Buttons from './Buttons';
 interface CardPlanProps {
@@ -125,17 +125,24 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           </View>
           <View className="flex-row-reverse items-center justify-center gap-4">
             <View className='flex-1'>
-              <ButtonPrimary title="הצג אימון" onPress={() => {
-                router.push({
-                  pathname: '/workout_plan/[paramse]',
-                  params: {
-                    paramse: plan.id || '',
-                  },
-                });
-              }} />
+              <AppButton
+                haptic="medium"
+                animationType="opacity"
+                className='bg-lime-500 px-4 py-3 rounded-md items-center'
+                onPress={() => {
+                  router.push({
+                    pathname: '/workout_plan/[paramse]',
+                    params: {
+                      paramse: plan.id || '',
+                    },
+                  });
+                }} ><Text className='text-background-850 text-md font-bold'>הצג אימון</Text>
+              </AppButton>
             </View>
             <View className='flex-col items-center gap-1'>
-              <TouchableOpacity
+              <AppButton
+                haptic="medium"
+                animationType="opacity"
                 className='items-center justify-center border border-lime-500 rounded-full p-1'
                 onPress={() => {
                   if (isActive) {
@@ -144,7 +151,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
                   }
                 }}>
                 <SimpleLineIcons name="options" size={24} color={colors.lime[500]} />
-              </TouchableOpacity>
+              </AppButton>
               {/* <Text className='text-lime-500 text-xs'>אפשרויות</Text> */}
             </View>
           </View>

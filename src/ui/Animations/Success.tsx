@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
 import Loading from '@/src/ui/Loading'; // הרכיב שלך
-import PressableOpacity from '@/src/ui/PressableOpacity'; // הרכיב שלך
+import AppButton from '@/src/ui/PressableOpacity';
 import LottieView from 'lottie-react-native';
 import { ReactNode, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -45,12 +45,13 @@ const Success = ({
     };
 
     return (
-        <PressableOpacity
+        <AppButton
             onPress={onPress}
             // כשיש אנימציה, אנחנו רוצים שהרקע של הכפתור ייעלם כדי לראות את ה-Lottie
-            bgColor={showSuccess ? 'transparent' : color}
+            haptic="medium"
+            animationType="opacity"
             disabled={isLoading || showSuccess}
-            className="p-1 rounded-full items-center justify-center min-w-[40px] min-h-[40px]"
+            className={`${showSuccess ? 'bg-transparent' : `bg-${color}`} p-1 rounded-full items-center justify-center min-w-[40px] min-h-[40px] ${className}`}
         >
             {isLoading ? (
                 <View style={{ width: 24, height: 24 }}>
@@ -107,7 +108,7 @@ const Success = ({
                     )}
                 </View>
             )} */}
-        </PressableOpacity>
+        </AppButton>
     );
 };
 

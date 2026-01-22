@@ -4,12 +4,13 @@ import { WorkoutPlan } from '@/src/types/workout';
 import Success from '@/src/ui/Animations/Success';
 import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
 import Loading from '@/src/ui/Loading';
-import PressableOpacity from '@/src/ui/PressableOpacity';
+import AppButtonhaptic from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
 import { Check, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import Card from './Card';
+import AppButton from '@/src/ui/PressableOpacity';
 
 const userID = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 interface PlansSelectorProps {
@@ -49,16 +50,16 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
             // style={{ height: height }}
             className='flex-1 bg-background-850 rounded-3xl relative overflow-hidden'>
             <View
-                className='flex-row items-center justify-between relative gap-6 self-end mr-2'>
+                className='bg-background-850 flex-row items-center justify-between relative gap-6 self-end mr-2'>
                 {!!plansData?.length && <Text className='text-center text-xl font-bold text-lime-500 mb-2'>בחר תוכנית</Text>}
-                <PressableOpacity
+                <AppButton
                     onPress={() => setIsShowListWorkoutsPlans(false)}
-                    bgColor="background-850"
-                    activeOpacity="/60"
-                    className="rounded-full border border-zinc-700"
+                    haptic="light"
+                    animationType="both"
+                    className="bg-background-500 rounded-full border border-zinc-700"
                 >
-                    <X color={colors.lime[500]} strokeWidth={3} size={16} />
-                </PressableOpacity>
+                    <X color={colors.lime[500]} strokeWidth={3} size={18} />
+                </AppButton>
             </View>
             <View style={{}} className="mt-4 h-[80%]">
                 {plansData?.length ?
@@ -95,20 +96,20 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                             </Text>
 
                         </View>
-                        <PressableOpacity
-                            bgColor="lime-500"
-                            activeOpacity="/60"
+                        <AppButtonhaptic
+                            animationType='both'
+                            haptic="light"
                             onPress={() => {
                                 router.replace("/(tabs)/workouts");
                                 setIsShowListWorkoutsPlans(false);
                             }}
-                            className="flex-row items-center px-8 py-4 rounded-2xl shadow-lg"
+                            className="bg-lime-500 flex-row items-center px-8 py-4 rounded-2xl shadow-lg"
                         >
                             <Text className="text-background-900 font-bold text-lg mr-2">
                                 עבור ליצירת תוכנית
                             </Text>
                             <IconAddToList color={colors.background[900]} size={24} />
-                        </PressableOpacity>
+                        </AppButtonhaptic>
                     </View>
                 }
             </View>

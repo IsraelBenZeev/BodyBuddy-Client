@@ -1,9 +1,9 @@
-import PressableOpacity from '@/src/ui/PressableOpacity';
+import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics'; // ייבוא הרטט
 import { useRef } from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import AnimatedNumbers from 'react-native-animated-numbers';
 interface Props {
     control: Control<any>;
@@ -68,18 +68,18 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
                     name={name}
                     render={({ field: { onChange, value = 0 } }) => (
                         <View className="flex-row items-center bg-zinc-900 rounded-2xl border border-white/5">
-                            <PressableOpacity
-                                activeOpacity="/50"
+                            <AppButton
                                 disabled={!disabled}
                                 // onPress={() => handlePress(value, -step, onChange)}
-                                bgColor='background-800'
                                 onPress={() => updateValue(value, -step, onChange)} // לחיצה רגילה
                                 onPressIn={() => handleLongPressStart(value, -step, onChange)} // תחילת לחיצה ארוכה
                                 onPressOut={handleLongPressEnd} // עזיבה
-                                className={"rounded-full p-2"}
-                                >
+                                className={"bg-background-800 rounded-full p-2"}
+                                haptic="medium"
+                                animationType="both"
+                            >
                                 <MaterialCommunityIcons name="minus" size={24} color="white" />
-                            </PressableOpacity>
+                            </AppButton>
 
 
                             <View className="px-4 min-w-[30px] items-center justify-center">
@@ -93,21 +93,20 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
                                         fontStyle: 'italic'
                                     }}
                                     animationDuration={300} // מהירות הגלילה (במילי-שניות)
-                                    />
+                                />
                             </View>
 
-                            <PressableOpacity
-                                activeOpacity="/50"
+                            <AppButton
                                 disabled={!disabled}
-                                bgColor='lime-500'
-                                // onPress={() => handlePress(value, step, onChange)}
                                 onPress={() => updateValue(value, step, onChange)} // לחיצה רגילה
                                 onPressIn={() => handleLongPressStart(value, step, onChange)} // תחילת לחיצה ארוכה
                                 onPressOut={handleLongPressEnd} // עזיבה
-                                className={"rounded-full p-2"}
+                                className={"bg-lime-500 rounded-full p-2"}
+                                haptic="medium"
+                                animationType="both"
                             >
                                 <MaterialCommunityIcons name="plus" size={24} color="black" />
-                            </PressableOpacity>
+                            </AppButton>
                         </View>
                     )}
                 />

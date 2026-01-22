@@ -119,14 +119,15 @@
 import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import Loading from '@/src/ui/Loading';
+import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 
 // הפיכת ה-Pressable לרכיב אנימטיבי
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const AnimatedPressable = Animated.createAnimatedComponent(AppButton);
 
 interface CardExerciseProps {
   mode: 'edit' | 'preview';
@@ -157,6 +158,8 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
       ) : (
         selectedExercisesData.map((exercise, index) => (
           <AnimatedPressable
+            animationType="scale"
+            haptic="medium"
             key={exercise.exerciseId}
             // אנימציית כניסה ב"מפל" (Stagger)
             entering={FadeInDown.delay(index * 100).springify()}
@@ -170,12 +173,14 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
           >
             {/* כפתור מחיקה רק במצב עריכה */}
             {mode === 'edit' && (
-              <TouchableOpacity
+              <AppButton
+                animationType="scale"
+                haptic="medium"
                 onPress={() => toggleExercise?.(exercise.exerciseId)}
                 className="w-10 h-10 items-center justify-center rounded-full bg-red-500/10 mr-2"
               >
                 <MaterialCommunityIcons name="close" size={20} color="#f87171" />
-              </TouchableOpacity>
+              </AppButton>
             )}
 
             {/* תמונת התרגיל */}
@@ -205,13 +210,15 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
 
       {/* כפתור הוספה במצב עריכה */}
       {mode === 'edit' && (
-        <TouchableOpacity
+        <AppButton
+          animationType="scale"
+          haptic="medium"
           onPress={navigateToPicker}
           className="bg-zinc-900 py-3 rounded-xl mt-2 mb-4 border border-zinc-800"
           disabled={isPendingCreate}
         >
           <Text className="text-lime-400 text-center font-bold">הוסף תרגילים נוספים +</Text>
-        </TouchableOpacity>
+        </AppButton>
       )}
     </ScrollView>
   );

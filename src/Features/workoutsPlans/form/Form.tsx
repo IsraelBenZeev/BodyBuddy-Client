@@ -5,10 +5,11 @@ import { modeAddWorkoutPlan } from '@/src/types/mode';
 // import { formFailds } from '@/src/types/workout';
 import { WorkoutPlan } from '@/src/types/workout';
 import FormInput from '@/src/ui/FormInput';
+import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Days from './Days';
 import HeaderForm from './HeaderForm';
 import ListExercise from './ListExercises';
@@ -152,7 +153,10 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       </ScrollView>
 
       <View className="absolute bottom-0 left-0 right-0 p-5 bg-background-950/95 border-t border-background-800">
-        <TouchableOpacity
+        <AppButton
+          disabled={isPendingCreate}
+          animationType="scale"
+          haptic="medium"
           onPress={handleSubmit(onSubmit)}
           activeOpacity={0.8}
           className="bg-lime-500 p-4 rounded-2xl items-center flex-row justify-center shadow-lg shadow-lime-500/20"
@@ -162,7 +166,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
               <ActivityIndicator color={colors.background[950]} />
               <Text className="text-background-950">{mode === "create" ? "יוצר עבורך את האימון..." : "מעדכן את האימון..."}</Text>
             </View> : mode === "create" ? 'צור אימון חדש' : 'עדכן את האימון'}</Text>
-        </TouchableOpacity>
+        </AppButton>
 
       </View>
     </KeyboardAvoidingView>

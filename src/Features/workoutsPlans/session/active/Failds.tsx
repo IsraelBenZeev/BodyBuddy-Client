@@ -1,9 +1,9 @@
-import PressableOpacity from '@/src/ui/PressableOpacity';
 import { useEffect, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import StepInput from './StepInput';
 import PremiumCheck from './PremiumCheck';
+import AppButton from '@/src/ui/PressableOpacity';
 
 const Failds = ({ control, item, onScrollBottom }: any) => {
     const [isCompleted, setIsCompleted] = useState(false);
@@ -75,16 +75,17 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                     </View>
                 );
             })}
-            <PressableOpacity
+            <AppButton
                 onPress={handleAddSet}
                 className="bg-lime-500/10 border border-lime-500/50 py-3 rounded-2xl flex-row justify-center items-center"
+                haptic="medium"
+                animationType="both"
             >
                 {/* <MaterialCommunityIcons name="plus" size={20} color="#bef264" /> */}
                 <Text className="text-lime-500 font-bold ml-2">הוסף סט</Text>
-            </PressableOpacity>
-            {/* <View className="w-full flex-row justify-end bd">
-                <PremiumCheck checked={isCompleted} onPress={() => setIsCompleted(!isCompleted)} />
-            </View> */}
+            </AppButton>
+            <View className="w-full flex-row justify-end bd">                <PremiumCheck checked={isCompleted} onPress={() => setIsCompleted(!isCompleted)} />
+            </View> 
         </View>
     );
 };
