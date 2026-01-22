@@ -17,6 +17,7 @@ const SessionManager = ({ id }: Props) => {
   const { height } = useWindowDimensions();
   const { data: workoutPlan, isLoading: workoutPlanLoading } = useWorkoutPlan(id, user_id);
   const [isStart, setIsStart] = useState(false);
+  const [startSession, setStartSession] = useState<Date>();
 
   if (workoutPlanLoading)
     return (
@@ -30,7 +31,7 @@ const SessionManager = ({ id }: Props) => {
       <Header workoutPlan={workoutPlan} />
 
       {!isStart && <ReviewWorkoutPlan workoutPlan={workoutPlan} setIsStart={setIsStart} />}
-      {isStart && <Session setIsStart={setIsStart} workoutPlan={workoutPlan} />}
+      {isStart && <Session setIsStart={setIsStart} workoutPlan={workoutPlan}  />}
     </View>
   );
 };

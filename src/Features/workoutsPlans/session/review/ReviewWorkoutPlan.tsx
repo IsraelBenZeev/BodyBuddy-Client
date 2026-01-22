@@ -4,6 +4,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Dispatch, SetStateAction } from "react";
 import { Text, useWindowDimensions, View } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import ListExercise from "../../form/ListExercises";
 import CardWorkouPlan from "./CardWorkouPlan";
 
@@ -14,7 +15,10 @@ interface Props {
 const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
     const { height } = useWindowDimensions();
     return (
-        <View className="flex-1">
+        <Animated.View className="flex-1"
+            entering={FadeIn.duration(600)} // משך זמן הכניסה במילי-שניות
+            exiting={FadeOut.duration(400)}  // משך זמן היציאה
+        >
             <AnimatedView
                 animation="fadeInUp"
                 duration={800}
@@ -40,7 +44,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
                     <MaterialCommunityIcons name="play" size={28} color="black" />
                 </AppButton>
             </View>
-        </View>
+        </Animated.View>
     );
 };
 

@@ -72,7 +72,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
   }, [isActive]);
 
   return (
-    <Animated.View style={[animatedStyle, { height: 470, width: 280, backgroundColor: '#18181b', borderWidth: 1, borderRadius: 40 }]}>
+    <Animated.View style={[animatedStyle, { height: 470, width: 280, backgroundColor: '#18181b', borderWidth: 1, borderRadius: 40, marginTop: 30 }]}>
       <View className="h-40 w-full relative rounded-t-[40px]">
         <Image
           source={{
@@ -128,7 +128,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
               <AppButton
                 haptic="medium"
                 animationType="opacity"
-                className='bg-lime-500 px-4 py-3 rounded-md items-center'
+                className='bg-lime-500 px-3 py-2 rounded-2xl items-center'
                 onPress={() => {
                   router.push({
                     pathname: '/workout_plan/[paramse]',
@@ -136,7 +136,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
                       paramse: plan.id || '',
                     },
                   });
-                }} ><Text className='text-background-850 text-md font-bold'>הצג אימון</Text>
+                }} ><Text className='text-background-850 text-lg font-bold'>הצג אימון</Text>
               </AppButton>
             </View>
             <View className='flex-col items-center gap-1'>
