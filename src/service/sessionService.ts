@@ -1,7 +1,35 @@
 import { supabase } from '../../supabase_client';
 import { ExerciseLogDBType, SessionDBType } from '../types/session';
+export const getSessions = async (userId: string, workoutPlanId: string) => {
+    try {
+        const { data, error } = await supabase
+            .from('sessions')
+            .select()
+            .eq('user_id', userId)
+            .eq('workout_plan_id', workoutPlanId);
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error("Error getting sessions:", error);
+        throw error;
+    }
+}
 
-export const createSessionWorkout = async (session: SessionDBType) => {
+export const getSessionExerciseLogs = async (sessionId: string) => {
+    try {
+        const { data, error } = await supabase
+            .from('exercise_logs')
+            .select()
+            .eq('session_id', sessionId);
+        if (error) throw error;
+        return data as ExerciseLogDBType[];
+    } catch (error) {
+        console.error("Error getting session exercise logs:", error);
+        throw error;
+    }
+}
+
+export const createSession = async (session: SessionDBType) => {
     try {
         const { data, error } = await supabase
             .from('sessions')
@@ -23,11 +51,11 @@ export const createSessionExerciseLogs = async (exerciseLogs: ExerciseLogDBType[
     try {
         const { data, error } = await supabase
             .from('exercise_logs')
-            .insert(exerciseLogs) 
-            .select(); 
+            .insert(exerciseLogs)
+            .select();
 
         if (error) throw error;
-        return data; 
+        return data;
     } catch (error) {
         console.error("Error creating exercise logs:", error);
         throw error;

@@ -11,6 +11,7 @@ interface ModalBottomProps {
   title?: string;
   enablePanDownToClose?: boolean;
   useScrollView?: boolean; // prop חדש
+  onClose?: () => void;
   onChange?: (isOpen: boolean) => void; // prop חדש
 
 }
@@ -25,6 +26,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     enablePanDownToClose = false,
     useScrollView = true, // ברירת מחדל true
     onChange,
+    onClose,
   } = props;
 
   const snapPoints = useMemo(() => [minHeight, maxHeight], [minHeight, maxHeight]);
@@ -38,27 +40,31 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     ),
     [title]
   );
-// const handleSheetChange = useCallback(
-//   (index: number) => {
-//     if (onChange) {
-//       // אם האינדקס הוא 1 (הנקודה הגבוהה - maxHeight), נחזיר true כדי לנעול את Expo.
-//       // אם האינדקס הוא 0 (הנקודה הנמוכה - minHeight), נחזיר false כדי לשחרר את הגרירה של Expo.
-//       onChange(index > 0); 
-//     }
-//   },
-//   [onChange]
-// );
-const handleSheetChange = useCallback(
-  (index: number) => {
-    if (onChange) {
-      // כאן התיקון:
-      // אנחנו מחשיבים את המודל כ"פתוח" (נועל את האפליקציה) 
-      // כל עוד האינדקס הוא לא 1- (סגור לגמרי)
-      onChange(index !== -1); 
-    }
-  },
-  [onChange]
-);
+  // const handleSheetChange = useCallback(
+  //   (index: number) => {
+  //     if (onChange) {
+  //       // אם האינדקס הוא 1 (הנקודה הגבוהה - maxHeight), נחזיר true כדי לנעול את Expo.
+  //       // אם האינדקס הוא 0 (הנקודה הנמוכה - minHeight), נחזיר false כדי לשחרר את הגרירה של Expo.
+  //       onChange(index > 0); 
+  //     }
+  //   },
+  //   [onChange]
+  // );
+  const handleSheetChange = useCallback(
+    (index: number) => {
+      if (onChange) {
+        // כאן התיקון:
+        // אנחנו מחשיבים את המודל כ"פתוח" (נועל את האפליקציה) 
+        // כל עוד האינדקס הוא לא 1- (סגור לגמרי)
+        onChange(index !== -1);
+      }
+      if (index === -1 && onClose) {
+        console.log("onClose");
+        onClose();
+      }
+    },
+    [onChange, onClose]
+  );
 
   return (
     <BottomSheet

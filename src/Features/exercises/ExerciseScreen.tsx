@@ -7,7 +7,8 @@ import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Buttons from './Buttons';
 import Information from './Information';
-import TabsMenager from './TabsMenager';
+import Instractions from './Instractions';
+import TabsManager from './TabsMenager';
 
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
 
@@ -57,7 +58,13 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
         <View className="w-full mt-6" style={{ minHeight: 600 }}>
           <Buttons exerciseId={exerciseData?.exerciseId} />
           <Information exercise={exerciseData} />
-          <TabsMenager instructions={exerciseData?.instructions_he} />
+          {/* <TabsMenager instructions={exerciseData?.instructions_he} /> */}
+          <TabsManager
+            tabs={[
+              { title: 'הוראות', Component: <Instractions instructions={exerciseData?.instructions_he} /> },
+              { title: 'היסטוריה', Component: <View className="p-6 items-end"><Text className="text-white text-lg">בהקמה...</Text></View> },
+            ]}
+          />
         </View>
       </ScrollView>
     </BackGround>

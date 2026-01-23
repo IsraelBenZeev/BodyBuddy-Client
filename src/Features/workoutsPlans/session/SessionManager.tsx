@@ -3,9 +3,9 @@ import BackGround from '@/src/ui/BackGround';
 import Loading from '@/src/ui/Loading';
 import { useState } from 'react';
 import { useWindowDimensions, View } from 'react-native';
+import Header from '../review/Header';
+import ReviewWorkoutPlan from '../review/ReviewWorkoutPlan';
 import Session from './active/Session';
-import Header from './review/Header';
-import ReviewWorkoutPlan from './review/ReviewWorkoutPlan';
 
 interface Props {
   id: string;
@@ -31,7 +31,7 @@ const SessionManager = ({ id }: Props) => {
       <Header workoutPlan={workoutPlan} />
 
       {!isStart && <ReviewWorkoutPlan workoutPlan={workoutPlan} setIsStart={setIsStart} />}
-      {isStart && <Session setIsStart={setIsStart} workoutPlan={workoutPlan}  />}
+      {isStart && <Session setIsStart={setIsStart} workoutPlan={workoutPlan} />}
     </View>
   );
 };
