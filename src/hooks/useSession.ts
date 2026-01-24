@@ -46,38 +46,11 @@ export const useSessionCreateExerciseLog = (user_id: string) => {
 
 
 export const useSessionExerciseLogs = (sessionId: string) => {
-    console.log("sessionId from hook", sessionId);
     return useQuery({
         queryKey: ['sessionDetails', sessionId],
         queryFn: () => getSessionExerciseLogs(sessionId),
         enabled: !!sessionId,
         retry: 0,
-        // select: (data) => {
-        //     if (!data) return [];
-        //     const grouped = data.reduce((acc: any, log: any) => {
-        //         const exerciseId = log.exercise_id;
-        //         const exerciseName = log.exercises?.name || "תרגיל לא ידוע";
-
-        //         if (!acc[exerciseId]) {
-        //             acc[exerciseId] = {
-        //                 id: exerciseId,
-        //                 name: exerciseName,
-        //                 sets: []
-        //             };
-        //         }
-
-        //         acc[exerciseId].sets.push({
-        //             id: log.id,
-        //             weight: log.weight,
-        //             reps: log.reps,
-        //             index: log.set_index
-        //         });
-
-        //         return acc as ExerciseLogDBType[];
-        //     }, {});
-
-        //     return Object.values(grouped); // מחזיר מערך של תרגילים
-        // }
     });
 };
 

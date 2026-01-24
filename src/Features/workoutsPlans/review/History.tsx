@@ -9,33 +9,37 @@ const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 interface Props {
     selectedSession: string;
     setSelectedSession: Dispatch<SetStateAction<string>>;
-    workoutPlanId:string;
+    workoutPlanId: string;
+    sheetRef: any;
 }
 
-const History = ({ selectedSession, setSelectedSession,workoutPlanId }: Props) => {
-    const sheetRef = useRef<any>(null);
+const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef }: Props) => {
+    // const sheetRef = useRef<any>(null);
     const { data: sessionsData, isLoading: isLoadingSessions } = useGetSessions(user_id, workoutPlanId);
-    useEffect(() => {
-        if (selectedSession && selectedSession !== "") {
-            setTimeout(() => {
-                sheetRef.current?.snapToIndex(1);
-            }, 50);
-        }
-    }, [selectedSession]);
-
+    // useEffect(() => {
+    //     if (selectedSession && selectedSession !== "") {
+    //         setTimeout(() => {
+    //             sheetRef.current?.snapToIndex(1);
+    //         }, 50);
+    //     }
+    // }, [selectedSession]);
+    const sessionsCount = sessionsData?.length || 0;
 
     if (isLoadingSessions) return <Text>Loading...</Text>;
     return (
-        <View className="pb-24">
-            <Text>History</Text>
-            <ScrollView className="">
-                {sessionsData?.map((session) => (
-                    <SessionReviewCard key={session.id} session={session} setSelectedSession={setSelectedSession} sheetRef={sheetRef} />
-                ))}
-            </ScrollView>
-        
-            <ModalBottom
-                key={selectedSession} // <--- זה יפתור את רוב בעיות ה-Lifecycle
+        <View className="pb-24 flex-1">
+            {sessionsCount > 0 ? (
+                <ScrollView className="">
+                    {sessionsData?.map((session) => (
+                        <SessionReviewCard key={session.id} session={session} setSelectedSession={setSelectedSession} sheetRef={sheetRef} />
+                    ))}
+                </ScrollView>
+            ) : (
+                <Text className="text-white text-2xl font-black text-right">אין אימונים</Text>
+            )}
+
+            {/* <ModalBottom
+                key={selectedSession}
                 ref={sheetRef}
                 title="פרטי האימון"
                 initialIndex={-1}
@@ -44,8 +48,8 @@ const History = ({ selectedSession, setSelectedSession,workoutPlanId }: Props) =
                 enablePanDownToClose={true}
                 onClose={() => setSelectedSession("")}
             >
-                <SessionInformation sessionId={selectedSession}/>
-            </ModalBottom>
+                <SessionInformation sessionId={selectedSession} />
+            </ModalBottom> */}
         </View>
     );
 };

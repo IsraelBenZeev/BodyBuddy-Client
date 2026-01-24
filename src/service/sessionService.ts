@@ -6,7 +6,8 @@ export const getSessions = async (userId: string, workoutPlanId: string) => {
             .from('sessions')
             .select()
             .eq('user_id', userId)
-            .eq('workout_plan_id', workoutPlanId);
+            .eq('workout_plan_id', workoutPlanId)
+            .order('created_at', { ascending: false });
         if (error) throw error;
         return data;
     } catch (error) {
@@ -20,7 +21,8 @@ export const getSessionExerciseLogs = async (sessionId: string) => {
         const { data, error } = await supabase
             .from('exercise_logs')
             .select()
-            .eq('session_id', sessionId);
+            .eq('session_id', sessionId)
+            .order('created_at', { ascending: false });
         if (error) throw error;
         return data as ExerciseLogDBType[];
     } catch (error) {

@@ -76,6 +76,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                     set_number: index + 1,
                     reps: Number(set.reps),
                     weight: Number(set.weight),
+                    workout_plan_id: workoutPlan.id as string,
                 });
             });
         });

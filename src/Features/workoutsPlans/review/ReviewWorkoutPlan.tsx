@@ -1,22 +1,34 @@
 import { WorkoutPlan } from "@/src/types/workout";
 import AppButton from "@/src/ui/PressableOpacity";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
+import ModalBottom from "@/src/ui/ModalButtom";
 import TabsManager from "../../exercises/TabsMenager";
 import ListExercise from "../form/ListExercises";
 import CardWorkouPlan from "./CardWorkouPlan";
+import Graphs from "./Graphs";
 import History from "./History";
+import SessionInformation from "./SessionInformation";
 interface Props {
     workoutPlan: WorkoutPlan;
     setIsStart: Dispatch<SetStateAction<boolean>>;
 }
 const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
+    const sheetRef = useRef<any>(null);
+
     const { height } = useWindowDimensions();
     const [selectedSession, setSelectedSession] = useState<string>("");
+    useEffect(() => {
+        if (selectedSession && selectedSession !== "") {
+            setTimeout(() => {
+                sheetRef.current?.snapToIndex(1);
+            }, 50);
+        }
+    }, [selectedSession]);
     return (
         <Animated.View className="flex-1"
             entering={FadeIn.duration(600)} // משך זמן הכניסה במילי-שניות
@@ -39,8 +51,9 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
                 <CardWorkouPlan workoutPlan={workoutPlan} />
                 <TabsManager
                     tabs={[
-                        { title: 'היסטוריה', Component: <History workoutPlanId={workoutPlan.id as string} setSelectedSession={setSelectedSession} selectedSession={selectedSession} /> },
-                        { title: 'התקדמות', Component: <View className="p-6 items-end"><Text className="text-white text-lg">בהקמה...</Text></View> },
+                        { title: 'היסטוריה', Component: <History workoutPlanId={workoutPlan.id as string} setSelectedSession={setSelectedSession} selectedSession={selectedSession} sheetRef={sheetRef} /> },
+                        // { title: 'התקדמות', Component: <SessionInformation /> },
+                        { title: 'התקדמות', Component: <Graphs workoutPlanId={workoutPlan.id as string} /> },
                     ]}
                 />
             </ScrollView>
@@ -59,6 +72,18 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
                     <MaterialCommunityIcons name="play" size={28} color="black" />
                 </AppButton>
             </View>
+            <ModalBottom
+                key={selectedSession}
+                ref={sheetRef}
+                title="פרטי האימון"
+                initialIndex={-1}
+                minHeight="50%"
+                maxHeight="90%"
+                enablePanDownToClose={true}
+                onClose={() => setSelectedSession("")}
+            >
+                <SessionInformation sessionId={selectedSession} />
+            </ModalBottom>
         </Animated.View>
     );
 };

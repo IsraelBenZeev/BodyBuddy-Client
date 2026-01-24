@@ -14,6 +14,8 @@ export type ExerciseLogDBType = {
     session_id: string;
     exercise_id: string;
     set_number: number;
+    created_at?: string;
+    workout_plan_id: string;
     reps: number;
     weight: number;
 }
