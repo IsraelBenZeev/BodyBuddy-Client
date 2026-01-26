@@ -13,6 +13,7 @@ import CardWorkouPlan from "./CardWorkouPlan";
 import Graphs from "./Graphs";
 import History from "./History";
 import SessionInformation from "./SessionInformation";
+import ExercisesProgress from "../session/review/ExercisesProgress";
 interface Props {
     workoutPlan: WorkoutPlan;
     setIsStart: Dispatch<SetStateAction<boolean>>;
@@ -52,8 +53,8 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
                 <TabsManager
                     tabs={[
                         { title: 'היסטוריה', Component: <History workoutPlanId={workoutPlan.id as string} setSelectedSession={setSelectedSession} selectedSession={selectedSession} sheetRef={sheetRef} /> },
-                        // { title: 'התקדמות', Component: <SessionInformation /> },
-                        { title: 'התקדמות', Component: <Graphs workoutPlanId={workoutPlan.id as string} /> },
+                        // { title: 'התקדמות', Component: <Graphs workoutPlanId={workoutPlan.id as string} /> },
+                        { title: 'התקדמות', Component: <ExercisesProgress workoutPlanId={workoutPlan.id as string} /> },
                     ]}
                 />
             </ScrollView>

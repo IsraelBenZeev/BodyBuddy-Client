@@ -73,3 +73,16 @@ export const deleteWorkoutPlan = async (id: string) => {
     throw error;
   }
 };
+export const getExerciseByWorkoutPlanId = async (workoutPlanId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('exercise_logs')
+      .select('*')
+      .eq('exercise_logs', workoutPlanId);
+    if (error) throw error;
+    return data as string[];
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
