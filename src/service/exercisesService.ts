@@ -34,6 +34,7 @@ export const getExerciseById = async (exerciseId: string) => {
   }
 };
 export const getExerciseByIds = async (exerciseId: string[]) => {
+  console.log("getExerciseByIds");
   try {
     const { data, error } = await supabase
       .from('exercises')

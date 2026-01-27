@@ -14,13 +14,6 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
 
   const { data: exercises, isLoading: isExerciseLoading } = useGetExercisesByIds([exerciseId]);
   const exerciseData = exercises?.[0];
-
-  useEffect(() => {
-    if (!exerciseData) return;
-    console.log("exercise", exerciseData)
-
-  }, [exerciseData, isExerciseLoading])
-
   if (isExerciseLoading || !exerciseData) {
     return (
       <BackGround>

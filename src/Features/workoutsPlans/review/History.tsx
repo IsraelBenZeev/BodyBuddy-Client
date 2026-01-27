@@ -16,6 +16,8 @@ interface Props {
 const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef }: Props) => {
     // const sheetRef = useRef<any>(null);
     const { data: sessionsData, isLoading: isLoadingSessions } = useGetSessions(user_id, workoutPlanId);
+    console.log("workoutPlanId: ", workoutPlanId);
+
     // useEffect(() => {
     //     if (selectedSession && selectedSession !== "") {
     //         setTimeout(() => {
@@ -35,21 +37,8 @@ const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef 
                     ))}
                 </ScrollView>
             ) : (
-                <Text className="text-white text-2xl font-black text-right">אין אימונים</Text>
+                <Text className="text-white text-2xl font-black text-right">אין אימונים עדיין</Text>
             )}
-
-            {/* <ModalBottom
-                key={selectedSession}
-                ref={sheetRef}
-                title="פרטי האימון"
-                initialIndex={-1}
-                minHeight="50%"
-                maxHeight="90%"
-                enablePanDownToClose={true}
-                onClose={() => setSelectedSession("")}
-            >
-                <SessionInformation sessionId={selectedSession} />
-            </ModalBottom> */}
         </View>
     );
 };

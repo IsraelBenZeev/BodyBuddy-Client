@@ -12,31 +12,53 @@ export const useExercises = (bodyParts: BodyPart[], page: number) => {
   });
 };
 
+// export const useGetExercisesByIds = (ids: string[]) => {
+//   const queryClient = useQueryClient();
+//   return useQuery({
+//     queryKey: ['exercises', 'byIds', ids],
+//     queryFn: async () => {
+//       const allCachedData = queryClient.getQueriesData<{ exercises: Exercise[] }>({
+//         queryKey: ['exercises']
+//       });
+//       const flattenedExercises = allCachedData.flatMap(([_, data]) => data?.exercises || []);
+//       const foundInCache = flattenedExercises.filter(ex => ids.includes(ex.exerciseId));
+//       const foundIds = foundInCache.map(ex => ex.exerciseId);
+//       const missingIds = ids.filter(id => !foundIds.includes(id));
+//       if (missingIds.length === 0) {
+//         return foundInCache;
+//       }
+//       console.log("Fetching missing exercises from DB:", missingIds);
+//       const fetchedFromDb = await getExerciseByIds(missingIds);
+//       const finalData = [...foundInCache, ...fetchedFromDb];
+//       return ids.map(id => finalData.find(ex => ex.exerciseId === id)).filter(Boolean) as Exercise[];
+//     },
+//     staleTime: Infinity,
+//     enabled: ids.length > 0,
+//   });
+// };
+
 export const useGetExercisesByIds = (ids: string[]) => {
+  console.log("useGetExercisesByIds");
   const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: ['exercises', 'byIds', ids],
-    queryFn: async () => {
-      const allCachedData = queryClient.getQueriesData<{ exercises: Exercise[] }>({
-        queryKey: ['exercises']
-      });
-      const flattenedExercises = allCachedData.flatMap(([_, data]) => data?.exercises || []);
-      const foundInCache = flattenedExercises.filter(ex => ids.includes(ex.exerciseId));
-      const foundIds = foundInCache.map(ex => ex.exerciseId);
-      const missingIds = ids.filter(id => !foundIds.includes(id));
-      if (missingIds.length === 0) {
-        return foundInCache;
-      }
-      console.log("Fetching missing exercises from DB:", missingIds);
-      const fetchedFromDb = await getExerciseByIds(missingIds);
-      const finalData = [...foundInCache, ...fetchedFromDb];
-      return ids.map(id => finalData.find(ex => ex.exerciseId === id)).filter(Boolean) as Exercise[];
+    queryFn: () => getExerciseByIds(ids),
+    // כאן הקסם קורה:
+    initialData: () => {
+      // מחפשים במטמון הקיים תרגילים שמתאימים ל-IDs שלנו
+      const allExercises = queryClient.getQueryData<Exercise[]>(['exercises']);
+      if (!allExercises) return undefined;
+
+      const filtered = allExercises.filter(ex => ids.includes(ex.exerciseId));
+      
+      // מחזירים נתונים מהמטמון רק אם מצאנו את הכל
+      return filtered.length === ids.length ? filtered : undefined;
     },
     staleTime: Infinity,
     enabled: ids.length > 0,
   });
 };
-
 
 // export const useGetExercisesByIds = (ids: string[]) => {
 //   const queryClient = useQueryClient();

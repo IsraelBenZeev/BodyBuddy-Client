@@ -1,5 +1,6 @@
 import { supabase } from '@/supabase_client';
 import { WorkoutPlan } from '../types/workout';
+import { ExerciseLogDBType } from '../types/session';
 
 export const getWorkoutsByUserUserId = async (user_id: string) => {
   try {
@@ -73,14 +74,15 @@ export const deleteWorkoutPlan = async (id: string) => {
     throw error;
   }
 };
-export const getExerciseByWorkoutPlanId = async (workoutPlanId: string) => {
+export const getExercisesIdsByWorkoutPlanId = async (workoutPlanId: string) => {
+  console.log("getExerciseByWorkoutPlanId");
   try {
     const { data, error } = await supabase
       .from('exercise_logs')
       .select('*')
-      .eq('exercise_logs', workoutPlanId);
+      .eq('workout_plan_id', workoutPlanId);
     if (error) throw error;
-    return data as string[];
+    return data as ExerciseLogDBType[];
   } catch (error) {
     console.error(error);
     throw error;

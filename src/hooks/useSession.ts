@@ -5,7 +5,7 @@ import { ExerciseLogDBType, SessionDBType } from "../types/session";
 const keyCashSessions = ["sessions"]
 export const useGetSessions = (user_id: string, workoutPlanId: string) => {
     return useQuery({
-        queryKey: [keyCashSessions, user_id],
+        queryKey: [keyCashSessions, workoutPlanId, user_id],
         queryFn: async () => await getSessions(user_id, workoutPlanId),
         staleTime: Infinity,
         enabled: !!user_id && !!workoutPlanId,
@@ -15,20 +15,20 @@ export const useGetSessions = (user_id: string, workoutPlanId: string) => {
         }
     });
 }
-export const useSessionCreateWorkout = (user_id: string) => {
+export const useSessionCreateWorkout = (user_id: string, workoutPlanId: string) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ session }: { session: SessionDBType }) =>
             await createSession(session),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [keyCashSessions, user_id] });
+            queryClient.invalidateQueries({ queryKey: [keyCashSessions, workoutPlanId, user_id] });
         },
         onError: (error) => {
             console.error("Mutation Error - Exercise Logs:", error);
         }
     })
 }
-export const useSessionCreateExerciseLog = (user_id: string) => {
+export const useSessionCreateExerciseLog = (user_id: string, workoutPlanId: string) => {
     const queryClient = useQueryClient();
     const { triggerSuccess } = useUIStore();
     return useMutation({
@@ -36,7 +36,7 @@ export const useSessionCreateExerciseLog = (user_id: string) => {
             await createSessionExerciseLogs(exerciseLog),
         onSuccess: () => {
             triggerSuccess("האימון נשמר בהצלחה");
-            queryClient.invalidateQueries({ queryKey: [keyCashSessions, user_id] });
+            queryClient.invalidateQueries({ queryKey: [keyCashSessions, workoutPlanId, user_id] });
         },
         onError: (error) => {
             console.error("Mutation Error - Exercise Logs:", error);

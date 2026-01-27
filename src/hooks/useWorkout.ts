@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { addExerciseToPlan, createNewWorkoutPlan, deleteWorkoutPlan, getWorkoutPlanById, getWorkoutsByUserUserId } from '../service/workoutService';
+import { addExerciseToPlan, createNewWorkoutPlan, deleteWorkoutPlan, getExercisesIdsByWorkoutPlanId, getWorkoutPlanById, getWorkoutsByUserUserId } from '../service/workoutService';
 import { useUIStore } from '../store/useUIStore';
 import { modeAddWorkoutPlan } from '../types/mode';
 import { WorkoutPlan } from '../types/workout';
@@ -84,7 +84,7 @@ export const useAddExerciseToPlan = (user_id: string) => {
     //   });
     // },
 
-onSuccess: async (data, variables) => {
+    onSuccess: async (data, variables) => {
       const refreshList = queryClient.invalidateQueries({
         queryKey: ['workoutPlans', user_id]
       });
@@ -95,7 +95,7 @@ onSuccess: async (data, variables) => {
       );
       await Promise.all([refreshList, ...refreshIndividualPlans]);
     },
-    
+
     onError: (error) => {
       console.error("Mutation error:", error);
     }
@@ -116,3 +116,13 @@ export const useDeleteWorkoutPlan = (user_id: string) => {
     },
   });
 };
+
+export const useGetExercisesIdsByWorkoutPlans = (workoutPlanId: string, user_id: string) => {
+  const queryClient = useQueryClient();
+  return useQuery({
+    queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, user_id],
+    queryFn: () => getExercisesIdsByWorkoutPlanId(workoutPlanId),
+    enabled: !!workoutPlanId && !!user_id,
+    staleTime: Infinity,
+  });
+}

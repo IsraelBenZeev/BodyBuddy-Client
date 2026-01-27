@@ -34,8 +34,8 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
         },
     });
 
-    const { mutateAsync: createSession, isPending: isPendingCreateSession } = useSessionCreateWorkout(user_id);
-    const { mutateAsync: createExerciseLog, isPending: isPendingCreateExerciseLog } = useSessionCreateExerciseLog(user_id);
+    const { mutateAsync: createSession, isPending: isPendingCreateSession } = useSessionCreateWorkout(user_id, workoutPlan.id as string);
+    const { mutateAsync: createExerciseLog, isPending: isPendingCreateExerciseLog } = useSessionCreateExerciseLog(user_id, workoutPlan.id as string);
     const formatTime = (totalSeconds: number): string => {
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
