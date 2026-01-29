@@ -13,7 +13,7 @@ import CardWorkouPlan from "./CardWorkouPlan";
 import Graphs from "./Graphs";
 import History from "./History";
 import SessionInformation from "./SessionInformation";
-import ExercisesProgress from "../session/review/ExercisesProgress";
+import ExercisesProgress from "./ExercisesProgress";
 interface Props {
     workoutPlan: WorkoutPlan;
     setIsStart: Dispatch<SetStateAction<boolean>>;

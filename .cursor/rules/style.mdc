@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+
+סטיילינג (Tailwind First): השתמש תמיד ב-Tailwind דרך className. אל תשתמש ב-StyleSheet אלא אם ביקשתי ספציפית.
+
+מערכת עיצוב (Design System):
+
+צבעי המותג המרכזיים הם: lime-500 וצבע רקע bg-[#1a1a1a] (המייצג Background 850). השתמש בהם באופן עקבי.
+
+במקרים חריגים בהם לא ניתן להשתמש ב-Tailwind, עליך לייבא ולהשתמש באובייקט COLORS מהקובץ: C:\Users\user\Documents\projects\BodyBuddy-Client\colors.ts.
