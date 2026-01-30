@@ -1,11 +1,13 @@
 ---
-alwaysApply: true
+name: style
+description: Apply these rules whenever I am working on UI components, styling, layouts, or modifying Tailwind CSS classes and colors.
 ---
 
-סטיילינג (Tailwind First): השתמש תמיד ב-Tailwind דרך className. אל תשתמש ב-StyleSheet אלא אם ביקשתי ספציפית.
+# Overview
 
-מערכת עיצוב (Design System):
-
-צבעי המותג המרכזיים הם: lime-500 וצבע רקע bg-[#1a1a1a] (המייצג Background 850). השתמש בהם באופן עקבי.
-
-במקרים חריגים בהם לא ניתן להשתמש ב-Tailwind, עליך לייבא ולהשתמש באובייקט COLORS מהקובץ: C:\Users\user\Documents\projects\BodyBuddy-Client\colors.ts.
+- For styling, always prioritize Tailwind CSS classes.
+- Primary App Colors: Use 'lime-500' for primary accents and 'background-850' for backgrounds (both are pre-configured in tailwind.config.js).
+- Inline/Standard Styles: If Tailwind is not applicable, use the centralized color palette from the 'colors' variable.
+- Color Reference: Import the color constants from the following path:
+  C:\Users\i0548\Documents\Full stack lessons\BodyBuddy\BodyBuddy-client\colors.ts
+- When using the 'colors.ts' file, ensure you use the naming convention defined within the 'colors' object to maintain consistency with the Tailwind config.

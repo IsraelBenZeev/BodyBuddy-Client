@@ -3,8 +3,9 @@ import { useGetExercisesIdsByWorkoutPlans } from '@/src/hooks/useWorkout';
 import Accordion from '@/src/ui/Accordion';
 import Loading from '@/src/ui/Loading';
 import { Image } from 'expo-image';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import GraphData from './GraphData';
 interface Props {
   workoutPlanId: string;
 }
@@ -49,11 +50,13 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
     }));
   }, [exercisesLog]);
 
+  const [openAccordionId, setOpenAccordionId] = useState<string | null>(null);
+
   if (isPending || (isPendingDetails && exercisesLog ? exercisesLog?.length > 0 : false))
     return <Loading />;
 
   return (
-    <View className="pb-20 px-4 bd">
+    <View className="pb-20 px-4">
       <Text className="text-white text-xl font-bold mb-6 text-right">
         {exercisesLog?.length ? `תרגילים באימון` : 'אין תרגילים באימון'}
       </Text>
@@ -64,8 +67,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
         );
         // console.log("exerciseDetails id", exerciseDetails?.exerciseId);
         // console.log("exercise id", exercise.id);
-        console.log('exerciseDetails gifUrl', exerciseDetails?.gifUrl);
-
+        // console.log('exerciseDetails gifUrl', exerciseDetails?.gifUrl);
         if (exercise.maxReps === 0) {
           return (
             <View key={exercise.id} className="flex-1 mr-4">
@@ -83,6 +85,11 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
         return (
           <Accordion
             key={exercise.id}
+            isOpen={openAccordionId === exercise.id}
+            onToggle={() => {
+              // אם האקורדיון כבר פתוח, סגור אותו, אחרת פתח אותו וסגור את כל האחרים
+              setOpenAccordionId(openAccordionId === exercise.id ? null : exercise.id);
+            }}
             title={
               <View className="flex-row justify-between items-center w-full">
                 <View className="flex-1 mr-4">
@@ -99,6 +106,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
                     source={exerciseDetails?.gifUrl}
                     style={{ width: 48, height: 48 }}
                     contentFit="cover"
+                    cachePolicy={'disk'}
                     transition={200}
                   />
                 </View>
@@ -106,10 +114,11 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
             }
           >
             <View className="py-2">
-              <View className="bg-zinc-800/50 rounded-2xl p-4 flex-row flex-wrap justify-between">
+              <GraphData logs={exercise.allLogs} />
+              <View className="bg-zinc-800/50 rounded-2xl p-4 flex-row flex-wrap justify-between mt-4">
                 <StatItem label="משקל שיא" value={`${exercise.maxWeight} ק"ג`} />
                 <StatItem label="חזרות שיא" value={exercise.maxReps.toString()} />
-                <StatItem label="שיא סטים" value={exercise.maxSetsRecord.toString()} />
+                <StatItem label="שיא סטים לאימון" value={exercise.maxSetsRecord.toString()} />
                 <StatItem label="סהכ עבודה" value={`${exercise.allLogs.length} סטים בוצעו`} />
               </View>
             </View>

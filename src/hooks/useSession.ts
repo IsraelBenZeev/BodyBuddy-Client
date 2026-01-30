@@ -22,6 +22,7 @@ export const useSessionCreateWorkout = (user_id: string, workoutPlanId: string) 
             await createSession(session),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [keyCashSessions, workoutPlanId, user_id] });
+            queryClient.invalidateQueries({ queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, user_id] });
         },
         onError: (error) => {
             console.error("Mutation Error - Exercise Logs:", error);
