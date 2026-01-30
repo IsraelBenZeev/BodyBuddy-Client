@@ -6,7 +6,7 @@ import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
@@ -15,29 +15,57 @@ interface ExercisesScreenProps {
   bodyParts: string | string[] | undefined;
   mode: string | string[] | undefined;
 }
-const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
+const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
+const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const router = useRouter();
   const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
-  const [page, setPage] = useState<number>(1);
-  const { data, isLoading } = useExercises(selectedPartsArray, page);
+  // const [page, setPage] = useState<number>(1);
+  // const { data, isLoading } = useExercises(user_id, selectedPartsArray, page);
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useExercises(user_id, selectedPartsArray);
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
   const [favorites, setFavorites] = useState<string[]>([]);
-
+  const allExercises = useMemo(() => {
+    return data?.pages.flatMap((page) => page.exercises) ?? [];
+  }, [data]);
+  console.log("data?.pages", data?.pages);
+  
+  useEffect(() => {
+    if (data) {
+      console.log('--- React Query Debug ---');
+      console.log('מספר עמודים בזיכרון:', data.pages.length);
+      console.log('האם יש עמוד הבא?:', hasNextPage);
+      console.log('נתונים בעמוד האחרון:', data.pages[data.pages.length - 1]?.exercises?.length, 'תרגילים');
+      console.log('-------------------------');
+    }
+  }, [data, hasNextPage]);
   const uniqueBodyParts = useMemo(() => {
-    if (!data?.exercises) return [];
-    const partsSet = new Set(data.exercises.flatMap((ex) => ex.bodyParts || []));
+    if (!allExercises.length) return [];
+    const partsSet = new Set(allExercises.flatMap((ex) => ex.bodyParts || []));
     return Array.from(partsSet) as BodyPart[];
-  }, [data?.exercises]);
+  }, [allExercises]);
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
   };
+
   const filteredExercises = useMemo(() => {
-    if (!data?.exercises.length) return [];
-    if (selectedFilter === 'all') return data.exercises;
-    return data.exercises.filter((ex) => ex.bodyParts.includes(selectedFilter));
-  }, [data?.exercises.length, selectedFilter]);
+    if (!allExercises.length) return [];
+    if (selectedFilter === 'all') return allExercises;
+    return allExercises.filter((ex) => ex.bodyParts.includes(selectedFilter));
+  }, [allExercises, selectedFilter]);
+
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
   return (
     <BackGround>
       {mode === 'view' && (
@@ -56,7 +84,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       {isLoading ? (
         <Loading />
       ) : (
-        <View className="flex-1 pt-2 items-center">
+        <View className="flex-1 pt-2 items-center px-1">
           {(mode === 'picker') && <Handle />}
           <View className="w-full">
             {selectedPartsArray.length > 1 && (
@@ -78,9 +106,15 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 />
               )}
               keyExtractor={(item) => item.exerciseId}
-              contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
-              showsVerticalScrollIndicator={false}
-              initialNumToRender={10}
+              onEndReached={handleEndReached}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={
+                isFetchingNextPage ? (
+                  <View className="py-6 items-center">
+                    <Text className="text-lime-400 font-medium">טוען תרגילים נוספים...</Text>
+                  </View>
+                ) : <View className="h-20" />
+              }
             />
           </View>
           {mode === "picker" && (

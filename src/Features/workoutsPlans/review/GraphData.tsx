@@ -1,6 +1,6 @@
 import { colors } from "@/colors";
 import { ExerciseLogDBType } from "@/src/types/session";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
@@ -129,7 +129,6 @@ const GraphData = ({ logs }: Props) => {
     if (!logs || logs.length === 0 || currentData.length === 0) {
         return null;
     }
-
     return (
         <View className="mb-4">
             {/* כפתורי טאבים */}
@@ -178,7 +177,7 @@ const GraphData = ({ logs }: Props) => {
                     textShiftY={-12}
                     textFontSize={12}
                     showVerticalLines
-                    verticalLinesColor="rgba(255,255,255,0.05)"
+                    verticalLinesColor={colors.lime[800]}
                     isAnimated={true}
                     animationDuration={1000}
                 />

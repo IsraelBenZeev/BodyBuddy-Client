@@ -15,6 +15,7 @@ const userID = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
 const WorkoutList = () => {
   const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(userID);
+  
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const router = useRouter();
 

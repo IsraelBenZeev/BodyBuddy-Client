@@ -16,6 +16,8 @@ interface Props {
 const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef }: Props) => {
     // const sheetRef = useRef<any>(null);
     const { data: sessionsData, isLoading: isLoadingSessions } = useGetSessions(user_id, workoutPlanId);
+    console.log("workoutPlanId: ", workoutPlanId);
+
     // useEffect(() => {
     //     if (selectedSession && selectedSession !== "") {
     //         setTimeout(() => {

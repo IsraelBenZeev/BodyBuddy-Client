@@ -7,7 +7,7 @@ import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { router, useFocusEffect } from 'expo-router';
-import { CalendarClock } from 'lucide-react-native';
+import { CalendarClock, Dumbbell } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Text, View } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
@@ -97,6 +97,10 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
         <Text numberOfLines={3} className="text-zinc-400 text-sm text-right mt-3 leading-5">
           {plan?.description}
         </Text>
+        <View className="flex-row items-center gap-2 self-end">
+          <Text className="text-zinc-300 text-[10px]">{plan?.exercise_ids.length} תרגילים</Text>
+          <Dumbbell size={18} color={colors.lime[500]} strokeWidth={1.25} />
+        </View>
 
         <View className="flex-row-reverse flex-wrap gap-2 mt-4">
           <CalendarClock size={18} color={colors.lime[500]} strokeWidth={1.25} />
@@ -108,7 +112,6 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
               <Text className="text-zinc-300 text-[10px]">{daysInHebrew[day]}</Text>
             </View>
           ))}
-          <Text className="text-zinc-300 text-[10px]">{plan?.exercise_ids.length} תרגילים</Text>
         </View>
 
         {/* 4. חלק תחתון - כפתור ונתונים */}

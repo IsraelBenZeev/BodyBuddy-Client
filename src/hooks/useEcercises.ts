@@ -1,41 +1,28 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getExerciseByIds, getExercisesByBodyParts } from '../service/exercisesService';
 import { BodyPart } from '../types/bodtPart';
 import { Exercise } from '../types/exercise';
 const limit = 30;
-export const useExercises = (bodyParts: BodyPart[], page: number) => {
-  return useQuery({
-    queryKey: ['exercises', [...bodyParts].sort(), page],
-    queryFn: () => getExercisesByBodyParts(bodyParts, page, limit),
-    staleTime: Infinity,
-    enabled: !!bodyParts,
-  });
-};
-
-// export const useGetExercisesByIds = (ids: string[]) => {
-//   const queryClient = useQueryClient();
+// export const useExercises = (user_id: string, bodyParts: BodyPart[], page: number) => {
 //   return useQuery({
-//     queryKey: ['exercises', 'byIds', ids],
-//     queryFn: async () => {
-//       const allCachedData = queryClient.getQueriesData<{ exercises: Exercise[] }>({
-//         queryKey: ['exercises']
-//       });
-//       const flattenedExercises = allCachedData.flatMap(([_, data]) => data?.exercises || []);
-//       const foundInCache = flattenedExercises.filter(ex => ids.includes(ex.exerciseId));
-//       const foundIds = foundInCache.map(ex => ex.exerciseId);
-//       const missingIds = ids.filter(id => !foundIds.includes(id));
-//       if (missingIds.length === 0) {
-//         return foundInCache;
-//       }
-//       console.log("Fetching missing exercises from DB:", missingIds);
-//       const fetchedFromDb = await getExerciseByIds(missingIds);
-//       const finalData = [...foundInCache, ...fetchedFromDb];
-//       return ids.map(id => finalData.find(ex => ex.exerciseId === id)).filter(Boolean) as Exercise[];
-//     },
+//     queryKey: ['exercises', [...bodyParts].sort(), page],
+//     queryFn: () => getExercisesByBodyParts(bodyParts, page, limit),
 //     staleTime: Infinity,
-//     enabled: ids.length > 0,
+//     enabled: !!bodyParts,
 //   });
 // };
+
+export const useExercises = (user_id: string, bodyParts: BodyPart[]) => {
+  return useInfiniteQuery({
+    queryKey: ['exercises', [...bodyParts].sort()],
+    queryFn: ({ pageParam = 1 }) => getExercisesByBodyParts(bodyParts, pageParam, limit),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.exercises.length < limit ? undefined : allPages.length + 1;
+    },
+    staleTime: Infinity,
+  });
+};
 
 export const useGetExercisesByIds = (ids: string[]) => {
   console.log("useGetExercisesByIds");
@@ -51,7 +38,7 @@ export const useGetExercisesByIds = (ids: string[]) => {
       if (!allExercises) return undefined;
 
       const filtered = allExercises.filter(ex => ids.includes(ex.exerciseId));
-      
+
       // מחזירים נתונים מהמטמון רק אם מצאנו את הכל
       return filtered.length === ids.length ? filtered : undefined;
     },
