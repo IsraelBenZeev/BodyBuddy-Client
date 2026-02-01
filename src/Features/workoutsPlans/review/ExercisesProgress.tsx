@@ -52,7 +52,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
   const [openAccordionId, setOpenAccordionId] = useState<string | null>(null);
 
 
-console.log("processedExercises", JSON.stringify(processedExercises, null, 2));
+// console.log("processedExercises", JSON.stringify(processedExercises, null, 2));
 
   if (isPending || (isPendingDetails && exercisesLog ? exercisesLog?.length > 0 : false))
     return <Loading />;
