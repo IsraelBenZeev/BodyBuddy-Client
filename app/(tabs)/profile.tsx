@@ -1,12 +1,7 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import ProfileScreen from "@/src/Features/auth/ProfileScreen";
 
-const Profil = () => {
-  return (
-    <View>
-      <Text>profil</Text>
-    </View>
-  );
+const Profile = () => {
+  return <ProfileScreen />;
 };
 
-export default Profil;
+export default Profile;

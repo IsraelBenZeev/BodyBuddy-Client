@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(npm run lint:*)",
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(npx expo:*)",
+      "Bash(npm start)",
+      "Bash(npx tsc:*)",
+      "Bash(grep:*)",
+      "Bash(dir:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}

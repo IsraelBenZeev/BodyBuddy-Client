@@ -1,7 +1,9 @@
 import { colors } from '@/colors';
+import { useAuthStore } from '@/src/store/useAuthStore';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -27,6 +29,12 @@ if (__DEV__) {
 
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
+
+  // רישום listener ל-Supabase auth + טעינת session קיים – בלי זה ה-store לא מתעדכן אחרי התחברות
+  useEffect(() => {
+    useAuthStore.getState().initialize();
+  }, []);
+
   return (
     // GestureHandlerRootView חייב להיות בדרגה הכי גבוהה כדי שהגרירה תעבוד
     <GestureHandlerRootView style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background[1200] }} >
