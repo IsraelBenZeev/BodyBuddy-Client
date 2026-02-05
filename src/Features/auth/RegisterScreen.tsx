@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
-import { View, Text, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { useForm } from 'react-hook-form';
-import { useRouter } from 'expo-router';
-import BackGround from '@/src/ui/BackGround';
-import FormInput from '@/src/ui/FormInput';
-import ButtonPrimary from '@/src/ui/ButtonPrimary';
+import { colors } from '@/colors';
 import { signUpWithEmail } from '@/src/service/authService';
+// import { signInWithGoogle, signUpWithEmail } from '@/src/service/authService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
-import { colors } from '@/colors';
+import BackGround from '@/src/ui/BackGround';
+import ButtonPrimary from '@/src/ui/ButtonPrimary';
+import FormInput from '@/src/ui/FormInput';
+import AppButton from '@/src/ui/PressableOpacity';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
 interface RegisterFormData {
   email: string;
@@ -204,6 +207,18 @@ export default function RegisterScreen() {
               onPress={handleSubmit(onSubmit)}
               classNameButton="mb-4"
             />
+            {/* Google Button */}
+            <AppButton
+              // onPress={signInWithGoogle}
+              className="w-full bg-background-800 border border-background-600 py-4 rounded-2xl"
+              animationType="opacity"
+              haptic="light"
+            >
+              <View className="flex-row-reverse items-center justify-center gap-3">
+                <Ionicons name="logo-google" size={24} color={colors.lime[500]} />
+                <Text className="text-white text-base font-semibold">הירשם באמצעות Google</Text>
+              </View>
+            </AppButton>
 
             {/* Login Link */}
             <View className="mt-8">

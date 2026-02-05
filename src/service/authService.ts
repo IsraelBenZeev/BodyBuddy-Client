@@ -1,6 +1,8 @@
 import { supabase } from '@/supabase_client';
-import { User, Session } from '@supabase/supabase-js';
-
+import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from 'expo-auth-session';
+import { Session, User } from '@supabase/supabase-js';
+// import { supabase } from '@/src/lib/supabase'; // וודא שהנתיב נכון
 interface AuthResponse {
   data: { user: User | null; session: Session | null } | null;
   error: Error | null;
@@ -11,10 +13,7 @@ interface ErrorResponse {
 }
 
 // Email/Password Authentication
-export const signUpWithEmail = async (
-  email: string,
-  password: string
-): Promise<AuthResponse> => {
+export const signUpWithEmail = async (email: string, password: string): Promise<AuthResponse> => {
   try {
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -28,10 +27,7 @@ export const signUpWithEmail = async (
   }
 };
 
-export const signInWithEmail = async (
-  email: string,
-  password: string
-): Promise<AuthResponse> => {
+export const signInWithEmail = async (email: string, password: string): Promise<AuthResponse> => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -92,6 +88,40 @@ export const getCurrentSession = async (): Promise<{
 };
 
 // TODO: Google OAuth - למימוש בשלב נפרד
-export const signInWithGoogle = async (): Promise<never> => {
-  throw new Error('Google OAuth not implemented yet');
-};
+WebBrowser.maybeCompleteAuthSession();
+
+// export const authService = {
+//   signInWithGoogle: async () => {
+//     try {
+//       // 1. יצירת ה-Redirect URL - אקספו יודעת לייצר כתובת שתחזור לאפליקציה
+//       const redirectUrl = AuthSession.makeRedirectUri();
+
+//       // 2. קריאה לסופבייס לקבלת לינק להתחברות
+//       const { data, error } = await supabase.auth.signInWithOAuth({
+//         provider: 'google',
+//         options: {
+//           redirectTo: redirectUrl,
+//           skipBrowserRedirect: true, // אנחנו ננהל את פתיחת הדפדפן בעצמנו
+//         },
+//       });
+
+//       if (error) throw error;
+
+//       // 3. פתיחת הדפדפן למשתמש
+//       const res = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+
+//       // 4. אם המשתמש חזר מהדפדפן, סופבייס יזהה את ה-Session אוטומטית דרך ה-Listener ב-Store
+//       if (res.type === 'success' && res.url) {
+//         const { params, errorCode } = AuthSession.parseErrorFromRedirect(res.url);
+//         if (errorCode) throw new Error(errorCode);
+        
+//         // שליפת הטוקנים מה-URL שחזר (סופבייס מטפל בזה בדרך כלל לבד ברקע)
+//         const { access_token, refresh_token } = AuthSession.parseErrorFromRedirect(res.url);
+//       }
+      
+//     } catch (error) {
+//       console.error("Google Login Error:", error);
+//       throw error;
+//     }
+//   }
+// };
