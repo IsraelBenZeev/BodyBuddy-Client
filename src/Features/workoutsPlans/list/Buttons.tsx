@@ -1,5 +1,6 @@
 import { colors } from "@/colors";
 import { useDeleteWorkoutPlan } from "@/src/hooks/useWorkout";
+import { useAuthStore } from "@/src/store/useAuthStore";
 import { useWorkoutStore } from "@/src/store/workoutsStore";
 import { WorkoutPlan } from "@/src/types/workout";
 import Loading from "@/src/ui/Loading";
@@ -12,7 +13,6 @@ import { useRouter } from "expo-router";
 import { ReactNode, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
 const Button = ({ text, onPress, icon }: { text: string, onPress: () => void, icon: ReactNode }) => {
     return (
@@ -30,10 +30,11 @@ const Button = ({ text, onPress, icon }: { text: string, onPress: () => void, ic
     )
 }
 const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
+    const user = useAuthStore((state) => state.user);
     const router = useRouter();
     const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
     const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
-    const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user_id)
+    const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user?.id as string)
     const [isShowButtonOkDelete, setIsShowButtonOkDelete] = useState<boolean>(false)
     const onDelete = (id: string) => {
         setIsShowButtonOkDelete(prev => !prev)

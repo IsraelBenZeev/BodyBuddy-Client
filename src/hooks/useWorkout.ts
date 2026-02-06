@@ -57,7 +57,7 @@ export const useCreateWorkoutPlan = (user_id: string, mode: modeAddWorkoutPlan) 
   return useMutation({
     mutationFn: (newWorkoutPlan: WorkoutPlan) => createNewWorkoutPlan(newWorkoutPlan),
     onSuccess: async (data, variables) => {
-      triggerSuccess(mode === "create" ? "נוצר בהצלחה" : "עודכן בהצלחה");
+      triggerSuccess(mode === "create" ? "נוצר בהצלחה" : "עודכן בהצלחה", "success");
       queryClient.invalidateQueries({
         queryKey: ['workoutPlans', user_id]
       });
@@ -108,7 +108,7 @@ export const useDeleteWorkoutPlan = (user_id: string) => {
   return useMutation({
     mutationFn: (planId: string) => deleteWorkoutPlan(planId),
     onSuccess: async () => {
-      triggerSuccess("נמחק בהצלחה");
+      triggerSuccess("נמחק בהצלחה", "success");
       queryClient.refetchQueries({ queryKey: ['workoutsPlans', user_id] });
       return await queryClient.invalidateQueries({
         queryKey: ['workoutPlans', user_id]

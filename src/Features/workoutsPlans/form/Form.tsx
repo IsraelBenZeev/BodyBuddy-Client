@@ -15,6 +15,7 @@ import HeaderForm from './HeaderForm';
 import ListExercise from './ListExercises';
 import Slider from './Slider';
 import TimeInput from './TimeInput';
+import { useAuthStore } from '@/src/store/useAuthStore';
 const bodyParts = [
   'neck',
   'lower arms',
@@ -32,15 +33,15 @@ interface FormProps {
   mode: modeAddWorkoutPlan;
   workout_plan_id?: string;
 }
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const Form = ({ mode, workout_plan_id }: FormProps) => {
+  const user = useAuthStore((state) => state.user);
   const router = useRouter();
   const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-  const { data: workoutPlanData, isLoading: isLoadingWorkoutPlan } = useGetWorkoutFromCache(workout_plan_id, user_id);
+  const { data: workoutPlanData, isLoading: isLoadingWorkoutPlan } = useGetWorkoutFromCache(workout_plan_id, user?.id as string);
   const initialValues = useMemo(() => {
     if (mode !== "edit") return undefined;
     return {
-      user_id: user_id,
+      user_id: user?.id as string,
       title: workoutPlanData?.title,
       description: workoutPlanData?.description,
       exercise_ids: workoutPlanData?.exercise_ids,
@@ -57,7 +58,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
   const resetExercise = useWorkoutStore((state) => state.clearAllExercises);
 
-  const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user_id, mode)
+  const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user?.id as string, mode)
   const navigateToPicker = () => {
     router.push({
       pathname: '/exercises/[parts]',
@@ -68,7 +69,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
     if (!data.description) {
       data.description = '';
     }
-    data.user_id = user_id;
+    data.user_id = user?.id as string;
     data.exercise_ids = selectedIds;
     createWorkoutPlan(data)
     resetExercise()

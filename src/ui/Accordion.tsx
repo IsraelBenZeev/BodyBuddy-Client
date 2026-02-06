@@ -18,7 +18,7 @@ interface AccordionProps {
 
 const Accordion = ({ title, children, defaultOpen = false, isOpen: controlledIsOpen, onToggle }: AccordionProps) => {
   const [internalIsOpen, setInternalIsOpen] = useState(defaultOpen);
-  
+
   // אם isOpen מועבר, זה controlled mode, אחרת uncontrolled
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const initialValue = controlledIsOpen !== undefined ? controlledIsOpen : defaultOpen;
@@ -50,7 +50,7 @@ const Accordion = ({ title, children, defaultOpen = false, isOpen: controlledIsO
 
   // אנימציה נפרדת לחץ עם useNativeDriver (יותר חלקה)
   const arrowRotation = useRef(new Animated.Value(initialValue ? 1 : 0)).current;
-  
+
   useEffect(() => {
     // מריץ את כל האנימציות במקביל לחלקות מקסימלית
     Animated.parallel([

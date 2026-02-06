@@ -13,9 +13,9 @@ import { Dimensions, Text, View } from 'react-native';
 import Card from './Card';
 import { colors } from '@/colors';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { useAuthStore } from '@/src/store/useAuthStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
 interface Props {
     setIsStart: any;
@@ -24,6 +24,8 @@ interface Props {
 
 }
 const Session = ({ setIsStart, workoutPlan }: Props) => {
+    const user = useAuthStore((state) => state.user);
+    const user_id = user?.id as string;
     const { data: exercises, isLoading } = useGetExercisesByIds(workoutPlan.exercise_ids);
     const [totalTime, setTotalTime] = useState(0);
     const [activeIndex, setActiveIndex] = useState(0);

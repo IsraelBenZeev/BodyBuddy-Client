@@ -6,16 +6,17 @@ import { useWindowDimensions, View } from 'react-native';
 import Header from '../review/Header';
 import ReviewWorkoutPlan from '../review/ReviewWorkoutPlan';
 import Session from './active/Session';
+import { useAuthStore } from '@/src/store/useAuthStore';
 
 interface Props {
   id: string;
 }
 
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
 const SessionManager = ({ id }: Props) => {
+  const user = useAuthStore((state) => state.user);
   const { height } = useWindowDimensions();
-  const { data: workoutPlan, isLoading: workoutPlanLoading } = useWorkoutPlan(id, user_id);
+  const { data: workoutPlan, isLoading: workoutPlanLoading } = useWorkoutPlan(id, user?.id as string);
   const [isStart, setIsStart] = useState(false);
   const [startSession, setStartSession] = useState<Date>();
 

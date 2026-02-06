@@ -12,16 +12,17 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Text, View } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Buttons from './Buttons';
+import { useAuthStore } from '@/src/store/useAuthStore';
 interface CardPlanProps {
   plan: WorkoutPlan;
   isActive: boolean;
   isSwiped: boolean;
   translateY: SharedValue<number>;
 }
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const CardPlan = ({ plan, isActive }: CardPlanProps) => {
   const [deleteId, setDeleteId] = useState<string>("");
-  const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user_id)
+  const user = useAuthStore((state) => state.user);
+  const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user?.id as string)
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);  // const handleDelete = (id: string) => {
@@ -119,7 +120,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           <View className="flex-row-reverse justify-between items-center mb-4 px-1">
             <View className="flex-row-reverse items-center">
               <MaterialCommunityIcons name="clock-fast" size={16} color={colors.lime[500]} />
-              <Text className="text-white text-xs mr-1 font-bold">{plan.time} דק'</Text>
+              <Text className="text-white text-xs mr-1 font-bold">{plan.time} דק׳</Text>
             </View>
             <View className="flex-row-reverse items-center">
               <MaterialCommunityIcons name="trending-up" size={16} color={colors.lime[500]} />

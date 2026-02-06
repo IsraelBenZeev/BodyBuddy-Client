@@ -1,5 +1,4 @@
 import { colors } from "@/colors";
-import { useWorkoutsPlans } from "@/src/hooks/useWorkout";
 import IconButton from "@/src/ui/IconButton";
 import { IconAddToListFitness, IconDislikeBG, IconlikeBG, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
 import { useState } from "react";
@@ -9,11 +8,9 @@ import PlanSelector from "../workoutsPlans/PlansSelector";
 interface ButtonsProps {
     exerciseId: string;
 }
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const Buttons = ({ exerciseId }: ButtonsProps) => {
-    const { data: plansData } = useWorkoutsPlans(user_id)
     const [isShowListWorkoutsPlans, setIsShowListWorkoutsPlans] = useState<boolean>(false);
-    const { width, height } = useWindowDimensions();
+    const {  height } = useWindowDimensions();
 
     return (
         <View>

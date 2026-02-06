@@ -1,11 +1,9 @@
 import { useGetSessions } from "@/src/hooks/useSession";
-import ModalBottom from "@/src/ui/ModalButtom";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import SessionInformation from "./SessionInformation";
 import SessionReviewCard from "./SessionReviewCard";
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
+import { useAuthStore } from '@/src/store/useAuthStore';
 interface Props {
     selectedSession: string;
     setSelectedSession: Dispatch<SetStateAction<string>>;
@@ -15,7 +13,8 @@ interface Props {
 
 const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef }: Props) => {
     // const sheetRef = useRef<any>(null);
-    const { data: sessionsData, isLoading: isLoadingSessions } = useGetSessions(user_id, workoutPlanId);
+    const user = useAuthStore((state) => state.user);
+    const { data: sessionsData, isLoading: isLoadingSessions } = useGetSessions(user?.id as string, workoutPlanId);
     console.log("workoutPlanId: ", workoutPlanId);
 
     // useEffect(() => {

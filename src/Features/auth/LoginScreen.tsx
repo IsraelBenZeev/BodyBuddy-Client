@@ -1,5 +1,5 @@
 import { colors } from '@/colors';
-import { signInWithEmail } from '@/src/service/authService';
+import { signInWithEmail, signInWithGoogle } from '@/src/service/authService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import BackGround from '@/src/ui/BackGround';
@@ -45,20 +45,17 @@ export default function LoginScreen() {
     setLoading(false);
 
     if (error) {
-      triggerSuccess('שגיאה בהתחברות - בדוק את הפרטים שלך');
+      triggerSuccess('שגיאה בהתחברות - בדוק את הפרטים שלך', 'failed');
     } else {
       if (data?.user && data?.session) {
         useAuthStore.getState().setUser(data.user);
         useAuthStore.getState().setSession(data.session);
-        triggerSuccess('התחברת בהצלחה');
+        triggerSuccess('התחברת בהצלחה', 'success');
         setShouldNavigateToTabs(true);
       }
     }
   };
 
-  const handleGoogleSignIn = () => {
-    triggerSuccess('התחברות דרך Google תתווסף בקרוב');
-  };
 
   return (
     <BackGround>
@@ -66,19 +63,12 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-        >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <View className="flex-1 px-5 py-12 justify-center">
             {/* Logo/Title */}
             <View className="mb-12">
-              <Text className="text-lime-400 text-4xl font-black text-center mb-2">
-                BodyBuddy
-              </Text>
-              <Text className="text-background-400 text-base text-center">
-                התחבר למערכת
-              </Text>
+              <Text className="text-lime-400 text-4xl font-black text-center mb-2">BodyBuddy</Text>
+              <Text className="text-background-400 text-base text-center">התחבר למערכת</Text>
             </View>
 
             {/* Email Input */}
@@ -168,39 +158,42 @@ export default function LoginScreen() {
             />
 
             {/* Login Button */}
-            <AppButton  
-                onPress={handleSubmit(onSubmit)}
-                className="w-full items-center justify-center bg-lime-500 py-4 rounded-2xl mb-4"
-                animationType="opacity"
-                haptic="light"
-              >
-                <Text className="text-black font-extrabold text-base">{loading ? 'מתחבר...' : 'התחבר'}</Text>
-              </AppButton>
+            <AppButton
+              onPress={handleSubmit(onSubmit)}
+              className="w-full items-center justify-center bg-lime-500 py-4 rounded-2xl mb-4"
+              animationType="opacity"
+              haptic="light"
+            >
+              <Text className="text-black font-extrabold text-base">
+                {loading ? 'מתחבר...' : 'התחבר'}
+              </Text>
+            </AppButton>
 
             {/* Google Button */}
             <AppButton
-              onPress={handleGoogleSignIn}
+              onPress={signInWithGoogle}
               className="w-full bg-background-800 border border-background-600 py-4 rounded-2xl"
               animationType="opacity"
               haptic="light"
             >
               <View className="flex-row-reverse items-center justify-center gap-3">
                 <Ionicons name="logo-google" size={24} color={colors.lime[500]} />
-                <Text className="text-white text-base font-semibold">
-                  התחבר באמצעות Google
-                </Text>
+                <Text className="text-white text-base font-semibold">התחבר באמצעות Google</Text>
               </View>
             </AppButton>
 
             {/* Register Link */}
             <View className="mt-8">
-              <Pressable onPress={() => router.replace({
-                pathname: '/auth/signup/[params]',
-                params: { params: "AUTH_PARAM" },
-              } as never)}>
+              <Pressable
+                onPress={() =>
+                  router.replace({
+                    pathname: '/auth/signup/[params]',
+                    params: { params: 'AUTH_PARAM' },
+                  } as never)
+                }
+              >
                 <Text className="text-background-400 text-center text-base">
-                  אין לך חשבון?{' '}
-                  <Text className="text-lime-400 font-semibold">הירשם כאן</Text>
+                  אין לך חשבון? <Text className="text-lime-400 font-semibold">הירשם כאן</Text>
                 </Text>
               </Pressable>
             </View>

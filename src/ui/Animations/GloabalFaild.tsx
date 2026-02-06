@@ -3,10 +3,10 @@ import LottieView from 'lottie-react-native';
 import { Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-export default function GlobalSuccess() {
+export default function GlobalFaild() {
     const { isSuccessVisible, message, hideSuccess, type } = useUIStore();
 
-    if (!isSuccessVisible || type !== 'success') return null;
+    if (!isSuccessVisible || type !== 'failed') return null;
 
     return (
         <Animated.View
@@ -17,7 +17,7 @@ export default function GlobalSuccess() {
         >
             <View className="bg-background-900 p-6 rounded-3xl items-center shadow-2xl border border-white/10">
                 <LottieView
-                    source={require('@/assets/animations/Success.lottie')}
+                    source={require('@/assets/animations/Error.lottie')}
                     autoPlay
                     loop={false}
                     onAnimationFinish={hideSuccess} // נסגר אוטומטית כשה-V מסתיים
@@ -25,12 +25,12 @@ export default function GlobalSuccess() {
                     colorFilters={[
                         {
                             keypath: "**",
-                            color: "#84cc16" // כאן שמים את קוד ה-HEX של הצבע (זה הליים שלך)
+                            color: "red" // כאן שמים את קוד ה-HEX של הצבע (זה הליים שלך)
                         },
                     ]}
                 />
                 {message ? (
-                    <Text className="text-lime-500 text-lg font-bold mt-2 italic uppercase">
+                    <Text className="text-red-500 text-lg font-bold mt-2 italic uppercase">
                         {message}
                     </Text>
                 ) : null}

@@ -28,9 +28,9 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
     };
     return (
         <Animated.View
-            entering={FadeInDown.duration(400).springify().damping(15)}
+            // entering={FadeInDown.duration(400).springify().damping(15)}
             // אם תמחק אימון, הוא יחליק שמאלה ויעלם
-            exiting={FadeOutLeft}
+            // exiting={FadeOutLeft}
             // גורם לכל הרשימה לזוז בצורה חלקה כשפריט נוסף/מוסר
             layout={LinearTransition.springify()}
             className="bg-background-850 border border-gray-800 rounded-2xl p-4 mb-3 flex-row items-center justify-between">

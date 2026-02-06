@@ -5,14 +5,15 @@ import Loading from '@/src/ui/Loading';
 import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { CardEmptyExercise, CardExerciseProgress, Title } from './CardExerciseProgress';
+import { useAuthStore } from '@/src/store/useAuthStore';
 interface Props {
   workoutPlanId: string;
 }
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 const ExercisesProgress = ({ workoutPlanId }: Props) => {
+  const user = useAuthStore((state) => state.user);
   const { data: exercisesLog, isPending } = useGetExercisesIdsByWorkoutPlans(
     workoutPlanId,
-    user_id
+    user?.id as string
   );
   const { data: exercisesDetails, isPending: isPendingDetails } = useGetExercisesByIds(
     exercisesLog?.map((log) => log.exercise_id) || []
@@ -52,7 +53,6 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
   const [openAccordionId, setOpenAccordionId] = useState<string | null>(null);
 
 
-// console.log("processedExercises", JSON.stringify(processedExercises, null, 2));
 
   if (isPending || (isPendingDetails && exercisesLog ? exercisesLog?.length > 0 : false))
     return <Loading />;

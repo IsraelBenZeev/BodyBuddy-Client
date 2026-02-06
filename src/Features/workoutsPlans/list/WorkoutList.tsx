@@ -10,11 +10,12 @@ import { SharedValue } from 'react-native-reanimated';
 import CustomCarousel from '../../../ui/CustomCarousel';
 import CardPlan from './CardPlan';
 import AppButton from '@/src/ui/PressableOpacity';
+import { useAuthStore } from '@/src/store/useAuthStore';
 
-const userID = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
 const WorkoutList = () => {
-  const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(userID);
+  const user = useAuthStore((state) => state.user);
+  const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(user?.id as string);
   
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const router = useRouter();
@@ -46,7 +47,7 @@ const WorkoutList = () => {
             <CustomCarousel
               data={plansData}
               variant='center'
-              renderItem={(item: any, isActive: boolean, isSwiped: boolean, translateY: SharedValue<number>) => (
+              renderItem={(item: any, isActive: boolean, isSwiped: boolean, activeId: string, translateY: SharedValue<number>) => (
                 <CardPlan plan={item} isActive={isActive} isSwiped={isSwiped} translateY={translateY} />
               )}
               widthCard={280}

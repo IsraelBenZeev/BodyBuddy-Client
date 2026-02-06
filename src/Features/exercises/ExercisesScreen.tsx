@@ -1,4 +1,5 @@
 import { useExercises } from '@/src/hooks/useEcercises';
+import { useAuthStore } from '@/src/store/useAuthStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
@@ -6,7 +7,7 @@ import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import {  useMemo, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
@@ -15,36 +16,25 @@ interface ExercisesScreenProps {
   bodyParts: string | string[] | undefined;
   mode: string | string[] | undefined;
 }
-const user_id = 'd3677b3f-604c-46b3-90d3-45e920d4aee2';
 
 const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
+  const user = useAuthStore((state) => state.user);
   const router = useRouter();
   const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
-  // const [page, setPage] = useState<number>(1);
-  // const { data, isLoading } = useExercises(user_id, selectedPartsArray, page);
   const {
     data,
     isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage
-  } = useExercises(user_id, selectedPartsArray);
+  } = useExercises(user?.id as string, selectedPartsArray);
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
   const [favorites, setFavorites] = useState<string[]>([]);
   const allExercises = useMemo(() => {
     return data?.pages.flatMap((page) => page.exercises) ?? [];
   }, [data]);
-  console.log("data?.pages", data?.pages);
-  
-  useEffect(() => {
-    if (data) {
-      console.log('--- React Query Debug ---');
-      console.log('מספר עמודים בזיכרון:', data.pages.length);
-      console.log('האם יש עמוד הבא?:', hasNextPage);
-      console.log('נתונים בעמוד האחרון:', data.pages[data.pages.length - 1]?.exercises?.length, 'תרגילים');
-      console.log('-------------------------');
-    }
-  }, [data, hasNextPage]);
+
+ 
   const uniqueBodyParts = useMemo(() => {
     if (!allExercises.length) return [];
     const partsSet = new Set(allExercises.flatMap((ex) => ex.bodyParts || []));

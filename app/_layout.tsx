@@ -1,8 +1,10 @@
 import { colors } from '@/colors';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
+import { supabase } from '@/supabase_client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
+import * as Linking from 'expo-linking';
+import { router, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -10,6 +12,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { QueryClientManager } from 'reactotron-react-query';
 import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
 import Reactotron from '../ReactotronConfig';
+import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
+
+// בתוך RootLayout
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -29,33 +34,63 @@ if (__DEV__) {
 
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
-
+  const url = Linking.useURL();
   // רישום listener ל-Supabase auth + טעינת session קיים – בלי זה ה-store לא מתעדכן אחרי התחברות
   useEffect(() => {
     useAuthStore.getState().initialize();
   }, []);
 
+  // 2. טיפול בחזרה מגוגל (Deep Linking) – fallback כש-URL מגיע דרך Linking ולא מ-openAuthSessionAsync
+  useEffect(() => {
+    const handleDeepLink = async () => {
+      if (!url) return;
+      const fragment = url.includes('#') ? url.split('#')[1] ?? '' : '';
+      if (!fragment) return;
+      const params = new URLSearchParams(fragment);
+      const access_token = params.get('access_token');
+      const refresh_token = params.get('refresh_token');
+      if (!access_token || !refresh_token) return;
+
+      const { data, error } = await supabase.auth.setSession({
+        access_token,
+        refresh_token,
+      });
+
+      if (!error && data?.session) {
+        useAuthStore.getState().setUser(data.session.user);
+        useAuthStore.getState().setSession(data.session);
+        router.replace('/(tabs)');
+      }
+    };
+
+    handleDeepLink();
+  }, [url]);
+
   return (
     // GestureHandlerRootView חייב להיות בדרגה הכי גבוהה כדי שהגרירה תעבוד
-    <GestureHandlerRootView style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background[1200] }} >
+    <GestureHandlerRootView
+      style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background[1200] }}
+    >
       <QueryClientProvider client={queryClient}>
         {/* <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full"> */}
         <StatusBar />
         {/* <Stack screenOptions={{ headerShown: false }} /> */}
         <GlobalSuccess />
+        <GlobalFaild />
         <Stack
           screenOptions={{
             headerShown: false,
           }}
         >
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="exercise/[exerciseId]"
+          <Stack.Screen
+            name="exercise/[exerciseId]"
             options={{
               presentation: 'pageSheet',
               animation: 'fade_from_bottom',
               animationDuration: 300,
-
-            }} />
+            }}
+          />
           <Stack.Screen
             name="form_create_Workout/[mode]"
             options={{
@@ -85,8 +120,6 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
-
-
 
 // הרכיב Stack אומר: "כאן אני אציג את הדפים של האפליקציה"
 // הוא לא מציג שום דבר ויזואלי בעצמו, הוא רק מנהל את התצוגה.

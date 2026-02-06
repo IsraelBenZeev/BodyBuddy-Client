@@ -4,8 +4,6 @@
 // const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 // export const supabase = createClient(supabaseUrl || '', supabaseKey || '');
 
-
-
 import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 
@@ -28,8 +26,8 @@ const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 export const supabase = createClient(supabaseUrl!, supabaseKey!, {
   auth: {
     storage: ExpoSecureStoreAdapter, // כאן ה-Session נשמר אוטומטית בזיכרון!
-    autoRefreshToken: true,          // מחדש את הטוקן ברקע
-    persistSession: true,            // דואג שהסשן לא יימחק בסגירת האפליקציה
-    detectSessionInUrl: false,
+    autoRefreshToken: true, // מחדש את הטוקן ברקע
+    persistSession: true, // דואג שהסשן לא יימחק בסגירת האפליקציה
+    detectSessionInUrl: true,
   },
 });

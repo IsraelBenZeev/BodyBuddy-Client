@@ -1,5 +1,5 @@
 import { colors } from '@/colors';
-import { signUpWithEmail } from '@/src/service/authService';
+import { signInWithGoogle, signUpWithEmail } from '@/src/service/authService';
 // import { signInWithGoogle, signUpWithEmail } from '@/src/service/authService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
@@ -52,9 +52,9 @@ export default function RegisterScreen() {
     setLoading(false);
 
     if (error) {
-      triggerSuccess('שגיאה בהרשמה - נסה שוב');
+      triggerSuccess('שגיאה בהרשמה - נסה שוב', 'failed');
     } else {
-      triggerSuccess('נרשמת בהצלחה!');
+      triggerSuccess('נרשמת בהצלחה!', 'success');
       if (data?.user) useAuthStore.getState().setUser(data.user);
       if (data?.session) useAuthStore.getState().setSession(data.session);
       setShouldNavigateToTabs(true); // ניווט אחרי הרשמה מוצלחת (בלוגין יש session תמיד; בהרשמה לפעמים רק אחרי אימות אימייל)
@@ -209,7 +209,7 @@ export default function RegisterScreen() {
             />
             {/* Google Button */}
             <AppButton
-              // onPress={signInWithGoogle}
+              onPress={signInWithGoogle}
               className="w-full bg-background-800 border border-background-600 py-4 rounded-2xl"
               animationType="opacity"
               haptic="light"

@@ -23,12 +23,15 @@ import { colors } from '../../../colors';
 import ModalBottom from '../../ui/ModalButtom';
 import CardAreaBody from './CardAreaBody';
 import AvatarMale from './male/AvatarMale';
+import { useAuthStore } from '@/src/store/useAuthStore';
 
 const { width, height } = Dimensions.get('window');
 
 const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
   const [selectedParts, setSelectedParts] = useState<BodyPart[]>([]);
+  const { user } = useAuthStore();
+  console.log('user', user);
   const sheetRef = useRef<any>(null);
   useEffect(() => {
     if (!selectedParts.length) {
