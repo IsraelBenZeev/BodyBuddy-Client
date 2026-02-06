@@ -1,9 +1,9 @@
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { supabase } from '@/supabase_client';
-import { router } from 'expo-router';
-import * as Linking from 'expo-linking';
-import * as WebBrowser from 'expo-web-browser';
 import { Session, User } from '@supabase/supabase-js';
+import * as Linking from 'expo-linking';
+import { router } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 // import { supabase } from '@/src/lib/supabase'; // וודא שהנתיב נכון
 interface AuthResponse {
   data: { user: User | null; session: Session | null } | null;
@@ -89,14 +89,13 @@ export const getCurrentSession = async (): Promise<{
   }
 };
 
-
-
-
 /** מפרסר טוקנים מ-URL של redirect (hash או query) */
-function parseTokensFromRedirectUrl(url: string): { access_token: string; refresh_token: string } | null {
+function parseTokensFromRedirectUrl(
+  url: string
+): { access_token: string; refresh_token: string } | null {
   try {
     const hasHash = url.includes('#');
-    const fragmentOrQuery = hasHash ? url.split('#')[1] ?? '' : url.split('?')[1] ?? '';
+    const fragmentOrQuery = hasHash ? (url.split('#')[1] ?? '') : (url.split('?')[1] ?? '');
     const params = new URLSearchParams(fragmentOrQuery);
     const access_token = params.get('access_token');
     const refresh_token = params.get('refresh_token');
@@ -142,7 +141,7 @@ export const signInWithGoogle = async () => {
         if (sessionData?.session) {
           useAuthStore.getState().setUser(sessionData.session.user);
           useAuthStore.getState().setSession(sessionData.session);
-          router.replace('/(tabs)');
+          router.replace('/auth-callback');
         }
       }
     }
