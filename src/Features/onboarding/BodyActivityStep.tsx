@@ -1,21 +1,20 @@
 import { colors } from '@/colors';
-import { Ionicons } from '@expo/vector-icons';
-import { useCallback } from 'react';
-import { Control, Controller, UseFormTrigger } from 'react-hook-form';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import Animated, { FadeInLeft } from 'react-native-reanimated';
 import {
   ActivityLevel,
   activityLevelOptions,
   ProfileFormData,
 } from '@/src/types/profile';
+import { Ionicons } from '@expo/vector-icons';
+import { useCallback } from 'react';
+import { Control, Controller, UseFormTrigger } from 'react-hook-form';
+import {
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
+import Animated, { FadeInLeft } from 'react-native-reanimated';
+import HorizontalRuler from './HorizontalRuler';
 
 /** אייקון לכל רמת פעילות */
 const activityIcons: Record<ActivityLevel, string> = {
@@ -30,26 +29,24 @@ interface BodyActivityStepProps {
   control: Control<ProfileFormData>;
   trigger: UseFormTrigger<ProfileFormData>;
   onBack: () => void;
-  onSubmit: () => void;
-  isPending: boolean;
+  onNext: () => void;
 }
 
 const BodyActivityStep = ({
   control,
   trigger,
   onBack,
-  onSubmit,
-  isPending,
+  onNext,
 }: BodyActivityStepProps) => {
-  const handleSubmit = useCallback(async () => {
-    const isValid = await trigger(['weight', 'activity_level']);
-    if (isValid) onSubmit();
-  }, [trigger, onSubmit]);
+  const handleNext = useCallback(async () => {
+    const isValid = await trigger(['height', 'weight', 'activity_level']);
+    if (isValid) onNext();
+  }, [trigger, onNext]);
 
   return (
     <Animated.View entering={FadeInLeft.duration(400)} className="flex-1 px-6">
       {/* Header */}
-      <View className="mb-8">
+      <View className="mb-6">
         <Text className="text-white text-3xl font-black text-right mb-2">
           עוד קצת פרטים
         </Text>
@@ -62,39 +59,62 @@ const BodyActivityStep = ({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
-        {/* Weight */}
+        {/* Height - Horizontal Ruler */}
         <View className="mb-6">
-          <Text className="text-background-200 text-sm font-semibold text-right mb-2">
-            משקל (ק״ג)
+          <Text className="text-background-200 text-sm font-semibold text-right mb-3">
+            גובה
+          </Text>
+          <Controller
+            control={control}
+            name="height"
+            rules={{
+              validate: (v) =>
+                (v >= 100 && v <= 250) || 'גובה חייב להיות בין 100 ל-250 ס״מ',
+            }}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <View>
+                <View className="bg-background-800 border border-background-600 rounded-2xl py-4 overflow-hidden">
+                  <HorizontalRuler
+                    min={100}
+                    max={250}
+                    value={value}
+                    onChange={onChange}
+                    unit="ס״מ"
+                  />
+                </View>
+                {error && (
+                  <Text className="text-red-400 text-xs text-right mt-1">
+                    {error.message}
+                  </Text>
+                )}
+              </View>
+            )}
+          />
+        </View>
+
+        {/* Weight - Horizontal Ruler */}
+        <View className="mb-6">
+          <Text className="text-background-200 text-sm font-semibold text-right mb-3">
+            משקל
           </Text>
           <Controller
             control={control}
             name="weight"
             rules={{
-              required: 'שדה חובה',
-              validate: (val) => {
-                const num = Number(val);
-                if (isNaN(num)) return 'יש להזין מספר';
-                if (num < 20 || num > 300)
-                  return 'משקל חייב להיות בין 20 ל-300 ק״ג';
-                return true;
-              },
+              validate: (v) =>
+                (v >= 20 && v <= 300) || 'משקל חייב להיות בין 20 ל-300 ק״ג',
             }}
-            render={({
-              field: { onChange, onBlur, value },
-              fieldState: { error },
-            }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View>
-                <TextInput
-                  className="bg-background-800 border border-background-600 rounded-2xl px-4 py-4 text-white text-base text-right"
-                  placeholder="המשקל שלך בק״ג"
-                  placeholderTextColor={colors.background[500]}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  keyboardType="decimal-pad"
-                  maxLength={5}
-                />
+                <View className="bg-background-800 border border-background-600 rounded-2xl py-4 overflow-hidden">
+                  <HorizontalRuler
+                    min={20}
+                    max={300}
+                    value={value}
+                    onChange={onChange}
+                    unit="ק״ג"
+                  />
+                </View>
                 {error && (
                   <Text className="text-red-400 text-xs text-right mt-1">
                     {error.message}
@@ -106,14 +126,14 @@ const BodyActivityStep = ({
         </View>
 
         {/* Activity Level */}
-        <View className="mb-6">
+        <View className="mb-4">
           <Text className="text-background-200 text-sm font-semibold text-right mb-3">
             רמת פעילות
           </Text>
           <Controller
             control={control}
             name="activity_level"
-            rules={{ required: 'יש לבחור רמת פעילות' }}
+            rules={{ validate: (v) => v !== '' || 'יש לבחור רמת פעילות' }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View>
                 <View className="gap-3">
@@ -131,7 +151,7 @@ const BodyActivityStep = ({
                         }`}
                       >
                         <View
-                          className={`w-12 h-12 rounded-xl items-center justify-center mr-0 ml-4 ${
+                          className={`w-12 h-12 rounded-xl items-center justify-center ml-4 ${
                             isSelected ? 'bg-lime-500/20' : 'bg-background-700'
                           }`}
                         >
@@ -178,7 +198,6 @@ const BodyActivityStep = ({
       <View className="flex-row-reverse gap-3 pt-2 pb-4">
         <Pressable
           onPress={onBack}
-          disabled={isPending}
           className="flex-row-reverse items-center justify-center bg-background-800 border border-background-600 rounded-2xl px-6 py-4"
         >
           <Ionicons name="arrow-forward" size={18} color={colors.background[200]} />
@@ -186,19 +205,12 @@ const BodyActivityStep = ({
         </Pressable>
 
         <Pressable
-          onPress={handleSubmit}
-          disabled={isPending}
-          className={`flex-1 rounded-2xl py-4 items-center shadow-lg ${
-            isPending ? 'bg-lime-700' : 'bg-lime-500'
-          }`}
+          onPress={handleNext}
+          className="flex-1 rounded-2xl py-4 items-center shadow-lg bg-lime-500"
         >
-          {isPending ? (
-            <ActivityIndicator color="black" />
-          ) : (
-            <Text className="text-center text-black font-extrabold text-base">
-              סיום
-            </Text>
-          )}
+          <Text className="text-center text-black font-extrabold text-base">
+            הבא
+          </Text>
         </Pressable>
       </View>
     </Animated.View>

@@ -1,14 +1,17 @@
 import { colors } from '@/colors';
+import {
+  genderOptions,
+  ProfileFormData,
+} from '@/src/types/profile';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInRight } from 'react-native-reanimated';
-import {
-  Gender,
-  genderOptions,
-  ProfileFormData,
-} from '@/src/types/profile';
+import AgeScrollPicker from './AgeScrollPicker';
+
+const AGE_MIN = 10;
+const AGE_MAX = 120;
 
 interface PersonalInfoStepProps {
   control: Control<ProfileFormData>;
@@ -35,7 +38,7 @@ const PersonalInfoStep = ({ control, trigger, onNext }: PersonalInfoStepProps) =
       </View>
 
       {/* Full Name */}
-      <View className="mb-5">
+      <View className="mb-6">
         <Text className="text-background-200 text-sm font-semibold text-right mb-2">
           שם מלא
         </Text>
@@ -68,14 +71,14 @@ const PersonalInfoStep = ({ control, trigger, onNext }: PersonalInfoStepProps) =
       </View>
 
       {/* Gender */}
-      <View className="mb-5">
+      <View className="mb-6">
         <Text className="text-background-200 text-sm font-semibold text-right mb-2">
           מין
         </Text>
         <Controller
           control={control}
           name="gender"
-          rules={{ required: 'יש לבחור מין' }}
+          rules={{ validate: (v) => v !== '' || 'יש לבחור מין' }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View>
               <View className="flex-row-reverse gap-3">
@@ -117,8 +120,8 @@ const PersonalInfoStep = ({ control, trigger, onNext }: PersonalInfoStepProps) =
         />
       </View>
 
-      {/* Age */}
-      <View className="mb-5">
+      {/* Age - Horizontal Scroll Picker */}
+      <View className="mb-4">
         <Text className="text-background-200 text-sm font-semibold text-right mb-2">
           גיל
         </Text>
@@ -126,26 +129,18 @@ const PersonalInfoStep = ({ control, trigger, onNext }: PersonalInfoStepProps) =
           control={control}
           name="age"
           rules={{
-            required: 'שדה חובה',
-            validate: (val) => {
-              const num = Number(val);
-              if (isNaN(num)) return 'יש להזין מספר';
-              if (num < 10 || num > 120) return 'גיל חייב להיות בין 10 ל-120';
-              return true;
-            },
+            validate: (v) => (v >= AGE_MIN && v <= AGE_MAX) || 'גיל לא תקין',
           }}
-          render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View>
-              <TextInput
-                className="bg-background-800 border border-background-600 rounded-2xl px-4 py-4 text-white text-base text-right"
-                placeholder="הגיל שלך"
-                placeholderTextColor={colors.background[500]}
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                keyboardType="number-pad"
-                maxLength={3}
-              />
+              <View className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden py-3">
+                <AgeScrollPicker
+                  min={AGE_MIN}
+                  max={AGE_MAX}
+                  value={value}
+                  onChange={onChange}
+                />
+              </View>
               {error && (
                 <Text className="text-red-400 text-xs text-right mt-1">
                   {error.message}

@@ -1,3 +1,4 @@
+import { getProfile } from '@/src/service/profileService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { supabase } from '@/supabase_client';
 import * as Linking from 'expo-linking';
@@ -25,9 +26,24 @@ export default function AuthCallback() {
   const router = useRouter();
   const url = Linking.useURL();
 
-  const navigateToUserSetup = useCallback(() => {
-    router.replace('/UserSetup');
-  }, [router]);
+  /** בודק אם למשתמש יש פרופיל מלא ומנווט בהתאם */
+  const navigateByProfile = useCallback(
+    async (userId: string) => {
+      try {
+        const profile = await getProfile(userId);
+        // אם יש פרופיל עם לפחות שם וגיל – הוא כבר מילא פרטים
+        if (profile && profile.full_name && profile.age != null) {
+          router.replace('/(tabs)');
+        } else {
+          router.replace('/UserSetup');
+        }
+      } catch {
+        // במקרה של שגיאה – נשלח למילוי פרטים ליתר ביטחון
+        router.replace('/UserSetup');
+      }
+    },
+    [router],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -44,7 +60,7 @@ export default function AuthCallback() {
           if (!cancelled && !error && data?.session) {
             useAuthStore.getState().setUser(data.session.user);
             useAuthStore.getState().setSession(data.session);
-            navigateToUserSetup();
+            await navigateByProfile(data.session.user.id);
             return;
           }
         }
@@ -53,17 +69,17 @@ export default function AuthCallback() {
       // מקרה 2: כבר יש session (חזרנו מ-WebBrowser בתוך האפליקציה – authService עשה setSession ונווט לכאן)
       const { data: { session } } = await supabase.auth.getSession();
       if (!cancelled && session) {
-        navigateToUserSetup();
+        await navigateByProfile(session.user.id);
         return;
       }
     };
 
     run();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (cancelled) return;
       if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
-        navigateToUserSetup();
+        await navigateByProfile(session.user.id);
       }
     });
 
@@ -71,7 +87,7 @@ export default function AuthCallback() {
       cancelled = true;
       subscription.unsubscribe();
     };
-  }, [url, navigateToUserSetup]);
+  }, [url, navigateByProfile]);
 
   return null;
 }
