@@ -17,16 +17,10 @@ const ASPECT_RATIO = FIGMA_HEIGHT / FIGMA_WIDTH;
 const svgWidth = screenWidth * 0.75;
 const svgHeight = svgWidth * ASPECT_RATIO;
 interface AvatarFemaleFrontProps {
- isSelected: (partName: BodyPart) => boolean;
-//  handle
+  isSelected: (partName: BodyPart) => boolean;
+  handleTogglePart: (partName: BodyPart) => void;
 }
-const AvatarFemaleFront = ({
-  selectedPart,
-  setSelectedPart,
-}: {
-  selectedPart: BodyPart | null;
-  setSelectedPart: React.Dispatch<React.SetStateAction<BodyPart | null>>;
-}) => {
+const AvatarFemaleFront = ({ isSelected, handleTogglePart }: AvatarFemaleFrontProps) => {
   return (
     <View className="relative">
       <Svg
@@ -36,14 +30,14 @@ const AvatarFemaleFront = ({
         preserveAspectRatio="xMidYMax meet"
       >
         <General />
-        <UpperLeg selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Shoulders selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Chest selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Neck selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Waist selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <UpperArms selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <LowerLeg selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <LowerArms selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
+        <UpperLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Shoulders isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Chest isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Neck isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Waist isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <UpperArms isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <LowerLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <LowerArms isSelected={isSelected} handleTogglePart={handleTogglePart} />
       </Svg>
     </View>
   );

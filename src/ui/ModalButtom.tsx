@@ -59,7 +59,6 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
         onChange(index !== -1);
       }
       if (index === -1 && onClose) {
-        console.log("onClose");
         onClose();
       }
     },
@@ -71,6 +70,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
       ref={ref}
       index={initialIndex}
       snapPoints={snapPoints}
+      animateOnMount={false}
       enablePanDownToClose={enablePanDownToClose}
       handleComponent={renderHandle}
       backgroundStyle={{ backgroundColor: colors.background[900] }}

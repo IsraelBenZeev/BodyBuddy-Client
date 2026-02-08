@@ -15,7 +15,6 @@ const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef 
     // const sheetRef = useRef<any>(null);
     const user = useAuthStore((state) => state.user);
     const { data: sessionsData, isLoading: isLoadingSessions } = useGetSessions(user?.id as string, workoutPlanId);
-    console.log("workoutPlanId: ", workoutPlanId);
 
     // useEffect(() => {
     //     if (selectedSession && selectedSession !== "") {

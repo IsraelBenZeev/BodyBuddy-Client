@@ -9,7 +9,8 @@
       "Bash(npm start)",
       "Bash(npx tsc:*)",
       "Bash(grep:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "WebSearch"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -62,7 +62,6 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             id: idSession
         };
 
-        console.log('Final Data to Send: ', JSON.stringify(finalData, null, 2));
         await createSession({
             session: finalData,
         });
@@ -82,7 +81,6 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                 });
             });
         });
-        console.log('Final sets array to send:', JSON.stringify(allSets, null, 2));
         await createExerciseLog({
             exerciseLog: allSets,
         });

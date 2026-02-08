@@ -1,19 +1,5 @@
-const fakeUser = {
-  gender: 'female',
-  name: 'Alice',
-  age: 28,
-  height: 165,
-  weight: 60,
-  mail: 'alice@example.com',
-};
-const fakeUser2 = {
-  gender: 'male',
-  name: 'Bob',
-  age: 28,
-  height: 175,
-  weight: 75,
-  mail: 'bob@example.com',
-};
+import { useProfile } from '@/src/hooks/useProfile';
+import { useAuthStore } from '@/src/store/useAuthStore';
 import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
@@ -22,8 +8,8 @@ import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../../colors';
 import ModalBottom from '../../ui/ModalButtom';
 import CardAreaBody from './CardAreaBody';
+import AvatarFemale from './female/AvatarFemale';
 import AvatarMale from './male/AvatarMale';
-import { useAuthStore } from '@/src/store/useAuthStore';
 
 const { width, height } = Dimensions.get('window');
 
@@ -31,7 +17,7 @@ const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
   const [selectedParts, setSelectedParts] = useState<BodyPart[]>([]);
   const { user } = useAuthStore();
-  console.log('user', user);
+  const { data: profile } = useProfile(user?.id);
   const sheetRef = useRef<any>(null);
   useEffect(() => {
     if (!selectedParts.length) {
@@ -64,23 +50,19 @@ const AvatarSelectorScreen = () => {
           {/* אפקט הילה מאחורי המודל */}
           <View style={styles.glowEffect} />
           <View style={styles.avatarScaleWrapper}>
-            <AvatarMale
-              isSelected={isSelected}
-              handleTogglePart={handleTogglePart}
-              avatarSide={sideAvatar}
-            />
-            {/* {fakeUser2.gender === 'female' ? (
+              {profile?.gender === 'female' ? (
                 <AvatarFemale
                   avatarSide={sideAvatar}
-                  selectedPart={selectedPart}
-                  setSelectedPart={setSelectedPart}
+                  isSelected={isSelected}
+                  handleTogglePart={handleTogglePart}
                 />
               ) : (
                 <AvatarMale
                   avatarSide={sideAvatar}
-                  
+                  isSelected={isSelected}
+                  handleTogglePart={handleTogglePart}
                 />
-              )} */}
+              )}
           </View>
           {/* כפתור סיבוב צף - Glassmorphism */}
           <View style={styles.controlsWrapper}>

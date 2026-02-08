@@ -1,5 +1,4 @@
 import { BodyPart } from '@/src/types/bodtPart';
-import { useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import Svg from 'react-native-svg';
 import { Back } from './Back';
@@ -17,10 +16,10 @@ const ASPECT_RATIO = FIGMA_HEIGHT / FIGMA_WIDTH;
 const svgWidth = screenWidth * 0.75;
 const svgHeight = svgWidth * ASPECT_RATIO;
 interface AvatarFemaleBackProps {
-  selectedPart: BodyPart | null;
-  setSelectedPart: React.Dispatch<React.SetStateAction<BodyPart | null>>;
+  isSelected: (partName: BodyPart) => boolean;
+  handleTogglePart: (partName: BodyPart) => void;
 }
-const AvatarFemaleBack = ({ selectedPart, setSelectedPart }: AvatarFemaleBackProps) => {
+const AvatarFemaleBack = ({ isSelected, handleTogglePart }: AvatarFemaleBackProps) => {
   return (
     <View className="relative">
       <Svg
@@ -30,12 +29,12 @@ const AvatarFemaleBack = ({ selectedPart, setSelectedPart }: AvatarFemaleBackPro
         preserveAspectRatio="xMidYMax meet"
       >
         <General />
-        <UpperLeg selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Shoulders selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <Back selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <UpperArms selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <LowerLeg selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
-        <LowerArms selectedPart={selectedPart} setSelectedPart={setSelectedPart} />
+        <UpperLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Shoulders isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Back isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <UpperArms isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <LowerLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <LowerArms isSelected={isSelected} handleTogglePart={handleTogglePart} />
       </Svg>
     </View>
   );

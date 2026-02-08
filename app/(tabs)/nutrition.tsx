@@ -1,11 +1,7 @@
-import { Text, View } from 'react-native';
+import NutritionScreen from "@/src/Features/nutrition/NutritionScreen";
 
-const nutrition = () => {
-  return (
-    <View>
-      <Text>nutrition</Text>
-    </View>
-  );
+const NutritionTab = () => {
+ return <NutritionScreen />
 };
 
-export default nutrition;
+export default NutritionTab;

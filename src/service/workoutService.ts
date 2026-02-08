@@ -75,7 +75,6 @@ export const deleteWorkoutPlan = async (id: string) => {
   }
 };
 export const getExercisesIdsByWorkoutPlanId = async (workoutPlanId: string) => {
-  console.log("getExerciseByWorkoutPlanId");
   try {
     const { data, error } = await supabase
       .from('exercise_logs')

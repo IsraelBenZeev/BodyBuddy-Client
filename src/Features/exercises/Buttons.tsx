@@ -1,16 +1,20 @@
 import { colors } from "@/colors";
 import IconButton from "@/src/ui/IconButton";
 import { IconAddToListFitness, IconDislikeBG, IconlikeBG, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
-import { useState } from "react";
-import {  StyleSheet, useWindowDimensions, View } from "react-native";
-import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
+import { useCallback, useState } from "react";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
 import PlanSelector from "../workoutsPlans/PlansSelector";
+
 interface ButtonsProps {
     exerciseId: string;
 }
+
 const Buttons = ({ exerciseId }: ButtonsProps) => {
     const [isShowListWorkoutsPlans, setIsShowListWorkoutsPlans] = useState<boolean>(false);
-    const {  height } = useWindowDimensions();
+
+    const handleOpenPlans = useCallback(() => {
+        setIsShowListWorkoutsPlans(true);
+    }, []);
 
     return (
         <View>
@@ -20,9 +24,7 @@ const Buttons = ({ exerciseId }: ButtonsProps) => {
                     { icon: <IconDislikeBG size={20} color={colors.lime[500]} />, text: 'לא אהבתי', onPress: () => console.log('Disliked') },
                     { icon: <IconShare size={20} color={colors.lime[500]} />, text: 'שתף', onPress: () => console.log('Shared') },
                     {
-                        icon: <IconAddToListFitness size={20} color={colors.lime[500]} />, text: 'הוסף', onPress: () => {
-                            setIsShowListWorkoutsPlans(prev => !prev)
-                        }
+                        icon: <IconAddToListFitness size={20} color={colors.lime[500]} />, text: 'הוסף', onPress: handleOpenPlans
                     },
                     { icon: <IconSearchGoogle size={20} color={colors.lime[500]} />, text: 'גוגל', onPress: () => console.log('Google') },
                 ].map((btn, i) => (
@@ -36,22 +38,34 @@ const Buttons = ({ exerciseId }: ButtonsProps) => {
                     </IconButton>
                 ))}
             </View>
-            {isShowListWorkoutsPlans && (
-                <Animated.View 
-                className="px-4 py-2"
-                style={{ height: height * 0.5 }}
-                
-                entering={SlideInRight.duration(700).springify()}
-                exiting={SlideOutRight.duration(700).springify()}
-                >
-                    <PlanSelector idExercise={exerciseId} setIsShowListWorkoutsPlans={setIsShowListWorkoutsPlans}/>
-                </Animated.View>
-            )}
-        </View>
-    )
 
-}
-export default Buttons
+            <Modal
+                visible={isShowListWorkoutsPlans}
+                transparent
+                animationType="slide"
+                statusBarTranslucent
+                onRequestClose={() => setIsShowListWorkoutsPlans(false)}
+            >
+                <View className="flex-1 justify-end">
+                    {/* Backdrop - לחיצה סוגרת את המודל */}
+                    <Pressable
+                        className="flex-1"
+                        onPress={() => setIsShowListWorkoutsPlans(false)}
+                    />
+                    {/* Content */}
+                    <View style={styles.modalContent}>
+                        <PlanSelector
+                            idExercise={exerciseId}
+                            setIsShowListWorkoutsPlans={setIsShowListWorkoutsPlans}
+                        />
+                    </View>
+                </View>
+            </Modal>
+        </View>
+    );
+};
+
+export default Buttons;
 
 const styles = StyleSheet.create({
     actionButtonInner: {
@@ -61,5 +75,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#333',
     },
-
-})
+    modalContent: {
+        height: '60%',
+        shadowColor: colors.lime[500],
+        shadowOffset: { width: 0, height: -8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 24,
+        elevation: 20,
+    },
+});

@@ -2,6 +2,7 @@ import { colors } from '@/colors';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
@@ -71,6 +72,7 @@ export default function RootLayout() {
       style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background[1200] }}
     >
       <QueryClientProvider client={queryClient}>
+        <BottomSheetModalProvider>
         {/* <SafeAreaView style={styles.container} className="bg-background-1200 flex-1 w-full"> */}
         <StatusBar />
         {/* <Stack screenOptions={{ headerShown: false }} /> */}
@@ -117,6 +119,7 @@ export default function RootLayout() {
           />
         </Stack>
         {/* </SafeAreaView> */}
+        </BottomSheetModalProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

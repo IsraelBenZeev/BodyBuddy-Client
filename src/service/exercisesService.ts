@@ -3,10 +3,6 @@ import { Exercise } from '../types/exercise';
 export const getExercisesByBodyParts = async (bodyPart: string[], page: number, limit: number) => {
   const from = (page - 1) * limit;
   const to = from + limit - 1;
-  console.log("from", from);
-  console.log("to", to);
-
-
   try {
     const { data, error, count } = await supabase
       .from('exercises')
@@ -37,7 +33,6 @@ export const getExerciseById = async (exerciseId: string) => {
   }
 };
 export const getExerciseByIds = async (exerciseId: string[]) => {
-  console.log("getExerciseByIds");
   try {
     const { data, error } = await supabase
       .from('exercises')

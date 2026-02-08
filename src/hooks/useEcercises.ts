@@ -25,7 +25,6 @@ export const useExercises = (user_id: string, bodyParts: BodyPart[]) => {
 };
 
 export const useGetExercisesByIds = (ids: string[]) => {
-  console.log("useGetExercisesByIds");
   const queryClient = useQueryClient();
 
   return useQuery({
