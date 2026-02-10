@@ -167,8 +167,8 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
     const capsuleWidth = (containerWidth - 8) / tabs.length; // חישוב רוחב דינמי לפי מספר הטאבים
 
     return (
-        <View className="w-full">
-            <View>
+        <View className="w-full flex-1">
+            <View className="flex-1">
                 {/* Tab Bar */}
                 <View className="mx-6 mt-4 mb-2 bg-background-850 rounded-full p-1 relative flex-row items-center h-12 border border-gray-800">
                     <Animated.View
@@ -199,9 +199,9 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
                     ))}
                 </View>
 
-                {/* תוכן עם זיהוי מחוות */}
-                <PanGestureHandler onHandlerStateChange={onGestureEvent} activeOffsetX={[-20, 20]}>
-                    <View className="min-h-[200px] p-6">
+                {/* תוכן עם זיהוי מחוות – תופס את שאר הגובה */}
+                <PanGestureHandler onHandlerStateChange={onGestureEvent} activeOffsetX={[-20, 20]} style={{ flex: 1 }}>
+                    <View className="flex-1 p-6">
                         {tabs[activeTab].Component}
                     </View>
                 </PanGestureHandler>

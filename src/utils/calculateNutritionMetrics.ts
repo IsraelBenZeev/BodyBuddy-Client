@@ -77,15 +77,57 @@ export const calculateProgress = (goal: number, consumed: number): number => {
   return Math.min(100, Math.round((consumed / goal) * 100));
 };
 
+const formatCalories = (n: number): string =>
+  Math.round(Math.abs(n)).toLocaleString('he-IL');
+
+export interface MotivationContent {
+  message: string;
+  icon: 'trophy-outline' | 'barbell-outline' | 'flame-outline' | 'flash-outline' | 'star-outline';
+}
+
 export const getMotivationMessage = (
   caloriesRemaining: number,
   progress: number,
-): string => {
-  if (progress >= 100) return '🎉 יום מושלם! השלמת את היעד היומי';
-  if (progress >= 80) return `💪 כמעט שם! נותרו ${caloriesRemaining} קק״ל`;
-  if (progress >= 50) return `🔥 באמצע הדרך! נותרו ${caloriesRemaining} קק״ל`;
-  if (progress >= 20) return `⚡ המשך כך! נותרו ${caloriesRemaining} קק״ל`;
-  return `🌟 בואו נתחיל! נותרו ${caloriesRemaining} קק״ל`;
+): MotivationContent | null => {
+  const remainingFormatted = formatCalories(caloriesRemaining);
+
+  if (progress >= 100) {
+    if (caloriesRemaining < 0) {
+      return {
+        message: `הגעת ליעד! עברת ב־${remainingFormatted} קק״ל – מחר חדש`,
+        icon: 'trophy-outline',
+      };
+    }
+    return { message: 'יום מושלם! השלמת את היעד היומי', icon: 'trophy-outline' };
+  }
+  if (progress >= 80) {
+    return {
+      message: `כמעט שם! נותרו ${remainingFormatted} קק״ל`,
+      icon: 'barbell-outline',
+    };
+  }
+  if (progress >= 50) {
+    return {
+      message: `באמצע הדרך! נותרו ${remainingFormatted} קק״ל`,
+      icon: 'flame-outline',
+    };
+  }
+  if (progress >= 20) {
+    return {
+      message: `המשך כך! נותרו ${remainingFormatted} קק״ל`,
+      icon: 'flash-outline',
+    };
+  }
+  if (progress === 0) {
+    return {
+      message: `עוד לא אכלת היום – בואו נתחיל! נותרו ${remainingFormatted} קק״ל`,
+      icon: 'star-outline',
+    };
+  }
+  return {
+    message: `בואו נתחיל! נותרו ${remainingFormatted} קק״ל`,
+    icon: 'star-outline',
+  };
 };
 
 export const formatDateForDB = (date: Date): string => {

@@ -29,6 +29,10 @@ export interface NutritionEntry {
   portion_size: number;
   portion_unit: 'g' | 'ml' | 'unit' | 'serving';
   food_item_id?: string;
+  /** רשומות עם אותו group_id מוצגות כבלוק אחד (למשל ארוחה מה-template) */
+  group_id?: string | null;
+  /** שם התצוגה של הקבוצה (למשל שם הארוחה) */
+  group_name?: string | null;
   created_at: string;
 }
 
@@ -37,6 +41,8 @@ export interface FoodItem {
   name: string;
   brand?: string;
   category?: string;
+  /** משקל מנה/יחידה אחת בגרם – משמש כערך התחלתי בבחירת מנה */
+  serving_weight?: number | null;
   protein_per_100: number;
   carbs_per_100: number;
   fat_per_100: number;
@@ -76,6 +82,8 @@ export interface CreateNutritionEntryPayload {
   portion_size: number;
   portion_unit: 'g' | 'ml' | 'unit' | 'serving';
   food_item_id?: string;
+  group_id?: string | null;
+  group_name?: string | null;
 }
 
 export interface MacroSplit {
@@ -86,6 +94,9 @@ export interface MacroSplit {
 
 export interface SliderEntryFormData {
   food_name: string;
+  category?: string;
+  /** משקל מנה/יחידה אחת בגרם – נשמר ב־serving_weight */
+  serving_weight?: number;
   protein_per_100: number;
   carbs_per_100: number;
   fat_per_100: number;

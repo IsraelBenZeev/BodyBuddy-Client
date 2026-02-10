@@ -22,9 +22,16 @@ const ProgressStats = ({ label, consumed, goal, unit, color, iconName }: Props) 
           <Ionicons name={iconName} size={20} color={color} />
           <Text className="text-white text-base font-bold mr-2">{label}</Text>
         </View>
-        <Text className="text-background-400 text-sm">
-          {consumed} / {goal} {unit}
-        </Text>
+        <View className="flex-row-reverse items-center space-x-1 space-x-reverse">
+          <Text className="text-background-400 text-sm font-bold">
+            {consumed}
+          </Text>
+          <Text className="text-background-400 text-xs mx-1">מתוך</Text>
+          <Text className="text-background-400 text-sm">
+            {goal}
+          </Text>
+          <Text className="text-background-400 text-xs mr-1">{unit}</Text>
+        </View>
       </View>
 
       <View className="bg-background-700 rounded-full h-3 overflow-hidden mb-2">
@@ -35,7 +42,9 @@ const ProgressStats = ({ label, consumed, goal, unit, color, iconName }: Props) 
       </View>
 
       <View className="flex-row-reverse items-center justify-between">
-        <Text className="text-background-400 text-xs">נותר: {remaining} {unit}</Text>
+        <Text className="text-background-400 text-xs">
+          נותר: {remaining} {unit}
+        </Text>
         <Text className="text-background-400 text-xs font-bold">{progress}%</Text>
       </View>
     </View>
