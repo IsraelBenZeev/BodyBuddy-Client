@@ -128,6 +128,8 @@ const UserDetails = () => {
             control={control}
             trigger={trigger}
             onNext={handleNext}
+            onSubmit={handleFinish}
+            isPending={isPending}
           />
         )}
 
@@ -137,6 +139,8 @@ const UserDetails = () => {
             trigger={trigger}
             onBack={handleBack}
             onNext={handleNext}
+            onSubmit={handleFinish}
+            isPending={isPending}
           />
         )}
 

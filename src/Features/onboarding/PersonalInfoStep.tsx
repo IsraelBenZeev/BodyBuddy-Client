@@ -6,7 +6,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInRight } from 'react-native-reanimated';
 import AgeScrollPicker from './AgeScrollPicker';
 
@@ -17,13 +17,27 @@ interface PersonalInfoStepProps {
   control: Control<ProfileFormData>;
   trigger: UseFormTrigger<ProfileFormData>;
   onNext: () => void;
+  onSubmit?: () => void;
+  isPending?: boolean;
 }
 
-const PersonalInfoStep = ({ control, trigger, onNext }: PersonalInfoStepProps) => {
+const PersonalInfoStep = ({
+  control,
+  trigger,
+  onNext,
+  onSubmit,
+  isPending = false,
+}: PersonalInfoStepProps) => {
   const handleNext = useCallback(async () => {
     const isValid = await trigger(['full_name', 'gender', 'age']);
     if (isValid) onNext();
   }, [trigger, onNext]);
+
+  const handleFinishAndSave = useCallback(async () => {
+    if (!onSubmit) return;
+    const isValid = await trigger(['full_name', 'gender', 'age']);
+    if (isValid) onSubmit();
+  }, [trigger, onSubmit]);
 
   return (
     <Animated.View entering={FadeInRight.duration(400)} className="flex-1 px-6">
@@ -151,13 +165,40 @@ const PersonalInfoStep = ({ control, trigger, onNext }: PersonalInfoStepProps) =
         />
       </View>
 
-      {/* Next Button */}
-      <Pressable
-        onPress={handleNext}
-        className="bg-lime-500 w-full py-4 rounded-2xl items-center shadow-lg mt-auto"
-      >
-        <Text className="text-center text-black font-extrabold text-base">הבא</Text>
-      </Pressable>
+      {/* כפתורי פעולה */}
+      <View className="mt-auto gap-3">
+        <Pressable
+          onPress={handleNext}
+          disabled={isPending}
+          className="flex-row-reverse items-center justify-center gap-2 bg-lime-500 w-full py-4 rounded-2xl shadow-lg disabled:opacity-70 active:opacity-90"
+        >
+          <Ionicons name="arrow-back" size={22} color={colors.background[900]} />
+          <Text className="text-black font-extrabold text-base">הבא</Text>
+        </Pressable>
+
+        {onSubmit && (
+          <Pressable
+            onPress={handleFinishAndSave}
+            disabled={isPending}
+            className="flex-row-reverse items-center justify-center gap-2 py-4 rounded-2xl border-2 border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
+          >
+            {isPending ? (
+              <ActivityIndicator color={colors.lime[500]} size="small" />
+            ) : (
+              <>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={colors.lime[500]}
+                />
+                <Text className="text-lime-500 font-bold text-base">
+                  סיום ושמירה
+                </Text>
+              </>
+            )}
+          </Pressable>
+        )}
+      </View>
     </Animated.View>
   );
 };

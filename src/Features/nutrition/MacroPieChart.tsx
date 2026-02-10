@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { PieChart } from 'react-native-gifted-charts';
 import { colors } from '@/colors';
 import type { MacroSplit } from '@/src/types/nutrition';
+import { useMemo, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import { PieChart } from 'react-native-gifted-charts';
 
 interface Props {
   macroSplit: MacroSplit;
@@ -47,8 +47,11 @@ const MacroPieChart = ({ macroSplit }: Props) => {
           radius={100}
           innerRadius={60}
           showText
+          // labelsPosition="mid"
           textColor="white"
           textSize={14}
+          strokeWidth={1}
+          strokeColor={colors.background[600]}
         />
       </View>
 

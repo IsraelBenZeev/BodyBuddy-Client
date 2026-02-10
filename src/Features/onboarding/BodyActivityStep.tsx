@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
 import {
+  ActivityIndicator,
   Pressable,
   ScrollView,
   Text,
@@ -30,6 +31,8 @@ interface BodyActivityStepProps {
   trigger: UseFormTrigger<ProfileFormData>;
   onBack: () => void;
   onNext: () => void;
+  onSubmit?: () => void;
+  isPending?: boolean;
 }
 
 const BodyActivityStep = ({
@@ -37,11 +40,19 @@ const BodyActivityStep = ({
   trigger,
   onBack,
   onNext,
+  onSubmit,
+  isPending = false,
 }: BodyActivityStepProps) => {
   const handleNext = useCallback(async () => {
     const isValid = await trigger(['height', 'weight', 'activity_level']);
     if (isValid) onNext();
   }, [trigger, onNext]);
+
+  const handleFinishAndSave = useCallback(async () => {
+    if (!onSubmit) return;
+    const isValid = await trigger(['height', 'weight', 'activity_level']);
+    if (isValid) onSubmit();
+  }, [trigger, onSubmit]);
 
   return (
     <Animated.View entering={FadeInLeft.duration(400)} className="flex-1 px-6">
@@ -194,24 +205,54 @@ const BodyActivityStep = ({
         </View>
       </ScrollView>
 
-      {/* Bottom Buttons */}
-      <View className="flex-row-reverse gap-3 pt-2 pb-4">
-        <Pressable
-          onPress={onBack}
-          className="flex-row-reverse items-center justify-center bg-background-800 border border-background-600 rounded-2xl px-6 py-4"
-        >
-          <Ionicons name="arrow-forward" size={18} color={colors.background[200]} />
-          <Text className="text-background-200 font-bold text-sm mr-1">חזרה</Text>
-        </Pressable>
+      {/* כפתורי פעולה – חזרה, הבא, סיום ושמירה */}
+      <View className="pt-2 pb-4 gap-3">
+        <View className="flex-row-reverse gap-3">
+          <Pressable
+            onPress={onBack}
+            disabled={isPending}
+            className="flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-4 bg-background-800 border border-background-600 disabled:opacity-70 active:opacity-90"
+          >
+            <Ionicons
+              name="arrow-forward"
+              size={22}
+              color={colors.background[200]}
+            />
+            <Text className="text-background-200 font-bold text-base">חזרה</Text>
+          </Pressable>
 
-        <Pressable
-          onPress={handleNext}
-          className="flex-1 rounded-2xl py-4 items-center shadow-lg bg-lime-500"
-        >
-          <Text className="text-center text-black font-extrabold text-base">
-            הבא
-          </Text>
-        </Pressable>
+          <Pressable
+            onPress={handleNext}
+            disabled={isPending}
+            className="flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-4 shadow-lg bg-lime-500 disabled:opacity-70 active:opacity-90"
+          >
+            <Ionicons name="arrow-back" size={22} color={colors.background[900]} />
+            <Text className="text-black font-extrabold text-base">הבא</Text>
+          </Pressable>
+        </View>
+
+        {onSubmit && (
+          <Pressable
+            onPress={handleFinishAndSave}
+            disabled={isPending}
+            className="flex-row-reverse items-center justify-center gap-2 py-4 rounded-2xl border-2 border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
+          >
+            {isPending ? (
+              <ActivityIndicator color={colors.lime[500]} size="small" />
+            ) : (
+              <>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={colors.lime[500]}
+                />
+                <Text className="text-lime-500 font-bold text-base">
+                  סיום ושמירה
+                </Text>
+              </>
+            )}
+          </Pressable>
+        )}
       </View>
     </Animated.View>
   );
