@@ -28,6 +28,8 @@ export interface NutritionEntry {
   calories: number;
   portion_size: number;
   portion_unit: 'g' | 'ml' | 'unit' | 'serving';
+  /** משקל מנה אחת בגרם – לתצוגה "שם × כמות סה״כ X גרם (מנה × כמות)" */
+  serving_weight?: number | null;
   food_item_id?: string;
   /** רשומות עם אותו group_id מוצגות כבלוק אחד (למשל ארוחה מה-template) */
   group_id?: string | null;
@@ -81,6 +83,8 @@ export interface CreateNutritionEntryPayload {
   calories: number;
   portion_size: number;
   portion_unit: 'g' | 'ml' | 'unit' | 'serving';
+  /** משקל מנה אחת בגרם (אופציונלי – לתצוגה ביומן) */
+  serving_weight?: number | null;
   food_item_id?: string;
   group_id?: string | null;
   group_name?: string | null;

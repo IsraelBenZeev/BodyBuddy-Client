@@ -76,7 +76,7 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
                         animationType="opacity"
                         haptic="medium"
                         onPress={() => setIsShowButtonOkDelete(false)}>
-                        <View className="flex-row items-center bd rounded-full p-2">
+                        <View className="flex-row items-center  rounded-full p-2">
                             <AntDesign name="close" size={16} color="red" />
                         </View>
                     </AppButton>

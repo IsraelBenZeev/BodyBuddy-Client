@@ -33,6 +33,7 @@ export const getNutritionEntries = async (
  * מנרמל רשומה מהדאטאבייס (id כ-bigint, ללא portion_unit).
  */
 function normalizeNutritionEntry(row: Record<string, unknown>): NutritionEntry {
+  const servingWeight = row.serving_weight;
   return {
     id: String(row.id),
     user_id: row.user_id as string,
@@ -44,6 +45,8 @@ function normalizeNutritionEntry(row: Record<string, unknown>): NutritionEntry {
     calories: Number(row.calories ?? 0),
     portion_size: Number(row.portion_size ?? 0),
     portion_unit: 'g',
+    serving_weight:
+      servingWeight != null && servingWeight !== '' ? Number(servingWeight) : undefined,
     food_item_id: row.food_item_id as string | undefined,
     group_id: (row.group_id as string | null) ?? undefined,
     group_name: (row.group_name as string | null) ?? undefined,
@@ -58,21 +61,25 @@ export const createNutritionEntry = async (
   payload: CreateNutritionEntryPayload,
 ): Promise<NutritionEntry> => {
   try {
+    const insertRow: Record<string, unknown> = {
+      user_id: payload.user_id,
+      date: payload.date,
+      food_name: payload.food_name,
+      portion_size: Math.round(payload.portion_size),
+      protein: Math.round(payload.protein),
+      carbs: Math.round(payload.carbs),
+      fat: Math.round(payload.fat),
+      calories: Math.round(payload.calories),
+      food_item_id: payload.food_item_id ?? null,
+      group_id: payload.group_id ?? null,
+      group_name: payload.group_name ?? null,
+    };
+    if (payload.serving_weight != null && payload.serving_weight > 0) {
+      insertRow.serving_weight = Math.round(payload.serving_weight);
+    }
     const { data, error } = await supabase
       .from('nutrition_entries')
-      .insert({
-        user_id: payload.user_id,
-        date: payload.date,
-        food_name: payload.food_name,
-        portion_size: Math.round(payload.portion_size),
-        protein: Math.round(payload.protein),
-        carbs: Math.round(payload.carbs),
-        fat: Math.round(payload.fat),
-        calories: Math.round(payload.calories),
-        food_item_id: payload.food_item_id ?? null,
-        group_id: payload.group_id ?? null,
-        group_name: payload.group_name ?? null,
-      })
+      .insert(insertRow)
       .select()
       .single();
 
@@ -92,19 +99,25 @@ export const createNutritionEntriesBulk = async (
 ): Promise<NutritionEntry[]> => {
   if (payloads.length === 0) return [];
   try {
-    const rows = payloads.map((p) => ({
-      user_id: p.user_id,
-      date: p.date,
-      food_name: p.food_name,
-      portion_size: Math.round(p.portion_size),
-      protein: Math.round(p.protein),
-      carbs: Math.round(p.carbs),
-      fat: Math.round(p.fat),
-      calories: Math.round(p.calories),
-      food_item_id: p.food_item_id ?? null,
-      group_id: p.group_id ?? null,
-      group_name: p.group_name ?? null,
-    }));
+    const rows = payloads.map((p) => {
+      const row: Record<string, unknown> = {
+        user_id: p.user_id,
+        date: p.date,
+        food_name: p.food_name,
+        portion_size: Math.round(p.portion_size),
+        protein: Math.round(p.protein),
+        carbs: Math.round(p.carbs),
+        fat: Math.round(p.fat),
+        calories: Math.round(p.calories),
+        food_item_id: p.food_item_id ?? null,
+        group_id: p.group_id ?? null,
+        group_name: p.group_name ?? null,
+      };
+      if (p.serving_weight != null && p.serving_weight > 0) {
+        row.serving_weight = Math.round(p.serving_weight);
+      }
+      return row;
+    });
     const { data, error } = await supabase
       .from('nutrition_entries')
       .insert(rows)

@@ -14,7 +14,8 @@ import { useForm } from 'react-hook-form';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 interface Props {
-  onSubmit: (data: SliderEntryFormData) => void;
+  /** addToJournal: true = שמירה לרשימה + הוספה ליומן, false = שמירה לרשימה בלבד */
+  onSubmit: (data: SliderEntryFormData, addToJournal: boolean) => void;
   isPending: boolean;
   onBack: () => void;
 }
@@ -25,7 +26,7 @@ const ManualEntryWithSliders = ({ onSubmit, isPending, onBack }: Props) => {
   const [carbs, setCarbs] = useState(0);
   const [fat, setFat] = useState(0);
   const [servingWeight, setServingWeight] = useState(100);
-  const [portionSize, setPortionSize] = useState(100);
+  const [quantity, setQuantity] = useState(1);
 
   const toggleCategory = useCallback((id: FoodCategoryId) => {
     setSelectedCategoryId((prev) => (prev === id ? null : id));
@@ -41,23 +42,32 @@ const ManualEntryWithSliders = ({ onSubmit, isPending, onBack }: Props) => {
     return Math.round((protein * 4 + carbs * 4 + fat * 9) * 10) / 10;
   }, [protein, carbs, fat]);
 
+  const portionGrams = quantity * servingWeight;
   const portionCalories = useMemo(() => {
-    const ratio = (portionSize || 0) / 100;
+    const ratio = portionGrams / 100;
     return Math.round(calculatedCalories * ratio * 10) / 10;
-  }, [calculatedCalories, portionSize]);
+  }, [calculatedCalories, portionGrams]);
 
-  const handleFormSubmit = (formData: { food_name: string }) => {
-    onSubmit({
+  const buildSubmitData = useCallback(
+    (formData: { food_name: string }): SliderEntryFormData => ({
       food_name: formData.food_name,
       category: selectedCategoryId ?? undefined,
       serving_weight: servingWeight,
       protein_per_100: protein,
       carbs_per_100: carbs,
       fat_per_100: fat,
-      portion_size: portionSize,
+      portion_size: portionGrams,
       portion_unit: 'g',
-    });
-  };
+    }),
+    [selectedCategoryId, servingWeight, protein, carbs, fat, portionGrams]
+  );
+
+  const handleFormSubmit = useCallback(
+    (formData: { food_name: string }, addToJournal: boolean) => {
+      onSubmit(buildSubmitData(formData), addToJournal);
+    },
+    [onSubmit, buildSubmitData]
+  );
 
   return (
     <View className="flex-1">
@@ -220,45 +230,68 @@ const ManualEntryWithSliders = ({ onSubmit, isPending, onBack }: Props) => {
         </View>
 
         <View className="mb-4">
-          <Text className="text-background-400 text-sm mb-3 text-right">כמה אכלת?</Text>
-          <HorizontalRuler
-            min={10}
-            max={500}
-            value={portionSize}
-            onChange={setPortionSize}
-            unit="גרם"
-          />
+          <Text className="text-background-400 text-sm mb-3 text-right">כמה אכלת? (מנות)</Text>
+          <View className="flex-row-reverse items-center justify-center bg-background-800 border border-background-600 rounded-2xl py-3 px-4">
+            <Pressable
+              onPress={() => setQuantity((q) => q + 1)}
+              className="w-12 h-12 items-center justify-center bg-lime-500/20 rounded-xl active:bg-lime-500/30"
+            >
+              <Ionicons name="add" size={24} color={colors.lime[500]} />
+            </Pressable>
+            <Text className="text-white font-black text-2xl min-w-[48px] text-center mx-4">
+              {quantity}
+            </Text>
+            <Pressable
+              onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+              className="w-12 h-12 items-center justify-center bg-background-700 rounded-xl active:bg-background-600"
+            >
+              <Ionicons name="remove" size={24} color={colors.white} />
+            </Pressable>
+          </View>
+          <Text className="text-background-500 text-xs text-center mt-2">
+            {quantity} × {servingWeight}g = {portionGrams}g
+          </Text>
         </View>
 
         <View className="bg-lime-500/10 border border-lime-500/30 rounded-2xl p-4 mb-6">
           <Text className="text-lime-400 text-center font-bold">
-            תוסיף ליומן: {portionCalories} קק״ל
+            אופציה: תוסיף גם ליומן — {portionCalories} קק״ל
           </Text>
         </View>
 
         <View className="h-24" />
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 flex-row-reverse gap-3 px-5 pb-10 pt-4 bg-background-900/95 border-t border-background-700">
-        <View className="flex-1">
+      <View className="absolute bottom-0 left-0 right-0 gap-3 px-5 pb-10 pt-4 bg-background-900/95 border-t border-background-700">
+        <View className="flex-col gap-3">
           <Pressable
             onPress={onBack}
-            className="bg-background-700 border border-background-600 rounded-2xl py-4 flex-row items-center justify-center"
+            className="min-w-0 flex-1 flex-row items-center justify-center rounded-2xl border border-background-600 bg-background-700 py-4"
           >
-            <Text className="text-background-400 font-bold text-base mr-2">חזור</Text>
-            <Ionicons name="arrow-forward" size={20} color={colors.background[400]} />
+            <Text className="text-background-400 font-bold text-base mr-2" numberOfLines={1}>חזור</Text>
+            <View style={{ flexShrink: 0 }}>
+              <Ionicons name="arrow-forward" size={20} color={colors.background[400]} />
+            </View>
           </Pressable>
-        </View>
-        <View className="flex-1">
           <Pressable
-            onPress={handleSubmit(handleFormSubmit)}
+            onPress={handleSubmit((formData) => handleFormSubmit(formData, false))}
             disabled={isPending}
-            className={`bg-lime-500 rounded-2xl py-4 flex-row items-center justify-center ${isPending ? 'opacity-50' : ''}`}
+            className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl border border-white/10 py-4 ${isPending ? 'bg-background-700 opacity-50' : 'bg-background-800'}`}
           >
-            <Ionicons name="checkmark-circle" size={20} color={colors.background[900]} />
-            <Text className="text-background-900 font-black text-base mr-2">
-              {isPending ? 'שומר...' : 'שמור והוסף'}
-            </Text>
+            <Text className="text-white font-black text-base mr-2 shrink min-w-0" numberOfLines={1}>שמור לרשימה בלבד</Text>
+            <View style={{ flexShrink: 0 }}>
+              <Ionicons name="list" size={20} color={colors.white} />
+            </View>
+          </Pressable>
+          <Pressable
+            onPress={handleSubmit((formData) => handleFormSubmit(formData, true))}
+            disabled={isPending}
+            className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl py-4 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
+          >
+            <Text className="mr-2 min-w-0 shrink font-black text-base text-background-900" numberOfLines={1}>שמור לרשימה וליומן</Text>
+            <View style={{ flexShrink: 0 }}>
+              <Ionicons name="checkmark-circle" size={20} color={colors.background[900]} />
+            </View>
           </Pressable>
         </View>
       </View>
