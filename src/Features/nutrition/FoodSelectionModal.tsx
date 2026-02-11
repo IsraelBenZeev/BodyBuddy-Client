@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import TabsManager from '../exercises/TabsMenager';
 import Foods from './Foods';
-import Meals from './Meals';
+import Meals from './meals/Meals';
 
 interface Props {
   userId: string;
@@ -18,7 +18,7 @@ export default function FoodSelectionModal({ userId, date, onClose }: Props) {
     },
   ];
   return (
-    <View className="flex-1">
+    <View className="flex-1 bd">
       <TabsManager initialTab={0} tabs={tabs} />
     </View>
   );

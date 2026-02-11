@@ -161,7 +161,7 @@ const ManualEntryForm = ({ onSubmit, isPending }: Props) => {
         />
       </View>
 
-      <View className="flex-row gap-3 mb-6">
+      <View className="flex-row gap-3 mb-6 bd">
         <FormInput
           control={control}
           name="fat"

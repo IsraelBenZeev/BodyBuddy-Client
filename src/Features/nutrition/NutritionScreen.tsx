@@ -193,7 +193,7 @@ const NutritionScreen = () => {
         presentationStyle="pageSheet"
         onRequestClose={closeAddFoodSheet}
       >
-        <View style={{ flex: 1, backgroundColor: colors.background[900] }}>
+        <View style={{ flex: 1, backgroundColor: colors.background[900] }} className='bd'>
           <View style={sheetStyles.handleContainer}>
             <Pressable
               onPress={closeAddFoodSheet}
