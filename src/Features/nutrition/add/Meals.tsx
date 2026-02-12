@@ -11,7 +11,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import MealReviewModal from '../MealReviewModal';
+import MealReviewModal from './MealReviewModal';
 
 interface Props {
   userId: string;

@@ -1,13 +1,12 @@
-import { colors } from '@/colors';
-import { getCategoryIconName } from '@/src/Features/nutrition/foodCategories';
+import { getCategoryIconName } from '@/src/Features/nutrition/add/foodCategories';
 import { useCreateFoodItem, useCreateNutritionEntry, useFoodItems } from '@/src/hooks/useNutrition';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
-import ManualEntryWithSliders from './ManualEntryWithSliders';
-import PortionSelector from './PortionSelector';
+import AddNewFood from './AddNewFoodForm';
+import AddNewFoodSelection from './AddNewFoodSelection';
 
 interface Props {
   userId: string;
@@ -113,7 +112,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
   if (viewMode === 'portion' && selectedFood) {
     return (
-      <PortionSelector
+      <AddNewFoodSelection
         foodItem={selectedFood}
         onSubmit={handlePortionSubmit}
         isPending={isCreatingEntry}
@@ -127,7 +126,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
   if (viewMode === 'manual') {
     return (
-      <ManualEntryWithSliders
+      <AddNewFood
         onSubmit={handleManualEntrySubmit}
         isPending={isCreatingFood || isCreatingEntry}
         onBack={() => setViewMode('list')}

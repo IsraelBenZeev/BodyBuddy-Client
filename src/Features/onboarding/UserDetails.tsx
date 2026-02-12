@@ -8,6 +8,7 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform, View } from 'react-n
 import {
   ActivityLevel,
   CreateProfilePayload,
+  DEFAULT_PROTEIN_PER_KG,
   Gender,
   Goal,
   ProfileFormData,
@@ -39,6 +40,7 @@ const UserDetails = () => {
       activity_level: '' as ActivityLevel | '',
       goal: '' as Goal | '',
       calorie_offset: 500,
+      protein_per_kg: DEFAULT_PROTEIN_PER_KG,
     }),
     [user?.user_metadata?.full_name],
   );
@@ -60,6 +62,7 @@ const UserDetails = () => {
         activity_level: (existingProfile.activity_level as ActivityLevel) ?? '',
         goal: existingProfile.goal ?? '',
         calorie_offset: existingProfile.calorie_offset ?? 500,
+        protein_per_kg: existingProfile.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG,
       });
     }
   }, [existingProfile, reset, user?.user_metadata?.full_name]);
@@ -85,6 +88,7 @@ const UserDetails = () => {
         activity_level: data.activity_level as ActivityLevel,
         goal: data.goal as Goal,
         calorie_offset: data.calorie_offset,
+        protein_per_kg: data.protein_per_kg,
         avatar_url: user?.user_metadata?.avatar_url ?? undefined,
       };
 

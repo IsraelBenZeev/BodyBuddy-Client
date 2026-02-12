@@ -15,7 +15,7 @@ interface Props {
 const defaultServingWeight = (foodItem: FoodItem) =>
   foodItem.serving_weight != null && foodItem.serving_weight > 0 ? foodItem.serving_weight : 100;
 
-const PortionSelector = ({ foodItem, onSubmit, isPending, onBack, submitLabel = 'הוסף ליומן אכילה' }: Props) => {
+const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabel = 'הוסף ליומן אכילה' }: Props) => {
   const servingWeight = defaultServingWeight(foodItem);
   const [quantity, setQuantity] = useState(1);
 
@@ -40,7 +40,7 @@ const PortionSelector = ({ foodItem, onSubmit, isPending, onBack, submitLabel = 
   }, [portionGrams, onSubmit]);
 
   return (
-    <View className="flex-1 px-6 py-6 bg-background-900">
+    <View className="flex-1 px-6 py-6 bg-background-900 bd">
       {/* כותרת ושם המאכל */}
       <View className="mb-8">
         <Text className="text-white text-3xl font-black text-right mb-1">כמה אכלת?</Text>
@@ -157,4 +157,4 @@ const PortionSelector = ({ foodItem, onSubmit, isPending, onBack, submitLabel = 
   );
 };
 
-export default PortionSelector;
+export default AddNewFoodSelection;

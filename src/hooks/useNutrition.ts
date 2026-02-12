@@ -3,6 +3,7 @@ import {
   createMealWithItems,
   createNutritionEntriesBulk,
   createNutritionEntry,
+  deleteNutritionEntriesByGroupId,
   deleteNutritionEntry,
   getFoodItems,
   getMealsWithItems,
@@ -81,6 +82,22 @@ export const useDeleteNutritionEntry = (userId: string, date: string) => {
     },
     onError: () => {
       triggerSuccess('שגיאה במחיקת הרשומה', 'failed');
+    },
+  });
+};
+
+export const useDeleteNutritionEntriesByGroupId = (userId: string, date: string) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+
+  return useMutation({
+    mutationFn: (groupId: string) => deleteNutritionEntriesByGroupId(groupId, userId),
+    onSuccess: () => {
+      triggerSuccess('הארוחה נמחקה', 'success');
+      queryClient.invalidateQueries({ queryKey: ['nutrition-entries', userId, date] });
+    },
+    onError: () => {
+      triggerSuccess('שגיאה במחיקת הארוחה', 'failed');
     },
   });
 };

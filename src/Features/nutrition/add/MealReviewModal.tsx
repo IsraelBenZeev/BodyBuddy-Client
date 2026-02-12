@@ -30,9 +30,7 @@ interface ItemRowState {
 
 const DEFAULT_SERVING = 100;
 
-function getServingWeight(
-  mi: MealItem & { food_item?: { serving_weight?: number } }
-): number {
+function getServingWeight(mi: MealItem & { food_item?: { serving_weight?: number } }): number {
   const sw = mi.food_item?.serving_weight;
   return sw != null && sw > 0 ? sw : DEFAULT_SERVING;
 }
@@ -63,15 +61,9 @@ export default function MealReviewModal({
     setRowState(initial);
   }, [visible, meal]);
 
-  const { mutate: addToJournal, isPending } = useCreateNutritionEntriesBulk(
-    userId,
-    date
-  );
+  const { mutate: addToJournal, isPending } = useCreateNutritionEntriesBulk(userId, date);
 
-  const items = useMemo(
-    () => meal?.meal_items?.filter((mi) => mi.food_item) ?? [],
-    [meal]
-  );
+  const items = useMemo(() => meal?.meal_items?.filter((mi) => mi.food_item) ?? [], [meal]);
 
   const getState = useCallback(
     (mi: (typeof items)[0]): ItemRowState => {
@@ -213,23 +205,15 @@ export default function MealReviewModal({
             onPress={handleConfirm}
             disabled={isPending || items.length === 0}
             className={`rounded-2xl py-4 flex-row-reverse items-center justify-center ${
-              isPending || items.length === 0
-                ? 'bg-background-700 opacity-60'
-                : 'bg-lime-500'
+              isPending || items.length === 0 ? 'bg-background-700 opacity-60' : 'bg-lime-500'
             }`}
           >
             {isPending ? (
               <ActivityIndicator color={colors.background[900]} size="small" />
             ) : (
               <>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={24}
-                  color={colors.background[900]}
-                />
-                <Text className="text-background-900 font-black text-base mr-2">
-                  הוסף ליומן
-                </Text>
+                <Ionicons name="checkmark-circle" size={24} color={colors.background[900]} />
+                <Text className="text-background-900 font-black text-base mr-2">הוסף ליומן</Text>
               </>
             )}
           </Pressable>
@@ -240,7 +224,16 @@ export default function MealReviewModal({
 }
 
 interface MealReviewRowProps {
-  mealItem: MealItem & { food_item?: { name: string; calories_per_100: number; protein_per_100: number; carbs_per_100: number; fat_per_100: number; serving_weight?: number } };
+  mealItem: MealItem & {
+    food_item?: {
+      name: string;
+      calories_per_100: number;
+      protein_per_100: number;
+      carbs_per_100: number;
+      fat_per_100: number;
+      serving_weight?: number;
+    };
+  };
   state: ItemRowState;
   grams: number;
   servingWeight: number;
@@ -277,82 +270,13 @@ function MealReviewRow({
     }
   };
 
-  // return (
-  //   <View className="bg-background-800 border border-background-600 rounded-xl p-3.5 mb-3">
-  //     <View className="flex-row-reverse items-center justify-between mb-2">
-  //       <Text className="text-white font-bold text-right flex-1 mr-2" numberOfLines={1}>
-  //         {info.name}
-  //       </Text>
-  //       <Text className="text-background-400 text-xs">{calories} קק״ל</Text>
-  //     </View>
-  //     <View className="flex-row-reverse items-center mb-2">
-  //       <Ionicons name="information-circle-outline" size={14} color={colors.background[400]} />
-  //       <Text className="text-background-400 text-xs mr-1">מנה: {servingWeight}g</Text>
-  //     </View>
-
-  //     <View className="flex-row-reverse items-center flex-wrap gap-2">
-  //       {/* כמות (מנות) */}
-  //       <View className="flex-row-reverse items-center bg-background-700 rounded-lg">
-  //         <Pressable
-  //           onPress={() => onQuantityChange(1)}
-  //           className="w-10 h-10 items-center justify-center"
-  //         >
-  //           <Ionicons name="add" size={20} color={colors.lime[500]} />
-  //         </Pressable>
-  //         <Text className="text-white font-bold min-w-[28px] text-center">
-  //           {state.quantity}
-  //         </Text>
-  //         <Pressable
-  //           onPress={() => onQuantityChange(-1)}
-  //           className="w-10 h-10 items-center justify-center"
-  //         >
-  //           <Ionicons name="remove" size={20} color={colors.lime[500]} />
-  //         </Pressable>
-  //       </View>
-
-  //       <Text className="text-background-400 text-sm">
-  //         מנות × {servingWeight}g = {grams}g
-  //       </Text>
-
-  //       {!editGrams ? (
-  //         <Pressable
-  //           onPress={() => {
-  //             setEditGrams(true);
-  //             setInputValue(String(grams));
-  //           }}
-  //           className="bg-background-700 rounded-lg px-3 py-2"
-  //         >
-  //           <Text className="text-lime-500 text-sm">ערוך גרם</Text>
-  //         </Pressable>
-  //       ) : (
-  //         <View className="flex-row-reverse items-center gap-2">
-  //           <Pressable
-  //             onPress={applyManualGrams}
-  //             className="bg-lime-500 rounded-lg px-3 py-2"
-  //           >
-  //             <Text className="text-background-900 text-sm font-bold">אישור</Text>
-  //           </Pressable>
-  //           <TextInput
-  //             value={inputValue}
-  //             onChangeText={setInputValue}
-  //             keyboardType="number-pad"
-  //             placeholder="גרם"
-  //             placeholderTextColor={colors.background[500]}
-  //             className="bg-background-700 rounded-lg px-3 py-2 text-white w-20 text-left"
-  //           />
-  //         </View>
-  //       )}
-  //     </View>
-  //   </View>
-  // );
   return (
     <View className="bg-background-800 border border-white/5 rounded-3xl p-4 mb-4 shadow-sm">
-      
       {/* שורה עליונה: שם * כמות סה״כ X גרם (מנה*כמות) וקלוריות */}
       <View className="flex-row-reverse items-center justify-between mb-3">
         <View className="flex-1 ml-3">
           <Text className="text-white font-bold text-lg text-right" numberOfLines={2}>
-            {info.name} × {state.quantity} סה״כ {grams} גרם ({servingWeight} × {state.quantity})
+            {info.name}
           </Text>
         </View>
         <View className="items-end">
@@ -360,10 +284,9 @@ function MealReviewRow({
           <Text className="text-gray-500 text-[10px] font-medium">קק״ל</Text>
         </View>
       </View>
-  
+
       {/* אזור השליטה בכמות */}
       <View className="flex-row-reverse items-center justify-between bg-background-900/40 p-3 rounded-2xl border border-white/5">
-        
         {/* ה-Stepper (פלוס/מינוס) */}
         <View className="flex-row-reverse items-center bg-background-700 rounded-xl p-1 shadow-inner">
           <Pressable
@@ -372,14 +295,12 @@ function MealReviewRow({
           >
             <Ionicons name="add" size={22} color="#84cc16" />
           </Pressable>
-          
+
           <View className="px-4 items-center">
-            <Text className="text-white font-black text-lg">
-              {state.quantity}
-            </Text>
+            <Text className="text-white font-black text-lg">{state.quantity}</Text>
             <Text className="text-gray-500 text-[9px] uppercase font-bold">מנות</Text>
           </View>
-  
+
           <Pressable
             onPress={() => onQuantityChange(-1)}
             className="w-10 h-10 items-center justify-center bg-white/5 rounded-lg active:bg-white/10"
@@ -387,7 +308,7 @@ function MealReviewRow({
             <Ionicons name="remove" size={22} color="#f87171" />
           </Pressable>
         </View>
-  
+
         {/* חישוב סופי */}
         <View className="flex-1 items-center mr-4">
           <Text className="text-gray-400 text-xs text-center mb-1">סה״כ משקל נבחר</Text>
@@ -400,7 +321,7 @@ function MealReviewRow({
           </Text>
         </View>
       </View>
-  
+
       {/* עריכה ידנית */}
       <View className="mt-4 pt-3 border-t border-white/5">
         {!editGrams ? (
@@ -412,7 +333,9 @@ function MealReviewRow({
             className="flex-row-reverse items-center justify-center py-2"
           >
             <Ionicons name="create-outline" size={14} color="#84cc16" />
-            <Text className="text-lime-500 text-xs font-bold mr-1.5 underline">עריכת גרמים ידנית</Text>
+            <Text className="text-lime-500 text-xs font-bold mr-1.5 underline">
+              עריכת גרמים ידנית
+            </Text>
           </Pressable>
         ) : (
           <View className="flex-row-reverse items-center justify-center gap-3">

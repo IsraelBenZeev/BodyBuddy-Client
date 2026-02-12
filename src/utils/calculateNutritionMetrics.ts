@@ -2,11 +2,12 @@ import type { MacroSplit, NutritionGoals } from '@/src/types/nutrition';
 import type { Profile } from '@/src/types/profile';
 import { calculateDailyCalories } from './calculateMetrics';
 
+const DEFAULT_PROTEIN_PER_KG = 1.7;
+
 /**
  * חישוב יעדי מקרו נוטריינטים לפי פרופיל משתמש
  *
- * ברירת מחדל:
- * - חלבון: 1.7g × משקל
+ * - חלבון: (protein_per_kg מהפרופיל או 1.7) × משקל
  * - שומן: 25% מקלוריות
  * - פחמימות: שאר הקלוריות
  */
@@ -27,7 +28,8 @@ export const calculateNutritionGoals = (
 
   if (!dailyCalories) return null;
 
-  const protein = Math.round(profile.weight * 1.7);
+  const proteinPerKg = profile.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG;
+  const protein = Math.round(profile.weight * proteinPerKg);
   const fatCalories = dailyCalories * 0.25;
   const fat = Math.round(fatCalories / 9);
   const proteinCalories = protein * 4;

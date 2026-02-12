@@ -1,4 +1,4 @@
-import NutritionScreen from "@/src/Features/nutrition/NutritionScreen";
+import NutritionScreen from "@/src/Features/nutrition/review/NutritionScreen";
 
 const NutritionTab = () => {
  return <NutritionScreen />

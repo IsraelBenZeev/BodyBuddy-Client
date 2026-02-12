@@ -1,10 +1,10 @@
 import { colors } from '@/colors';
-import HorizontalRuler from '@/src/Features/onboarding/HorizontalRuler';
 import {
   FOOD_CATEGORIES,
   getCategoryById,
   type FoodCategoryId,
-} from '@/src/Features/nutrition/foodCategories';
+} from '@/src/Features/nutrition/add/foodCategories';
+import HorizontalRuler from '@/src/Features/onboarding/HorizontalRuler';
 import type { SliderEntryFormData } from '@/src/types/nutrition';
 import FormInput from '@/src/ui/FormInput';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,7 +20,7 @@ interface Props {
   onBack: () => void;
 }
 
-const ManualEntryWithSliders = ({ onSubmit, isPending, onBack }: Props) => {
+const AddNewFood = ({ onSubmit, isPending, onBack }: Props) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<FoodCategoryId | null>(null);
   const [protein, setProtein] = useState(0);
   const [carbs, setCarbs] = useState(0);
@@ -299,4 +299,4 @@ const ManualEntryWithSliders = ({ onSubmit, isPending, onBack }: Props) => {
   );
 };
 
-export default ManualEntryWithSliders;
+export default AddNewFood;
