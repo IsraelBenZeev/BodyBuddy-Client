@@ -1,7 +1,13 @@
 import { getCategoryIconName } from '@/src/Features/nutrition/add/foodCategories';
-import { useCreateFoodItem, useCreateNutritionEntry, useFoodItems } from '@/src/hooks/useNutrition';
+import {
+  useCreateFoodItem,
+  useCreateNutritionEntry,
+  useDeleteFoodItem,
+  useFoodItems,
+} from '@/src/hooks/useNutrition';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
+import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
@@ -19,11 +25,13 @@ type ViewMode = 'list' | 'portion' | 'manual';
 const Foods = ({ userId, date, onClose }: Props) => {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
+  const [foodToDelete, setFoodToDelete] = useState<FoodItem | null>(null);
   const { triggerSuccess } = useUIStore();
 
   const { data: foodItems = [], isLoading } = useFoodItems(userId);
   const { mutate: createFoodItem, isPending: isCreatingFood } = useCreateFoodItem(userId);
   const { mutate: createEntry, isPending: isCreatingEntry } = useCreateNutritionEntry(userId, date);
+  const { mutate: deleteFood, isPending: isDeletingFood } = useDeleteFoodItem(userId);
 
   const handleFoodSelect = useCallback((food: FoodItem) => {
     setSelectedFood(food);
@@ -293,9 +301,23 @@ const Foods = ({ userId, date, onClose }: Props) => {
                   </View>
                 </View>
   
-                {/* אינדיקטור בחירה */}
-                <View className="bg-background-700 rounded-full p-1 mr-1">
-                  <Ionicons name="chevron-back" size={16} color="#9ca3af" />
+                {/* כפתורי פעולה */}
+                <View className="flex-row items-center mr-1">
+                  {item.is_custom && item.user_id === userId && (
+                    <Pressable
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        setFoodToDelete(item);
+                      }}
+                      hitSlop={8}
+                      className="bg-red-500/10 rounded-xl p-2 ml-2"
+                    >
+                      <Ionicons name="trash-outline" size={16} color="#ef4444" />
+                    </Pressable>
+                  )}
+                  <View className="bg-background-700 rounded-full p-1">
+                    <Ionicons name="chevron-back" size={16} color="#9ca3af" />
+                  </View>
                 </View>
               </View>
   
@@ -338,6 +360,21 @@ const Foods = ({ userId, date, onClose }: Props) => {
           * המזונות שתגדיר כאן יהיו זמינים להוספה מהירה ליומן
         </Text>
       </View>
+
+      <DeleteConfirmModal
+        visible={foodToDelete !== null}
+        title="מחיקת מאכל"
+        message={`האם למחוק את "${foodToDelete?.name}" מהרשימה?`}
+        infoNote="מחיקת מאכל מהרשימה שלך לא תשפיע על הרשומות שכבר קיימות ביומן התזונה"
+        isDeleting={isDeletingFood}
+        onCancel={() => setFoodToDelete(null)}
+        onConfirm={() => {
+          if (!foodToDelete) return;
+          const id = foodToDelete.id;
+          setFoodToDelete(null);
+          deleteFood(id);
+        }}
+      />
     </View>
   );
 };

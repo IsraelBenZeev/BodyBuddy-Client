@@ -1,8 +1,8 @@
 import type { Meal, MealWithItems } from '@/src/types/meal';
 import type {
-  CreateNutritionEntryPayload,
-  FoodItem,
-  NutritionEntry,
+    CreateNutritionEntryPayload,
+    FoodItem,
+    NutritionEntry,
 } from '@/src/types/nutrition';
 import { supabase } from '@/supabase_client';
 
@@ -234,6 +234,66 @@ export const createFoodItem = async (
     return normalizeFoodItem(data as Record<string, unknown>);
   } catch (error) {
     console.error('Create food item error:', error);
+    throw error;
+  }
+};
+
+/**
+ * מוחק מאכל מרשימת המאכלים של המשתמש (food_items).
+ * הערה: לא משפיע על רשומות יומן (nutrition_entries) שכבר קיימות.
+ */
+export const deleteFoodItem = async (foodItemId: string, userId: string): Promise<void> => {
+  try {
+    const { error: nullifyError } = await supabase
+      .from('nutrition_entries')
+      .update({ food_item_id: null })
+      .eq('food_item_id', foodItemId)
+      .eq('user_id', userId);
+
+    if (nullifyError) throw nullifyError;
+
+    const { error: mealItemsError } = await supabase
+      .from('meal_items')
+      .delete()
+      .eq('food_item_id', foodItemId);
+
+    if (mealItemsError) throw mealItemsError;
+
+    const { error } = await supabase
+      .from('food_items')
+      .delete()
+      .eq('id', foodItemId)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Delete food item error:', error);
+    throw error;
+  }
+};
+
+/**
+ * מוחק ארוחה שמורה (meal + meal_items) מרשימת הארוחות של המשתמש.
+ * הערה: לא משפיע על רשומות יומן (nutrition_entries) שכבר קיימות.
+ */
+export const deleteMeal = async (mealId: string, userId: string): Promise<void> => {
+  try {
+    const { error: itemsError } = await supabase
+      .from('meal_items')
+      .delete()
+      .eq('meal_id', mealId);
+
+    if (itemsError) throw itemsError;
+
+    const { error: mealError } = await supabase
+      .from('meals')
+      .delete()
+      .eq('id', mealId)
+      .eq('user_id', userId);
+
+    if (mealError) throw mealError;
+  } catch (error) {
+    console.error('Delete meal error:', error);
     throw error;
   }
 };

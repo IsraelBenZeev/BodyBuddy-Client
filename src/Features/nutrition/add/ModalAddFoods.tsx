@@ -1,5 +1,7 @@
 import { colors } from '@/colors';
 import FoodSelectionTabs from '@/src/Features/nutrition/add/FoodSelectionTabs';
+import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
+import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 
@@ -45,6 +47,8 @@ const ModalAddFoods = ({ visible, onClose, userId, date }: ModalAddFoodsProps) =
           <View style={sheetStyles.indicator} />
         </View>
         <FoodSelectionTabs userId={userId} date={date} onClose={onClose} />
+        <GlobalSuccess />
+        <GlobalFaild />
       </View>
     </Modal>
   );
