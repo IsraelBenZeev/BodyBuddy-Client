@@ -3,7 +3,7 @@ import type { AIAnalysisResult } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
 
 interface Props {
@@ -18,6 +18,13 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
   const [state, setState] = useState<ModalState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
+  useEffect(() => {
+    if (visible) {
+      setState('idle');
+      setErrorMsg('');
+    }
+  }, [visible]);
+
   const handleAnalyze = async (base64: string) => {
     setState('loading');
     try {
@@ -25,8 +32,9 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
       onClose();
       if (analysis.type === 'food') {
         router.push({
-          pathname: '/add-food/create',
+          pathname: '/add-food/[mode]',
           params: {
+            mode: 'create',
             food_name: analysis.food_name,
             protein_per_100: String(analysis.protein_per_100),
             carbs_per_100: String(analysis.carbs_per_100),
@@ -38,8 +46,9 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
         });
       } else {
         router.push({
-          pathname: '/MealBuilder/create',
+          pathname: '/MealBuilder/[paramse]',
           params: {
+            paramse: 'create',
             initialName: analysis.meal_name,
             initialItemsJson: JSON.stringify(analysis.items),
           },

@@ -1,3 +1,4 @@
+import { colors } from '@/colors';
 import type { AddStep } from '@/src/Features/nutrition/add/ListFoodForMealBuilder';
 import ListFoodForMealBuilder from '@/src/Features/nutrition/add/ListFoodForMealBuilder';
 import {
@@ -11,10 +12,20 @@ import type { MealItemForm } from '@/src/types/meal';
 import type { AIMealResultItem, FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
+import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 type MealItemState = MealItemForm & { isPendingCreate?: boolean };
 
@@ -56,6 +67,16 @@ const MealBuilderScreen = () => {
   const [addStep, setAddStep] = useState<AddStep>('list');
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [savingMode, setSavingMode] = useState<'list' | 'list-and-journal' | null>(null);
+  const [editDraft, setEditDraft] = useState<{
+    index: number;
+    name: string;
+    isPendingCreate: boolean;
+    amount_g: number;
+    serving_weight: number;
+    protein_per_100: number;
+    carbs_per_100: number;
+    fat_per_100: number;
+  } | null>(null);
 
   const today = useMemo(() => new Date().toISOString().split('T')[0], []);
   const { data: foodItems = [] } = useFoodItems(userId);
@@ -117,7 +138,9 @@ const MealBuilderScreen = () => {
   const handleNewFoodSubmit = useCallback(
     (data: SliderEntryFormData) => {
       const calories =
-        Math.round((data.protein_per_100 * 4 + data.carbs_per_100 * 4 + data.fat_per_100 * 9) * 10) / 10;
+        Math.round(
+          (data.protein_per_100 * 4 + data.carbs_per_100 * 4 + data.fat_per_100 * 9) * 10
+        ) / 10;
       createFoodItem(
         {
           name: data.food_name,
@@ -154,6 +177,47 @@ const MealBuilderScreen = () => {
   const removeItem = useCallback((index: number) => {
     setItems((prev) => prev.filter((_, i) => i !== index));
   }, []);
+
+  const openEditItem = useCallback(
+    (index: number) => {
+      const item = items[index];
+      setEditDraft({
+        index,
+        name: item.name,
+        isPendingCreate: item.isPendingCreate ?? false,
+        amount_g: item.amount_g,
+        serving_weight: item.serving_weight,
+        protein_per_100: item.protein_per_100,
+        carbs_per_100: item.carbs_per_100,
+        fat_per_100: item.fat_per_100,
+      });
+    },
+    [items]
+  );
+
+  const confirmEditItem = useCallback(() => {
+    if (!editDraft) return;
+    const p = editDraft.protein_per_100;
+    const c = editDraft.carbs_per_100;
+    const f = editDraft.fat_per_100;
+    const calories_per_100 = Math.round((p * 4 + c * 4 + f * 9) * 10) / 10;
+    setItems((prev) =>
+      prev.map((item, i) =>
+        i === editDraft.index
+          ? {
+              ...item,
+              amount_g: editDraft.amount_g,
+              serving_weight: editDraft.serving_weight,
+              protein_per_100: p,
+              carbs_per_100: c,
+              fat_per_100: f,
+              calories_per_100,
+            }
+          : item
+      )
+    );
+    setEditDraft(null);
+  }, [editDraft]);
 
   // יצור מאכלים שעדיין לא קיימים ב-DB (מ-AI) ומחזיר רשימה עם IDs מלאים
   const resolvePendingItems = useCallback(async (): Promise<MealItemState[]> => {
@@ -320,34 +384,57 @@ const MealBuilderScreen = () => {
               </Text>
             </View>
           }
-          renderItem={({ item, index }) => (
-            <View className="bg-background-800 border border-white/5 rounded-2xl p-4 flex-row-reverse items-center shadow-sm">
-              <View className="bg-background-700 w-12 h-12 rounded-xl items-center justify-center ml-4">
-                <Ionicons name="nutrition" size={20} color="#fb923c" />
-              </View>
-
-              <View className="flex-1">
-                <Text className="text-white font-bold text-base text-right" numberOfLines={1}>
-                  {item.name}
-                </Text>
-                <View className="flex-row-reverse items-center mt-1">
-                  <Text className="text-gray-400 text-xs">{item.amount_g} גרם</Text>
-                  <View className="w-1 h-1 rounded-full bg-gray-600 mx-2" />
-                  <Text className="text-lime-400 text-xs font-bold">
-                    {Math.round((item.calories_per_100 * item.amount_g) / 100)} קק״ל
+          renderItem={({ item, index }) => {
+            const ratio = item.amount_g / 100;
+            const cal = Math.round(item.calories_per_100 * ratio);
+            const pActual = Math.round(item.protein_per_100 * ratio * 10) / 10;
+            const cActual = Math.round(item.carbs_per_100 * ratio * 10) / 10;
+            const fActual = Math.round(item.fat_per_100 * ratio * 10) / 10;
+            return (
+              <View className="bg-background-800 border border-white/5 rounded-2xl p-4">
+                {/* שורה 1: אייקון + שם + כפתורים */}
+                <View className="flex-row-reverse items-center mb-2">
+                  <View className="bg-background-700 w-10 h-10 rounded-xl items-center justify-center ml-3">
+                    <Ionicons name="nutrition" size={18} color="#fb923c" />
+                  </View>
+                  <Text
+                    className="text-white font-bold text-base flex-1 text-right"
+                    numberOfLines={1}
+                  >
+                    {item.name}
                   </Text>
+                  <View className="flex-row gap-2">
+                    <Pressable
+                      onPress={() => openEditItem(index)}
+                      className="bg-background-700 p-2 rounded-xl"
+                      hitSlop={10}
+                    >
+                      <Ionicons name="pencil-outline" size={16} color="#a3a3a3" />
+                    </Pressable>
+                    <Pressable
+                      onPress={() => removeItem(index)}
+                      className="bg-red-500/10 p-2 rounded-xl"
+                      hitSlop={10}
+                    >
+                      <Ionicons name="trash-outline" size={16} color="#f87171" />
+                    </Pressable>
+                  </View>
+                </View>
+                {/* שורה 2: כמות + קלוריות */}
+                <View className="flex-row-reverse items-center gap-2 mb-1">
+                  <Text className="text-gray-400 text-xs">{item.amount_g}g</Text>
+                  <View className="w-1 h-1 rounded-full bg-gray-600" />
+                  <Text className="text-lime-400 text-xs font-bold">{cal} קק״ל</Text>
+                </View>
+                {/* שורה 3: מאקרו בפועל */}
+                <View className="flex-row-reverse gap-3">
+                  <Text className="text-blue-400 text-xs">P {pActual}g</Text>
+                  <Text className="text-orange-400 text-xs">C {cActual}g</Text>
+                  <Text className="text-red-400 text-xs">F {fActual}g</Text>
                 </View>
               </View>
-
-              <Pressable
-                onPress={() => removeItem(index)}
-                className="bg-red-500/10 p-2.5 rounded-xl"
-                hitSlop={15}
-              >
-                <Ionicons name="trash-outline" size={18} color="#f87171" />
-              </Pressable>
-            </View>
-          )}
+            );
+          }}
         />
 
         {/* כפתורי פעולה בתחתית הרשימה */}
@@ -396,6 +483,243 @@ const MealBuilderScreen = () => {
           </View>
         </View>
       </View>
+
+      {/* Modal: עריכת מאכל */}
+      <Modal
+        visible={editDraft !== null}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setEditDraft(null)}
+      >
+        <Pressable className="flex-1 bg-black/70 justify-end" onPress={() => setEditDraft(null)}>
+          <Pressable onPress={(e) => e.stopPropagation()}>
+            <View className="bg-background-900 rounded-t-3xl" style={{ maxHeight: '92%' }}>
+              <ScrollView
+                nestedScrollEnabled
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+              >
+                <View className="px-6 pt-5 pb-10">
+                  {/* Handle */}
+                  <View className="items-center mb-5">
+                    <View className="w-12 h-1.5 bg-white/10 rounded-full" />
+                  </View>
+
+                  {/* שם המאכל + AI badge */}
+                  <View className="flex-row-reverse items-center mb-6">
+                    <View className="bg-orange-500/10 w-11 h-11 rounded-2xl items-center justify-center ml-3">
+                      <Ionicons name="nutrition" size={20} color="#fb923c" />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-white font-black text-xl text-right" numberOfLines={1}>
+                        {editDraft?.name ?? ''}
+                      </Text>
+                      {editDraft?.isPendingCreate && (
+                        <View className="flex-row-reverse items-center mt-1">
+                          <Ionicons name="flash" size={12} color="#84cc16" />
+                          <Text className="text-lime-400 text-xs font-bold mr-1">
+                            זוהה ע״י AI — בדוק ערכים
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Hero קלוריות — live */}
+                  {editDraft && (
+                    <View className="bg-background-800 border border-lime-500/15 rounded-3xl p-5 mb-7 items-center">
+                      <Text className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
+                        קלוריות בצלחת
+                      </Text>
+                      <Text
+                        className="text-white font-black"
+                        style={{ fontSize: 52, lineHeight: 60 }}
+                      >
+                        {Math.round(
+                          (editDraft.protein_per_100 * 4 +
+                            editDraft.carbs_per_100 * 4 +
+                            editDraft.fat_per_100 * 9) *
+                            (editDraft.amount_g / 100)
+                        )}
+                      </Text>
+                      <Text className="text-gray-500 text-sm mb-5">קק״ל</Text>
+                      <View className="flex-row items-center" style={{ gap: 24 }}>
+                        <View className="items-center">
+                          <Text className="text-blue-400 font-black text-xl">
+                            {Math.round(
+                              editDraft.protein_per_100 * (editDraft.amount_g / 100) * 10
+                            ) / 10}
+                            g
+                          </Text>
+                          <Text className="text-gray-500 text-xs mt-0.5">חלבון</Text>
+                        </View>
+                        <View className="w-px bg-white/10" style={{ height: 32 }} />
+                        <View className="items-center">
+                          <Text className="text-orange-400 font-black text-xl">
+                            {Math.round(editDraft.carbs_per_100 * (editDraft.amount_g / 100) * 10) /
+                              10}
+                            g
+                          </Text>
+                          <Text className="text-gray-500 text-xs mt-0.5">פחמימות</Text>
+                        </View>
+                        <View className="w-px bg-white/10" style={{ height: 32 }} />
+                        <View className="items-center">
+                          <Text className="text-red-400 font-black text-xl">
+                            {Math.round(editDraft.fat_per_100 * (editDraft.amount_g / 100) * 10) /
+                              10}
+                            g
+                          </Text>
+                          <Text className="text-gray-500 text-xs mt-0.5">שומן</Text>
+                        </View>
+                      </View>
+                    </View>
+                  )}
+
+                  {/* כמות שאכלת */}
+                  <View className="mb-7 mt-5">
+                    <View className="flex-row-reverse items-center justify-between mb-2">
+                      <Text className="text-white font-bold">כמות שאכלת</Text>
+                      <View className="bg-lime-500/10 border border-lime-500/20 px-4 py-1.5 rounded-full">
+                        <Text className="text-lime-400 font-black text-base">
+                          {editDraft?.amount_g ?? 0}g
+                        </Text>
+                      </View>
+                    </View>
+                    <Slider
+                      style={{ width: '100%', height: 44 }}
+                      minimumValue={0}
+                      maximumValue={1000}
+                      step={5}
+                      value={editDraft?.amount_g ?? 0}
+                      onValueChange={(v) => setEditDraft((d) => d && { ...d, amount_g: v })}
+                      minimumTrackTintColor={colors.lime[500]}
+                      maximumTrackTintColor={colors.background[600]}
+                      thumbTintColor={colors.lime[400]}
+                    />
+                    <View className="flex-row-reverse justify-between" style={{ marginTop: -4 }}>
+                      <Text className="text-gray-700 text-xs">0g</Text>
+                      <Text className="text-gray-700 text-xs">1000g</Text>
+                    </View>
+                  </View>
+
+                  {/* גרם ליחידה */}
+                  <View className="bg-background-800 rounded-2xl p-4 border border-white/5 mb-4">
+                    <View className="flex-row-reverse items-center justify-between mb-1">
+                      <Text className="text-gray-400 text-sm font-bold">גרם ליחידה</Text>
+                      <Text className="text-white text-xl font-black">
+                        {editDraft?.serving_weight ?? 100}g
+                      </Text>
+                    </View>
+                    <Slider
+                      style={{ width: '100%', height: 44 }}
+                      minimumValue={1}
+                      maximumValue={500}
+                      step={1}
+                      value={editDraft?.serving_weight ?? 100}
+                      onValueChange={(v) =>
+                        setEditDraft((d) => d && { ...d, serving_weight: Math.round(v) })
+                      }
+                      minimumTrackTintColor={colors.background[400]}
+                      maximumTrackTintColor={colors.background[600]}
+                      thumbTintColor={colors.background[300]}
+                    />
+                    <View className="flex-row-reverse justify-between" style={{ marginTop: -4 }}>
+                      <Text className="text-gray-700 text-xs">1g</Text>
+                      <Text className="text-gray-700 text-xs">500g</Text>
+                    </View>
+                  </View>
+
+                  {/* Divider */}
+                  <View className="flex-row items-center mb-5">
+                    <View className="flex-1 h-px bg-white/5" />
+                    <Text className="text-gray-600 text-xs font-bold uppercase tracking-widest px-3">
+                      ערכים ל-100g
+                    </Text>
+                    <View className="flex-1 h-px bg-white/5" />
+                  </View>
+
+                  {/* חלבון */}
+                  <View className="bg-background-800 rounded-2xl p-4 mb-3 border border-blue-500/20">
+                    <View className="flex-row-reverse items-center justify-between mb-1">
+                      <Text className="text-blue-400 text-sm font-bold">חלבון</Text>
+                      <Text className="text-blue-400 text-xl font-black">
+                        {editDraft?.protein_per_100 ?? 0}g
+                      </Text>
+                    </View>
+                    <Slider
+                      style={{ width: '100%', height: 44 }}
+                      minimumValue={0}
+                      maximumValue={100}
+                      step={0.5}
+                      value={editDraft?.protein_per_100 ?? 0}
+                      onValueChange={(v) =>
+                        setEditDraft((d) => d && { ...d, protein_per_100: Math.round(v * 10) / 10 })
+                      }
+                      minimumTrackTintColor="#60a5fa"
+                      maximumTrackTintColor={colors.background[600]}
+                      thumbTintColor="#60a5fa"
+                    />
+                  </View>
+
+                  {/* פחמימות */}
+                  <View className="bg-background-800 rounded-2xl p-4 mb-3 border border-orange-500/20">
+                    <View className="flex-row-reverse items-center justify-between mb-1">
+                      <Text className="text-orange-400 text-sm font-bold">פחמימות</Text>
+                      <Text className="text-orange-400 text-xl font-black">
+                        {editDraft?.carbs_per_100 ?? 0}g
+                      </Text>
+                    </View>
+                    <Slider
+                      style={{ width: '100%', height: 44 }}
+                      minimumValue={0}
+                      maximumValue={100}
+                      step={0.5}
+                      value={editDraft?.carbs_per_100 ?? 0}
+                      onValueChange={(v) =>
+                        setEditDraft((d) => d && { ...d, carbs_per_100: Math.round(v * 10) / 10 })
+                      }
+                      minimumTrackTintColor={colors.orange[500]}
+                      maximumTrackTintColor={colors.background[600]}
+                      thumbTintColor={colors.orange[500]}
+                    />
+                  </View>
+
+                  {/* שומן */}
+                  <View className="bg-background-800 rounded-2xl p-4 mb-5 border border-red-500/20">
+                    <View className="flex-row-reverse items-center justify-between mb-1">
+                      <Text className="text-red-400 text-sm font-bold">שומן</Text>
+                      <Text className="text-red-400 text-xl font-black">
+                        {editDraft?.fat_per_100 ?? 0}g
+                      </Text>
+                    </View>
+                    <Slider
+                      style={{ width: '100%', height: 44 }}
+                      minimumValue={0}
+                      maximumValue={100}
+                      step={0.5}
+                      value={editDraft?.fat_per_100 ?? 0}
+                      onValueChange={(v) =>
+                        setEditDraft((d) => d && { ...d, fat_per_100: Math.round(v * 10) / 10 })
+                      }
+                      minimumTrackTintColor={colors.red[500]}
+                      maximumTrackTintColor={colors.background[600]}
+                      thumbTintColor={colors.red[500]}
+                    />
+                  </View>
+
+                  {/* כפתור שמור */}
+                  <Pressable
+                    onPress={confirmEditItem}
+                    className="bg-lime-500 rounded-2xl h-14 items-center justify-center"
+                  >
+                    <Text className="text-black font-black text-base">שמור</Text>
+                  </Pressable>
+                </View>
+              </ScrollView>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {/* Modal: בחירת מאכל */}
       <Modal
