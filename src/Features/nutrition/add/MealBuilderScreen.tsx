@@ -10,6 +10,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import type { MealItemForm } from '@/src/types/meal';
 import type { AIMealResultItem, FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
+import Handle from '@/src/ui/Handle';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
@@ -265,10 +266,23 @@ const MealBuilderScreen = () => {
 
   return (
     <BackGround>
-      <View className="flex-1 px-5 py-6">
-        <Text className="text-white text-3xl font-black mb-2 text-right">בניית ארוחה</Text>
+      <View className="flex-1 px-5 pb-6">
+        {/* Handle + כפתור סגירה */}
+        <View className="items-center pt-3 pb-2">
+          <Handle />
+        </View>
+        <View className="flex-row-reverse items-center justify-between mb-6">
+          <Text className="text-white text-3xl font-black text-right">בניית ארוחה</Text>
+          <Pressable
+            onPress={() => router.back()}
+            className="bg-background-800 w-10 h-10 rounded-xl items-center justify-center border border-white/10"
+            hitSlop={8}
+          >
+            <Ionicons name="close" size={20} color="#fff" />
+          </Pressable>
+        </View>
         {/* קלט שם הארוחה */}
-        <View className="mb-8 mt-10">
+        <View className="mb-8">
           <Text className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2 text-right px-1">
             איך נקרא לארוחה?
           </Text>

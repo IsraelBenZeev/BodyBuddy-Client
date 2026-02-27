@@ -4,8 +4,11 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { SliderEntryFormData } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
+import Handle from '@/src/ui/Handle';
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
+import { Pressable, View } from 'react-native';
 
 const AddFoodScreen = () => {
   const router = useRouter();
@@ -90,13 +93,28 @@ const AddFoodScreen = () => {
 
   return (
     <BackGround>
-      <AddNewFood
-        onSubmit={handleSubmit}
-        isPending={isCreatingFood || isCreatingEntry}
-        onBack={() => router.back()}
-        mode="standalone"
-        initialValues={initialValues}
-      />
+      <View className="flex-1">
+        {/* Handle + כפתור סגירה */}
+        <View className="items-center pt-3 pb-2">
+          <Handle />
+        </View>
+        <View className="flex-row justify-end px-5 pb-2">
+          <Pressable
+            onPress={() => router.back()}
+            className="bg-background-800 w-10 h-10 rounded-xl items-center justify-center border border-white/10"
+            hitSlop={8}
+          >
+            <Ionicons name="close" size={20} color="#fff" />
+          </Pressable>
+        </View>
+        <AddNewFood
+          onSubmit={handleSubmit}
+          isPending={isCreatingFood || isCreatingEntry}
+          onBack={() => router.back()}
+          mode="standalone"
+          initialValues={initialValues}
+        />
+      </View>
     </BackGround>
   );
 };

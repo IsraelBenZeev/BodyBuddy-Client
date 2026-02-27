@@ -7,12 +7,14 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import HoldButton from '@/src/ui/HoldButton';
 import ModalBottom from '@/src/ui/ModalButtom';
-import TabsManager from '../../exercises/TabsMenager';
-import ListExercise from '../form/ListExercises';
+// import TabsManager from '../../exercises/TabsMenager';
+// import ListExercise from '../form/ListExercises';
 import CardWorkouPlan from './CardWorkouPlan';
 import ExercisesProgress from './ExercisesProgress';
 import History from './History';
 import SessionInformation from './SessionInformation';
+import ListExercise from '../form/ListExercises';
+import TabsManager from '@/src/Features/exercises/TabsMenager';
 interface Props {
   workoutPlan: WorkoutPlan;
   setIsStart: Dispatch<SetStateAction<boolean>>;

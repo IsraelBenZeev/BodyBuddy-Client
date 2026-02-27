@@ -13,7 +13,7 @@ import CardWorkouPlan from './CardWorkouPlan';
 import ExercisesProgress from './ExercisesProgress';
 import History from './History';
 import SessionInformation from './SessionInformation';
-import ListExercise from '../../form/ListExercises';
+import ListExercise from '../form/ListExercises';
 import TabsManager from '@/src/Features/exercises/TabsMenager';
 interface Props {
   workoutPlan: WorkoutPlan;

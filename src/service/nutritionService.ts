@@ -424,7 +424,7 @@ export const createMealWithItems = async (
 
 // ── AI Image Analysis ──────────────────────────────────────────────────────────
 
-const AI_AGENT_URL = 'http://localhost:8000/analyze';
+const AI_AGENT_URL = 'https://mail2-whats-app-sever.vercel.app/nutrition/analyze-food';
 
 export const analyzeNutritionImage = async (imageBase64: string): Promise<AIAnalysisResult> => {
   const response = await fetch(AI_AGENT_URL, {

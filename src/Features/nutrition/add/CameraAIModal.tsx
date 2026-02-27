@@ -18,24 +18,10 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
   const [state, setState] = useState<ModalState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleCapture = async () => {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) {
-      setErrorMsg('נדרשת הרשאת מצלמה');
-      setState('error');
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      base64: true,
-      quality: 0.7,
-    });
-
-    if (result.canceled || !result.assets[0]?.base64) return;
-
+  const handleAnalyze = async (base64: string) => {
     setState('loading');
     try {
-      const analysis: AIAnalysisResult = await analyzeNutritionImage(result.assets[0].base64);
+      const analysis: AIAnalysisResult = await analyzeNutritionImage(base64);
       onClose();
       if (analysis.type === 'food') {
         router.push({
@@ -63,6 +49,30 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
       setErrorMsg('שגיאה בניתוח התמונה. נסה שוב.');
       setState('error');
     }
+  };
+
+  const handleCapture = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      setErrorMsg('נדרשת הרשאת מצלמה');
+      setState('error');
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({ base64: true, quality: 0.7 });
+    if (result.canceled || !result.assets[0]?.base64) return;
+    await handleAnalyze(result.assets[0].base64);
+  };
+
+  const handlePickFromGallery = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      setErrorMsg('נדרשת הרשאת גישה לגלריה');
+      setState('error');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({ base64: true, quality: 0.7 });
+    if (result.canceled || !result.assets[0]?.base64) return;
+    await handleAnalyze(result.assets[0].base64);
   };
 
   const handleRetry = () => {
@@ -95,16 +105,24 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                   <View className="bg-lime-500/10 w-20 h-20 rounded-full items-center justify-center mb-4">
                     <Ionicons name="camera" size={38} color="#84cc16" />
                   </View>
-                  <Text className="text-white text-xl font-black text-center">צלם ארוחה עם AI</Text>
+                  <Text className="text-white text-xl font-black text-center">נתח ארוחה עם AI</Text>
                   <Text className="text-gray-400 text-sm text-center mt-2 px-4">
-                    צלם את הארוחה שלך ו-AI יזהה את המרכיבים ואת הערכים התזונתיים
+                    צלם או בחר תמונה ו-AI יזהה את המרכיבים ואת הערכים התזונתיים
                   </Text>
                 </View>
                 <Pressable
                   onPress={handleCapture}
-                  className="bg-lime-500 rounded-2xl h-14 items-center justify-center"
+                  className="bg-lime-500 rounded-2xl h-14 items-center justify-center flex-row gap-2"
                 >
+                  <Ionicons name="camera" size={20} color="#000" />
                   <Text className="text-black font-black text-base">צלם ארוחה</Text>
+                </Pressable>
+                <Pressable
+                  onPress={handlePickFromGallery}
+                  className="mt-3 bg-background-800 border border-white/10 rounded-2xl h-14 items-center justify-center flex-row gap-2"
+                >
+                  <Ionicons name="images-outline" size={20} color="#fff" />
+                  <Text className="text-white font-bold text-base">בחר מהגלריה</Text>
                 </Pressable>
                 <Pressable onPress={handleClose} className="mt-3 h-12 items-center justify-center">
                   <Text className="text-gray-400 font-bold">ביטול</Text>
