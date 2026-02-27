@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import TabsManager from '../exercises/TabsMenager';
+import TabsManager from '../../exercises/TabsMenager';
 import Foods from './Foods';
 import Meals from './Meals';
 
@@ -9,13 +9,13 @@ interface Props {
   onClose: () => void;
 }
 
-export default function FoodSelectionModal({ userId, date, onClose }: Props) {
+export default function FoodSelectionTabs({ userId, date, onClose }: Props) {
   const tabs = [
-    { title: 'ארוחות', Component: <Meals userId={userId} date={date} onClose={onClose} /> },
     {
       title: 'מאכלים',
       Component: <Foods userId={userId} date={date} onClose={onClose} />,
     },
+    { title: 'ארוחות', Component: <Meals userId={userId} date={date} onClose={onClose} /> },
   ];
   return (
     <View className="flex-1">

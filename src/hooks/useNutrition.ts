@@ -1,12 +1,15 @@
 import {
-  createFoodItem,
-  createMealWithItems,
-  createNutritionEntriesBulk,
-  createNutritionEntry,
-  deleteNutritionEntry,
-  getFoodItems,
-  getMealsWithItems,
-  getNutritionEntries,
+    createFoodItem,
+    createMealWithItems,
+    createNutritionEntriesBulk,
+    createNutritionEntry,
+    deleteFoodItem,
+    deleteMeal,
+    deleteNutritionEntriesByGroupId,
+    deleteNutritionEntry,
+    getFoodItems,
+    getMealsWithItems,
+    getNutritionEntries,
 } from '@/src/service/nutritionService';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { CreateNutritionEntryPayload } from '@/src/types/nutrition';
@@ -85,6 +88,22 @@ export const useDeleteNutritionEntry = (userId: string, date: string) => {
   });
 };
 
+export const useDeleteNutritionEntriesByGroupId = (userId: string, date: string) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+
+  return useMutation({
+    mutationFn: (groupId: string) => deleteNutritionEntriesByGroupId(groupId, userId),
+    onSuccess: () => {
+      triggerSuccess('הארוחה נמחקה', 'success');
+      queryClient.invalidateQueries({ queryKey: ['nutrition-entries', userId, date] });
+    },
+    onError: () => {
+      triggerSuccess('שגיאה במחיקת הארוחה', 'failed');
+    },
+  });
+};
+
 /** מאכלים לבחירה: גלובליים + של המשתמש (מ־food_items) */
 export const useFoodItems = (userId: string | undefined) => {
   return useQuery({
@@ -110,6 +129,38 @@ export const useCreateFoodItem = (userId: string) => {
     }) => createFoodItem(userId, foodData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['food-items', userId] });
+    },
+  });
+};
+
+export const useDeleteFoodItem = (userId: string) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+
+  return useMutation({
+    mutationFn: (foodItemId: string) => deleteFoodItem(foodItemId, userId),
+    onSuccess: () => {
+      triggerSuccess('המאכל נמחק מהרשימה', 'success');
+      queryClient.invalidateQueries({ queryKey: ['food-items', userId] });
+    },
+    onError: () => {
+      triggerSuccess('שגיאה במחיקת המאכל', 'failed');
+    },
+  });
+};
+
+export const useDeleteMeal = (userId: string) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+
+  return useMutation({
+    mutationFn: (mealId: string) => deleteMeal(mealId, userId),
+    onSuccess: () => {
+      triggerSuccess('הארוחה נמחקה מהרשימה', 'success');
+      queryClient.invalidateQueries({ queryKey: ['meals-with-items', userId] });
+    },
+    onError: () => {
+      triggerSuccess('שגיאה במחיקת הארוחה', 'failed');
     },
   });
 };

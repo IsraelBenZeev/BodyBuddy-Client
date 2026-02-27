@@ -2,9 +2,11 @@ import { colors } from '@/colors';
 import {
   ActivityLevel,
   activityLevelOptions,
+  DEFAULT_PROTEIN_PER_KG,
   ProfileFormData,
 } from '@/src/types/profile';
 import { Ionicons } from '@expo/vector-icons';
+import { Slider } from '@miblanchard/react-native-slider';
 import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
 import {
@@ -44,13 +46,13 @@ const BodyActivityStep = ({
   isPending = false,
 }: BodyActivityStepProps) => {
   const handleNext = useCallback(async () => {
-    const isValid = await trigger(['height', 'weight', 'activity_level']);
+    const isValid = await trigger(['height', 'weight', 'protein_per_kg', 'activity_level']);
     if (isValid) onNext();
   }, [trigger, onNext]);
 
   const handleFinishAndSave = useCallback(async () => {
     if (!onSubmit) return;
-    const isValid = await trigger(['height', 'weight', 'activity_level']);
+    const isValid = await trigger(['height', 'weight', 'protein_per_kg', 'activity_level']);
     if (isValid) onSubmit();
   }, [trigger, onSubmit]);
 
@@ -125,6 +127,66 @@ const BodyActivityStep = ({
                     onChange={onChange}
                     unit="ק״ג"
                   />
+                </View>
+                {error && (
+                  <Text className="text-red-400 text-xs text-right mt-1">
+                    {error.message}
+                  </Text>
+                )}
+              </View>
+            )}
+          />
+        </View>
+
+        {/* Protein per kg */}
+        <View className="mb-6">
+          <Text className="text-background-200 text-sm font-semibold text-right mb-1">
+            חלבון לכל ק״ג משקל (גרם)
+          </Text>
+          <Text className="text-background-500 text-xs text-right mb-3">
+            ערך ברירת מחדל {DEFAULT_PROTEIN_PER_KG} – משמש לחישוב יעד החלבון היומי
+          </Text>
+          <Controller
+            control={control}
+            name="protein_per_kg"
+            rules={{
+              validate: (v) =>
+                (v >= 0.8 && v <= 3) || 'ערך בין 0.8 ל-3',
+            }}
+            render={({
+              field: { onChange, value },
+              fieldState: { error },
+            }) => (
+              <View>
+                <View className="bg-background-800 border border-background-600 rounded-2xl p-5">
+                  <View className="items-center mb-2">
+                    <Text className="text-white text-2xl font-black">{value.toFixed(1)}</Text>
+                    <Text className="text-background-400 text-xs">גרם/ק״ג</Text>
+                  </View>
+                  <Slider
+                    value={value}
+                    onValueChange={(val) => onChange((val as number[])[0])}
+                    minimumValue={0.8}
+                    maximumValue={3}
+                    step={0.1}
+                    minimumTrackTintColor={colors.lime[500]}
+                    maximumTrackTintColor={colors.background[600]}
+                    thumbTintColor={colors.lime[500]}
+                    trackStyle={{ height: 6, borderRadius: 3 }}
+                    thumbStyle={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: 12,
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 3,
+                    }}
+                  />
+                  <View className="flex-row justify-between mt-1">
+                    <Text className="text-background-500 text-xs">0.8</Text>
+                    <Text className="text-background-500 text-xs">3</Text>
+                  </View>
                 </View>
                 {error && (
                   <Text className="text-red-400 text-xs text-right mt-1">

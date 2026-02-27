@@ -1,15 +1,16 @@
 import { colors } from '@/colors';
-import { useMealsWithItems } from '@/src/hooks/useNutrition';
+import { useDeleteMeal, useMealsWithItems } from '@/src/hooks/useNutrition';
 import type { MealWithItems } from '@/src/types/meal';
+import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  Text,
-  View,
+    ActivityIndicator,
+    FlatList,
+    Pressable,
+    Text,
+    View,
 } from 'react-native';
 import MealReviewModal from './MealReviewModal';
 
@@ -23,6 +24,8 @@ export default function Meals({ userId, date, onClose }: Props) {
   const router = useRouter();
   const { data: meals = [], isLoading } = useMealsWithItems(userId);
   const [reviewMeal, setReviewMeal] = useState<MealWithItems | null>(null);
+  const [mealToDelete, setMealToDelete] = useState<MealWithItems | null>(null);
+  const { mutate: deleteMeal, isPending: isDeletingMeal } = useDeleteMeal(userId);
 
   const handleCreateFirstMeal = useCallback(() => {
     onClose();
@@ -175,6 +178,7 @@ return (
         <MealCard
           meal={item}
           onPress={() => setReviewMeal(item)}
+          onDelete={() => setMealToDelete(item)}
         />
       )}
       ListEmptyComponent={() => (
@@ -212,11 +216,34 @@ return (
         </Text>
       </Pressable>
     </View>
+
+    <DeleteConfirmModal
+      visible={mealToDelete !== null}
+      title="מחיקת ארוחה"
+      message={`האם למחוק את "${mealToDelete?.name_meal}" מהרשימה?`}
+      infoNote="מחיקת ארוחה מהרשימה שלך לא תשפיע על הרשומות שכבר קיימות ביומן התזונה"
+      isDeleting={isDeletingMeal}
+      onCancel={() => setMealToDelete(null)}
+      onConfirm={() => {
+        if (!mealToDelete) return;
+        const id = mealToDelete.id;
+        setMealToDelete(null);
+        deleteMeal(id);
+      }}
+    />
   </View>
 );
 }
 
-function MealCard({ meal, onPress }: { meal: MealWithItems; onPress: () => void }) {
+function MealCard({
+  meal,
+  onPress,
+  onDelete,
+}: {
+  meal: MealWithItems;
+  onPress: () => void;
+  onDelete: () => void;
+}) {
   // חישוב קלוריות ומשקל כולל
   const stats = (meal.meal_items ?? []).reduce(
     (acc, mi) => {
@@ -263,9 +290,21 @@ function MealCard({ meal, onPress }: { meal: MealWithItems; onPress: () => void 
           </View>
         </View>
 
-        {/* חץ כניסה עדין */}
-        <View className="bg-background-700 rounded-full p-1 mr-1">
-          <Ionicons name="chevron-back" size={16} color="#9ca3af" />
+        {/* כפתורי פעולה */}
+        <View className="flex-row items-center mr-1">
+          <Pressable
+            onPress={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            hitSlop={8}
+            className="bg-red-500/10 rounded-xl p-2 ml-2"
+          >
+            <Ionicons name="trash-outline" size={16} color="#ef4444" />
+          </Pressable>
+          <View className="bg-background-700 rounded-full p-1">
+            <Ionicons name="chevron-back" size={16} color="#9ca3af" />
+          </View>
         </View>
       </View>
 

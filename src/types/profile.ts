@@ -11,6 +11,8 @@ export interface Profile {
   goal: Goal | null;
   calorie_offset: number | null;
   avatar_url: string | null;
+  /** גרם חלבון לכל ק"ג משקל – ברירת מחדל 1.7 */
+  protein_per_kg: number | null;
 }
 
 export type Gender = 'male' | 'female';
@@ -33,6 +35,7 @@ export interface ProfileFormData {
   activity_level: ActivityLevel | '';
   goal: Goal | '';
   calorie_offset: number;
+  protein_per_kg: number;
 }
 
 export interface CreateProfilePayload {
@@ -44,6 +47,7 @@ export interface CreateProfilePayload {
   activity_level: ActivityLevel;
   goal: Goal;
   calorie_offset: number;
+  protein_per_kg: number;
   avatar_url?: string;
 }
 
@@ -92,6 +96,9 @@ export const activityLevelToTDEEKey: Record<ActivityLevel, 'A' | 'B' | 'C' | 'D'
   very_active: 'D',
   extra_active: 'E',
 };
+
+/** ברירת מחדל למכפיל חלבון (גרם חלבון לכל ק"ג משקל) */
+export const DEFAULT_PROTEIN_PER_KG = 1.7;
 
 /** ברירות מחדל להפרש קלוריות לפי מטרה */
 export const DEFAULT_CALORIE_OFFSET: Record<'cut' | 'bulk', number> = {
