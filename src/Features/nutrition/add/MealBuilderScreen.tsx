@@ -1,13 +1,14 @@
 import type { AddStep } from '@/src/Features/nutrition/add/ListFoodForMealBuilder';
 import ListFoodForMealBuilder from '@/src/Features/nutrition/add/ListFoodForMealBuilder';
 import {
+  useCreateFoodItem,
   useCreateMealWithItems,
   useCreateNutritionEntriesBulk,
   useFoodItems,
 } from '@/src/hooks/useNutrition';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import type { MealItemForm } from '@/src/types/meal';
-import type { FoodItem } from '@/src/types/nutrition';
+import type { FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -36,6 +37,7 @@ const MealBuilderScreen = () => {
     userId,
     today
   );
+  const { mutate: createFoodItem, isPending: isCreatingFood } = useCreateFoodItem(userId);
 
   const totalCal = useMemo(
     () => items.reduce((sum, i) => sum + Math.round((i.calories_per_100 * i.amount_g) / 100), 0),
@@ -79,6 +81,43 @@ const MealBuilderScreen = () => {
       closeAddModal();
     },
     [selectedFood, closeAddModal]
+  );
+
+  const handleNewFoodSubmit = useCallback(
+    (data: SliderEntryFormData) => {
+      const calories =
+        Math.round((data.protein_per_100 * 4 + data.carbs_per_100 * 4 + data.fat_per_100 * 9) * 10) / 10;
+      createFoodItem(
+        {
+          name: data.food_name,
+          category: data.category,
+          serving_weight: data.serving_weight,
+          protein_per_100: data.protein_per_100,
+          carbs_per_100: data.carbs_per_100,
+          fat_per_100: data.fat_per_100,
+          calories_per_100: calories,
+        },
+        {
+          onSuccess: (newFood) => {
+            setItems((prev) => [
+              ...prev,
+              {
+                food_item_id: newFood.id,
+                name: newFood.name,
+                amount_g: data.portion_size,
+                protein_per_100: newFood.protein_per_100,
+                carbs_per_100: newFood.carbs_per_100,
+                fat_per_100: newFood.fat_per_100,
+                calories_per_100: newFood.calories_per_100,
+                serving_weight: newFood.serving_weight ?? 100,
+              },
+            ]);
+            closeAddModal();
+          },
+        }
+      );
+    },
+    [createFoodItem, closeAddModal]
   );
 
   const removeItem = useCallback((index: number) => {
@@ -294,6 +333,8 @@ const MealBuilderScreen = () => {
           foodItems={foodItems}
           onSelectFood={onSelectFood}
           addItemFromPortion={addItemFromPortion}
+          onNewFoodSubmit={handleNewFoodSubmit}
+          isCreatingFood={isCreatingFood}
         />
       </Modal>
     </BackGround>

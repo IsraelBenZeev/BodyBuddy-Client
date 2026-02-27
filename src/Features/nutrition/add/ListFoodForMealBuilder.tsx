@@ -1,10 +1,11 @@
 import AddNewFoodSelection from '@/src/Features/nutrition/add/AddNewFoodSelection';
+import AddNewFood from '@/src/Features/nutrition/add/AddNewFoodForm';
 import { getCategoryIconName } from '@/src/Features/nutrition/add/foodCategories';
-import type { FoodItem } from '@/src/types/nutrition';
+import type { FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
-export type AddStep = 'list' | 'amount';
+export type AddStep = 'list' | 'amount' | 'create';
 
 export interface ListFoodForMealBuilderProps {
   addStep: AddStep;
@@ -15,6 +16,8 @@ export interface ListFoodForMealBuilderProps {
   foodItems: FoodItem[];
   onSelectFood: (food: FoodItem) => void;
   addItemFromPortion: (portionGrams: number) => void;
+  onNewFoodSubmit: (data: SliderEntryFormData) => void;
+  isCreatingFood: boolean;
 }
 
 const ListFoodForMealBuilder = ({
@@ -26,6 +29,8 @@ const ListFoodForMealBuilder = ({
   foodItems,
   onSelectFood,
   addItemFromPortion,
+  onNewFoodSubmit,
+  isCreatingFood,
 }: ListFoodForMealBuilderProps) => {
   return (
         <View className="flex-1 bg-background-950">
@@ -38,7 +43,7 @@ const ListFoodForMealBuilder = ({
         <View className="flex-row-reverse items-center justify-between px-6 py-4 border-b border-white/5">
           <View className="flex-1">
             <Text className="text-white text-2xl font-black text-right tracking-tight">
-              {addStep === 'list' ? 'בחירת מאכל' : 'כמות והגשה'}
+              {addStep === 'list' ? 'בחירת מאכל' : addStep === 'amount' ? 'כמות והגשה' : 'מאכל חדש'}
             </Text>
             {addStep === 'amount' && selectedFood && (
               <View className="flex-row-reverse items-center mt-1">
@@ -51,44 +56,51 @@ const ListFoodForMealBuilder = ({
           </View>
 
           <Pressable
-            onPress={() => (addStep === 'amount' ? setAddStep('list') : closeAddModal())}
+            onPress={() => (addStep !== 'list' ? setAddStep('list') : closeAddModal())}
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             className="bg-background-800 w-11 h-11 rounded-2xl items-center justify-center border border-white/10 shadow-lg"
           >
             <Ionicons
-              name={addStep === 'amount' ? 'arrow-forward' : 'close'}
+              name={addStep !== 'list' ? 'arrow-forward' : 'close'}
               size={24}
               color="#fff"
             />
           </Pressable>
         </View>
 
-        {addStep === 'list' ? (
+        {addStep === 'create' ? (
+          <AddNewFood
+            mode="meal-builder"
+            onSubmit={(data) => onNewFoodSubmit(data)}
+            isPending={isCreatingFood}
+            onBack={() => setAddStep('list')}
+          />
+        ) : addStep === 'list' ? (
           <View className="flex-1">
-            {/* שורת חיפוש דמו (אופציונלי) - מוסיף המון לסטייל */}
-            {/* <View className="px-6 py-4">
-              <View className="bg-background-800 rounded-2xl flex-row-reverse items-center px-4 py-3 border border-white/5">
-                <Ionicons name="search" size={18} color="#6b7280" />
-                <Text className="text-gray-500 text-right mr-3 flex-1 text-sm font-medium">
-                  חפש ברשימה שלך...
-                </Text>
-              </View>
-            </View> */}
+            {/* כפתור יצירת מאכל חדש */}
+            <Pressable
+              onPress={() => setAddStep('create')}
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              className="mx-6 mt-4 mb-2 flex-row-reverse items-center justify-center bg-lime-500/10 border border-lime-500/30 border-dashed rounded-2xl py-3.5"
+            >
+              <Ionicons name="add-circle-outline" size={20} color="#84cc16" />
+              <Text className="text-lime-400 font-bold text-sm mr-2">הוסף מאכל חדש לרשימה</Text>
+            </Pressable>
 
             <FlatList
               data={foodItems}
               keyExtractor={(item) => item.id}
-              contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 60 }}
+              contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 60, paddingTop: 8 }}
               ItemSeparatorComponent={() => <View className="h-4" />}
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={() => (
-                <View className="items-center justify-center mt-32">
+                <View className="items-center justify-center mt-20">
                   <View className="bg-background-800 p-6 rounded-full mb-4">
                     <Ionicons name="file-tray-outline" size={40} color="#374151" />
                   </View>
                   <Text className="text-gray-500 font-bold text-lg">הרשימה ריקה</Text>
                   <Text className="text-gray-600 text-sm mt-1 text-center px-10">
-                    הוסף מאכלים בטאב הראשי כדי שיופיעו כאן
+                    לחץ על &quot;הוסף מאכל חדש&quot; למעלה כדי להתחיל
                   </Text>
                 </View>
               )}

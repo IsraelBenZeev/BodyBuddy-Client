@@ -18,9 +18,11 @@ interface Props {
   onSubmit: (data: SliderEntryFormData, addToJournal: boolean) => void;
   isPending: boolean;
   onBack: () => void;
+  /** meal-builder: מציג כפתור אחד "שמור והוסף לארוחה" במקום שני כפתורים */
+  mode?: 'standalone' | 'meal-builder';
 }
 
-const AddNewFood = ({ onSubmit, isPending, onBack }: Props) => {
+const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone' }: Props) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<FoodCategoryId | null>(null);
   const [protein, setProtein] = useState(0);
   const [carbs, setCarbs] = useState(0);
@@ -72,7 +74,9 @@ const AddNewFood = ({ onSubmit, isPending, onBack }: Props) => {
   return (
     <View className="flex-1">
       <ScrollView className="flex-1 px-5 py-4">
-        <Text className="text-lime-400 text-2xl font-black mb-2 text-right">הוספת מזון חדש</Text>
+        <Text className="text-lime-400 text-2xl font-black mb-2 text-right">
+          {mode === 'meal-builder' ? 'הוספת מזון חדש לארוחה' : 'הוספת מזון חדש'}
+        </Text>
         <Text className="text-background-400 text-sm mb-6 text-right">המזון יישמר לשימוש חוזר</Text>
 
         <FormInput
@@ -273,26 +277,41 @@ const AddNewFood = ({ onSubmit, isPending, onBack }: Props) => {
               <Ionicons name="arrow-forward" size={20} color={colors.background[400]} />
             </View>
           </Pressable>
-          <Pressable
-            onPress={handleSubmit((formData) => handleFormSubmit(formData, false))}
-            disabled={isPending}
-            className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl border border-white/10 py-4 ${isPending ? 'bg-background-700 opacity-50' : 'bg-background-800'}`}
-          >
-            <Text className="text-white font-black text-base mr-2 shrink min-w-0" numberOfLines={1}>שמור לרשימה בלבד</Text>
-            <View style={{ flexShrink: 0 }}>
-              <Ionicons name="list" size={20} color={colors.white} />
-            </View>
-          </Pressable>
-          <Pressable
-            onPress={handleSubmit((formData) => handleFormSubmit(formData, true))}
-            disabled={isPending}
-            className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl py-4 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
-          >
-            <Text className="mr-2 min-w-0 shrink font-black text-base text-background-900" numberOfLines={1}>שמור לרשימה וליומן</Text>
-            <View style={{ flexShrink: 0 }}>
-              <Ionicons name="checkmark-circle" size={20} color={colors.background[900]} />
-            </View>
-          </Pressable>
+          {mode === 'meal-builder' ? (
+            <Pressable
+              onPress={handleSubmit((formData) => handleFormSubmit(formData, false))}
+              disabled={isPending}
+              className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl py-4 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
+            >
+              <Text className="mr-2 min-w-0 shrink font-black text-base text-background-900" numberOfLines={1}>שמור והוסף לארוחה</Text>
+              <View style={{ flexShrink: 0 }}>
+                <Ionicons name="restaurant" size={20} color={colors.background[900]} />
+              </View>
+            </Pressable>
+          ) : (
+            <>
+              <Pressable
+                onPress={handleSubmit((formData) => handleFormSubmit(formData, false))}
+                disabled={isPending}
+                className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl border border-white/10 py-4 ${isPending ? 'bg-background-700 opacity-50' : 'bg-background-800'}`}
+              >
+                <Text className="text-white font-black text-base mr-2 shrink min-w-0" numberOfLines={1}>שמור לרשימה בלבד</Text>
+                <View style={{ flexShrink: 0 }}>
+                  <Ionicons name="list" size={20} color={colors.white} />
+                </View>
+              </Pressable>
+              <Pressable
+                onPress={handleSubmit((formData) => handleFormSubmit(formData, true))}
+                disabled={isPending}
+                className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl py-4 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
+              >
+                <Text className="mr-2 min-w-0 shrink font-black text-base text-background-900" numberOfLines={1}>שמור לרשימה וליומן</Text>
+                <View style={{ flexShrink: 0 }}>
+                  <Ionicons name="checkmark-circle" size={20} color={colors.background[900]} />
+                </View>
+              </Pressable>
+            </>
+          )}
         </View>
       </View>
     </View>
