@@ -1,4 +1,6 @@
 import { colors } from '@/colors';
+import AddOptionsSheet from '@/src/Features/nutrition/add/AddOptionsSheet';
+import CameraAIModal from '@/src/Features/nutrition/add/CameraAIModal';
 import ModalAddFoods from '@/src/Features/nutrition/add/ModalAddFoods';
 import NutritionEntriesList from '@/src/Features/nutrition/review/NutritionEntriesList';
 import ProgressStats from '@/src/Features/nutrition/review/ProgressStats';
@@ -21,16 +23,16 @@ import {
   sumEntriesToDailyConsumed,
 } from '@/src/utils/calculateNutritionMetrics';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 const NutritionScreen = () => {
   const user = useAuthStore((state) => state.user);
+  const router = useRouter();
   const today = getTodayDate();
   const [isAddFoodOpen, setIsAddFoodOpen] = useState(false);
-
-  const openAddFoodSheet = useCallback(() => {
-    setIsAddFoodOpen(true);
-  }, []);
+  const [showOptions, setShowOptions] = useState(false);
+  const [showCameraModal, setShowCameraModal] = useState(false);
 
   const closeAddFoodSheet = useCallback(() => {
     setIsAddFoodOpen(false);
@@ -182,7 +184,7 @@ const NutritionScreen = () => {
         </ScrollView>
 
         <Pressable
-          onPress={openAddFoodSheet}
+          onPress={() => setShowOptions(true)}
           className="absolute bottom-6 left-5 flex-row items-center gap-2 rounded-full bg-lime-500 pl-4 pr-5 py-3 border border-lime-400/40 active:opacity-90"
           style={{
             shadowColor: colors.lime[500],
@@ -196,6 +198,32 @@ const NutritionScreen = () => {
           <Text className="text-background-900 font-bold text-base">הוספת מאכל או ארוחה</Text>
         </Pressable>
       </View>
+
+      <AddOptionsSheet
+        visible={showOptions}
+        onClose={() => setShowOptions(false)}
+        onSelectFromList={() => {
+          setShowOptions(false);
+          setIsAddFoodOpen(true);
+        }}
+        onAddNewFood={() => {
+          setShowOptions(false);
+          router.push('/add-food/create');
+        }}
+        onAddMeal={() => {
+          setShowOptions(false);
+          router.push('/MealBuilder/create');
+        }}
+        onCameraAI={() => {
+          setShowOptions(false);
+          setShowCameraModal(true);
+        }}
+      />
+
+      <CameraAIModal
+        visible={showCameraModal}
+        onClose={() => setShowCameraModal(false)}
+      />
 
       <ModalAddFoods
         visible={isAddFoodOpen}

@@ -107,3 +107,33 @@ export interface SliderEntryFormData {
   portion_size: number;
   portion_unit: 'g' | 'ml';
 }
+
+// ── AI Analysis Types ──────────────────────────────────────────────────────────
+
+export interface AIFoodResult {
+  type: 'food';
+  food_name: string;
+  protein_per_100: number;
+  carbs_per_100: number;
+  fat_per_100: number;
+  calories_per_100: number;
+  serving_weight?: number;
+  category?: string;
+}
+
+export interface AIMealResultItem {
+  food_name: string;
+  estimated_grams: number;
+  protein_per_100: number;
+  carbs_per_100: number;
+  fat_per_100: number;
+  calories_per_100: number;
+}
+
+export interface AIMealResult {
+  type: 'meal';
+  meal_name: string;
+  items: AIMealResultItem[];
+}
+
+export type AIAnalysisResult = AIFoodResult | AIMealResult;

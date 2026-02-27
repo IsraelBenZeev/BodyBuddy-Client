@@ -20,14 +20,25 @@ interface Props {
   onBack: () => void;
   /** meal-builder: מציג כפתור אחד "שמור והוסף לארוחה" במקום שני כפתורים */
   mode?: 'standalone' | 'meal-builder';
+  /** ערכים ראשוניים (מ-AI או מקור חיצוני) */
+  initialValues?: {
+    food_name?: string;
+    protein_per_100?: number;
+    carbs_per_100?: number;
+    fat_per_100?: number;
+    serving_weight?: number;
+    category?: string;
+  };
 }
 
-const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone' }: Props) => {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<FoodCategoryId | null>(null);
-  const [protein, setProtein] = useState(0);
-  const [carbs, setCarbs] = useState(0);
-  const [fat, setFat] = useState(0);
-  const [servingWeight, setServingWeight] = useState(100);
+const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialValues }: Props) => {
+  const [selectedCategoryId, setSelectedCategoryId] = useState<FoodCategoryId | null>(
+    (initialValues?.category as FoodCategoryId) ?? null
+  );
+  const [protein, setProtein] = useState(initialValues?.protein_per_100 ?? 0);
+  const [carbs, setCarbs] = useState(initialValues?.carbs_per_100 ?? 0);
+  const [fat, setFat] = useState(initialValues?.fat_per_100 ?? 0);
+  const [servingWeight, setServingWeight] = useState(initialValues?.serving_weight ?? 100);
   const [quantity, setQuantity] = useState(1);
 
   const toggleCategory = useCallback((id: FoodCategoryId) => {
@@ -36,7 +47,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone' }: Props)
 
   const { control, handleSubmit } = useForm<{ food_name: string }>({
     defaultValues: {
-      food_name: '',
+      food_name: initialValues?.food_name ?? '',
     },
   });
 

@@ -86,7 +86,20 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="auth-callback" options={{ headerShown: false }} />
           <Stack.Screen name="UserSetup" />
-          <Stack.Screen name="MealBuilder/[paramse]" />
+          <Stack.Screen
+            name="MealBuilder/[paramse]"
+            options={{
+              presentation: 'pageSheet',
+              animation: 'slide_from_bottom',
+            }}
+          />
+          <Stack.Screen
+            name="add-food/[mode]"
+            options={{
+              presentation: 'pageSheet',
+              animation: 'slide_from_bottom',
+            }}
+          />
           <Stack.Screen
             name="exercise/[exerciseId]"
             options={{

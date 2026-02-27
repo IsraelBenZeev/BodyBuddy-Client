@@ -1,5 +1,6 @@
 import type { Meal, MealWithItems } from '@/src/types/meal';
 import type {
+    AIAnalysisResult,
     CreateNutritionEntryPayload,
     FoodItem,
     NutritionEntry,
@@ -419,4 +420,18 @@ export const createMealWithItems = async (
     console.error('Create meal with items error:', error);
     throw error;
   }
+};
+
+// ── AI Image Analysis ──────────────────────────────────────────────────────────
+
+const AI_AGENT_URL = 'http://localhost:8000/analyze';
+
+export const analyzeNutritionImage = async (imageBase64: string): Promise<AIAnalysisResult> => {
+  const response = await fetch(AI_AGENT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: imageBase64 }),
+  });
+  if (!response.ok) throw new Error('שגיאה בניתוח התמונה');
+  return response.json() as Promise<AIAnalysisResult>;
 };

@@ -8,23 +8,49 @@ import {
 } from '@/src/hooks/useNutrition';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import type { MealItemForm } from '@/src/types/meal';
-import type { FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
+import type { AIMealResultItem, FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
 
+type MealItemState = MealItemForm & { isPendingCreate?: boolean };
+
 const MealBuilderScreen = () => {
-  const params = useLocalSearchParams<{ paramse?: string; initialName?: string }>();
+  const params = useLocalSearchParams<{
+    paramse?: string;
+    initialName?: string;
+    initialItemsJson?: string;
+  }>();
   const router = useRouter();
   const userId = useAuthStore((s) => s.user?.id) ?? '';
 
   const mode = params.paramse ?? 'create';
   const initialName = params.initialName ?? '';
 
+  const parsedInitialItems = useMemo<MealItemState[]>(() => {
+    if (!params.initialItemsJson) return [];
+    try {
+      const aiItems: AIMealResultItem[] = JSON.parse(params.initialItemsJson);
+      return aiItems.map((item) => ({
+        food_item_id: '',
+        name: item.food_name,
+        amount_g: item.estimated_grams,
+        protein_per_100: item.protein_per_100,
+        carbs_per_100: item.carbs_per_100,
+        fat_per_100: item.fat_per_100,
+        calories_per_100: item.calories_per_100,
+        serving_weight: 100,
+        isPendingCreate: true,
+      }));
+    } catch {
+      return [];
+    }
+  }, [params.initialItemsJson]);
+
   const [nameMeal, setNameMeal] = useState(initialName || '');
-  const [items, setItems] = useState<MealItemForm[]>([]);
+  const [items, setItems] = useState<MealItemState[]>(parsedInitialItems);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [addStep, setAddStep] = useState<AddStep>('list');
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
@@ -37,7 +63,11 @@ const MealBuilderScreen = () => {
     userId,
     today
   );
-  const { mutate: createFoodItem, isPending: isCreatingFood } = useCreateFoodItem(userId);
+  const {
+    mutate: createFoodItem,
+    mutateAsync: createFoodItemAsync,
+    isPending: isCreatingFood,
+  } = useCreateFoodItem(userId);
 
   const totalCal = useMemo(
     () => items.reduce((sum, i) => sum + Math.round((i.calories_per_100 * i.amount_g) / 100), 0),
@@ -124,30 +154,67 @@ const MealBuilderScreen = () => {
     setItems((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
-  const handleSaveListOnly = useCallback(() => {
+  // יצור מאכלים שעדיין לא קיימים ב-DB (מ-AI) ומחזיר רשימה עם IDs מלאים
+  const resolvePendingItems = useCallback(async (): Promise<MealItemState[]> => {
+    const pending = items.filter((i) => i.isPendingCreate);
+    if (pending.length === 0) return items;
+    const created = await Promise.all(
+      pending.map((i) =>
+        createFoodItemAsync({
+          name: i.name,
+          protein_per_100: i.protein_per_100,
+          carbs_per_100: i.carbs_per_100,
+          fat_per_100: i.fat_per_100,
+          calories_per_100: i.calories_per_100,
+          serving_weight: i.serving_weight,
+        })
+      )
+    );
+    let createdIdx = 0;
+    return items.map((item) => {
+      if (!item.isPendingCreate) return item;
+      const newFood = created[createdIdx++];
+      return { ...item, food_item_id: newFood?.id ?? '', isPendingCreate: false };
+    });
+  }, [items, createFoodItemAsync]);
+
+  const handleSaveListOnly = useCallback(async () => {
     const trimmed = nameMeal.trim();
     if (!trimmed) return;
     setSavingMode('list');
-    const payload = items.map((it: MealItemForm) => ({
-      food_item_id: it.food_item_id,
-      amount_g: it.amount_g,
-    }));
-    createMeal(
-      { name_meal: trimmed, items: payload },
-      {
-        onSuccess: () => {
-          setSavingMode(null);
-          router.back();
-        },
-        onError: () => setSavingMode(null),
-      }
-    );
-  }, [nameMeal, items, createMeal, router]);
+    try {
+      const resolvedItems = await resolvePendingItems();
+      const payload = resolvedItems.map((it) => ({
+        food_item_id: it.food_item_id,
+        amount_g: it.amount_g,
+      }));
+      createMeal(
+        { name_meal: trimmed, items: payload },
+        {
+          onSuccess: () => {
+            setSavingMode(null);
+            router.back();
+          },
+          onError: () => setSavingMode(null),
+        }
+      );
+    } catch {
+      setSavingMode(null);
+    }
+  }, [nameMeal, resolvePendingItems, createMeal, router]);
 
-  const handleSaveListAndJournal = useCallback(() => {
+  const handleSaveListAndJournal = useCallback(async () => {
     const trimmed = nameMeal.trim();
     if (!trimmed) return;
-    const mealPayload = items.map((it: MealItemForm) => ({
+    setSavingMode('list-and-journal');
+    let resolvedItems: MealItemState[];
+    try {
+      resolvedItems = await resolvePendingItems();
+    } catch {
+      setSavingMode(null);
+      return;
+    }
+    const mealPayload = resolvedItems.map((it) => ({
       food_item_id: it.food_item_id,
       amount_g: it.amount_g,
     }));
@@ -159,7 +226,7 @@ const MealBuilderScreen = () => {
             const v = c === 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
           });
-    const entryPayloads = items.map((it: MealItemForm) => {
+    const entryPayloads = resolvedItems.map((it) => {
       const ratio = it.amount_g / 100;
       return {
         user_id: userId,
@@ -177,7 +244,6 @@ const MealBuilderScreen = () => {
         group_name: trimmed,
       };
     });
-    setSavingMode('list-and-journal');
     createMeal(
       { name_meal: trimmed, items: mealPayload },
       {
@@ -193,7 +259,7 @@ const MealBuilderScreen = () => {
         onError: () => setSavingMode(null),
       }
     );
-  }, [nameMeal, items, userId, today, createMeal, addToJournal, router]);
+  }, [nameMeal, resolvePendingItems, userId, today, createMeal, addToJournal, router]);
 
   const canSave = nameMeal.trim().length > 0 && items.length > 0 && !isSaving && !isAddingToJournal;
 
