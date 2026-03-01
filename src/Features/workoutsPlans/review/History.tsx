@@ -1,12 +1,13 @@
 import { useGetSessions } from "@/src/hooks/useSession";
+import { SessionDBType } from "@/src/types/session";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import SessionReviewCard from "./SessionReviewCard";
 import { useAuthStore } from '@/src/store/useAuthStore';
 interface Props {
-    selectedSession: string;
-    setSelectedSession: Dispatch<SetStateAction<string>>;
+    selectedSession: SessionDBType | null;
+    setSelectedSession: Dispatch<SetStateAction<SessionDBType | null>>;
     workoutPlanId: string;
     sheetRef: any;
 }

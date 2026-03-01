@@ -1,3 +1,4 @@
+import { SessionDBType } from '@/src/types/session';
 import { WorkoutPlan } from '@/src/types/workout';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
@@ -23,9 +24,9 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
   const sheetRef = useRef<any>(null);
 
   const { height } = useWindowDimensions();
-  const [selectedSession, setSelectedSession] = useState<string>('');
+  const [selectedSession, setSelectedSession] = useState<SessionDBType | null>(null);
   useEffect(() => {
-    if (selectedSession && selectedSession !== '') {
+    if (selectedSession?.id) {
       setTimeout(() => {
         sheetRef.current?.snapToIndex(1);
       }, 50);
@@ -74,8 +75,8 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
         />
       </ScrollView>
       <View
-        style={{ opacity: selectedSession ? 0 : 1 }}
-        pointerEvents={selectedSession ? 'none' : 'auto'}
+        style={{ opacity: selectedSession?.id ? 0 : 1 }}
+        pointerEvents={selectedSession?.id ? 'none' : 'auto'}
         className="absolute bottom-10 left-0 right-0 px-10"
       >
         {/* <AppButton
@@ -101,16 +102,16 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
         </HoldButton>
       </View>
       <ModalBottom
-        key={selectedSession}
+        key={selectedSession?.id || ''}
         ref={sheetRef}
         title="פרטי האימון"
         initialIndex={-1}
         minHeight="50%"
         maxHeight="90%"
         enablePanDownToClose={true}
-        onClose={() => setSelectedSession('')}
+        onClose={() => setSelectedSession(null)}
       >
-        <SessionInformation sessionId={selectedSession} />
+        <SessionInformation sessionId={selectedSession?.id || ''} session={selectedSession} workoutPlanTitle={workoutPlan.title} />
       </ModalBottom>
     </Animated.View>
   );
