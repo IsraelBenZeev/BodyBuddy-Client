@@ -1,10 +1,12 @@
 import { analyzeNutritionImage } from '@/src/service/nutritionService';
+import { useUIStore } from '@/src/store/useUIStore';
 import type { AIAnalysisResult } from '@/src/types/nutrition';
+import ScanAnimation from '@/src/ui/Animations/ScanAnimation';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Modal, Pressable, Text, View } from 'react-native';
 
 interface Props {
   visible: boolean;
@@ -15,8 +17,10 @@ type ModalState = 'idle' | 'loading' | 'error';
 
 const CameraAIModal = ({ visible, onClose }: Props) => {
   const router = useRouter();
+  const { triggerSuccess } = useUIStore();
   const [state, setState] = useState<ModalState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -26,9 +30,12 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
   }, [visible]);
 
   const handleAnalyze = async (base64: string) => {
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     setState('loading');
     try {
-      const analysis: AIAnalysisResult = await analyzeNutritionImage(base64);
+      const analysis: AIAnalysisResult = await analyzeNutritionImage(base64, controller.signal);
+      if (controller.signal.aborted) return;
       onClose();
       if (analysis.type === 'food') {
         router.push({
@@ -55,9 +62,17 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
         });
       }
     } catch {
+      if (abortControllerRef.current?.signal.aborted) return;
       setErrorMsg('שגיאה בניתוח התמונה. נסה שוב.');
       setState('error');
     }
+  };
+
+  const handleCancel = () => {
+    abortControllerRef.current?.abort();
+    setState('idle');
+    onClose();
+    triggerSuccess('בקשתך בוטלה', 'success');
   };
 
   const handleCapture = async () => {
@@ -99,12 +114,12 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <Pressable
         className="flex-1 bg-black/70 justify-end"
-        onPress={handleClose}
+        onPress={state === 'loading' ? undefined : handleClose}
       >
         <Pressable onPress={(e) => e.stopPropagation()}>
           <View className="bg-background-900 rounded-t-3xl px-6 pt-6 pb-10">
             {/* Handle */}
-            <View className="items-center mb-6">
+            <View className="items-center mb-4">
               <View className="w-12 h-1.5 bg-white/10 rounded-full" />
             </View>
 
@@ -140,10 +155,14 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
             )}
 
             {state === 'loading' && (
-              <View className="items-center py-8">
-                <ActivityIndicator size="large" color="#84cc16" />
-                <Text className="text-white font-bold text-base mt-4">מנתח את הארוחה...</Text>
-                <Text className="text-gray-500 text-sm mt-1">זה עלול לקחת מספר שניות</Text>
+              <View className="items-center py-4">
+                <ScanAnimation />
+                <Pressable
+                  onPress={handleCancel}
+                  className="mt-6 bg-background-800 border border-white/10 rounded-2xl h-12 w-full items-center justify-center"
+                >
+                  <Text className="text-gray-400 font-bold">ביטול</Text>
+                </Pressable>
               </View>
             )}
 

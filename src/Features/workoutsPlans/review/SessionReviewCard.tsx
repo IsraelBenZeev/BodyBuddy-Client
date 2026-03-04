@@ -11,7 +11,7 @@ import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-nativ
 interface SessionCardProps {
     session: SessionDBType;
     onPress?: () => void;
-    setSelectedSession: Dispatch<SetStateAction<string>>;
+    setSelectedSession: Dispatch<SetStateAction<SessionDBType | null>>;
     sheetRef: any;
 }
 
@@ -71,7 +71,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
             {/* כפתור מעבר לפרטים */}
             <AppButton
                 onPress={() => {
-                    setSelectedSession(session?.id || "")
+                    setSelectedSession(session)
                     sheetRef.current?.snapToIndex(1);
                 }}
                 haptic="medium"

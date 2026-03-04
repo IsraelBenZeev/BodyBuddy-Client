@@ -426,11 +426,12 @@ export const createMealWithItems = async (
 
 const AI_AGENT_URL = 'https://mail2-whats-app-sever.vercel.app/nutrition/analyze-food';
 
-export const analyzeNutritionImage = async (imageBase64: string): Promise<AIAnalysisResult> => {
+export const analyzeNutritionImage = async (imageBase64: string, signal?: AbortSignal): Promise<AIAnalysisResult> => {
   const response = await fetch(AI_AGENT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ image: imageBase64 }),
+    signal,
   });
   if (!response.ok) throw new Error('שגיאה בניתוח התמונה');
   return response.json() as Promise<AIAnalysisResult>;
