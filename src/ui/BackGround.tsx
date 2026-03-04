@@ -13,7 +13,7 @@ const BackGround = ({ children, colorA, colorB, colorC, colorD }: BackGroundProp
   return (
     <LinearGradient
       className=""
-      style={{ flex: 1, width: '100%',  paddingBottom: 90,  }}
+      style={{ flex: 1, width: '100%',  paddingBottom: 10, }}
       colors={[
         colorA || colors.background[900],
         colorB || colors.background[950],

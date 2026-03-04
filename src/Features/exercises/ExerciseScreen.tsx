@@ -11,7 +11,6 @@ import Instractions from './Instractions';
 import TabsManager from './TabsMenager';
 
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
-
   const { data: exercises, isLoading: isExerciseLoading } = useGetExercisesByIds([exerciseId]);
   const exerciseData = exercises?.[0];
   if (isExerciseLoading || !exerciseData) {
@@ -23,14 +22,15 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
       </BackGround>
     );
   }
-
+  // return <View className='bd h-full'></View>;
   return (
-    <BackGround><View></View>
-      <View className='items-center mt-3'>
+    <BackGround>
+      <View className="items-center mt-3">
         <Handle />
       </View>
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} // שימוש ב-flexGrow חשוב כאן
+      className=''
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 0 }} // שימוש ב-flexGrow חשוב כאן
         showsVerticalScrollIndicator={false}
       >
         <View className="px-6 mb-8 w-full mt-5">
@@ -54,8 +54,18 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           {/* <TabsMenager instructions={exerciseData?.instructions_he} /> */}
           <TabsManager
             tabs={[
-              { title: 'הוראות', Component: <Instractions instructions={exerciseData?.instructions_he} /> },
-              { title: 'היסטוריה', Component: <View className="p-6 items-end"><Text className="text-white text-lg">בהקמה...</Text></View> },
+              {
+                title: 'הוראות',
+                Component: <Instractions instructions={exerciseData?.instructions_he} />,
+              },
+              {
+                title: 'היסטוריה',
+                Component: (
+                  <View className="p-6 items-end">
+                    <Text className="text-white text-lg">בהקמה...</Text>
+                  </View>
+                ),
+              },
             ]}
           />
         </View>
@@ -67,7 +77,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
 const styles = StyleSheet.create({
   imageWrapper: {
     width: '90%',
-    height: 320,
+    height: 280,
     backgroundColor: 'white',
     borderRadius: 32,
     padding: 15,

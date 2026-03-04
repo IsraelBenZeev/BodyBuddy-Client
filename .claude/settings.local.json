@@ -10,7 +10,9 @@
       "Bash(npx tsc:*)",
       "Bash(grep:*)",
       "Bash(dir:*)",
-      "WebSearch"
+      "WebSearch",
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__execute_sql"
     ]
   },
   "enableAllProjectMcpServers": true,

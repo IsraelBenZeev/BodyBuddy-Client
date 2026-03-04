@@ -185,7 +185,7 @@ const NutritionScreen = () => {
 
         <Pressable
           onPress={() => setShowOptions(true)}
-          className="absolute bottom-6 left-5 flex-row items-center gap-2 rounded-full bg-lime-500 pl-4 pr-5 py-3 border border-lime-400/40 active:opacity-90"
+          className="absolute bottom-6 left-5 flex-row items-center gap-2 rounded-full bg-lime-500 pl-4 pr-5 py-3 border border-lime-400/40 active:opacity-90 mb-12"
           style={{
             shadowColor: colors.lime[500],
             shadowOffset: { width: 0, height: 4 },
