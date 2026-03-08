@@ -3,9 +3,9 @@ import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import { Image } from 'expo-image';
-import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Buttons from './Buttons';
+import ExerciseHistory from './ExerciseHistory';
 import Information from './Information';
 import Instractions from './Instractions';
 import TabsManager from './TabsMenager';
@@ -60,11 +60,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
               },
               {
                 title: 'היסטוריה',
-                Component: (
-                  <View className="p-6 items-end">
-                    <Text className="text-white text-lg">בהקמה...</Text>
-                  </View>
-                ),
+                Component: <ExerciseHistory exerciseId={exerciseData.exerciseId} />,
               },
             ]}
           />

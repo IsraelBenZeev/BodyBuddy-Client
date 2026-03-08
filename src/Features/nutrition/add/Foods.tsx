@@ -1,17 +1,11 @@
 import { getCategoryIconName } from '@/src/Features/nutrition/add/foodCategories';
-import {
-  useCreateFoodItem,
-  useCreateNutritionEntry,
-  useDeleteFoodItem,
-  useFoodItems,
-} from '@/src/hooks/useNutrition';
-import { useUIStore } from '@/src/store/useUIStore';
-import type { FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
+import { useCreateNutritionEntry, useDeleteFoodItem, useFoodItems } from '@/src/hooks/useNutrition';
+import type { FoodItem } from '@/src/types/nutrition';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
-import AddNewFood from './AddNewFoodForm';
 import AddNewFoodSelection from './AddNewFoodSelection';
 
 interface Props {
@@ -20,16 +14,15 @@ interface Props {
   onClose: () => void;
 }
 
-type ViewMode = 'list' | 'portion' | 'manual';
+type ViewMode = 'list' | 'portion';
 
 const Foods = ({ userId, date, onClose }: Props) => {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [foodToDelete, setFoodToDelete] = useState<FoodItem | null>(null);
-  const { triggerSuccess } = useUIStore();
+  const router = useRouter();
 
   const { data: foodItems = [], isLoading } = useFoodItems(userId);
-  const { mutate: createFoodItem, isPending: isCreatingFood } = useCreateFoodItem(userId);
   const { mutate: createEntry, isPending: isCreatingEntry } = useCreateNutritionEntry(userId, date);
   const { mutate: deleteFood, isPending: isDeletingFood } = useDeleteFoodItem(userId);
 
@@ -68,56 +61,6 @@ const Foods = ({ userId, date, onClose }: Props) => {
     [selectedFood, userId, date, createEntry, onClose]
   );
 
-  const handleManualEntrySubmit = useCallback(
-    (data: SliderEntryFormData, addToJournal: boolean) => {
-      const calories =
-        Math.round(
-          (data.protein_per_100 * 4 + data.carbs_per_100 * 4 + data.fat_per_100 * 9) * 10
-        ) / 10;
-
-      createFoodItem(
-        {
-          name: data.food_name,
-          category: data.category,
-          serving_weight: data.serving_weight,
-          protein_per_100: data.protein_per_100,
-          carbs_per_100: data.carbs_per_100,
-          fat_per_100: data.fat_per_100,
-          calories_per_100: calories,
-        },
-        {
-          onSuccess: (newFood) => {
-            if (!addToJournal) {
-              triggerSuccess('המזון נוסף בהצלחה', 'success');
-              onClose();
-              return;
-            }
-            const ratio = data.portion_size / 100;
-            createEntry(
-              {
-                user_id: userId,
-                date,
-                food_name: newFood.name,
-                protein: Math.round(newFood.protein_per_100 * ratio * 10) / 10,
-                carbs: Math.round(newFood.carbs_per_100 * ratio * 10) / 10,
-                fat: Math.round(newFood.fat_per_100 * ratio * 10) / 10,
-                calories: Math.round(newFood.calories_per_100 * ratio * 10) / 10,
-                portion_size: data.portion_size,
-                portion_unit: data.portion_unit,
-                serving_weight: newFood.serving_weight ?? data.serving_weight ?? undefined,
-                food_item_id: newFood.id,
-              },
-              {
-                onSuccess: () => onClose(),
-              }
-            );
-          },
-        }
-      );
-    },
-    [userId, date, createFoodItem, createEntry, onClose, triggerSuccess]
-  );
-
   if (viewMode === 'portion' && selectedFood) {
     return (
       <AddNewFoodSelection
@@ -128,16 +71,6 @@ const Foods = ({ userId, date, onClose }: Props) => {
           setViewMode('list');
           setSelectedFood(null);
         }}
-      />
-    );
-  }
-
-  if (viewMode === 'manual') {
-    return (
-      <AddNewFood
-        onSubmit={handleManualEntrySubmit}
-        isPending={isCreatingFood || isCreatingEntry}
-        onBack={() => setViewMode('list')}
       />
     );
   }
@@ -249,10 +182,12 @@ const Foods = ({ userId, date, onClose }: Props) => {
       <View className="mb-6">
         <Text className="text-white text-3xl font-black text-right mb-1">רשימת המאכלים שלי</Text>
         <Text className="text-gray-400 text-sm text-right font-medium">
-          {foodItems.length > 0 ? `בחר מאכל מתוך ${foodItems.length} פריטים` : 'עדיין לא הוספת מזונות'}
+          {foodItems.length > 0
+            ? `בחר מאכל מתוך ${foodItems.length} פריטים`
+            : 'עדיין לא הוספת מזונות'}
         </Text>
       </View>
-  
+
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator color="#84cc16" size="large" />
@@ -283,24 +218,26 @@ const Foods = ({ userId, date, onClose }: Props) => {
               <View className="flex-row-reverse items-center p-4">
                 {/* אייקון קטגוריה משודרג */}
                 <View className="bg-orange-500/10 rounded-2xl w-14 h-14 items-center justify-center ml-4 border border-orange-500/10">
-                  <Ionicons
+                  <MaterialCommunityIcons
                     name={getCategoryIconName(item.category)}
                     size={26}
                     color="#fb923c"
                   />
                 </View>
-  
+
                 {/* שם המאכל וקלוריות */}
                 <View className="flex-1">
                   <Text className="text-white text-lg font-bold text-right" numberOfLines={1}>
                     {item.name}
                   </Text>
                   <View className="flex-row-reverse items-center mt-1">
-                    <Text className="text-lime-400 text-xs font-bold">{item.calories_per_100} קק״ל</Text>
+                    <Text className="text-lime-400 text-xs font-bold">
+                      {item.calories_per_100} קק״ל
+                    </Text>
                     <Text className="text-gray-500 text-[10px] mr-1">/ ל-100 גרם</Text>
                   </View>
                 </View>
-  
+
                 {/* כפתורי פעולה */}
                 <View className="flex-row items-center mr-1">
                   {item.is_custom && item.user_id === userId && (
@@ -320,7 +257,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
                   </View>
                 </View>
               </View>
-  
+
               {/* שורת מאקרו תחתונה - נקייה יותר */}
               <View className="flex-row-reverse bg-white/5 px-4 py-3 justify-between items-center">
                 <View className="items-center flex-1">
@@ -330,7 +267,9 @@ const Foods = ({ userId, date, onClose }: Props) => {
                 <View className="w-[1px] h-4 bg-white/10" />
                 <View className="items-center flex-1">
                   <Text className="text-orange-500 font-black text-xs">{item.carbs_per_100}g</Text>
-                  <Text className="text-gray-500 text-[9px] uppercase font-bold mt-0.5">פחמימה</Text>
+                  <Text className="text-gray-500 text-[9px] uppercase font-bold mt-0.5">
+                    פחמימה
+                  </Text>
                 </View>
                 <View className="w-[1px] h-4 bg-white/10" />
                 <View className="items-center flex-1">
@@ -342,11 +281,14 @@ const Foods = ({ userId, date, onClose }: Props) => {
           )}
         />
       )}
-  
+
       {/* כפתור הוספה צף בתחתית */}
       <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
         <Pressable
-          onPress={() => setViewMode('manual')}
+          onPress={() => {
+            onClose();
+            router.push('/add-food/standalone');
+          }}
           className="bg-lime-500 rounded-2xl h-16 flex-row-reverse items-center justify-center"
           style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
         >

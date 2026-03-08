@@ -7,8 +7,10 @@ import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
-import {  useMemo, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { useDeferredValue, useMemo, useState } from 'react';
+import { FlashList } from '@shopify/flash-list';
+import { Ionicons } from '@expo/vector-icons';
+import { Text, TextInput, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
 
@@ -29,27 +31,43 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     isFetchingNextPage
   } = useExercises(user?.id as string, selectedPartsArray);
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
   const allExercises = useMemo(() => {
     return data?.pages.flatMap((page) => page.exercises) ?? [];
   }, [data]);
 
- 
-  const uniqueBodyParts = useMemo(() => {
-    if (!allExercises.length) return [];
-    const partsSet = new Set(allExercises.flatMap((ex) => ex.bodyParts || []));
-    return Array.from(partsSet) as BodyPart[];
+  // בונה אינדקס פעם אחת בטעינת עמוד — פילטור O(1) במקום O(n)
+  const exerciseIndex = useMemo(() => {
+    const index = new Map<string, typeof allExercises>();
+    index.set('all', allExercises);
+    for (const exercise of allExercises) {
+      for (const part of exercise.bodyParts) {
+        if (!index.has(part)) index.set(part, []);
+        index.get(part)!.push(exercise);
+      }
+    }
+    return index;
   }, [allExercises]);
+
+  const uniqueBodyParts = useMemo(() => {
+    return Array.from(exerciseIndex.keys()).filter((k) => k !== 'all') as BodyPart[];
+  }, [exerciseIndex]);
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
   };
 
+  const deferredFilter = useDeferredValue(selectedFilter);
+  const deferredSearch = useDeferredValue(searchQuery);
   const filteredExercises = useMemo(() => {
-    if (!allExercises.length) return [];
-    if (selectedFilter === 'all') return allExercises;
-    return allExercises.filter((ex) => ex.bodyParts.includes(selectedFilter));
-  }, [allExercises, selectedFilter]);
+    const byPart = exerciseIndex.get(deferredFilter) ?? exerciseIndex.get('all') ?? [];
+    if (!deferredSearch.trim()) return byPart;
+    const q = deferredSearch.toLowerCase();
+    return byPart.filter(
+      (ex) => ex.name.toLowerCase().includes(q) || ex.name_he.includes(deferredSearch)
+    );
+  }, [exerciseIndex, deferredFilter, deferredSearch]);
 
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -76,7 +94,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       ) : (
         <View className="flex-1 pt-2 items-center px-1">
           {(mode === 'picker') && <Handle />}
-          <View className="w-full">
+          <View className="w-full flex-1">
             {selectedPartsArray.length > 1 && (
               <Filters
                 uniqueBodyParts={uniqueBodyParts}
@@ -85,7 +103,22 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 mode={mode as modeListExercises}
               />
             )}
-            <FlatList
+            <View className="flex-row-reverse items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-4 mx-2 mb-3 mt-2">
+              <Ionicons name="search" size={18} color="#a3a3a3" />
+              <TextInput
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="חפש תרגיל..."
+                placeholderTextColor="#525252"
+                className="flex-1 text-white text-right py-3 px-2 text-base"
+              />
+              {searchQuery.length > 0 && (
+                <AppButton onPress={() => setSearchQuery('')} haptic="light" animationType="opacity">
+                  <Ionicons name="close-circle" size={18} color="#a3a3a3" />
+                </AppButton>
+              )}
+            </View>
+            <FlashList
               data={filteredExercises}
               renderItem={({ item }) => (
                 <CardExercise

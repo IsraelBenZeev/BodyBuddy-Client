@@ -49,6 +49,22 @@ export const createSession = async (session: SessionDBType) => {
     }
 };
 // שינוי ה-Type שיקבל מערך של אובייקטים
+export const getExerciseLogsByExerciseId = async (userId: string, exerciseId: string) => {
+    try {
+        const { data, error } = await supabase
+            .from('exercise_logs')
+            .select()
+            .eq('user_id', userId)
+            .eq('exercise_id', exerciseId)
+            .order('created_at', { ascending: true });
+        if (error) throw error;
+        return data as ExerciseLogDBType[];
+    } catch (error) {
+        console.error("Error getting exercise logs by exercise id:", error);
+        throw error;
+    }
+};
+
 export const createSessionExerciseLogs = async (exerciseLogs: ExerciseLogDBType[]) => {
     try {
         const { data, error } = await supabase

@@ -1,12 +1,12 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
-import { Ionicons } from '@expo/vector-icons';
 
 export type FoodCategoryId = string;
 
 export interface FoodCategoryOption {
   id: FoodCategoryId;
   label: string;
-  icon: ComponentProps<typeof Ionicons>['name'];
+  icon: ComponentProps<typeof MaterialCommunityIcons>['name'];
 }
 
 /**
@@ -14,28 +14,28 @@ export interface FoodCategoryOption {
  * המשתמש יוסיף שדה category ל־food_items ב-DB.
  */
 export const FOOD_CATEGORIES: FoodCategoryOption[] = [
-  { id: 'bakery', label: 'מאפים', icon: 'pizza-outline' },
-  { id: 'dairy', label: 'מוצרי חלב', icon: 'nutrition-outline' },
-  { id: 'sweets', label: 'ממתקים', icon: 'ice-cream-outline' },
-  { id: 'salty_snacks', label: 'מלוחים', icon: 'fast-food-outline' },
-  { id: 'meat_poultry', label: 'בשר ועוף', icon: 'restaurant-outline' },
-  { id: 'fish', label: 'דגים', icon: 'fish-outline' },
-  { id: 'eggs', label: 'ביצים', icon: 'egg-outline' },
-  { id: 'legumes', label: 'קטניות', icon: 'leaf-outline' },
-  { id: 'vegetables', label: 'ירקות', icon: 'leaf-outline' },
-  { id: 'fruits', label: 'פירות', icon: 'nutrition-outline' },
-  { id: 'grains', label: 'דגנים', icon: 'nutrition-outline' },
-  { id: 'fats_oils', label: 'שומנים ושמנים', icon: 'water-outline' },
-  { id: 'beverages', label: 'משקאות', icon: 'water-outline' },
-  { id: 'protein_powder', label: 'אבקות חלבון', icon: 'barbell-outline' },
-  { id: 'protein_bars', label: 'חטיפי חלבון', icon: 'flash-outline' },
-  { id: 'fast_food', label: 'מזון מהיר', icon: 'fast-food-outline' },
-  { id: 'spreads', label: 'ממרחים', icon: 'color-palette-outline' },
-  { id: 'sauces', label: 'רטבים', icon: 'water-outline' },
-  { id: 'salads', label: 'סלטים', icon: 'leaf-outline' },
-  { id: 'soups', label: 'מרקים', icon: 'water-outline' },
-  { id: 'nuts_seeds', label: 'אגוזים וגרעינים', icon: 'disc-outline' },
-  { id: 'other', label: 'אחר', icon: 'ellipsis-horizontal' },
+  { id: 'bakery', label: 'מאפים', icon: 'bread-slice' },
+  { id: 'dairy', label: 'מוצרי חלב', icon: 'cheese' },
+  { id: 'sweets', label: 'ממתקים', icon: 'candy' },
+  { id: 'salty_snacks', label: 'מלוחים', icon: 'food-variant' },
+  { id: 'meat_poultry', label: 'בשר ועוף', icon: 'food-drumstick' },
+  { id: 'fish', label: 'דגים', icon: 'fish' },
+  { id: 'eggs', label: 'ביצים', icon: 'egg' },
+  { id: 'legumes', label: 'קטניות', icon: 'sprout' },
+  { id: 'vegetables', label: 'ירקות', icon: 'carrot' },
+  { id: 'fruits', label: 'פירות', icon: 'fruit-watermelon' },
+  { id: 'grains', label: 'דגנים', icon: 'grain' },
+  { id: 'fats_oils', label: 'שומנים ושמנים', icon: 'bottle-tonic' },
+  { id: 'beverages', label: 'משקאות', icon: 'cup-outline' },
+  { id: 'protein_powder', label: 'אבקות חלבון', icon: 'dumbbell' },
+  { id: 'protein_bars', label: 'חטיפי חלבון', icon: 'lightning-bolt' },
+  { id: 'fast_food', label: 'מזון מהיר', icon: 'hamburger' },
+  { id: 'spreads', label: 'ממרחים', icon: 'knife' },
+  { id: 'sauces', label: 'רטבים', icon: 'food-variant' },
+  { id: 'salads', label: 'סלטים', icon: 'bowl-mix' },
+  { id: 'soups', label: 'מרקים', icon: 'pot-steam' },
+  { id: 'nuts_seeds', label: 'אגוזים וגרעינים', icon: 'peanut' },
+  { id: 'other', label: 'אחר', icon: 'dots-horizontal' },
 ];
 
 const CATEGORY_MAP = new Map<FoodCategoryId, FoodCategoryOption>(
@@ -47,7 +47,9 @@ export function getCategoryById(id: FoodCategoryId | null | undefined): FoodCate
   return CATEGORY_MAP.get(id) ?? null;
 }
 
-export function getCategoryIconName(categoryId: FoodCategoryId | null | undefined): ComponentProps<typeof Ionicons>['name'] {
+export function getCategoryIconName(
+  categoryId: FoodCategoryId | null | undefined
+): ComponentProps<typeof MaterialCommunityIcons>['name'] {
   const cat = getCategoryById(categoryId);
-  return cat?.icon ?? 'nutrition-outline';
+  return cat?.icon ?? 'food-variant';
 }

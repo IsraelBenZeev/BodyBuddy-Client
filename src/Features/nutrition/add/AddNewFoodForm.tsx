@@ -7,7 +7,7 @@ import {
 import HorizontalRuler from '@/src/Features/onboarding/HorizontalRuler';
 import type { SliderEntryFormData } from '@/src/types/nutrition';
 import FormInput from '@/src/ui/FormInput';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -17,7 +17,7 @@ interface Props {
   /** addToJournal: true = שמירה לרשימה + הוספה ליומן, false = שמירה לרשימה בלבד */
   onSubmit: (data: SliderEntryFormData, addToJournal: boolean) => void;
   isPending: boolean;
-  onBack: () => void;
+  onBack?: () => void;
   /** meal-builder: מציג כפתור אחד "שמור והוסף לארוחה" במקום שני כפתורים */
   mode?: 'standalone' | 'meal-builder';
   /** ערכים ראשוניים (מ-AI או מקור חיצוני) */
@@ -119,7 +119,12 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ flexDirection: 'row-reverse', gap: 10, paddingHorizontal: 2, paddingVertical: 4 }}
+          contentContainerStyle={{
+            flexDirection: 'row-reverse',
+            gap: 10,
+            paddingHorizontal: 2,
+            paddingVertical: 4,
+          }}
           className="mb-4 -mx-1"
         >
           {FOOD_CATEGORIES.map((cat) => {
@@ -134,7 +139,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                     : 'border-background-600 bg-background-800'
                 }`}
               >
-                <Ionicons
+                <MaterialCommunityIcons
                   name={cat.icon}
                   size={18}
                   color={isSelected ? colors.lime[500] : colors.background[400]}
@@ -154,8 +159,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           <View className="flex-row-reverse items-center mb-2">
             <Text className="text-background-400 text-xs mr-2">נבחר:</Text>
             <View className="flex-row-reverse items-center bg-background-800 rounded-lg px-2 py-1">
-              <Ionicons
-                name={getCategoryById(selectedCategoryId)?.icon ?? 'nutrition-outline'}
+              <MaterialCommunityIcons
+                name={getCategoryById(selectedCategoryId)?.icon ?? 'food-variant'}
                 size={14}
                 color={colors.lime[500]}
               />
@@ -251,7 +256,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               onPress={() => setQuantity((q) => q + 1)}
               className="w-12 h-12 items-center justify-center bg-lime-500/20 rounded-xl active:bg-lime-500/30"
             >
-              <Ionicons name="add" size={24} color={colors.lime[500]} />
+              <MaterialCommunityIcons name="plus" size={24} color={colors.lime[500]} />
             </Pressable>
             <Text className="text-white font-black text-2xl min-w-[48px] text-center mx-4">
               {quantity}
@@ -260,7 +265,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               onPress={() => setQuantity((q) => Math.max(1, q - 1))}
               className="w-12 h-12 items-center justify-center bg-background-700 rounded-xl active:bg-background-600"
             >
-              <Ionicons name="remove" size={24} color={colors.white} />
+              <MaterialCommunityIcons name="minus" size={24} color={colors.white} />
             </Pressable>
           </View>
           <Text className="text-background-500 text-xs text-center mt-2">
@@ -274,56 +279,53 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           </Text>
         </View>
 
-        <View className="h-24" />
+        <View className="h-28" />
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 gap-3 px-5 pb-10 pt-4 bg-background-900/95 border-t border-background-700">
-        <View className="flex-col gap-3">
+      <View className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-background-900/95 border-t border-background-700">
+        {mode === 'meal-builder' ? (
           <Pressable
-            onPress={onBack}
-            className="min-w-0 flex-1 flex-row items-center justify-center rounded-2xl border border-background-600 bg-background-700 py-4"
+            onPress={handleSubmit((formData) => handleFormSubmit(formData, false))}
+            disabled={isPending}
+            className={`flex-row-reverse items-center justify-center rounded-2xl py-4 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
           >
-            <Text className="text-background-400 font-bold text-base mr-2" numberOfLines={1}>חזור</Text>
-            <View style={{ flexShrink: 0 }}>
-              <Ionicons name="arrow-forward" size={20} color={colors.background[400]} />
-            </View>
+            <MaterialCommunityIcons
+              name="silverware-fork-knife"
+              size={20}
+              color={colors.background[900]}
+            />
+            <Text className="mr-2 font-black text-base text-background-900" numberOfLines={1}>
+              שמור והוסף לארוחה
+            </Text>
           </Pressable>
-          {mode === 'meal-builder' ? (
+        ) : (
+          <View className="flex-row gap-3">
             <Pressable
               onPress={handleSubmit((formData) => handleFormSubmit(formData, false))}
               disabled={isPending}
-              className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl py-4 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
+              className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl border border-white/10 py-4 ${isPending ? 'bg-background-700 opacity-50' : 'bg-background-800'}`}
             >
-              <Text className="mr-2 min-w-0 shrink font-black text-base text-background-900" numberOfLines={1}>שמור והוסף לארוחה</Text>
-              <View style={{ flexShrink: 0 }}>
-                <Ionicons name="restaurant" size={20} color={colors.background[900]} />
-              </View>
+              <MaterialCommunityIcons name="content-save-outline" size={20} color={colors.white} />
+              <Text className="text-white font-black text-sm mr-2" numberOfLines={1}>
+                שמור
+              </Text>
             </Pressable>
-          ) : (
-            <>
-              <Pressable
-                onPress={handleSubmit((formData) => handleFormSubmit(formData, false))}
-                disabled={isPending}
-                className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl border border-white/10 py-4 ${isPending ? 'bg-background-700 opacity-50' : 'bg-background-800'}`}
-              >
-                <Text className="text-white font-black text-base mr-2 shrink min-w-0" numberOfLines={1}>שמור לרשימה בלבד</Text>
-                <View style={{ flexShrink: 0 }}>
-                  <Ionicons name="list" size={20} color={colors.white} />
-                </View>
-              </Pressable>
-              <Pressable
-                onPress={handleSubmit((formData) => handleFormSubmit(formData, true))}
-                disabled={isPending}
-                className={`min-w-0 flex-1 flex-row-reverse items-center justify-center rounded-2xl py-4 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
-              >
-                <Text className="mr-2 min-w-0 shrink font-black text-base text-background-900" numberOfLines={1}>שמור לרשימה וליומן</Text>
-                <View style={{ flexShrink: 0 }}>
-                  <Ionicons name="checkmark-circle" size={20} color={colors.background[900]} />
-                </View>
-              </Pressable>
-            </>
-          )}
-        </View>
+            <Pressable
+              onPress={handleSubmit((formData) => handleFormSubmit(formData, true))}
+              disabled={isPending}
+              className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl py-4 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
+            >
+              <MaterialCommunityIcons
+                name="notebook-plus-outline"
+                size={20}
+                color={colors.background[900]}
+              />
+              <Text className="mr-2 font-black text-sm text-background-900" numberOfLines={1}>
+                שמור + יומן
+              </Text>
+            </Pressable>
+          </View>
+        )}
       </View>
     </View>
   );

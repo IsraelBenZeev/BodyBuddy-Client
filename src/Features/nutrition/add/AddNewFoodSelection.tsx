@@ -40,7 +40,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
   }, [portionGrams, onSubmit]);
 
   return (
-    <View className="flex-1 px-6 py-6 bg-background-900 bd">
+    <View className="flex-1 px-6 py-6 bg-background-900">
       {/* כותרת ושם המאכל */}
       <View className="mb-8">
         <Text className="text-white text-3xl font-black text-right mb-1">כמה אכלת?</Text>

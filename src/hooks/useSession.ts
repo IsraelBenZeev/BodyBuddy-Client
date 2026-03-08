@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     createSession,
     createSessionExerciseLogs,
+    getExerciseLogsByExerciseId,
     getSessionExerciseLogs,
     getSessions,
 } from '../service/sessionService';
@@ -48,6 +49,15 @@ export const useSessionCreateExerciseLog = (user_id: string, workoutPlanId: stri
     onError: (error) => {
       console.error('Mutation Error - Exercise Logs:', error);
     },
+  });
+};
+
+export const useGetExerciseHistory = (userId: string, exerciseId: string) => {
+  return useQuery({
+    queryKey: ['exerciseHistory', exerciseId, userId],
+    queryFn: () => getExerciseLogsByExerciseId(userId, exerciseId),
+    staleTime: Infinity,
+    enabled: !!userId && !!exerciseId,
   });
 };
 
