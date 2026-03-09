@@ -104,6 +104,8 @@ export interface SliderEntryFormData {
   protein_per_100: number;
   carbs_per_100: number;
   fat_per_100: number;
+  /** אם קיים – משתמשים בערך זה ולא מחשבים מחדש מהמאקרואים */
+  calories_per_100?: number;
   portion_size: number;
   portion_unit: 'g' | 'ml';
 }

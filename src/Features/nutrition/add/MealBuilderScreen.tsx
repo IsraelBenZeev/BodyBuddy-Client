@@ -138,6 +138,7 @@ const MealBuilderScreen = () => {
   const handleNewFoodSubmit = useCallback(
     (data: SliderEntryFormData) => {
       const calories =
+        data.calories_per_100 ??
         Math.round(
           (data.protein_per_100 * 4 + data.carbs_per_100 * 4 + data.fat_per_100 * 9) * 10
         ) / 10;

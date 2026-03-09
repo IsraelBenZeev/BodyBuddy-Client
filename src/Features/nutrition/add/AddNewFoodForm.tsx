@@ -11,7 +11,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 interface Props {
   /** addToJournal: true = שמירה לרשימה + הוספה ליומן, false = שמירה לרשימה בלבד */
@@ -40,6 +40,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
   const [fat, setFat] = useState(initialValues?.fat_per_100 ?? 0);
   const [servingWeight, setServingWeight] = useState(initialValues?.serving_weight ?? 100);
   const [quantity, setQuantity] = useState(1);
+  const [isManualCalories, setIsManualCalories] = useState(false);
+  const [manualCalories, setManualCalories] = useState('');
 
   const toggleCategory = useCallback((id: FoodCategoryId) => {
     setSelectedCategoryId((prev) => (prev === id ? null : id));
@@ -55,11 +57,13 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
     return Math.round((protein * 4 + carbs * 4 + fat * 9) * 10) / 10;
   }, [protein, carbs, fat]);
 
+  const activeCalories = isManualCalories ? (parseFloat(manualCalories) || 0) : calculatedCalories;
+
   const portionGrams = quantity * servingWeight;
   const portionCalories = useMemo(() => {
     const ratio = portionGrams / 100;
-    return Math.round(calculatedCalories * ratio * 10) / 10;
-  }, [calculatedCalories, portionGrams]);
+    return Math.round(activeCalories * ratio * 10) / 10;
+  }, [activeCalories, portionGrams]);
 
   const buildSubmitData = useCallback(
     (formData: { food_name: string }): SliderEntryFormData => ({
@@ -69,10 +73,11 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
       protein_per_100: protein,
       carbs_per_100: carbs,
       fat_per_100: fat,
+      calories_per_100: isManualCalories ? (parseFloat(manualCalories) || 0) : undefined,
       portion_size: portionGrams,
       portion_unit: 'g',
     }),
-    [selectedCategoryId, servingWeight, protein, carbs, fat, portionGrams]
+    [selectedCategoryId, servingWeight, protein, carbs, fat, isManualCalories, manualCalories, portionGrams]
   );
 
   const handleFormSubmit = useCallback(
@@ -230,10 +235,45 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
         </View>
 
         <View className="bg-background-700 rounded-2xl p-4 mb-6 border border-background-600">
-          <View className="flex-row-reverse items-center justify-between">
-            <Text className="text-background-400 text-sm">קלוריות (חישוב אוטומטי)</Text>
-            <Text className="text-white text-xl font-black">{calculatedCalories}</Text>
+          <View className="flex-row-reverse items-center justify-between mb-3">
+            <Text className="text-background-400 text-sm font-bold">קלוריות (ל-100g)</Text>
+            <View className="flex-row gap-1">
+              <Pressable
+                onPress={() => { setIsManualCalories(false); setManualCalories(''); }}
+                className={`px-3 py-1 rounded-lg border ${!isManualCalories ? 'bg-lime-500/15 border-lime-500' : 'bg-background-800 border-background-600'}`}
+              >
+                <Text className={`text-xs font-bold ${!isManualCalories ? 'text-lime-400' : 'text-background-400'}`}>
+                  אוטומטי
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setIsManualCalories(true)}
+                className={`px-3 py-1 rounded-lg border ${isManualCalories ? 'bg-lime-500/15 border-lime-500' : 'bg-background-800 border-background-600'}`}
+              >
+                <Text className={`text-xs font-bold ${isManualCalories ? 'text-lime-400' : 'text-background-400'}`}>
+                  ידני
+                </Text>
+              </Pressable>
+            </View>
           </View>
+          {isManualCalories ? (
+            <View className="flex-row-reverse items-center gap-2">
+              <TextInput
+                value={manualCalories}
+                onChangeText={setManualCalories}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.background[500]}
+                className="flex-1 text-white text-xl font-black text-right bg-background-800 rounded-xl px-3 py-2 border border-lime-500/40"
+              />
+              <Text className="text-background-400 text-sm">קק״ל</Text>
+            </View>
+          ) : (
+            <View className="flex-row-reverse items-center justify-between">
+              <Text className="text-background-400 text-xs">מחושב מהמאקרואים</Text>
+              <Text className="text-white text-xl font-black">{calculatedCalories}</Text>
+            </View>
+          )}
         </View>
 
         <View className="mb-4">
