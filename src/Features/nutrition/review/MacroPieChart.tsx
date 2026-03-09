@@ -19,13 +19,11 @@ type DisplayMode = 'percentage' | 'grams';
 
 const MacroPieChart = ({ macroSplit, caloriesConsumed, caloriesGoal }: Props) => {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('percentage');
-  const showCenterCalories =
-    typeof caloriesConsumed === 'number' && caloriesConsumed >= 0;
+  const showCenterCalories = typeof caloriesConsumed === 'number' && caloriesConsumed >= 0;
 
   const pieData = useMemo(() => {
     const { protein, carbs, fat } = macroSplit;
-    const v = (n: number) =>
-      displayMode === 'percentage' ? `${n}%` : `${n}g`;
+    const v = (n: number) => (displayMode === 'percentage' ? `${n}%` : `${n}g`);
     return [
       {
         value: displayMode === 'percentage' ? protein.percentage : protein.grams,
@@ -50,9 +48,7 @@ const MacroPieChart = ({ macroSplit, caloriesConsumed, caloriesGoal }: Props) =>
 
   return (
     <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600 items-center justify-center">
-      <Text className="text-white text-lg font-bold mb-4 text-right">
-        פילוח מקרו נוטריינטים
-      </Text>
+      <Text className="text-white text-lg font-bold mb-4 text-right">פילוח נתונים </Text>
 
       <View
         className="items-center justify-center mb-4"
@@ -77,7 +73,10 @@ const MacroPieChart = ({ macroSplit, caloriesConsumed, caloriesGoal }: Props) =>
       <View className="space-y-2 mb-4 w-full">
         <View className="flex-row-reverse items-center justify-between">
           <View className="flex-row-reverse items-center gap-1">
-            <View className="w-4 h-4 rounded-full mr-2" style={{ backgroundColor: colors.lime[500] }} />
+            <View
+              className="w-4 h-4 rounded-full mr-2"
+              style={{ backgroundColor: colors.lime[500] }}
+            />
             <Text className="text-white text-sm">חלבון</Text>
           </View>
           <Text className="text-background-400 text-sm">{pieData[0].text}</Text>
@@ -85,7 +84,10 @@ const MacroPieChart = ({ macroSplit, caloriesConsumed, caloriesGoal }: Props) =>
 
         <View className="flex-row-reverse items-center justify-between">
           <View className="flex-row-reverse items-center gap-1">
-            <View className="w-4 h-4 rounded-full mr-2" style={{ backgroundColor: colors.orange[500] }} />
+            <View
+              className="w-4 h-4 rounded-full mr-2"
+              style={{ backgroundColor: colors.orange[500] }}
+            />
             <Text className="text-white text-sm">פחמימות</Text>
           </View>
           <Text className="text-background-400 text-sm">{pieData[1].text}</Text>
@@ -93,7 +95,10 @@ const MacroPieChart = ({ macroSplit, caloriesConsumed, caloriesGoal }: Props) =>
 
         <View className="flex-row-reverse items-center justify-between ">
           <View className="flex-row-reverse items-center gap-1">
-            <View className="w-4 h-4 rounded-full mr-2" style={{ backgroundColor: colors.red[500] }} />
+            <View
+              className="w-4 h-4 rounded-full mr-2"
+              style={{ backgroundColor: colors.red[500] }}
+            />
             <Text className="text-white text-sm">שומן</Text>
           </View>
           <Text className="text-background-400 text-sm">{pieData[2].text}</Text>
@@ -101,7 +106,7 @@ const MacroPieChart = ({ macroSplit, caloriesConsumed, caloriesGoal }: Props) =>
       </View>
 
       <Pressable
-        onPress={() => setDisplayMode(prev => prev === 'percentage' ? 'grams' : 'percentage')}
+        onPress={() => setDisplayMode((prev) => (prev === 'percentage' ? 'grams' : 'percentage'))}
         className="bg-background-700 border border-lime-500/30 rounded-xl py-3 w-full"
       >
         <Text className="text-lime-500 font-bold text-center text-sm">

@@ -1,10 +1,17 @@
 import { useUIStore } from '@/src/store/useUIStore';
 import LottieView from 'lottie-react-native';
+import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 export default function GlobalFaild() {
     const { isSuccessVisible, message, hideSuccess, type } = useUIStore();
+
+    useEffect(() => {
+        if (!isSuccessVisible || type !== 'failed') return;
+        const timer = setTimeout(hideSuccess, 3000);
+        return () => clearTimeout(timer);
+    }, [isSuccessVisible]);
 
     if (!isSuccessVisible || type !== 'failed') return null;
 
