@@ -1,5 +1,8 @@
 import { colors } from '@/colors';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -83,6 +86,7 @@ export default function RootLayout() {
             headerShown: false,
           }}
         >
+          <Stack.Screen name="index" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="auth-callback" options={{ headerShown: false }} />
           <Stack.Screen name="UserSetup" />

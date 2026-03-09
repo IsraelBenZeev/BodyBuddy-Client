@@ -1,5 +1,6 @@
 import { colors } from '@/colors';
 import { useProfile } from '@/src/hooks/useProfile';
+import { useUserWorkoutStats } from '@/src/hooks/useSession';
 import { signOut } from '@/src/service/authService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
@@ -62,6 +63,32 @@ const StatBox = ({
   </View>
 );
 
+const formatMinutes = (minutes: number): string => {
+  if (minutes === 0) return '0 דק׳';
+  if (minutes < 60) return `${minutes} דק׳`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m > 0 ? `${h}:${String(m).padStart(2, '0')} שע׳` : `${h} שע׳`;
+};
+
+const WorkoutStatItem = ({
+  icon,
+  value,
+  label,
+}: {
+  icon: any;
+  value: string;
+  label: string;
+}) => (
+  <View className="items-center flex-1">
+    <View className="bg-background-700 p-2 rounded-xl mb-2 border border-white/5">
+      <Ionicons name={icon} size={16} color={colors.lime[500]} />
+    </View>
+    <Text className="text-white text-lg font-black">{value}</Text>
+    <Text className="text-white/30 text-[9px] font-bold text-center mt-0.5">{label}</Text>
+  </View>
+);
+
 /** --- מסך הפרופיל המרכזי --- **/
 
 export default function ProfileScreen() {
@@ -70,6 +97,7 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
 
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
+  const { data: workoutStats, isLoading: isStatsLoading } = useUserWorkoutStats(user?.id);
 
   const dailyCalories = useMemo(() => {
     if (!profile) return null;
@@ -137,6 +165,34 @@ export default function ProfileScreen() {
               <Text className="text-white/30 text-xs text-right mt-1">{user?.email ?? ''}</Text>
             </View>
           
+          </View>
+        </View>
+
+        {/* Workout Stats Card */}
+        <View className="px-6 mb-6">
+          <View className="bg-background-800 border border-white/5 rounded-[30px] p-5">
+            <View className="flex-row-reverse justify-between">
+              <WorkoutStatItem
+                icon="barbell-outline"
+                value={isStatsLoading ? '...' : String(workoutStats?.weeklyCount ?? 0)}
+                label="אימונים השבוע"
+              />
+              <WorkoutStatItem
+                icon="time-outline"
+                value={isStatsLoading ? '...' : formatMinutes(workoutStats?.weeklyMinutes ?? 0)}
+                label="זמן השבוע"
+              />
+              <WorkoutStatItem
+                icon="flame-outline"
+                value={isStatsLoading ? '...' : `${workoutStats?.streak ?? 0}`}
+                label="רצף שבועות"
+              />
+              <WorkoutStatItem
+                icon="trophy-outline"
+                value={isStatsLoading ? '...' : String(workoutStats?.totalCount ?? 0)}
+                label='סה"כ אימונים'
+              />
+            </View>
           </View>
         </View>
 

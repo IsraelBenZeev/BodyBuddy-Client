@@ -1,0 +1,5 @@
+.agent/
+.cursor/
+.vscode/
+.claude/
+node_modules/

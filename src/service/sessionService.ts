@@ -65,6 +65,21 @@ export const getExerciseLogsByExerciseId = async (userId: string, exerciseId: st
     }
 };
 
+export const getAllUserSessions = async (userId: string): Promise<SessionDBType[]> => {
+    try {
+        const { data, error } = await supabase
+            .from('sessions')
+            .select('id, user_id, started_at, completed_at, total_time')
+            .eq('user_id', userId)
+            .order('started_at', { ascending: true });
+        if (error) throw error;
+        return data as SessionDBType[];
+    } catch (error) {
+        console.error("Error getting all user sessions:", error);
+        throw error;
+    }
+};
+
 export const createSessionExerciseLogs = async (exerciseLogs: ExerciseLogDBType[]) => {
     try {
         const { data, error } = await supabase

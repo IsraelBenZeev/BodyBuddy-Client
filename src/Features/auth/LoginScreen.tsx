@@ -3,6 +3,7 @@ import { signInWithEmail, signInWithGoogle } from '@/src/service/authService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import BackGround from '@/src/ui/BackGround';
+import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import FormInput from '@/src/ui/FormInput';
 import AppButton from '@/src/ui/PressableOpacity';
 import { Ionicons } from '@expo/vector-icons';
@@ -66,9 +67,9 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
           <View className="flex-1 px-5 py-12 justify-center">
             {/* Logo/Title */}
-            <View className="mb-12">
-              <Text className="text-lime-400 text-4xl font-black text-center mb-2">BodyBuddy</Text>
-              <Text className="text-background-400 text-base text-center">התחבר למערכת</Text>
+            <View className="mb-12 items-center">
+              <BodyBuddyLogo width={220} height={154} />
+              <Text className="text-background-400 text-base text-center mt-4">התחבר למערכת</Text>
             </View>
 
             {/* Email Input */}

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     createSession,
     createSessionExerciseLogs,
+    getAllUserSessions,
     getExerciseLogsByExerciseId,
     getSessionExerciseLogs,
     getSessions,
@@ -30,6 +31,7 @@ export const useSessionCreateWorkout = (user_id: string, workoutPlanId: string) 
       queryClient.invalidateQueries({
         queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, user_id],
       });
+      queryClient.invalidateQueries({ queryKey: ['userWorkoutStats', user_id] });
     },
     onError: (error) => {
       console.error('Mutation Error - Exercise Logs:', error);
@@ -67,5 +69,63 @@ export const useSessionExerciseLogs = (sessionId: string) => {
     queryFn: () => getSessionExerciseLogs(sessionId),
     enabled: !!sessionId,
     retry: 0,
+  });
+};
+
+const getWeekStart = (): Date => {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sunday
+  const diff = now.getDate() - day;
+  const weekStart = new Date(now);
+  weekStart.setDate(diff);
+  weekStart.setHours(0, 0, 0, 0);
+  return weekStart;
+};
+
+const getWeekKey = (date: Date): string => {
+  const weekStart = new Date(date);
+  const day = weekStart.getDay();
+  weekStart.setDate(weekStart.getDate() - day);
+  weekStart.setHours(0, 0, 0, 0);
+  return weekStart.toISOString().split('T')[0];
+};
+
+const calcStreak = (sessions: { started_at: string }[]): number => {
+  if (sessions.length === 0) return 0;
+
+  const weekSet = new Set(sessions.map((s) => getWeekKey(new Date(s.started_at))));
+
+  let streak = 0;
+  const cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+
+  while (true) {
+    const key = getWeekKey(cursor);
+    if (weekSet.has(key)) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 7);
+    } else {
+      break;
+    }
+  }
+  return streak;
+};
+
+export const useUserWorkoutStats = (userId: string | undefined) => {
+  return useQuery({
+    queryKey: ['userWorkoutStats', userId],
+    queryFn: () => getAllUserSessions(userId!),
+    staleTime: Infinity,
+    enabled: !!userId,
+    select: (sessions) => {
+      const weekStart = getWeekStart();
+      const thisWeek = sessions.filter((s) => new Date(s.started_at) >= weekStart);
+      return {
+        weeklyCount: thisWeek.length,
+        weeklyMinutes: thisWeek.reduce((sum, s) => sum + (s.total_time ?? 0), 0),
+        totalCount: sessions.length,
+        streak: calcStreak(sessions),
+      };
+    },
   });
 };
