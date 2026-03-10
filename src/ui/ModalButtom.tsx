@@ -1,7 +1,7 @@
 import { colors } from '@/colors';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet'; // הסרנו את ה-Backdrop מהייבוא
 import { forwardRef, ReactNode, useCallback, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 interface ModalBottomProps {
   children?: ReactNode;
@@ -13,7 +13,6 @@ interface ModalBottomProps {
   useScrollView?: boolean; // prop חדש
   onClose?: () => void;
   onChange?: (isOpen: boolean) => void; // prop חדש
-
 }
 
 const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
@@ -45,7 +44,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
   //     if (onChange) {
   //       // אם האינדקס הוא 1 (הנקודה הגבוהה - maxHeight), נחזיר true כדי לנעול את Expo.
   //       // אם האינדקס הוא 0 (הנקודה הנמוכה - minHeight), נחזיר false כדי לשחרר את הגרירה של Expo.
-  //       onChange(index > 0); 
+  //       onChange(index > 0);
   //     }
   //   },
   //   [onChange]
@@ -54,7 +53,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     (index: number) => {
       if (onChange) {
         // כאן התיקון:
-        // אנחנו מחשיבים את המודל כ"פתוח" (נועל את האפליקציה) 
+        // אנחנו מחשיבים את המודל כ"פתוח" (נועל את האפליקציה)
         // כל עוד האינדקס הוא לא 1- (סגור לגמרי)
         onChange(index !== -1);
       }
@@ -75,7 +74,10 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
       handleComponent={renderHandle}
       backgroundStyle={{ backgroundColor: colors.background[900] }}
       activeOffsetY={[-1, 1]}
-      containerStyle={{ pointerEvents: 'box-none' }}
+      containerStyle={{
+        pointerEvents: 'box-none',
+        ...(Platform.OS === 'android' && { elevation: 999, zIndex: 999 }),
+      }}
       onChange={handleSheetChange}
     >
       {useScrollView ? (

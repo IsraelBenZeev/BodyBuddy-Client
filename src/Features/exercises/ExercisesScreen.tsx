@@ -23,6 +23,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
   const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
+  
   const {
     data,
     isLoading,
@@ -36,7 +37,8 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const allExercises = useMemo(() => {
     return data?.pages.flatMap((page) => page.exercises) ?? [];
   }, [data]);
-
+  
+  // if(mode === 'picker')
   // בונה אינדקס פעם אחת בטעינת עמוד — פילטור O(1) במקום O(n)
   const exerciseIndex = useMemo(() => {
     const index = new Map<string, typeof allExercises>();
@@ -146,7 +148,6 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 animationType="scale"
                 haptic="success"
                 onPress={() => router.back()}
-                // העברנו את כל העיצוב ל-ClassName אחד נקי
                 className="bg-lime-500 w-full h-16 rounded-2xl items-center justify-center shadow-lime-500 shadow-offset-[0/10] shadow-opacity-30 shadow-radius-[20px] elevation-10"
               >
                 <Text className="text-zinc-950 font-bold text-lg">שמור וסיים</Text>

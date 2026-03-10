@@ -2,7 +2,7 @@ import { G, Path } from 'react-native-svg';
 
 export const General = () => {
   return (
-    <G id="Art">
+    <G id="Art" pointerEvents="none">
       <G id="Posterior">
         <Path
           id="Vector"

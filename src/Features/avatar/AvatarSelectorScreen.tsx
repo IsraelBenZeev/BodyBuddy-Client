@@ -16,6 +16,7 @@ const { width, height } = Dimensions.get('window');
 const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
   const [selectedParts, setSelectedParts] = useState<BodyPart[]>([]);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { user } = useAuthStore();
   const { data: profile } = useProfile(user?.id);
   const sheetRef = useRef<any>(null);
@@ -26,6 +27,10 @@ const AvatarSelectorScreen = () => {
       sheetRef.current?.snapToIndex(0);
     }
   }, [selectedParts.length]);
+
+  const handleSheetChange = (open: boolean) => {
+    setIsSheetOpen(open);
+  };
   const handleTogglePart = (partName: BodyPart) => {
     setSelectedParts(
       (prev) =>
@@ -50,22 +55,22 @@ const AvatarSelectorScreen = () => {
           {/* אפקט הילה מאחורי המודל */}
           <View style={styles.glowEffect} />
           <View style={styles.avatarScaleWrapper}>
-              {profile?.gender === 'female' ? (
-                <AvatarFemale
-                  avatarSide={sideAvatar}
-                  isSelected={isSelected}
-                  handleTogglePart={handleTogglePart}
-                />
-              ) : (
-                <AvatarMale
-                  avatarSide={sideAvatar}
-                  isSelected={isSelected}
-                  handleTogglePart={handleTogglePart}
-                />
-              )}
+            {profile?.gender === 'female' ? (
+              <AvatarFemale
+                avatarSide={sideAvatar}
+                isSelected={isSelected}
+                handleTogglePart={handleTogglePart}
+              />
+            ) : (
+              <AvatarMale
+                avatarSide={sideAvatar}
+                isSelected={isSelected}
+                handleTogglePart={handleTogglePart}
+              />
+            )}
           </View>
           {/* כפתור סיבוב צף - Glassmorphism */}
-          <View style={styles.controlsWrapper}>
+          <View style={[styles.controlsWrapper, isSheetOpen && { zIndex: 0, elevation: 0 }]}>
             <Pressable
               style={({ pressed }) => [
                 styles.rotateButton,
@@ -98,7 +103,7 @@ const AvatarSelectorScreen = () => {
           </Text>
         </View>
       </View>
-      
+
       {/* מודאל תחתון */}
       <ModalBottom
         ref={sheetRef}
@@ -107,7 +112,8 @@ const AvatarSelectorScreen = () => {
         minHeight="40%"
         maxHeight="40%"
         enablePanDownToClose={true}
-      // onClose={()=> setSelectedParts([])}
+        onChange={handleSheetChange}
+        // onClose={()=> setSelectedParts([])}
       >
         <View style={{ paddingBottom: 100 }}>
           <CardAreaBody selectedPart={selectedParts} />
