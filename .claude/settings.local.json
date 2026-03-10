@@ -10,6 +10,7 @@
       "Bash(npx tsc:*)",
       "Bash(grep:*)",
       "Bash(dir:*)",
+      "Bash(cd)",
       "WebSearch",
       "mcp__claude_ai_Supabase__list_projects",
       "mcp__claude_ai_Supabase__execute_sql",

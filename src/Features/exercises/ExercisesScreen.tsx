@@ -1,15 +1,16 @@
 import { useExercises } from '@/src/hooks/useEcercises';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
+import { Ionicons } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { useDeferredValue, useMemo, useState } from 'react';
-import { FlashList } from '@shopify/flash-list';
-import { Ionicons } from '@expo/vector-icons';
 import { Text, TextInput, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
@@ -23,21 +24,20 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
   const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
-  
-  const {
-    data,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage
-  } = useExercises(user?.id as string, selectedPartsArray);
+  const exerciseSelectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
+  const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
+
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useExercises(
+    user?.id as string,
+    selectedPartsArray
+  );
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
   const allExercises = useMemo(() => {
     return data?.pages.flatMap((page) => page.exercises) ?? [];
   }, [data]);
-  
+
   // if(mode === 'picker')
   // בונה אינדקס פעם אחת בטעינת עמוד — פילטור O(1) במקום O(n)
   const exerciseIndex = useMemo(() => {
@@ -79,7 +79,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   return (
     <BackGround>
       {mode === 'view' && (
-        <View className='pt-4'>
+        <View className="pt-4">
           <View className="px-6 mb-6">
             <Text className="text-lime-50 text-right text-sm font-bold uppercase tracking-widest">
               מתאמן על
@@ -95,7 +95,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
         <Loading />
       ) : (
         <View className="flex-1 pt-2 items-center px-1">
-          {(mode === 'picker') && <Handle />}
+          {mode === 'picker' && <Handle />}
           <View className="w-full flex-1">
             {selectedPartsArray.length > 1 && (
               <Filters
@@ -115,11 +115,40 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 className="flex-1 text-white text-right py-3 px-2 text-base"
               />
               {searchQuery.length > 0 && (
-                <AppButton onPress={() => setSearchQuery('')} haptic="light" animationType="opacity">
+                <AppButton
+                  onPress={() => setSearchQuery('')}
+                  haptic="light"
+                  animationType="opacity"
+                >
                   <Ionicons name="close-circle" size={18} color="#a3a3a3" />
                 </AppButton>
               )}
             </View>
+            {mode === 'picker' && (
+              <View className="flex-row-reverse items-center justify-between bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 mx-2 mb-3">
+                <View className="flex-row-reverse items-center">
+                  <View className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.length > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}>
+                    <Text className={`${exerciseSelectedIds.length > 0 ? 'text-zinc-950' : 'text-zinc-400'} font-black text-base`}>
+                      {exerciseSelectedIds.length}
+                    </Text>
+                  </View>
+                  <Text className="text-zinc-300 font-bold text-base">
+                    תרגילים נבחרו
+                  </Text>
+                </View>
+
+                {exerciseSelectedIds.length > 0 && (
+                  <AppButton
+                    onPress={clearAllExercises}
+                    haptic="medium"
+                    animationType="scale"
+                    className="bg-red-500/10 px-4 py-2 rounded-xl border border-red-500/20"
+                  >
+                    <Text className="text-red-400 font-bold text-sm">נקה הכל</Text>
+                  </AppButton>
+                )}
+              </View>
+            )}
             <FlashList
               data={filteredExercises}
               renderItem={({ item }) => (
@@ -138,11 +167,13 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                   <View className="py-6 items-center">
                     <Text className="text-lime-400 font-medium">טוען תרגילים נוספים...</Text>
                   </View>
-                ) : <View className="h-20" />
+                ) : (
+                  <View className="h-20" />
+                )
               }
             />
           </View>
-          {mode === "picker" && (
+          {mode === 'picker' && (
             <View className="absolute bottom-10 left-0 right-0 items-center px-10">
               <AppButton
                 animationType="scale"
@@ -159,6 +190,5 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     </BackGround>
   );
 };
-
 
 export default ExercisesScreen;
