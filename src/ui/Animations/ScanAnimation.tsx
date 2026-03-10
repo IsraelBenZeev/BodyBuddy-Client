@@ -5,14 +5,14 @@ export default function ScanAnimation() {
     return (
         <View className="items-center py-4">
             <LottieView
-                source={require('@/assets/animations/Circle.lottie')}
+                source={require('@/assets/animations/Circle.json')}
                 autoPlay
                 loop={true}
                 style={{ width: 220, height: 220 }}
                 colorFilters={[
                     {
                         keypath: '**',
-                        color: '#84cc16',
+                        color: '#96C828',
                     },
                 ]}
             />

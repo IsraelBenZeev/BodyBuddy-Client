@@ -24,7 +24,7 @@ export default function GlobalFaild() {
         >
             <View className="bg-background-900 p-6 rounded-3xl items-center shadow-2xl border border-white/10">
                 <LottieView
-                    source={require('@/assets/animations/Error.lottie')}
+                    source={require('@/assets/animations/Error.json')}
                     autoPlay
                     loop={false}
                     onAnimationFinish={hideSuccess} // נסגר אוטומטית כשה-V מסתיים

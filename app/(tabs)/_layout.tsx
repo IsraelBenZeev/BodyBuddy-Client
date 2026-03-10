@@ -2,8 +2,11 @@ import { colors } from '@/colors';
 import { IconFoodsTab, IconHome, IconsFitnessTools, IconUser } from '@/src/ui/IconsSVG';
 import TabButton from '@/src/ui/TabButton';
 import { Tabs } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
@@ -13,8 +16,8 @@ export default function TabsLayout() {
           backgroundColor: colors.background[900], // רקע כהה שמתאים לאפליקציה שלך
           borderTopWidth: 0,
           elevation: 0,
-          height: 60,
-          paddingBottom: 10,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom + 10,
 
           position: 'absolute', // הופך את הטאב-בר לשכבה צפה שלא נדחפת
           bottom: 0,            // מצמיד לתחתית

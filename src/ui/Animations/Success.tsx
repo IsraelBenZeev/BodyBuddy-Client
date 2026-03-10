@@ -59,7 +59,7 @@ const Success = ({
                 </View>
             ) : showSuccess ? (
                 <LottieView
-                    source={require('@/assets/animations/Success.lottie')}
+                    source={require('@/assets/animations/Success.json')}
                     autoPlay
                     loop={false}
                     onAnimationFinish={handleAnimationFinish}
@@ -82,7 +82,7 @@ const Success = ({
                 <View className="items-center justify-center">
                     {showSuccess ? (
                         <LottieView
-                            source={require('@/assets/animations/Success.lottie')}
+                            source={require('@/assets/animations/Success.json')}
                             autoPlay
                             loop={false}
                             onAnimationFinish={handleAnimationFinish}
@@ -176,7 +176,7 @@ export default Success;
 //         </View>
 //       ) : showSuccess ? (
 //         <LottieView
-//           source={require('@/assets/animations/Success.lottie')}
+//           source={require('@/assets/animations/Success.json')}
 //           autoPlay
 //           loop={false}
 //           onAnimationFinish={handleAnimationFinish}

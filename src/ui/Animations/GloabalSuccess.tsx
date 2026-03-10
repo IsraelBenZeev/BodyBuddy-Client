@@ -24,7 +24,7 @@ export default function GlobalSuccess() {
         >
             <View className="bg-background-900 p-6 rounded-3xl items-center shadow-2xl border border-white/10">
                 <LottieView
-                    source={require('@/assets/animations/Success.lottie')}
+                    source={require('@/assets/animations/Success.json')}
                     autoPlay
                     loop={false}
                     onAnimationFinish={hideSuccess} // נסגר אוטומטית כשה-V מסתיים
@@ -32,7 +32,7 @@ export default function GlobalSuccess() {
                     colorFilters={[
                         {
                             keypath: "**",
-                            color: "#84cc16" // כאן שמים את קוד ה-HEX של הצבע (זה הליים שלך)
+                            color: "#96C828"
                         },
                     ]}
                 />
