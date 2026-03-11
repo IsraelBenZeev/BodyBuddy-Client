@@ -119,6 +119,7 @@
 import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import Loading from '@/src/ui/Loading';
+import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -185,11 +186,15 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
 
             {/* תמונת התרגיל */}
             <View className="bg-white/5 rounded-xl overflow-hidden">
-              <Image
-                source={{ uri: exercise.gifUrl }}
-                style={{ width: 56, height: 56 }}
-                contentFit="cover"
-              />
+              {exercise.gif_available === false ? (
+                <DumbbellAnimation size={56} />
+              ) : (
+                <Image
+                  source={{ uri: exercise.gifUrl }}
+                  style={{ width: 56, height: 56 }}
+                  contentFit="cover"
+                />
+              )}
             </View>
 
             {/* פרטי התרגיל */}

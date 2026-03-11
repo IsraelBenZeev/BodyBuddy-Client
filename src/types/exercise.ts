@@ -14,6 +14,7 @@ export interface Exercise {
   instructions_he: string[]; // הוראות בעברית
   gifUrl: string; // לינק לאנימציה
   created_at: string; // תאריך יצירה (ISO String)
+  gif_available: boolean; // האם יש אנימציה זמינה 
 }
 export interface FetchExercisesResponse {
   exercises: Exercise[];

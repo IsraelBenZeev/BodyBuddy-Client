@@ -4,6 +4,7 @@ import { useSessionExerciseLogs } from "@/src/hooks/useSession";
 import { Exercise } from "@/src/types/exercise";
 import { ExerciseLogDBType, SessionDBType } from "@/src/types/session";
 import Loading from "@/src/ui/Loading";
+import DumbbellAnimation from "@/src/ui/Animations/DumbbellAnimation";
 import AppButton from "@/src/ui/PressableOpacity";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
@@ -226,7 +227,9 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             >
               <View className="flex-row items-center justify-between bg-background-800 px-4 py-3 border-b border-gray-800">
                 <View className="bg-white/10 rounded-lg overflow-hidden border border-gray-700">
-                  {isLoadingExercises ? <Loading size="small" /> : exerciseInfo?.gifUrl ? (
+                  {isLoadingExercises ? <Loading size="small" /> : exerciseInfo?.gif_available === false ? (
+                    <DumbbellAnimation size={48} />
+                  ) : exerciseInfo?.gifUrl ? (
                     <Image
                       source={{ uri: exerciseInfo.gifUrl }}
                       style={{ width: 48, height: 48 }}

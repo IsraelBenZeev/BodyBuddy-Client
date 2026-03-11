@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { Text, View } from 'react-native';
+import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import GraphData from './GraphData';
 interface CardExerciseProgressProps {
   exercise: any;
@@ -23,13 +24,17 @@ const Title = ({ exerciseDetails }: TitleProps) => {
         </Text>
       </View>
       <View className="shrink-0 h-12 w-12 rounded-lg bg-zinc-800 border border-zinc-700 overflow-hidden">
-        <Image
-          source={exerciseDetails?.gifUrl}
-          style={{ width: 48, height: 48 }}
-          contentFit="cover"
-          cachePolicy={'disk'}
-          transition={200}
-        />
+        {exerciseDetails?.gif_available === false ? (
+          <DumbbellAnimation size={48} />
+        ) : (
+          <Image
+            source={exerciseDetails?.gifUrl}
+            style={{ width: 48, height: 48 }}
+            contentFit="cover"
+            cachePolicy={'disk'}
+            transition={200}
+          />
+        )}
       </View>
     </View>
   );
@@ -63,15 +68,19 @@ const CardEmptyExercise = ({ exerciseDetails }: CardEmptyExerciseProps) => {
             {exerciseDetails?.name_he}
           </Text>
         </View>
-        {exerciseDetails?.gifUrl && (
+        {(exerciseDetails?.gifUrl || exerciseDetails?.gif_available === false) && (
           <View className="shrink-0 h-12 w-12 rounded-lg bg-zinc-800 border border-zinc-700 overflow-hidden">
-            <Image
-              source={exerciseDetails.gifUrl}
-              style={{ width: 48, height: 48 }}
-              contentFit="cover"
-              cachePolicy={'disk'}
-              transition={200}
-            />
+            {exerciseDetails?.gif_available === false ? (
+              <DumbbellAnimation size={48} />
+            ) : (
+              <Image
+                source={exerciseDetails.gifUrl}
+                style={{ width: 48, height: 48 }}
+                contentFit="cover"
+                cachePolicy={'disk'}
+                transition={200}
+              />
+            )}
           </View>
         )}
       </View>

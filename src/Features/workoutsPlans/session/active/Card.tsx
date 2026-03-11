@@ -1,4 +1,5 @@
 import { Exercise } from '@/src/types/exercise';
+import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import { Image } from 'expo-image';
 import { useRef } from 'react';
 import { Control } from 'react-hook-form';
@@ -77,11 +78,15 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
       >
         <View className="items-center bg-background-850 border border-white/10 rounded-2xl px-4 py-2 gap-3">
           <View className="bg-white items-center justify-center rounded-2xl overflow-hidden w-full">
-            <Image
-              source={{ uri: item.gifUrl }}
-              style={{ width: 200, height: 200 }}
-              contentFit="cover"
-            />
+            {item.gif_available === false ? (
+              <DumbbellAnimation size={200} />
+            ) : (
+              <Image
+                source={{ uri: item.gifUrl }}
+                style={{ width: 200, height: 200 }}
+                contentFit="cover"
+              />
+            )}
           </View>
           <View className="w-full">
             <Failds control={control} item={item} onScrollBottom={scrollToBottom} />

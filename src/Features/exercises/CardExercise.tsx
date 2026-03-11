@@ -3,6 +3,7 @@ import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { Exercise } from '@/src/types/exercise';
 import { modeListExercises } from '@/src/types/mode';
 import { ButtonAddFavorit, ButtonRemoveFavorit } from '@/src/ui/ButtonsFavorit';
+import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -57,12 +58,16 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
     >
       {/* תמונה / GIF */}
       <View style={styles.imageContainer}>
-        <Image
-          source={item.gifUrl}
-          style={styles.image}
-          contentFit="cover"
-          transition={400}
-        />
+        {item.gif_available === false ? (
+          <DumbbellAnimation size={85} />
+        ) : (
+          <Image
+            source={item.gifUrl}
+            style={styles.image}
+            contentFit="cover"
+            transition={400}
+          />
+        )}
         
         {/* כפתור מועדפים - רק במצב VIEW */}
         {mode === 'view' && (

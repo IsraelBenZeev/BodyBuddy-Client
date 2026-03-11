@@ -2,6 +2,7 @@ import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
+import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import { Image } from 'expo-image';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Buttons from './Buttons';
@@ -40,13 +41,20 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           <View className="h-1 w-20 bg-lime-500 rounded-full self-end mt-2" />
         </View>
         <View style={styles.imageWrapper} className="self-center">
-          <Image
-            style={styles.mainImage}
-            source={exerciseData?.gifUrl}
-            contentFit="contain"
-            transition={500}
-            cachePolicy={'disk'}
-          />
+          {exerciseData?.gif_available === false ? (
+            <>
+              <DumbbellAnimation size={200} />
+              <Text className="text-zinc-400 text-sm font-medium mt-1">תרגיל זה אינו זמין כרגע</Text>
+            </>
+          ) : (
+            <Image
+              style={styles.mainImage}
+              source={exerciseData?.gifUrl}
+              contentFit="contain"
+              transition={500}
+              cachePolicy={'disk'}
+            />
+          )}
         </View>
         <View className="w-full mt-6" style={{ minHeight: 600 }}>
           <Buttons exerciseId={exerciseData?.exerciseId} />
@@ -77,6 +85,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 32,
     padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: colors.lime[500],
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.2,
