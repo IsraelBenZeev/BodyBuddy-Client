@@ -150,7 +150,7 @@ export default function ProfileScreen() {
         {/* Header Section */}
         <View className="px-6 pt-12 pb-8">
           <View className="flex-row-reverse items-center justify-start gap-4">
-          <View className="overflow-hidden rounded-full border border-white/10">
+          <View className="overflow-hidden rounded-full">
               <Image
                 source={profile?.avatar_url ?? user.user_metadata.avatar_url}
                 style={{ width: 56, height: 56 }}

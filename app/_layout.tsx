@@ -43,6 +43,13 @@ export default function RootLayout() {
     useAuthStore.getState().initialize();
   }, []);
 
+  // לכוד את ה-URL של OAuth לפני שהקומפוננט auth-callback עולה (הוא מחמיץ את האירוע בגלל טיימינג)
+  useEffect(() => {
+    if (url && url.includes('auth-callback') && (url.includes('access_token') || url.includes('code='))) {
+      useAuthStore.getState().setPendingAuthUrl(url);
+    }
+  }, [url]);
+
   // 2. טיפול בחזרה מגוגל (Deep Linking) – fallback כש-URL מגיע דרך Linking ולא מ-openAuthSessionAsync
   // useEffect(() => {
   //   const handleDeepLink = async () => {

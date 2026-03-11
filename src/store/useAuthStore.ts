@@ -8,11 +8,13 @@ interface AuthState {
   session: Session | null;
   isLoading: boolean;
   isInitialized: boolean;
+  pendingAuthUrl: string | null;
 
   // Actions
   setUser: (user: User | null) => void;
   setSession: (session: Session | null) => void;
   setLoading: (loading: boolean) => void;
+  setPendingAuthUrl: (url: string | null) => void;
   clearAuth: () => void;
   initialize: () => Promise<void>;
 }
@@ -23,11 +25,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   isLoading: false,
   isInitialized: false,
+  pendingAuthUrl: null,
 
   // Actions
   setUser: (user) => set({ user }),
   setSession: (session) => set({ session }),
   setLoading: (loading) => set({ isLoading: loading }),
+  setPendingAuthUrl: (url) => set({ pendingAuthUrl: url }),
   clearAuth: () => set({ user: null, session: null }),
 
   // Initialize: טעינת session קיים + listener לשינויים

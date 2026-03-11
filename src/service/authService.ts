@@ -1,6 +1,9 @@
 import { useAuthStore } from '@/src/store/useAuthStore';
+import { getProfile } from '@/src/service/profileService';
 import { supabase } from '@/supabase_client';
 import { Session, User } from '@supabase/supabase-js';
+import { makeRedirectUri } from 'expo-auth-session';
+import Constants from 'expo-constants';
 import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -106,8 +109,48 @@ function parseTokensFromRedirectUrl(
   return null;
 }
 
+/**
+ * מאזין ל-deep link URL שמגיע דרך Linking — fallback לאנדרואיד
+ * כש-openAuthSessionAsync מחזיר dismiss במקום success (באג ידוע של Expo)
+ */
+function waitForRedirectUrl(timeoutMs: number): {
+  promise: Promise<string | null>;
+  cleanup: () => void;
+} {
+  let subscription: ReturnType<typeof Linking.addEventListener> | null = null;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let resolved = false;
+
+  const promise = new Promise<string | null>((resolve) => {
+    subscription = Linking.addEventListener('url', ({ url }) => {
+      if (!resolved && url && url.includes('access_token')) {
+        resolved = true;
+        if (timeoutId) clearTimeout(timeoutId);
+        resolve(url);
+      }
+    });
+    timeoutId = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        resolve(null);
+      }
+    }, timeoutMs);
+  });
+
+  const cleanup = () => {
+    resolved = true;
+    if (subscription) subscription.remove();
+    if (timeoutId) clearTimeout(timeoutId);
+  };
+
+  return { promise, cleanup };
+}
+
 export const signInWithGoogle = async () => {
-  const redirectUrl = Linking.createURL('/auth-callback');
+  const isExpoGo = Constants.executionEnvironment === 'storeClient';
+  const redirectUrl = isExpoGo
+    ? Linking.createURL('/auth-callback')
+    : makeRedirectUri({ scheme: 'bodybuddy', path: 'auth-callback' });
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
@@ -125,25 +168,53 @@ export const signInWithGoogle = async () => {
   }
 
   if (data?.url) {
-    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+    // רישום listener ללכידת URL מ-deep link לפני פתיחת הדפדפן (Android fallback)
+    const { promise: linkingUrlPromise, cleanup } = waitForRedirectUrl(120_000);
 
-    if (result.type === 'success' && result.url) {
-      const tokens = parseTokensFromRedirectUrl(result.url);
-      if (tokens) {
-        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token,
-        });
-        if (sessionError) {
-          console.error('setSession error:', sessionError.message);
-          return;
-        }
-        if (sessionData?.session) {
-          useAuthStore.getState().setUser(sessionData.session.user);
-          useAuthStore.getState().setSession(sessionData.session);
-          router.replace('/auth-callback');
+    try {
+      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+
+      // קבלת URL — מ-openAuthSessionAsync (iOS) או מ-Linking listener (Android)
+      let authUrl: string | null = null;
+      if (result.type === 'success' && result.url) {
+        authUrl = result.url;
+      } else if (result.type === 'dismiss') {
+        authUrl = await linkingUrlPromise;
+      }
+
+      cleanup();
+
+      if (!authUrl) return; // המשתמש ביטל או timeout
+
+      const tokens = parseTokensFromRedirectUrl(authUrl);
+      if (!tokens) return;
+
+      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+      });
+      if (sessionError) {
+        console.error('setSession error:', sessionError.message);
+        return;
+      }
+
+      if (sessionData?.session) {
+        useAuthStore.getState().setUser(sessionData.session.user);
+        useAuthStore.getState().setSession(sessionData.session);
+        try {
+          const profile = await getProfile(sessionData.session.user.id);
+          if (profile?.full_name && profile.age != null) {
+            router.replace('/(tabs)');
+          } else {
+            router.replace('/UserSetup');
+          }
+        } catch {
+          router.replace('/UserSetup');
         }
       }
+    } catch (err) {
+      cleanup();
+      console.error('signInWithGoogle error:', err);
     }
   }
 };
