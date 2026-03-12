@@ -142,6 +142,7 @@ export const useDeleteFoodItem = (userId: string) => {
     onSuccess: () => {
       triggerSuccess('המאכל נמחק מהרשימה', 'success');
       queryClient.invalidateQueries({ queryKey: ['food-items', userId] });
+      queryClient.invalidateQueries({ queryKey: ['meals-with-items', userId] });
     },
     onError: () => {
       triggerSuccess('שגיאה במחיקת המאכל', 'failed');

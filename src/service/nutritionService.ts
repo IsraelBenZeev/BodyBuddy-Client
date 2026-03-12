@@ -173,6 +173,7 @@ export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
       .from('food_items')
       .select('*')
       .or(`user_id.is.null,user_id.eq.${userId}`)
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -198,6 +199,7 @@ function normalizeFoodItem(row: Record<string, unknown>): FoodItem {
     calories_per_100: Number(row.calories_per_100 ?? 0),
     is_verified: Boolean(row.is_verified),
     is_custom: Boolean(row.is_custom),
+    is_active: row.is_active !== false,
     user_id: row.user_id as string | undefined,
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
@@ -245,24 +247,9 @@ export const createFoodItem = async (
  */
 export const deleteFoodItem = async (foodItemId: string, userId: string): Promise<void> => {
   try {
-    const { error: nullifyError } = await supabase
-      .from('nutrition_entries')
-      .update({ food_item_id: null })
-      .eq('food_item_id', foodItemId)
-      .eq('user_id', userId);
-
-    if (nullifyError) throw nullifyError;
-
-    const { error: mealItemsError } = await supabase
-      .from('meal_items')
-      .delete()
-      .eq('food_item_id', foodItemId);
-
-    if (mealItemsError) throw mealItemsError;
-
     const { error } = await supabase
       .from('food_items')
-      .delete()
+      .update({ is_active: false })
       .eq('id', foodItemId)
       .eq('user_id', userId);
 
@@ -346,7 +333,7 @@ export const getMealsWithItems = async (
           meal_id,
           food_item_id,
           amount_g,
-          food_items ( name, calories_per_100, protein_per_100, carbs_per_100, fat_per_100, serving_weight )
+          food_items ( name, calories_per_100, protein_per_100, carbs_per_100, fat_per_100, serving_weight, is_active )
         )
       `)
       .eq('user_id', userId)
@@ -357,7 +344,10 @@ export const getMealsWithItems = async (
     return (mealsData ?? []).map((row: Record<string, unknown>) => {
       const meal = normalizeMeal(row);
       const rawItems = (row.meal_items as Record<string, unknown>[] | null) ?? [];
-      const meal_items = rawItems.map((mi: Record<string, unknown>) => {
+      const meal_items = rawItems.filter((mi: Record<string, unknown>) => {
+        const fi = (mi.food_items ?? mi.food_item) as Record<string, unknown> | null;
+        return fi == null || fi.is_active !== false;
+      }).map((mi: Record<string, unknown>) => {
         const food_item = (mi.food_items ?? mi.food_item) as Record<string, unknown> | null;
         return {
           id: String(mi.id),

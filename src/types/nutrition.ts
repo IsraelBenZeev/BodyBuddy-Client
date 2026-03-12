@@ -51,6 +51,7 @@ export interface FoodItem {
   calories_per_100: number;
   is_verified: boolean;
   is_custom: boolean;
+  is_active: boolean;
   user_id?: string;
   created_at: string;
   updated_at: string;
