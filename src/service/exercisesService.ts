@@ -8,6 +8,7 @@ export const getExercisesByBodyParts = async (bodyPart: string[], page: number, 
       .from('exercises')
       .select('*', { count: 'exact' })
       .overlaps('bodyParts', bodyPart)
+      .eq('gif_available', true)
       .order('sort_order', { ascending: true })
       // .in('bodyParts', bodyPart)
       .range(from, to);
