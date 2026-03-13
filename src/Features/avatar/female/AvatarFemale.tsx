@@ -5,12 +5,13 @@ interface AvatarFemaleProps {
   avatarSide: 'front' | 'back';
   isSelected: (partName: BodyPart) => boolean;
   handleTogglePart: (partName: BodyPart) => void;
+  svgWidthOverride?: number;
 }
-const AvatarFemale = ({ avatarSide, isSelected, handleTogglePart }: AvatarFemaleProps) => {
+const AvatarFemale = ({ avatarSide, isSelected, handleTogglePart, svgWidthOverride }: AvatarFemaleProps) => {
   return avatarSide === 'front' ? (
-    <AvatarFemaleFront isSelected={isSelected} handleTogglePart={handleTogglePart} />
+    <AvatarFemaleFront isSelected={isSelected} handleTogglePart={handleTogglePart} svgWidthOverride={svgWidthOverride} />
   ) : (
-    <AvatarFemaleBack isSelected={isSelected} handleTogglePart={handleTogglePart} />
+    <AvatarFemaleBack isSelected={isSelected} handleTogglePart={handleTogglePart} svgWidthOverride={svgWidthOverride} />
   );
 };
 

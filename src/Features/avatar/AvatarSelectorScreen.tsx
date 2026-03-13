@@ -3,11 +3,11 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { colors } from '../../../colors';
-import ModalBottom from '../../ui/ModalButtom';
-import CardAreaBody from './CardAreaBody';
+import FloatingSelectionBar from './FloatingSelectionBar';
 import AvatarFemale from './female/AvatarFemale';
 import AvatarMale from './male/AvatarMale';
 
@@ -16,21 +16,10 @@ const { width, height } = Dimensions.get('window');
 const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
   const [selectedParts, setSelectedParts] = useState<BodyPart[]>([]);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { user } = useAuthStore();
   const { data: profile } = useProfile(user?.id);
-  const sheetRef = useRef<any>(null);
-  useEffect(() => {
-    if (!selectedParts.length) {
-      sheetRef.current?.close();
-    } else {
-      sheetRef.current?.snapToIndex(0);
-    }
-  }, [selectedParts.length]);
+  const router = useRouter();
 
-  const handleSheetChange = (open: boolean) => {
-    setIsSheetOpen(open);
-  };
   const handleTogglePart = (partName: BodyPart) => {
     setSelectedParts(
       (prev) =>
@@ -39,6 +28,16 @@ const AvatarSelectorScreen = () => {
           : [...prev, partName] // מוסיף
     );
   };
+
+  const handleNavigate = useCallback(() => {
+    router.push({
+      pathname: '/exercises/[parts]',
+      params: {
+        parts: JSON.stringify(selectedParts),
+        mode: 'view',
+      },
+    });
+  }, [selectedParts, router]);
 
   const isSelected = (partName: BodyPart) => selectedParts.includes(partName);
   return (
@@ -70,7 +69,7 @@ const AvatarSelectorScreen = () => {
             )}
           </View>
           {/* כפתור סיבוב צף - Glassmorphism */}
-          <View style={[styles.controlsWrapper, isSheetOpen && { zIndex: 0, elevation: 0 }]}>
+          <View style={styles.controlsWrapper}>
             <Pressable
               style={({ pressed }) => [
                 styles.rotateButton,
@@ -104,21 +103,15 @@ const AvatarSelectorScreen = () => {
         </View>
       </View>
 
-      {/* מודאל תחתון */}
-      <ModalBottom
-        ref={sheetRef}
-        title="האזורים שנבחרו"
-        initialIndex={-1}
-        minHeight="40%"
-        maxHeight="40%"
-        enablePanDownToClose={true}
-        onChange={handleSheetChange}
-        // onClose={()=> setSelectedParts([])}
-      >
-        <View style={{ paddingBottom: 100 }}>
-          <CardAreaBody selectedPart={selectedParts} />
-        </View>
-      </ModalBottom>
+      {/* בר בחירה צף */}
+      {selectedParts.length > 0 && (
+        <FloatingSelectionBar
+          selectedParts={selectedParts}
+          onDeselectPart={handleTogglePart}
+          onClearAll={() => setSelectedParts([])}
+          onNavigate={handleNavigate}
+        />
+      )}
     </BackGround>
   );
 };

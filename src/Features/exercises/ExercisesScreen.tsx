@@ -1,4 +1,5 @@
 import { useExercises } from '@/src/hooks/useEcercises';
+import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
@@ -7,6 +8,7 @@ import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
+import MiniAvatar from './MiniAvatar';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
@@ -27,6 +29,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const exerciseSelectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
 
+  const { data: profile } = useProfile(user?.id);
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useExercises(
     user?.id as string,
     selectedPartsArray
@@ -80,13 +83,21 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     <BackGround>
       {mode === 'view' && (
         <View className="pt-4">
-          <View className="px-6 mb-6">
-            <Text className="text-lime-50 text-right text-sm font-bold uppercase tracking-widest">
-              מתאמן על
-            </Text>
-            <Text className="text-white font-black text-3xl text-right">
-              {selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', ')}
-            </Text>
+          <View className="px-6 mb-6 flex-row-reverse items-center gap-4">
+            {profile?.gender && (
+              <MiniAvatar
+                selectedParts={selectedPartsArray}
+                gender={profile.gender as 'male' | 'female'}
+              />
+            )}
+            <View className="flex-1">
+              <Text className="text-lime-50 text-right text-sm font-bold uppercase tracking-widest">
+                מתאמן על
+              </Text>
+              <Text className="text-white font-black text-3xl text-right" numberOfLines={2}>
+                {selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', ')}
+              </Text>
+            </View>
           </View>
         </View>
       )}

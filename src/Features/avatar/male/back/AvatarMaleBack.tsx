@@ -12,18 +12,19 @@ const { width: screenWidth } = Dimensions.get('window');
 const FIGMA_WIDTH = 871;
 const FIGMA_HEIGHT = 1726;
 const ASPECT_RATIO = FIGMA_HEIGHT / FIGMA_WIDTH;
-const svgWidth = screenWidth * 0.75;
-const svgHeight = svgWidth * ASPECT_RATIO;
 interface AvatarMaleBackProps {
   isSelected: (partName: BodyPart) => boolean;
   handleTogglePart: (partName: BodyPart) => void;
+  svgWidthOverride?: number;
 }
-const AvatarMaleBack = ({ isSelected, handleTogglePart }: AvatarMaleBackProps) => {
+const AvatarMaleBack = ({ isSelected, handleTogglePart, svgWidthOverride }: AvatarMaleBackProps) => {
+  const computedWidth = svgWidthOverride ?? screenWidth * 0.75;
+  const computedHeight = computedWidth * ASPECT_RATIO;
   return (
     <View className="relative " pointerEvents="auto">
       <Svg
-        width={svgWidth * 0.9}
-        height={svgHeight * 0.9}
+        width={computedWidth * 0.9}
+        height={computedHeight * 0.9}
         viewBox={`0 0 ${FIGMA_WIDTH} ${FIGMA_HEIGHT}`}
         preserveAspectRatio="xMidYMax meet"
         pointerEvents="auto"

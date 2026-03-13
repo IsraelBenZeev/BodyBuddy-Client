@@ -6,12 +6,13 @@ interface AvatarMaleProps {
   avatarSide: 'front' | 'back';
   isSelected: (partName: BodyPart) => boolean;
   handleTogglePart: (partName: BodyPart) => void;
+  svgWidthOverride?: number;
 }
-const AvatarMale = ({ avatarSide, isSelected, handleTogglePart }: AvatarMaleProps) => {
+const AvatarMale = ({ avatarSide, isSelected, handleTogglePart, svgWidthOverride }: AvatarMaleProps) => {
   return avatarSide === 'front' ? (
-    <AvatarMaleFront isSelected={isSelected} handleTogglePart={handleTogglePart} />
+    <AvatarMaleFront isSelected={isSelected} handleTogglePart={handleTogglePart} svgWidthOverride={svgWidthOverride} />
   ) : (
-    <AvatarMaleBack isSelected={isSelected} handleTogglePart={handleTogglePart} />
+    <AvatarMaleBack isSelected={isSelected} handleTogglePart={handleTogglePart} svgWidthOverride={svgWidthOverride} />
   );
 };
 
