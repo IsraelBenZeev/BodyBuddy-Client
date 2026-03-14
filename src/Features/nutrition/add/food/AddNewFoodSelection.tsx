@@ -1,3 +1,4 @@
+import { calculateNutrients, getAmountLabel, getPortionUnit } from '@/src/Features/nutrition/utils/nutritionCalc';
 import type { FoodItem } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -5,45 +6,49 @@ import { Pressable, Text, View } from 'react-native';
 
 interface Props {
   foodItem: FoodItem;
-  onSubmit: (portionGrams: number) => void;
+  onSubmit: (amount: number, portionUnit: 'g' | 'unit') => void;
   isPending: boolean;
   onBack: () => void;
-  /** טקסט כפתור האישור (ברירת מחדל: הוסף ליומן אכילה) */
   submitLabel?: string;
 }
 
-const defaultServingWeight = (foodItem: FoodItem) =>
-  foodItem.serving_weight != null && foodItem.serving_weight > 0 ? foodItem.serving_weight : 100;
-
 const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabel = 'הוסף ליומן אכילה' }: Props) => {
-  const servingWeight = defaultServingWeight(foodItem);
-  const [quantity, setQuantity] = useState(1);
+  const isUnits = foodItem.measurement_type === 'units';
+  const unitLabel = getAmountLabel(foodItem);
 
-  const portionGrams = useMemo(() => quantity * servingWeight, [quantity, servingWeight]);
+  // עבור grams: ברירת מחדל 100g. עבור units: ברירת מחדל 1
+  const [quantity, setQuantity] = useState(isUnits ? 1 : 1);
 
-  const calculatedMacros = useMemo(() => {
-    const ratio = portionGrams / 100;
-    return {
-      protein: Math.round(foodItem.protein_per_100 * ratio * 10) / 10,
-      carbs: Math.round(foodItem.carbs_per_100 * ratio * 10) / 10,
-      fat: Math.round(foodItem.fat_per_100 * ratio * 10) / 10,
-      calories: Math.round(foodItem.calories_per_100 * ratio * 10) / 10,
-    };
-  }, [portionGrams, foodItem]);
+  // אם grams, כל "מנה" = 100g. משתמש בוחר quantity
+  const portionAmount = useMemo(() => {
+    if (isUnits) return quantity;
+    return quantity * 100;
+  }, [isUnits, quantity]);
+
+  const calculatedMacros = useMemo(
+    () => calculateNutrients(foodItem, portionAmount),
+    [foodItem, portionAmount]
+  );
 
   const handleQuantityChange = useCallback((delta: number) => {
     setQuantity((q) => Math.max(1, q + delta));
   }, []);
 
+  const handleHalfUnit = useCallback(() => {
+    setQuantity((q) => Math.max(0.5, q - 0.5));
+  }, []);
+
   const handleSubmit = useCallback(() => {
-    onSubmit(portionGrams);
-  }, [portionGrams, onSubmit]);
+    onSubmit(portionAmount, getPortionUnit(foodItem));
+  }, [portionAmount, foodItem, onSubmit]);
 
   return (
-    <View className="flex-1 px-6 py-6 bg-background-900">
+    <View className="flex-1 px-6 py-6 bg-background-900 ">
       {/* כותרת ושם המאכל */}
       <View className="mb-8">
-        <Text className="text-white text-3xl font-black text-right mb-1">כמה אכלת?</Text>
+        <Text className="text-white text-3xl font-black text-right mb-1">
+          {isUnits ? `כמה ${unitLabel}?` : 'כמה גרם?'}
+        </Text>
         <Text className="text-lime-400 text-lg text-right font-medium opacity-90">
           {foodItem.name}
         </Text>
@@ -53,30 +58,30 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
       <View className="bg-background-800 rounded-3xl p-5 border border-white/5 mb-6 shadow-xl">
         <View className="flex-row-reverse justify-between items-center mb-4">
           <Text className="text-gray-400 text-sm font-bold uppercase tracking-wider">
-            כמות מנות
+            {isUnits ? `כמות ${unitLabel}` : 'כמות (×100 גרם)'}
           </Text>
-          {foodItem.serving_weight != null && foodItem.serving_weight > 0 && (
-            <View className="bg-lime-500/10 px-3 py-1 rounded-full flex-row-reverse items-center">
-              <Ionicons name="scale-outline" size={14} color="#84cc16" />
-              <Text className="text-lime-500 text-[11px] font-bold mr-1">
-                מנה = {foodItem.serving_weight}ג׳
-              </Text>
-            </View>
-          )}
+          <View className="bg-lime-500/10 px-3 py-1 rounded-full flex-row-reverse items-center">
+            <Ionicons name="scale-outline" size={14} color="#84cc16" />
+            <Text className="text-lime-500 text-[11px] font-bold mr-1">
+              {isUnits ? `${quantity} ${unitLabel}` : `${portionAmount} גרם`}
+            </Text>
+          </View>
         </View>
 
         {/* Stepper מרכזי */}
         <View className="flex-row-reverse items-center justify-between bg-background-900/50 rounded-2xl p-2 border border-white/5">
           <Pressable
             onPress={() => handleQuantityChange(1)}
-            className="w-14 h-14 items-center justify-center bg-lime-500 rounded-xl active:scale-95 transition-transform"
+            className="w-14 h-14 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
           >
             <Ionicons name="add" size={28} color="#000" />
           </Pressable>
 
           <View className="items-center">
             <Text className="text-white font-black text-4xl">{quantity}</Text>
-            <Text className="text-gray-500 text-[10px] font-bold uppercase">מנות נבחרו</Text>
+            <Text className="text-gray-500 text-[10px] font-bold uppercase">
+              {isUnits ? unitLabel : 'מנות'}
+            </Text>
           </View>
 
           <Pressable
@@ -87,22 +92,31 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
           </Pressable>
         </View>
 
-        {/* חישוב גרמים תחתון */}
-        <View className="mt-4 items-center">
-          <View className="flex-row-reverse items-center bg-background-700/50 px-4 py-2 rounded-full">
-            <Text className="text-gray-300 text-sm font-medium">סה״כ:</Text>
-            <Text className="text-white font-black text-sm mx-1.5">{portionGrams} גרם</Text>
-            <Text className="text-gray-500 text-[10px] mr-1">
-              ({quantity} × {servingWeight}ג׳)
-            </Text>
+        {/* חצי יחידה — רק עבור units */}
+        {isUnits && (
+          <View className="mt-3 flex-row-reverse gap-2">
+            <Pressable
+              onPress={handleHalfUnit}
+              className="flex-1 bg-background-700 rounded-xl py-2 items-center border border-white/5"
+            >
+              <Text className="text-gray-400 text-xs font-bold">½ {unitLabel}</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setQuantity(1)}
+              className="flex-1 bg-background-700 rounded-xl py-2 items-center border border-white/5"
+            >
+              <Text className="text-gray-400 text-xs font-bold">איפוס</Text>
+            </Pressable>
           </View>
-        </View>
+        )}
       </View>
 
-      {/* כרטיס ערכים תזוניים - "התוצאה" */}
+      {/* כרטיס ערכים תזוניים */}
       <View className="bg-background-800 rounded-3xl p-6 border border-white/5 mb-8">
         <Text className="text-gray-400 text-[11px] font-bold uppercase tracking-widest text-center mb-5">
-          ערכים תזוניים ל-{portionGrams} גרם
+          {isUnits
+            ? `ערכים תזוניים ל-${quantity} ${unitLabel}`
+            : `ערכים תזוניים ל-${portionAmount} גרם`}
         </Text>
 
         <View className="flex-row-reverse justify-around items-end mb-6">

@@ -3,6 +3,7 @@ import type {
     AIAnalysisResult,
     CreateNutritionEntryPayload,
     FoodItem,
+    MeasurementType,
     NutritionEntry,
 } from '@/src/types/nutrition';
 import { supabase } from '@/supabase_client';
@@ -30,10 +31,6 @@ export const getNutritionEntries = async (
   }
 };
 
-/**
- * מנרמל רשומה מהדאטאבייס (id כ-bigint, ללא portion_unit).
- * הערה: nutrition_entries לא כוללת serving_weight – השדה נשמר רק ב־food_items.
- */
 function normalizeNutritionEntry(row: Record<string, unknown>): NutritionEntry {
   return {
     id: String(row.id),
@@ -45,7 +42,7 @@ function normalizeNutritionEntry(row: Record<string, unknown>): NutritionEntry {
     fat: Number(row.fat ?? 0),
     calories: Number(row.calories ?? 0),
     portion_size: Number(row.portion_size ?? 0),
-    portion_unit: 'g',
+    portion_unit: (row.portion_unit as NutritionEntry['portion_unit']) ?? 'g',
     food_item_id: row.food_item_id as string | undefined,
     group_id: (row.group_id as string | null) ?? undefined,
     group_name: (row.group_name as string | null) ?? undefined,
@@ -54,7 +51,7 @@ function normalizeNutritionEntry(row: Record<string, unknown>): NutritionEntry {
 }
 
 /**
- * יוצר רשומת תזונה (הוספה ליומן היומי). ללא עדכון טבלת סיכום – הסיכום מחושב בצד הלקוח מ־nutrition_entries.
+ * יוצר רשומת תזונה (הוספה ליומן היומי).
  */
 export const createNutritionEntry = async (
   payload: CreateNutritionEntryPayload,
@@ -65,6 +62,7 @@ export const createNutritionEntry = async (
       date: payload.date,
       food_name: payload.food_name,
       portion_size: Math.round(payload.portion_size),
+      portion_unit: payload.portion_unit,
       protein: Math.round(payload.protein),
       carbs: Math.round(payload.carbs),
       fat: Math.round(payload.fat),
@@ -100,6 +98,7 @@ export const createNutritionEntriesBulk = async (
       date: p.date,
       food_name: p.food_name,
       portion_size: Math.round(p.portion_size),
+      portion_unit: p.portion_unit,
       protein: Math.round(p.protein),
       carbs: Math.round(p.carbs),
       fat: Math.round(p.fat),
@@ -123,7 +122,7 @@ export const createNutritionEntriesBulk = async (
 };
 
 /**
- * מוחק רשומת תזונה. הסיכום היומי מחושב מחדש בצד הלקוח מ־entries.
+ * מוחק רשומת תזונה.
  */
 export const deleteNutritionEntry = async (
   entryId: string,
@@ -165,13 +164,19 @@ export const deleteNutritionEntriesByGroupId = async (
 };
 
 /**
- * מחזיר את כל המאכלים שהמשתמש יכול לבחור: גלובליים (user_id null) + המאכלים שלו (user_id = userId).
+ * מחזיר את כל המאכלים שהמשתמש יכול לבחור: גלובליים (user_id null) + המאכלים שלו.
  */
 export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
   try {
     const { data, error } = await supabase
       .from('food_items')
-      .select('*')
+      .select(`
+        id, name, category, is_active, user_id,
+        measurement_type, unit_weight_g,
+        calories_per_100, protein_per_100, carbs_per_100, fat_per_100,
+        calories_per_unit, protein_per_unit, carbs_per_unit, fat_per_unit,
+        created_at, updated_at
+      `)
       .or(`user_id.is.null,user_id.eq.${userId}`)
       .eq('is_active', true)
       .order('created_at', { ascending: false });
@@ -185,51 +190,73 @@ export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
 };
 
 function normalizeFoodItem(row: Record<string, unknown>): FoodItem {
-  const servingWeight = row.serving_weight;
+  const measurementType = (row.measurement_type as MeasurementType) ?? 'grams';
   return {
     id: row.id as string,
     name: row.name as string,
-    brand: row.brand as string | undefined,
     category: (row.category as string) ?? undefined,
-    serving_weight:
-      servingWeight != null && servingWeight !== '' ? Number(servingWeight) : undefined,
-    protein_per_100: Number(row.protein_per_100 ?? 0),
-    carbs_per_100: Number(row.carbs_per_100 ?? 0),
-    fat_per_100: Number(row.fat_per_100 ?? 0),
-    calories_per_100: Number(row.calories_per_100 ?? 0),
-    is_verified: Boolean(row.is_verified),
-    is_custom: Boolean(row.is_custom),
     is_active: row.is_active !== false,
     user_id: row.user_id as string | undefined,
+    measurement_type: measurementType,
+    unit_weight_g: row.unit_weight_g != null ? Number(row.unit_weight_g) : null,
+    calories_per_100: row.calories_per_100 != null ? Number(row.calories_per_100) : null,
+    protein_per_100: row.protein_per_100 != null ? Number(row.protein_per_100) : null,
+    carbs_per_100: row.carbs_per_100 != null ? Number(row.carbs_per_100) : null,
+    fat_per_100: row.fat_per_100 != null ? Number(row.fat_per_100) : null,
+    calories_per_unit: row.calories_per_unit != null ? Number(row.calories_per_unit) : null,
+    protein_per_unit: row.protein_per_unit != null ? Number(row.protein_per_unit) : null,
+    carbs_per_unit: row.carbs_per_unit != null ? Number(row.carbs_per_unit) : null,
+    fat_per_unit: row.fat_per_unit != null ? Number(row.fat_per_unit) : null,
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
   };
 }
 
 /**
- * מוסיף מאכל חדש ל־food_items (ואז המשתמש יכול להוסיף אותו ל־nutrition_entries).
+ * מוסיף מאכל חדש ל־food_items.
  */
 export const createFoodItem = async (
   userId: string,
   foodData: {
     name: string;
     category?: string;
-    serving_weight?: number;
-    protein_per_100: number;
-    carbs_per_100: number;
-    fat_per_100: number;
-    calories_per_100: number;
+    measurement_type: MeasurementType;
+    // grams path
+    calories_per_100?: number | null;
+    protein_per_100?: number | null;
+    carbs_per_100?: number | null;
+    fat_per_100?: number | null;
+    // units path
+    unit_weight_g?: number | null;
+    calories_per_unit?: number | null;
+    protein_per_unit?: number | null;
+    carbs_per_unit?: number | null;
+    fat_per_unit?: number | null;
   },
 ): Promise<FoodItem> => {
   try {
+    const isGrams = foodData.measurement_type === 'grams';
+    const insertData = {
+      user_id: userId,
+      name: foodData.name,
+      category: foodData.category ?? null,
+      measurement_type: foodData.measurement_type,
+      // grams path (NOT NULL in DB — use 0 as default for units path)
+      calories_per_100: isGrams ? (foodData.calories_per_100 ?? 0) : 0,
+      protein_per_100: isGrams ? (foodData.protein_per_100 ?? 0) : 0,
+      carbs_per_100: isGrams ? (foodData.carbs_per_100 ?? 0) : 0,
+      fat_per_100: isGrams ? (foodData.fat_per_100 ?? 0) : 0,
+      // units path
+      unit_weight_g: !isGrams ? (foodData.unit_weight_g ?? null) : null,
+      calories_per_unit: !isGrams ? (foodData.calories_per_unit ?? null) : null,
+      protein_per_unit: !isGrams ? (foodData.protein_per_unit ?? null) : null,
+      carbs_per_unit: !isGrams ? (foodData.carbs_per_unit ?? null) : null,
+      fat_per_unit: !isGrams ? (foodData.fat_per_unit ?? null) : null,
+    };
+
     const { data, error } = await supabase
       .from('food_items')
-      .insert({
-        user_id: userId,
-        is_custom: true,
-        is_verified: false,
-        ...foodData,
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -242,8 +269,7 @@ export const createFoodItem = async (
 };
 
 /**
- * מוחק מאכל מרשימת המאכלים של המשתמש (food_items).
- * הערה: לא משפיע על רשומות יומן (nutrition_entries) שכבר קיימות.
+ * מוחק מאכל מרשימת המאכלים של המשתמש (soft delete).
  */
 export const deleteFoodItem = async (foodItemId: string, userId: string): Promise<void> => {
   try {
@@ -261,8 +287,7 @@ export const deleteFoodItem = async (foodItemId: string, userId: string): Promis
 };
 
 /**
- * מוחק ארוחה שמורה (meal + meal_items) מרשימת הארוחות של המשתמש.
- * הערה: לא משפיע על רשומות יומן (nutrition_entries) שכבר קיימות.
+ * מוחק ארוחה שמורה (meal + meal_items).
  */
 export const deleteMeal = async (mealId: string, userId: string): Promise<void> => {
   try {
@@ -333,7 +358,11 @@ export const getMealsWithItems = async (
           meal_id,
           food_item_id,
           amount_g,
-          food_items ( name, calories_per_100, protein_per_100, carbs_per_100, fat_per_100, serving_weight, is_active )
+          food_items (
+            name, measurement_type, unit_weight_g, is_active,
+            calories_per_100, protein_per_100, carbs_per_100, fat_per_100,
+            calories_per_unit, protein_per_unit, carbs_per_unit, fat_per_unit
+          )
         )
       `)
       .eq('user_id', userId)
@@ -349,6 +378,7 @@ export const getMealsWithItems = async (
         return fi == null || fi.is_active !== false;
       }).map((mi: Record<string, unknown>) => {
         const food_item = (mi.food_items ?? mi.food_item) as Record<string, unknown> | null;
+        const measurementType = (food_item?.measurement_type as MeasurementType) ?? 'grams';
         return {
           id: String(mi.id),
           created_at: mi.created_at as string,
@@ -359,11 +389,16 @@ export const getMealsWithItems = async (
             food_item != null
               ? {
                   name: (food_item.name as string) ?? '',
-                  calories_per_100: Number(food_item.calories_per_100 ?? 0),
-                  protein_per_100: Number(food_item.protein_per_100 ?? 0),
-                  carbs_per_100: Number(food_item.carbs_per_100 ?? 0),
-                  fat_per_100: Number(food_item.fat_per_100 ?? 0),
-                  serving_weight: Number(food_item.serving_weight ?? 100),
+                  measurement_type: measurementType,
+                  unit_weight_g: food_item.unit_weight_g != null ? Number(food_item.unit_weight_g) : null,
+                  calories_per_100: food_item.calories_per_100 != null ? Number(food_item.calories_per_100) : null,
+                  protein_per_100: food_item.protein_per_100 != null ? Number(food_item.protein_per_100) : null,
+                  carbs_per_100: food_item.carbs_per_100 != null ? Number(food_item.carbs_per_100) : null,
+                  fat_per_100: food_item.fat_per_100 != null ? Number(food_item.fat_per_100) : null,
+                  calories_per_unit: food_item.calories_per_unit != null ? Number(food_item.calories_per_unit) : null,
+                  protein_per_unit: food_item.protein_per_unit != null ? Number(food_item.protein_per_unit) : null,
+                  carbs_per_unit: food_item.carbs_per_unit != null ? Number(food_item.carbs_per_unit) : null,
+                  fat_per_unit: food_item.fat_per_unit != null ? Number(food_item.fat_per_unit) : null,
                 }
               : undefined,
         };
@@ -377,7 +412,7 @@ export const getMealsWithItems = async (
 };
 
 /**
- * יוצר ארוחה חדשה עם פריטים (מזונות + כמות בגרם).
+ * יוצר ארוחה חדשה עם פריטים (מזונות + כמות).
  */
 export const createMealWithItems = async (
   userId: string,

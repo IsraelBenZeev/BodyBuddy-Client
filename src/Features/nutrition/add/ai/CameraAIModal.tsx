@@ -47,7 +47,7 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
             carbs_per_100: String(analysis.carbs_per_100),
             fat_per_100: String(analysis.fat_per_100),
             calories_per_100: String(analysis.calories_per_100),
-            ...(analysis.serving_weight != null && { serving_weight: String(analysis.serving_weight) }),
+            measurement_type: analysis.measurement_type ?? 'grams',
             ...(analysis.category != null && { category: analysis.category }),
           },
         });

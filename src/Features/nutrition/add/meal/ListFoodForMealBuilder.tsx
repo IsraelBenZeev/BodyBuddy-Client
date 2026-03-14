@@ -1,7 +1,7 @@
-import AddNewFood from '@/src/Features/nutrition/add/AddNewFoodForm';
-import AddNewFoodSelection from '@/src/Features/nutrition/add/AddNewFoodSelection';
-import { getCategoryIconName } from '@/src/Features/nutrition/add/foodCategories';
-import type { FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
+import AddNewFood from '@/src/Features/nutrition/add/food/AddNewFoodForm';
+import AddNewFoodSelection from '@/src/Features/nutrition/add/food/AddNewFoodSelection';
+import { getCategoryIconName } from '@/src/Features/nutrition/add/food/foodCategories';
+import type { CreateFoodFormData, FoodItem } from '@/src/types/nutrition';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
@@ -15,8 +15,8 @@ export interface ListFoodForMealBuilderProps {
   closeAddModal: () => void;
   foodItems: FoodItem[];
   onSelectFood: (food: FoodItem) => void;
-  addItemFromPortion: (portionGrams: number) => void;
-  onNewFoodSubmit: (data: SliderEntryFormData) => void;
+  addItemFromPortion: (amount: number, portionUnit: 'g' | 'unit') => void;
+  onNewFoodSubmit: (data: CreateFoodFormData) => void;
   isCreatingFood: boolean;
 }
 
@@ -122,11 +122,16 @@ const ListFoodForMealBuilder = ({
                   <View className="flex-row-reverse items-center mt-1.5">
                     <View className="bg-background-900 px-2 py-0.5 rounded-md border border-white/5">
                       <Text className="text-orange-400 text-[11px] font-black">
-                        {item.calories_per_100} קק״ל
+                        {item.measurement_type === 'units'
+                          ? item.calories_per_unit
+                          : item.calories_per_100}{' '}
+                        קק״ל
                       </Text>
                     </View>
                     <Text className="text-gray-500 text-[10px] text-right mr-2 font-medium">
-                      ל-100 ג׳
+                      {item.measurement_type === 'units'
+                        ? `ליחידה`
+                        : 'ל-100 ג׳'}
                     </Text>
                   </View>
                 </View>

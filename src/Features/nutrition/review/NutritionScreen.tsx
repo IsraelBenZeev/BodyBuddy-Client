@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
 import AddOptionsSheet from '@/src/Features/nutrition/add/AddOptionsSheet';
-import CameraAIModal from '@/src/Features/nutrition/add/CameraAIModal';
+import CameraAIModal from '@/src/Features/nutrition/add/ai/CameraAIModal';
 import ModalAddFoods from '@/src/Features/nutrition/add/ModalAddFoods';
 import NutritionEntriesList from '@/src/Features/nutrition/review/NutritionEntriesList';
 import ProgressStats from '@/src/Features/nutrition/review/ProgressStats';

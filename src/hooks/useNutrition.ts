@@ -12,7 +12,7 @@ import {
     getNutritionEntries,
 } from '@/src/service/nutritionService';
 import { useUIStore } from '@/src/store/useUIStore';
-import type { CreateNutritionEntryPayload } from '@/src/types/nutrition';
+import type { CreateNutritionEntryPayload, MeasurementType } from '@/src/types/nutrition';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useNutritionEntries = (userId: string | undefined, date: string) => {
@@ -121,11 +121,19 @@ export const useCreateFoodItem = (userId: string) => {
     mutationFn: (foodData: {
       name: string;
       category?: string;
-      serving_weight?: number;
-      protein_per_100: number;
-      carbs_per_100: number;
-      fat_per_100: number;
-      calories_per_100: number;
+      measurement_type: MeasurementType;
+      // grams path
+      calories_per_100?: number | null;
+      protein_per_100?: number | null;
+      carbs_per_100?: number | null;
+      fat_per_100?: number | null;
+      // units path
+      unit_name?: string | null;
+      unit_weight_g?: number | null;
+      calories_per_unit?: number | null;
+      protein_per_unit?: number | null;
+      carbs_per_unit?: number | null;
+      fat_per_unit?: number | null;
     }) => createFoodItem(userId, foodData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['food-items', userId] });

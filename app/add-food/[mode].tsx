@@ -1,4 +1,4 @@
-import AddFoodScreen from '@/src/Features/nutrition/add/AddFoodScreen';
+import AddFoodScreen from '@/src/Features/nutrition/add/food/AddFoodScreen';
 
 export default function AddFoodPage() {
   return <AddFoodScreen />;

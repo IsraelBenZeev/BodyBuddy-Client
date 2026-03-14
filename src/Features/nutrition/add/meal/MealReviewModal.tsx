@@ -1,6 +1,7 @@
 import { colors } from '@/colors';
+import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
 import { useCreateNutritionEntriesBulk } from '@/src/hooks/useNutrition';
-import type { MealItem, MealWithItems } from '@/src/types/meal';
+import type { MealItem, MealItemFoodInfo, MealWithItems } from '@/src/types/meal';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -9,7 +10,6 @@ import {
     Pressable,
     ScrollView,
     Text,
-    TextInput,
     View,
 } from 'react-native';
 
@@ -22,17 +22,9 @@ interface Props {
   onSuccess?: () => void;
 }
 
-/** לכל פריט: כמות (מנות) וערך גרם ידני אופציונלי */
+/** לכל פריט: כמות (מנות/יחידות) */
 interface ItemRowState {
   quantity: number;
-  manualGrams: number | null;
-}
-
-const DEFAULT_SERVING = 100;
-
-function getServingWeight(mi: MealItem & { food_item?: { serving_weight?: number } }): number {
-  const sw = mi.food_item?.serving_weight;
-  return sw != null && sw > 0 ? sw : DEFAULT_SERVING;
 }
 
 export default function MealReviewModal({
@@ -45,18 +37,13 @@ export default function MealReviewModal({
 }: Props) {
   const [rowState, setRowState] = useState<Record<string, ItemRowState>>({});
 
-  /** מאתחל כמות התחלתית מכמות הגרמים שנשמרו בארוחה: כמות = amount_g / serving_weight (מנה בסיסית מהמוצר) */
+  /** מאתחל כמות התחלתית מה-amount_g שנשמר */
   useEffect(() => {
     if (!visible || !meal?.meal_items?.length) return;
     const initial: Record<string, ItemRowState> = {};
     for (const mi of meal.meal_items) {
       if (!mi.food_item) continue;
-      const sw =
-        mi.food_item.serving_weight != null && mi.food_item.serving_weight > 0
-          ? mi.food_item.serving_weight
-          : DEFAULT_SERVING;
-      const quantity = Math.max(1, Math.round(mi.amount_g / sw));
-      initial[mi.id] = { quantity, manualGrams: null };
+      initial[mi.id] = { quantity: Math.max(1, mi.amount_g) };
     }
     setRowState(initial);
   }, [visible, meal]);
@@ -66,41 +53,20 @@ export default function MealReviewModal({
   const items = useMemo(() => meal?.meal_items?.filter((mi) => mi.food_item) ?? [], [meal]);
 
   const getState = useCallback(
-    (mi: (typeof items)[0]): ItemRowState => {
-      return (
-        rowState[mi.id] ?? {
-          quantity: 1,
-          manualGrams: null,
-        }
-      );
-    },
+    (mi: (typeof items)[0]): ItemRowState => rowState[mi.id] ?? { quantity: 1 },
     [rowState]
   );
 
-  const getGrams = useCallback(
-    (mi: (typeof items)[0]): number => {
-      const state = getState(mi);
-      if (state.manualGrams != null) return state.manualGrams;
-      return state.quantity * getServingWeight(mi);
-    },
-    [getState, items]
+  const getAmount = useCallback(
+    (mi: (typeof items)[0]): number => getState(mi).quantity,
+    [getState]
   );
 
   const setQuantity = useCallback((miId: string, delta: number) => {
     setRowState((prev) => {
-      const cur = prev[miId] ?? { quantity: 1, manualGrams: null };
-      const nextQ = Math.max(1, cur.quantity + delta);
-      return {
-        ...prev,
-        [miId]: { quantity: nextQ, manualGrams: null },
-      };
-    });
-  }, []);
-
-  const setManualGrams = useCallback((miId: string, value: number | null) => {
-    setRowState((prev) => {
-      const cur = prev[miId] ?? { quantity: 1, manualGrams: null };
-      return { ...prev, [miId]: { ...cur, manualGrams: value } };
+      const cur = prev[miId] ?? { quantity: 1 };
+      const nextQ = Math.max(0.5, Math.round((cur.quantity + delta) * 2) / 2);
+      return { ...prev, [miId]: { quantity: nextQ } };
     });
   }, []);
 
@@ -114,22 +80,38 @@ export default function MealReviewModal({
             const v = c === 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
           });
+
     const payloads = items.map((mi) => {
-      const grams = getGrams(mi);
+      const amount = getAmount(mi);
       const info = mi.food_item!;
-      const ratio = grams / 100;
-      const serving = getServingWeight(mi);
+      const foodForCalc = {
+        id: mi.food_item_id,
+        name: info.name,
+        measurement_type: info.measurement_type,
+        unit_weight_g: info.unit_weight_g ?? null,
+        calories_per_100: info.calories_per_100,
+        protein_per_100: info.protein_per_100,
+        carbs_per_100: info.carbs_per_100,
+        fat_per_100: info.fat_per_100,
+        calories_per_unit: info.calories_per_unit ?? null,
+        protein_per_unit: info.protein_per_unit ?? null,
+        carbs_per_unit: info.carbs_per_unit ?? null,
+        fat_per_unit: info.fat_per_unit ?? null,
+        is_active: true,
+        created_at: '',
+        updated_at: '',
+      };
+      const nutrients = calculateNutrients(foodForCalc, amount);
       return {
         user_id: userId,
         date,
         food_name: info.name,
-        portion_size: Math.round(grams),
-        protein: Math.round(info.protein_per_100 * ratio * 10) / 10,
-        carbs: Math.round(info.carbs_per_100 * ratio * 10) / 10,
-        fat: Math.round(info.fat_per_100 * ratio * 10) / 10,
-        calories: Math.round(info.calories_per_100 * ratio * 10) / 10,
-        portion_unit: 'g' as const,
-        serving_weight: serving,
+        portion_size: Math.round(amount),
+        protein: nutrients.protein,
+        carbs: nutrients.carbs,
+        fat: nutrients.fat,
+        calories: Math.round(nutrients.calories),
+        portion_unit: (info.measurement_type === 'units' ? 'unit' : 'g') as 'g' | 'unit',
         food_item_id: mi.food_item_id,
         group_id: groupId,
         group_name: meal.name_meal || 'ארוחה',
@@ -141,16 +123,33 @@ export default function MealReviewModal({
         onClose();
       },
     });
-  }, [meal, items, getGrams, userId, date, addToJournal, onSuccess, onClose]);
+  }, [meal, items, getAmount, userId, date, addToJournal, onSuccess, onClose]);
 
   const totalCal = useMemo(
     () =>
       items.reduce((sum, mi) => {
-        const grams = getGrams(mi);
+        const amount = getAmount(mi);
         const info = mi.food_item!;
-        return sum + Math.round((info.calories_per_100 * grams) / 100);
+        const foodForCalc = {
+          id: mi.food_item_id,
+          name: info.name,
+          measurement_type: info.measurement_type,
+          unit_weight_g: info.unit_weight_g ?? null,
+          calories_per_100: info.calories_per_100,
+          protein_per_100: info.protein_per_100,
+          carbs_per_100: info.carbs_per_100,
+          fat_per_100: info.fat_per_100,
+          calories_per_unit: info.calories_per_unit ?? null,
+          protein_per_unit: info.protein_per_unit ?? null,
+          carbs_per_unit: info.carbs_per_unit ?? null,
+          fat_per_unit: info.fat_per_unit ?? null,
+          is_active: true,
+          created_at: '',
+          updated_at: '',
+        };
+        return sum + Math.round(calculateNutrients(foodForCalc, amount).calories);
       }, 0),
-    [items, getGrams]
+    [items, getAmount]
   );
 
   if (!meal) return null;
@@ -187,10 +186,8 @@ export default function MealReviewModal({
               key={mi.id}
               mealItem={mi}
               state={getState(mi)}
-              grams={getGrams(mi)}
-              servingWeight={getServingWeight(mi)}
+              amount={getAmount(mi)}
               onQuantityChange={(delta) => setQuantity(mi.id, delta)}
-              onManualGramsChange={(v) => setManualGrams(mi.id, v)}
             />
           ))}
 
@@ -224,55 +221,41 @@ export default function MealReviewModal({
 }
 
 interface MealReviewRowProps {
-  mealItem: MealItem & {
-    food_item?: {
-      name: string;
-      calories_per_100: number;
-      protein_per_100: number;
-      carbs_per_100: number;
-      fat_per_100: number;
-      serving_weight?: number;
-    };
-  };
+  mealItem: MealItem & { food_item?: MealItemFoodInfo };
   state: ItemRowState;
-  grams: number;
-  servingWeight: number;
+  amount: number;
   onQuantityChange: (delta: number) => void;
-  onManualGramsChange: (grams: number | null) => void;
 }
 
-function MealReviewRow({
-  mealItem,
-  state,
-  grams,
-  servingWeight,
-  onQuantityChange,
-  onManualGramsChange,
-}: MealReviewRowProps) {
-  const [editGrams, setEditGrams] = useState(false);
-  const [inputValue, setInputValue] = useState(String(grams));
+function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReviewRowProps) {
   const info = mealItem.food_item!;
-  const calories = Math.round((info.calories_per_100 * grams) / 100);
+  const isUnits = info.measurement_type === 'units';
+  const unitLabel = isUnits ? 'יחידה' : 'גרם';
 
-  useEffect(() => {
-    if (state.manualGrams === null && editGrams) setEditGrams(false);
-  }, [state.manualGrams, editGrams]);
-
-  const applyManualGrams = () => {
-    const n = parseInt(inputValue, 10);
-    if (!Number.isNaN(n) && n >= 0) {
-      onManualGramsChange(n);
-      setEditGrams(false);
-    } else {
-      onManualGramsChange(null);
-      setInputValue(String(state.quantity * servingWeight));
-      setEditGrams(false);
-    }
+  const foodForCalc = {
+    id: mealItem.food_item_id,
+    name: info.name,
+    measurement_type: info.measurement_type,
+    unit_weight_g: info.unit_weight_g ?? null,
+    calories_per_100: info.calories_per_100,
+    protein_per_100: info.protein_per_100,
+    carbs_per_100: info.carbs_per_100,
+    fat_per_100: info.fat_per_100,
+    calories_per_unit: info.calories_per_unit ?? null,
+    protein_per_unit: info.protein_per_unit ?? null,
+    carbs_per_unit: info.carbs_per_unit ?? null,
+    fat_per_unit: info.fat_per_unit ?? null,
+    is_active: true,
+    created_at: '',
+    updated_at: '',
   };
+
+  const nutrients = calculateNutrients(foodForCalc, amount);
+  const calories = Math.round(nutrients.calories);
 
   return (
     <View className="bg-background-800 border border-white/5 rounded-3xl p-4 mb-4 shadow-sm">
-      {/* שורה עליונה: שם * כמות סה״כ X גרם (מנה*כמות) וקלוריות */}
+      {/* שורה עליונה: שם וקלוריות */}
       <View className="flex-row-reverse items-center justify-between mb-3">
         <View className="flex-1 ml-3">
           <Text className="text-white font-bold text-lg text-right" numberOfLines={2}>
@@ -287,7 +270,6 @@ function MealReviewRow({
 
       {/* אזור השליטה בכמות */}
       <View className="flex-row-reverse items-center justify-between bg-background-900/40 p-3 rounded-2xl border border-white/5">
-        {/* ה-Stepper (פלוס/מינוס) */}
         <View className="flex-row-reverse items-center bg-background-700 rounded-xl p-1 shadow-inner">
           <Pressable
             onPress={() => onQuantityChange(1)}
@@ -298,7 +280,7 @@ function MealReviewRow({
 
           <View className="px-4 items-center">
             <Text className="text-white font-black text-lg">{state.quantity}</Text>
-            <Text className="text-gray-500 text-[9px] uppercase font-bold">מנות</Text>
+            <Text className="text-gray-500 text-[9px] uppercase font-bold">{unitLabel}</Text>
           </View>
 
           <Pressable
@@ -309,52 +291,17 @@ function MealReviewRow({
           </Pressable>
         </View>
 
-        {/* חישוב סופי */}
+        {/* תצוגת חישוב */}
         <View className="flex-1 items-center mr-4">
-          <Text className="text-gray-400 text-xs text-center mb-1">סה״כ משקל נבחר</Text>
-          <View className="flex-row-reverse items-center">
-            <Text className="text-white font-bold text-base">{grams}</Text>
-            <Text className="text-white/60 text-sm mr-1">גרם</Text>
-          </View>
-          <Text className="text-gray-500 text-[10px] mt-1 italic">
-            ({state.quantity} מנות × {servingWeight}ג׳)
+          <Text className="text-gray-400 text-xs text-center mb-1">
+            {isUnits ? `${amount} ${unitLabel}` : `${amount} גרם`}
           </Text>
-        </View>
-      </View>
-
-      {/* עריכה ידנית */}
-      <View className="mt-4 pt-3 border-t border-white/5">
-        {!editGrams ? (
-          <Pressable
-            onPress={() => {
-              setEditGrams(true);
-              setInputValue(String(grams));
-            }}
-            className="flex-row-reverse items-center justify-center py-2"
-          >
-            <Ionicons name="create-outline" size={14} color="#84cc16" />
-            <Text className="text-lime-500 text-xs font-bold mr-1.5 underline">
-              עריכת גרמים ידנית
-            </Text>
-          </Pressable>
-        ) : (
-          <View className="flex-row-reverse items-center justify-center gap-3">
-            <TextInput
-              value={inputValue}
-              onChangeText={setInputValue}
-              keyboardType="number-pad"
-              placeholder="גרם"
-              placeholderTextColor="#525252"
-              className="bg-background-900 rounded-xl px-4 py-2.5 text-white w-24 text-center font-bold border border-lime-500/30"
-            />
-            <Pressable
-              onPress={applyManualGrams}
-              className="bg-lime-500 rounded-xl px-6 py-2.5 shadow-sm active:bg-lime-600"
-            >
-              <Text className="text-background-900 text-sm font-black">עדכן</Text>
-            </Pressable>
+          <View className="flex-row-reverse gap-2">
+            <Text className="text-lime-400 text-xs">P {nutrients.protein}g</Text>
+            <Text className="text-orange-400 text-xs">C {nutrients.carbs}g</Text>
+            <Text className="text-red-400 text-xs">F {nutrients.fat}g</Text>
           </View>
-        )}
+        </View>
       </View>
     </View>
   );

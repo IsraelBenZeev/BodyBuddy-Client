@@ -28,8 +28,6 @@ export interface NutritionEntry {
   calories: number;
   portion_size: number;
   portion_unit: 'g' | 'ml' | 'unit' | 'serving';
-  /** משקל מנה אחת בגרם – לתצוגה "שם × כמות סה״כ X גרם (מנה × כמות)" */
-  serving_weight?: number | null;
   food_item_id?: string;
   /** רשומות עם אותו group_id מוצגות כבלוק אחד (למשל ארוחה מה-template) */
   group_id?: string | null;
@@ -38,21 +36,26 @@ export interface NutritionEntry {
   created_at: string;
 }
 
+export type MeasurementType = 'grams' | 'units';
+
 export interface FoodItem {
   id: string;
   name: string;
-  brand?: string;
   category?: string;
-  /** משקל מנה/יחידה אחת בגרם – משמש כערך התחלתי בבחירת מנה */
-  serving_weight?: number | null;
-  protein_per_100: number;
-  carbs_per_100: number;
-  fat_per_100: number;
-  calories_per_100: number;
-  is_verified: boolean;
-  is_custom: boolean;
   is_active: boolean;
   user_id?: string;
+  measurement_type: MeasurementType;
+  unit_weight_g?: number | null;
+  // מסלול גרמים
+  calories_per_100: number | null;
+  protein_per_100: number | null;
+  carbs_per_100: number | null;
+  fat_per_100: number | null;
+  // מסלול יחידות
+  calories_per_unit: number | null;
+  protein_per_unit: number | null;
+  carbs_per_unit: number | null;
+  fat_per_unit: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -84,8 +87,6 @@ export interface CreateNutritionEntryPayload {
   calories: number;
   portion_size: number;
   portion_unit: 'g' | 'ml' | 'unit' | 'serving';
-  /** משקל מנה אחת בגרם (אופציונלי – לתצוגה ביומן) */
-  serving_weight?: number | null;
   food_item_id?: string;
   group_id?: string | null;
   group_name?: string | null;
@@ -97,18 +98,23 @@ export interface MacroSplit {
   fat: { grams: number; percentage: number };
 }
 
-export interface SliderEntryFormData {
+export interface CreateFoodFormData {
   food_name: string;
+  measurement_type: MeasurementType;
   category?: string;
-  /** משקל מנה/יחידה אחת בגרם – נשמר ב־serving_weight */
-  serving_weight?: number;
-  protein_per_100: number;
-  carbs_per_100: number;
-  fat_per_100: number;
-  /** אם קיים – משתמשים בערך זה ולא מחשבים מחדש מהמאקרואים */
+  // מסלול גרמים
   calories_per_100?: number;
-  portion_size: number;
-  portion_unit: 'g' | 'ml';
+  protein_per_100?: number;
+  carbs_per_100?: number;
+  fat_per_100?: number;
+  // מסלול יחידות
+  calories_per_unit?: number;
+  protein_per_unit?: number;
+  carbs_per_unit?: number;
+  fat_per_unit?: number;
+  // להוספה ליומן
+  portion_size?: number;
+  portion_unit?: 'g' | 'unit';
 }
 
 // ── AI Analysis Types ──────────────────────────────────────────────────────────
@@ -120,7 +126,7 @@ export interface AIFoodResult {
   carbs_per_100: number;
   fat_per_100: number;
   calories_per_100: number;
-  serving_weight?: number;
+  measurement_type?: MeasurementType;
   category?: string;
 }
 

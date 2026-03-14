@@ -35,15 +35,13 @@ interface Props {
   isDeletingGroup?: boolean;
 }
 
-/** מחזיר טקסט תצוגה: "שם × כמות סה״כ X גרם (מנה×כמות)" או "שם סה״כ X גרם" */
+/** מחזיר טקסט תצוגה לפי סוג המדידה */
 function formatEntryPortionLine(entry: NutritionEntry): string {
   const total = entry.portion_size;
-  const sw = entry.serving_weight;
-  if (sw != null && sw > 0) {
-    const q = Math.round(total / sw);
-    if (q >= 1) return `${entry.food_name} × ${q} סה״כ ${total} גרם (${sw} × ${q})`;
+  if (entry.portion_unit === 'unit') {
+    return `${entry.food_name} × ${total}`;
   }
-  return `${entry.food_name} סה״כ ${total} גרם`;
+  return `${entry.food_name} ${total} גרם`;
 }
 
 /** בלוק לתצוגה: קבוצה (ארוחה) או רשומה בודדת */

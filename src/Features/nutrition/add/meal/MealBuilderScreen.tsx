@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
-import type { AddStep } from '@/src/Features/nutrition/add/ListFoodForMealBuilder';
-import ListFoodForMealBuilder from '@/src/Features/nutrition/add/ListFoodForMealBuilder';
+import type { AddStep } from '@/src/Features/nutrition/add/meal/ListFoodForMealBuilder';
+import ListFoodForMealBuilder from '@/src/Features/nutrition/add/meal/ListFoodForMealBuilder';
 import {
   useCreateFoodItem,
   useCreateMealWithItems,
@@ -9,7 +9,8 @@ import {
 } from '@/src/hooks/useNutrition';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import type { MealItemForm } from '@/src/types/meal';
-import type { AIMealResultItem, FoodItem, SliderEntryFormData } from '@/src/types/nutrition';
+import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
+import type { AIMealResultItem, CreateFoodFormData, FoodItem } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import Slider from '@react-native-community/slider';
@@ -49,11 +50,15 @@ const MealBuilderScreen = () => {
         food_item_id: '',
         name: item.food_name,
         amount_g: item.estimated_grams,
+        measurement_type: 'grams' as const,
         protein_per_100: item.protein_per_100,
         carbs_per_100: item.carbs_per_100,
         fat_per_100: item.fat_per_100,
         calories_per_100: item.calories_per_100,
-        serving_weight: 100,
+        calories_per_unit: null,
+        protein_per_unit: null,
+        carbs_per_unit: null,
+        fat_per_unit: null,
         isPendingCreate: true,
       }));
     } catch {
@@ -72,7 +77,6 @@ const MealBuilderScreen = () => {
     name: string;
     isPendingCreate: boolean;
     amount_g: number;
-    serving_weight: number;
     protein_per_100: number;
     carbs_per_100: number;
     fat_per_100: number;
@@ -92,7 +96,24 @@ const MealBuilderScreen = () => {
   } = useCreateFoodItem(userId);
 
   const totalCal = useMemo(
-    () => items.reduce((sum, i) => sum + Math.round((i.calories_per_100 * i.amount_g) / 100), 0),
+    () =>
+      items.reduce((sum, i) => {
+        const nutrients = calculateNutrients(
+          {
+            ...i,
+            id: i.food_item_id,
+            is_active: true,
+            created_at: '',
+            updated_at: '',
+            calories_per_unit: i.calories_per_unit ?? null,
+            protein_per_unit: i.protein_per_unit ?? null,
+            carbs_per_unit: i.carbs_per_unit ?? null,
+            fat_per_unit: i.fat_per_unit ?? null,
+          },
+          i.amount_g
+        );
+        return sum + Math.round(nutrients.calories);
+      }, 0),
     [items]
   );
 
@@ -114,20 +135,23 @@ const MealBuilderScreen = () => {
   }, []);
 
   const addItemFromPortion = useCallback(
-    (portionGrams: number) => {
+    (amount: number, _portionUnit: 'g' | 'unit') => {
       if (!selectedFood) return;
-      const serving = selectedFood.serving_weight ?? 100;
       setItems((prev) => [
         ...prev,
         {
           food_item_id: selectedFood.id,
           name: selectedFood.name,
-          amount_g: portionGrams,
+          amount_g: amount,
+          measurement_type: selectedFood.measurement_type,
           protein_per_100: selectedFood.protein_per_100,
           carbs_per_100: selectedFood.carbs_per_100,
           fat_per_100: selectedFood.fat_per_100,
           calories_per_100: selectedFood.calories_per_100,
-          serving_weight: serving,
+          calories_per_unit: selectedFood.calories_per_unit ?? null,
+          protein_per_unit: selectedFood.protein_per_unit ?? null,
+          carbs_per_unit: selectedFood.carbs_per_unit ?? null,
+          fat_per_unit: selectedFood.fat_per_unit ?? null,
         },
       ]);
       closeAddModal();
@@ -136,35 +160,50 @@ const MealBuilderScreen = () => {
   );
 
   const handleNewFoodSubmit = useCallback(
-    (data: SliderEntryFormData) => {
-      const calories =
-        data.calories_per_100 ??
-        Math.round(
-          (data.protein_per_100 * 4 + data.carbs_per_100 * 4 + data.fat_per_100 * 9) * 10
-        ) / 10;
+    (data: CreateFoodFormData) => {
+      const isGrams = data.measurement_type === 'grams';
+      const calories_per_100 = isGrams
+        ? (data.calories_per_100 ??
+          Math.round(
+            ((data.protein_per_100 ?? 0) * 4 +
+              (data.carbs_per_100 ?? 0) * 4 +
+              (data.fat_per_100 ?? 0) * 9) * 10
+          ) / 10)
+        : null;
+
       createFoodItem(
         {
           name: data.food_name,
           category: data.category,
-          serving_weight: data.serving_weight,
-          protein_per_100: data.protein_per_100,
-          carbs_per_100: data.carbs_per_100,
-          fat_per_100: data.fat_per_100,
-          calories_per_100: calories,
+          measurement_type: data.measurement_type,
+          calories_per_100: isGrams ? calories_per_100 : 0,
+          protein_per_100: isGrams ? (data.protein_per_100 ?? 0) : 0,
+          carbs_per_100: isGrams ? (data.carbs_per_100 ?? 0) : 0,
+          fat_per_100: isGrams ? (data.fat_per_100 ?? 0) : 0,
+          calories_per_unit: !isGrams ? (data.calories_per_unit ?? null) : null,
+          protein_per_unit: !isGrams ? (data.protein_per_unit ?? null) : null,
+          carbs_per_unit: !isGrams ? (data.carbs_per_unit ?? null) : null,
+          fat_per_unit: !isGrams ? (data.fat_per_unit ?? null) : null,
         },
         {
           onSuccess: (newFood) => {
+            // ברירת מחדל: מנה אחת (100g אם grams, 1 יחידה אם units)
+            const defaultAmount = newFood.measurement_type === 'units' ? 1 : 100;
             setItems((prev) => [
               ...prev,
               {
                 food_item_id: newFood.id,
                 name: newFood.name,
-                amount_g: data.portion_size,
+                amount_g: defaultAmount,
+                measurement_type: newFood.measurement_type,
                 protein_per_100: newFood.protein_per_100,
                 carbs_per_100: newFood.carbs_per_100,
                 fat_per_100: newFood.fat_per_100,
                 calories_per_100: newFood.calories_per_100,
-                serving_weight: newFood.serving_weight ?? 100,
+                calories_per_unit: newFood.calories_per_unit ?? null,
+                protein_per_unit: newFood.protein_per_unit ?? null,
+                carbs_per_unit: newFood.carbs_per_unit ?? null,
+                fat_per_unit: newFood.fat_per_unit ?? null,
               },
             ]);
             closeAddModal();
@@ -187,10 +226,9 @@ const MealBuilderScreen = () => {
         name: item.name,
         isPendingCreate: item.isPendingCreate ?? false,
         amount_g: item.amount_g,
-        serving_weight: item.serving_weight,
-        protein_per_100: item.protein_per_100,
-        carbs_per_100: item.carbs_per_100,
-        fat_per_100: item.fat_per_100,
+        protein_per_100: item.protein_per_100 ?? 0,
+        carbs_per_100: item.carbs_per_100 ?? 0,
+        fat_per_100: item.fat_per_100 ?? 0,
       });
     },
     [items]
@@ -208,7 +246,6 @@ const MealBuilderScreen = () => {
           ? {
               ...item,
               amount_g: editDraft.amount_g,
-              serving_weight: editDraft.serving_weight,
               protein_per_100: p,
               carbs_per_100: c,
               fat_per_100: f,
@@ -228,11 +265,15 @@ const MealBuilderScreen = () => {
       pending.map((i) =>
         createFoodItemAsync({
           name: i.name,
+          measurement_type: i.measurement_type ?? 'grams',
           protein_per_100: i.protein_per_100,
           carbs_per_100: i.carbs_per_100,
           fat_per_100: i.fat_per_100,
           calories_per_100: i.calories_per_100,
-          serving_weight: i.serving_weight,
+          calories_per_unit: i.calories_per_unit ?? null,
+          protein_per_unit: i.protein_per_unit ?? null,
+          carbs_per_unit: i.carbs_per_unit ?? null,
+          fat_per_unit: i.fat_per_unit ?? null,
         })
       )
     );
@@ -293,18 +334,30 @@ const MealBuilderScreen = () => {
             return v.toString(16);
           });
     const entryPayloads = resolvedItems.map((it) => {
-      const ratio = it.amount_g / 100;
+      const nutrients = calculateNutrients(
+        {
+          ...it,
+          id: it.food_item_id,
+          is_active: true,
+          created_at: '',
+          updated_at: '',
+          calories_per_unit: it.calories_per_unit ?? null,
+          protein_per_unit: it.protein_per_unit ?? null,
+          carbs_per_unit: it.carbs_per_unit ?? null,
+          fat_per_unit: it.fat_per_unit ?? null,
+        },
+        it.amount_g
+      );
       return {
         user_id: userId,
         date: today,
         food_name: it.name,
         portion_size: Math.round(it.amount_g),
-        protein: Math.round(it.protein_per_100 * ratio * 10) / 10,
-        carbs: Math.round(it.carbs_per_100 * ratio * 10) / 10,
-        fat: Math.round(it.fat_per_100 * ratio * 10) / 10,
-        calories: Math.round((it.calories_per_100 * it.amount_g) / 100),
-        portion_unit: 'g' as const,
-        serving_weight: it.serving_weight,
+        protein: nutrients.protein,
+        carbs: nutrients.carbs,
+        fat: nutrients.fat,
+        calories: Math.round(nutrients.calories),
+        portion_unit: (it.measurement_type === 'units' ? 'unit' : 'g') as 'g' | 'unit',
         food_item_id: it.food_item_id,
         group_id: groupId,
         group_name: trimmed,
@@ -386,11 +439,18 @@ const MealBuilderScreen = () => {
             </View>
           }
           renderItem={({ item, index }) => {
-            const ratio = item.amount_g / 100;
-            const cal = Math.round(item.calories_per_100 * ratio);
-            const pActual = Math.round(item.protein_per_100 * ratio * 10) / 10;
-            const cActual = Math.round(item.carbs_per_100 * ratio * 10) / 10;
-            const fActual = Math.round(item.fat_per_100 * ratio * 10) / 10;
+            const nutrients = calculateNutrients(
+              { ...item, id: item.food_item_id, is_active: true, created_at: '', updated_at: '', calories_per_unit: item.calories_per_unit ?? null, protein_per_unit: item.protein_per_unit ?? null, carbs_per_unit: item.carbs_per_unit ?? null, fat_per_unit: item.fat_per_unit ?? null },
+              item.amount_g
+            );
+            const cal = Math.round(nutrients.calories);
+            const pActual = nutrients.protein;
+            const cActual = nutrients.carbs;
+            const fActual = nutrients.fat;
+            const amountLabel =
+              item.measurement_type === 'units'
+                ? `${item.amount_g} יחידה`
+                : `${item.amount_g}g`;
             return (
               <View className="bg-background-800 border border-white/5 rounded-2xl p-4">
                 {/* שורה 1: אייקון + שם + כפתורים */}
@@ -423,7 +483,7 @@ const MealBuilderScreen = () => {
                 </View>
                 {/* שורה 2: כמות + קלוריות */}
                 <View className="flex-row-reverse items-center gap-2 mb-1">
-                  <Text className="text-gray-400 text-xs">{item.amount_g}g</Text>
+                  <Text className="text-gray-400 text-xs">{amountLabel}</Text>
                   <View className="w-1 h-1 rounded-full bg-gray-600" />
                   <Text className="text-lime-400 text-xs font-bold">{cal} קק״ל</Text>
                 </View>
@@ -600,33 +660,6 @@ const MealBuilderScreen = () => {
                     <View className="flex-row-reverse justify-between" style={{ marginTop: -4 }}>
                       <Text className="text-gray-700 text-xs">0g</Text>
                       <Text className="text-gray-700 text-xs">1000g</Text>
-                    </View>
-                  </View>
-
-                  {/* גרם ליחידה */}
-                  <View className="bg-background-800 rounded-2xl p-4 border border-white/5 mb-4">
-                    <View className="flex-row-reverse items-center justify-between mb-1">
-                      <Text className="text-gray-400 text-sm font-bold">גרם ליחידה</Text>
-                      <Text className="text-white text-xl font-black">
-                        {editDraft?.serving_weight ?? 100}g
-                      </Text>
-                    </View>
-                    <Slider
-                      style={{ width: '100%', height: 44 }}
-                      minimumValue={1}
-                      maximumValue={500}
-                      step={1}
-                      value={editDraft?.serving_weight ?? 100}
-                      onValueChange={(v) =>
-                        setEditDraft((d) => d && { ...d, serving_weight: Math.round(v) })
-                      }
-                      minimumTrackTintColor={colors.background[400]}
-                      maximumTrackTintColor={colors.background[600]}
-                      thumbTintColor={colors.background[300]}
-                    />
-                    <View className="flex-row-reverse justify-between" style={{ marginTop: -4 }}>
-                      <Text className="text-gray-700 text-xs">1g</Text>
-                      <Text className="text-gray-700 text-xs">500g</Text>
                     </View>
                   </View>
 

@@ -1,8 +1,9 @@
-import AddNewFood from '@/src/Features/nutrition/add/AddNewFoodForm';
+import AddNewFood from '@/src/Features/nutrition/add/food/AddNewFoodForm';
+import { calculateNutrients, getPortionUnit } from '@/src/Features/nutrition/utils/nutritionCalc';
 import { useCreateFoodItem, useCreateNutritionEntry } from '@/src/hooks/useNutrition';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
-import type { SliderEntryFormData } from '@/src/types/nutrition';
+import type { CreateFoodFormData, MeasurementType } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,7 +24,7 @@ const AddFoodScreen = () => {
     carbs_per_100?: string;
     fat_per_100?: string;
     calories_per_100?: string;
-    serving_weight?: string;
+    measurement_type?: string;
     category?: string;
   }>();
 
@@ -33,7 +34,8 @@ const AddFoodScreen = () => {
       protein_per_100: params.protein_per_100 ? parseFloat(params.protein_per_100) : undefined,
       carbs_per_100: params.carbs_per_100 ? parseFloat(params.carbs_per_100) : undefined,
       fat_per_100: params.fat_per_100 ? parseFloat(params.fat_per_100) : undefined,
-      serving_weight: params.serving_weight ? parseFloat(params.serving_weight) : undefined,
+      calories_per_100: params.calories_per_100 ? parseFloat(params.calories_per_100) : undefined,
+      measurement_type: (params.measurement_type as MeasurementType) ?? 'grams',
       category: params.category,
     }),
     [params]
@@ -46,20 +48,35 @@ const AddFoodScreen = () => {
   );
 
   const handleSubmit = useCallback(
-    (data: SliderEntryFormData, addToJournal: boolean) => {
-      const calories =
-        data.calories_per_100 ??
-        Math.round((data.protein_per_100 * 4 + data.carbs_per_100 * 4 + data.fat_per_100 * 9) * 10) / 10;
+    (data: CreateFoodFormData, addToJournal: boolean) => {
+      const isGrams = data.measurement_type === 'grams';
+
+      // חישוב קלוריות אם לא הוזנו ידנית (מסלול גרמים)
+      const calories_per_100 = isGrams
+        ? (data.calories_per_100 ??
+          Math.round(
+            ((data.protein_per_100 ?? 0) * 4 +
+              (data.carbs_per_100 ?? 0) * 4 +
+              (data.fat_per_100 ?? 0) * 9) *
+              10
+          ) / 10)
+        : null;
 
       createFoodItem(
         {
           name: data.food_name,
           category: data.category,
-          serving_weight: data.serving_weight,
-          protein_per_100: data.protein_per_100,
-          carbs_per_100: data.carbs_per_100,
-          fat_per_100: data.fat_per_100,
-          calories_per_100: calories,
+          measurement_type: data.measurement_type,
+          // grams
+          calories_per_100: isGrams ? calories_per_100 : 0,
+          protein_per_100: isGrams ? (data.protein_per_100 ?? 0) : 0,
+          carbs_per_100: isGrams ? (data.carbs_per_100 ?? 0) : 0,
+          fat_per_100: isGrams ? (data.fat_per_100 ?? 0) : 0,
+          // units
+          calories_per_unit: !isGrams ? (data.calories_per_unit ?? null) : null,
+          protein_per_unit: !isGrams ? (data.protein_per_unit ?? null) : null,
+          carbs_per_unit: !isGrams ? (data.carbs_per_unit ?? null) : null,
+          fat_per_unit: !isGrams ? (data.fat_per_unit ?? null) : null,
         },
         {
           onSuccess: (newFood) => {
@@ -68,19 +85,19 @@ const AddFoodScreen = () => {
               router.back();
               return;
             }
-            const ratio = data.portion_size / 100;
+
+            const amount = data.portion_size ?? (newFood.measurement_type === 'units' ? 1 : 100);
+            const nutrients = calculateNutrients(newFood, amount);
+            const portionUnit = getPortionUnit(newFood);
+
             createEntry(
               {
                 user_id: userId,
                 date: today,
                 food_name: newFood.name,
-                protein: Math.round(newFood.protein_per_100 * ratio * 10) / 10,
-                carbs: Math.round(newFood.carbs_per_100 * ratio * 10) / 10,
-                fat: Math.round(newFood.fat_per_100 * ratio * 10) / 10,
-                calories: Math.round(newFood.calories_per_100 * ratio * 10) / 10,
-                portion_size: data.portion_size,
-                portion_unit: data.portion_unit,
-                serving_weight: newFood.serving_weight ?? data.serving_weight ?? undefined,
+                ...nutrients,
+                portion_size: amount,
+                portion_unit: portionUnit,
                 food_item_id: newFood.id,
               },
               { onSuccess: () => router.back() }
@@ -95,7 +112,6 @@ const AddFoodScreen = () => {
   return (
     <BackGround>
       <View className="flex-1">
-        {/* Handle + כפתור סגירה */}
         <View className="items-center pt-3 pb-2">
           <Handle />
         </View>

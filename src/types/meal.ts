@@ -1,3 +1,5 @@
+import type { MeasurementType } from './nutrition';
+
 /** תואם לטבלת meals ב-Supabase */
 export interface Meal {
   id: string;
@@ -12,18 +14,25 @@ export interface MealItem {
   created_at: string;
   meal_id: string;
   food_item_id: string;
+  /** גרמים אם measurement_type='grams', מספר יחידות אם 'units' */
   amount_g: number;
 }
 
 /** נתוני מזון מתוך food_items (למודל סקירת ארוחה וליומן) */
 export interface MealItemFoodInfo {
   name: string;
-  calories_per_100: number;
-  protein_per_100: number;
-  carbs_per_100: number;
-  fat_per_100: number;
-  /** משקל מנה/יחידה אחת בגרם – להצגת כמות (quantity × serving_weight = גרם) */
-  serving_weight: number;
+  measurement_type: MeasurementType;
+  unit_weight_g?: number | null;
+  // מסלול גרמים
+  calories_per_100: number | null;
+  protein_per_100: number | null;
+  carbs_per_100: number | null;
+  fat_per_100: number | null;
+  // מסלול יחידות
+  calories_per_unit?: number | null;
+  protein_per_unit?: number | null;
+  carbs_per_unit?: number | null;
+  fat_per_unit?: number | null;
 }
 
 /** ארוחה עם פריטים (לצורך תצוגה) */
@@ -42,6 +51,7 @@ export type MealBuilderParams = {
     carbs_per_100?: number;
     fat_per_100?: number;
     calories_per_100: number;
+    measurement_type?: MeasurementType;
   }[];
   mealId?: string;
 };
@@ -50,11 +60,15 @@ export type MealBuilderParams = {
 export interface MealItemForm {
   food_item_id: string;
   name: string;
+  /** גרמים אם measurement_type='grams', מספר יחידות אם 'units' */
   amount_g: number;
-  protein_per_100: number;
-  carbs_per_100: number;
-  fat_per_100: number;
-  calories_per_100: number;
-  /** גרם למנה (מ־food_items.serving_weight) – לתצוגה */
-  serving_weight: number;
+  measurement_type: MeasurementType;
+  protein_per_100: number | null;
+  carbs_per_100: number | null;
+  fat_per_100: number | null;
+  calories_per_100: number | null;
+  calories_per_unit?: number | null;
+  protein_per_unit?: number | null;
+  carbs_per_unit?: number | null;
+  fat_per_unit?: number | null;
 }

@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import TabsManager from '../../exercises/TabsMenager';
-import Foods from './Foods';
-import Meals from './Meals';
+import Foods from './food/Foods';
+import Meals from './meal/Meals';
 
 interface Props {
   userId: string;

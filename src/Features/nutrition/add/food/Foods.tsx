@@ -1,4 +1,5 @@
-import { getCategoryIconName } from '@/src/Features/nutrition/add/foodCategories';
+import { getCategoryIconName } from '@/src/Features/nutrition/add/food/foodCategories';
+import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
 import { useCreateNutritionEntry, useDeleteFoodItem, useFoodItems } from '@/src/hooks/useNutrition';
 import type { FoodItem } from '@/src/types/nutrition';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
@@ -32,23 +33,19 @@ const Foods = ({ userId, date, onClose }: Props) => {
   }, []);
 
   const handlePortionSubmit = useCallback(
-    (portionSize: number) => {
+    (amount: number, portionUnit: 'g' | 'unit') => {
       if (!selectedFood) return;
 
-      const ratio = portionSize / 100;
+      const nutrients = calculateNutrients(selectedFood, amount);
 
       createEntry(
         {
           user_id: userId,
           date,
           food_name: selectedFood.name,
-          protein: Math.round(selectedFood.protein_per_100 * ratio * 10) / 10,
-          carbs: Math.round(selectedFood.carbs_per_100 * ratio * 10) / 10,
-          fat: Math.round(selectedFood.fat_per_100 * ratio * 10) / 10,
-          calories: Math.round(selectedFood.calories_per_100 * ratio * 10) / 10,
-          portion_size: portionSize,
-          portion_unit: 'g',
-          serving_weight: selectedFood.serving_weight ?? undefined,
+          ...nutrients,
+          portion_size: amount,
+          portion_unit: portionUnit,
           food_item_id: selectedFood.id,
         },
         {
@@ -75,107 +72,6 @@ const Foods = ({ userId, date, onClose }: Props) => {
     );
   }
 
-  // return (
-  //   <View style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 16 }} className=''>
-  //     <Text className="text-lime-400 text-2xl font-black mb-2 text-right">בחר מהרשימה</Text>
-  //     <Text className="text-background-400 text-sm mb-6 text-right">
-  //       {foodItems.length > 0 ? 'מהרשימה שלך' : 'עדיין לא הוספת מזונות'}
-  //     </Text>
-
-  //     {isLoading ? (
-  //       <View className="flex-1 items-center justify-center">
-  //         <ActivityIndicator color={colors.lime[500]} size="large" />
-  //       </View>
-  //     ) : foodItems.length === 0 ? (
-  //       <View className="flex-1 items-center justify-center px-5">
-  //         <Ionicons name="nutrition-outline" size={60} color={colors.background[400]} />
-  //         <Text className="text-white text-lg font-bold text-center mt-4">
-  //           עדיין לא הוספת מזונות
-  //         </Text>
-  //         <Text className="text-background-400 text-center mt-2 mb-6">
-  //           התחל על ידי הוספת מזון ידנית
-  //         </Text>
-  //       </View>
-  //     ) : (
-  //       <FlatList
-  //         data={foodItems}
-  //         keyExtractor={(item) => item.id}
-  //         showsVerticalScrollIndicator={false}
-  //         ItemSeparatorComponent={() => <View className="h-3" />}
-  //         contentContainerStyle={{ paddingBottom: 120 }}
-  //         renderItem={({ item }) => (
-  //           <Pressable
-  //             onPress={() => handleFoodSelect(item)}
-  //             className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden"
-  //           >
-  //             <View className="flex-row-reverse items-center p-3.5">
-  //               {/* Icon by category or default */}
-  //               <View className="bg-background-700 rounded-xl w-12 h-12 items-center justify-center mr-1">
-  //                 <Ionicons
-  //                   name={getCategoryIconName(item.category)}
-  //                   size={22}
-  //                   color={colors.orange[400]}
-  //                 />
-  //               </View>
-
-  //               {/* Food name & calories */}
-  //               <View className="flex-1 mr-3">
-  //                 <Text className="text-white text-base font-bold text-right" numberOfLines={1}>
-  //                   {item.name}
-  //                 </Text>
-  //                 <Text className="text-background-400 text-xs text-right mt-0.5">
-  //                   {item.calories_per_100} קק״ל ל-100g
-  //                 </Text>
-  //               </View>
-
-  //               {/* Arrow indicator */}
-  //               <Ionicons name="chevron-back" size={18} color={colors.background[500]} />
-  //             </View>
-
-  //             {/* Macro bar */}
-  //             <View className="flex-row-reverse border-t border-background-700 px-3.5 py-2.5">
-  //               <View className="flex-row-reverse items-center flex-1 justify-around">
-  //                 <View className="flex-row-reverse items-center">
-  //                   <View className="w-2 h-2 rounded-full bg-lime-500 ml-1.5" />
-  //                   <Text className="text-background-300 text-xs">
-  //                     חלבון <Text className="text-lime-500 font-bold">{item.protein_per_100}g</Text>
-  //                   </Text>
-  //                 </View>
-
-  //                 <View className="flex-row-reverse items-center">
-  //                   <View className="w-2 h-2 rounded-full bg-orange-500 ml-1.5" />
-  //                   <Text className="text-background-300 text-xs">
-  //                     פחמימות{' '}
-  //                     <Text className="text-orange-500 font-bold">{item.carbs_per_100}g</Text>
-  //                   </Text>
-  //                 </View>
-
-  //                 <View className="flex-row-reverse items-center">
-  //                   <View className="w-2 h-2 rounded-full bg-red-500 ml-1.5" />
-  //                   <Text className="text-background-300 text-xs">
-  //                     שומן <Text className="text-red-500 font-bold">{item.fat_per_100}g</Text>
-  //                   </Text>
-  //                 </View>
-  //               </View>
-  //             </View>
-  //           </Pressable>
-  //         )}
-  //       />
-  //     )}
-
-  //     <View className="absolute bottom-5 left-5 right-5 bg-background-900 pb-10">
-  //       <Pressable
-  //         onPress={() => setViewMode('manual')}
-  //         className="bg-lime-500 rounded-2xl py-4 flex-row-reverse items-center justify-center"
-  //       >
-  //         <Ionicons name="add-circle-outline" size={24} color={colors.background[900]} />
-  //         <Text className="text-background-900 font-black text-base mr-2">
-  //           {foodItems.length === 0 ? 'הוסף מזון עכשיו' : 'המזון שלך לא ברשימה?'}
-  //         </Text>
-  //       </Pressable>
-  //     </View>
-  //   </View>
-  // );
   return (
     <View className="flex-1 bg-background-900 px-5 pt-6">
       {/* Header */}
@@ -232,15 +128,22 @@ const Foods = ({ userId, date, onClose }: Props) => {
                   </Text>
                   <View className="flex-row-reverse items-center mt-1">
                     <Text className="text-lime-400 text-xs font-bold">
-                      {item.calories_per_100} קק״ל
+                      {item.measurement_type === 'units'
+                        ? item.calories_per_unit
+                        : item.calories_per_100}{' '}
+                      קק״ל
                     </Text>
-                    <Text className="text-gray-500 text-[10px] mr-1">/ ל-100 גרם</Text>
+                    <Text className="text-gray-500 text-[10px] mr-1">
+                      {item.measurement_type === 'units'
+                        ? `/ ליחידה`
+                        : '/ ל-100 גרם'}
+                    </Text>
                   </View>
                 </View>
 
                 {/* כפתורי פעולה */}
                 <View className="flex-row items-center mr-1">
-                  {item.is_custom && item.user_id === userId && (
+                  {item.user_id === userId && (
                     <Pressable
                       onPress={(e) => {
                         e.stopPropagation();
@@ -258,22 +161,28 @@ const Foods = ({ userId, date, onClose }: Props) => {
                 </View>
               </View>
 
-              {/* שורת מאקרו תחתונה - נקייה יותר */}
+              {/* שורת מאקרו תחתונה */}
               <View className="flex-row-reverse bg-white/5 px-4 py-3 justify-between items-center">
                 <View className="items-center flex-1">
-                  <Text className="text-lime-500 font-black text-xs">{item.protein_per_100}g</Text>
+                  <Text className="text-lime-500 font-black text-xs">
+                    {item.measurement_type === 'units' ? item.protein_per_unit : item.protein_per_100}g
+                  </Text>
                   <Text className="text-gray-500 text-[9px] uppercase font-bold mt-0.5">חלבון</Text>
                 </View>
                 <View className="w-[1px] h-4 bg-white/10" />
                 <View className="items-center flex-1">
-                  <Text className="text-orange-500 font-black text-xs">{item.carbs_per_100}g</Text>
+                  <Text className="text-orange-500 font-black text-xs">
+                    {item.measurement_type === 'units' ? item.carbs_per_unit : item.carbs_per_100}g
+                  </Text>
                   <Text className="text-gray-500 text-[9px] uppercase font-bold mt-0.5">
                     פחמימה
                   </Text>
                 </View>
                 <View className="w-[1px] h-4 bg-white/10" />
                 <View className="items-center flex-1">
-                  <Text className="text-red-500 font-black text-xs">{item.fat_per_100}g</Text>
+                  <Text className="text-red-500 font-black text-xs">
+                    {item.measurement_type === 'units' ? item.fat_per_unit : item.fat_per_100}g
+                  </Text>
                   <Text className="text-gray-500 text-[9px] uppercase font-bold mt-0.5">שומן</Text>
                 </View>
               </View>
