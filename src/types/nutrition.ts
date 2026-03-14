@@ -135,10 +135,10 @@ export interface AIFoodResult {
 export interface AIMealResultItem {
   food_name: string;
   estimated_grams: number;
-  protein_per_100: number;
-  carbs_per_100: number;
-  fat_per_100: number;
   calories_per_100: number;
+  protein_per_100: number;
+  carbs_per_100?: number;
+  fat_per_100?: number;
 }
 
 export interface AIMealResult {

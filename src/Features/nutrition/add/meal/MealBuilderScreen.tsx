@@ -10,7 +10,7 @@ import {
 import { useAuthStore } from '@/src/store/useAuthStore';
 import type { MealItemForm } from '@/src/types/meal';
 import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
-import type { AIMealResultItem, CreateFoodFormData, FoodItem } from '@/src/types/nutrition';
+import type { AIMealResultItem, CreateFoodFormData, FoodItem, MeasurementType } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import Slider from '@react-native-community/slider';
@@ -52,8 +52,8 @@ const MealBuilderScreen = () => {
         amount_g: item.estimated_grams,
         measurement_type: 'grams' as const,
         protein_per_100: item.protein_per_100,
-        carbs_per_100: item.carbs_per_100,
-        fat_per_100: item.fat_per_100,
+        carbs_per_100: 0,
+        fat_per_100: 0,
         calories_per_100: item.calories_per_100,
         calories_per_unit: null,
         protein_per_unit: null,
@@ -76,10 +76,12 @@ const MealBuilderScreen = () => {
     index: number;
     name: string;
     isPendingCreate: boolean;
+    measurement_type: MeasurementType;
     amount_g: number;
     protein_per_100: number;
-    carbs_per_100: number;
-    fat_per_100: number;
+    calories_per_100: number;
+    calories_per_unit: number | null;
+    protein_per_unit: number | null;
   } | null>(null);
 
   const today = useMemo(() => new Date().toISOString().split('T')[0], []);
@@ -225,10 +227,12 @@ const MealBuilderScreen = () => {
         index,
         name: item.name,
         isPendingCreate: item.isPendingCreate ?? false,
+        measurement_type: item.measurement_type ?? 'grams',
         amount_g: item.amount_g,
         protein_per_100: item.protein_per_100 ?? 0,
-        carbs_per_100: item.carbs_per_100 ?? 0,
-        fat_per_100: item.fat_per_100 ?? 0,
+        calories_per_100: item.calories_per_100 ?? 0,
+        calories_per_unit: item.calories_per_unit ?? null,
+        protein_per_unit: item.protein_per_unit ?? null,
       });
     },
     [items]
@@ -236,20 +240,19 @@ const MealBuilderScreen = () => {
 
   const confirmEditItem = useCallback(() => {
     if (!editDraft) return;
-    const p = editDraft.protein_per_100;
-    const c = editDraft.carbs_per_100;
-    const f = editDraft.fat_per_100;
-    const calories_per_100 = Math.round((p * 4 + c * 4 + f * 9) * 10) / 10;
     setItems((prev) =>
       prev.map((item, i) =>
         i === editDraft.index
           ? {
               ...item,
+              measurement_type: editDraft.measurement_type,
               amount_g: editDraft.amount_g,
-              protein_per_100: p,
-              carbs_per_100: c,
-              fat_per_100: f,
-              calories_per_100,
+              protein_per_100: editDraft.protein_per_100,
+              calories_per_100: editDraft.calories_per_100,
+              calories_per_unit: editDraft.calories_per_unit,
+              protein_per_unit: editDraft.protein_per_unit,
+              carbs_per_100: 0,
+              fat_per_100: 0,
             }
           : item
       )
@@ -267,8 +270,8 @@ const MealBuilderScreen = () => {
           name: i.name,
           measurement_type: i.measurement_type ?? 'grams',
           protein_per_100: i.protein_per_100,
-          carbs_per_100: i.carbs_per_100,
-          fat_per_100: i.fat_per_100,
+          carbs_per_100: 0,
+          fat_per_100: 0,
           calories_per_100: i.calories_per_100,
           calories_per_unit: i.calories_per_unit ?? null,
           protein_per_unit: i.protein_per_unit ?? null,
@@ -587,159 +590,167 @@ const MealBuilderScreen = () => {
                   </View>
 
                   {/* Hero קלוריות — live */}
-                  {editDraft && (
-                    <View className="bg-background-800 border border-lime-500/15 rounded-3xl p-5 mb-7 items-center">
-                      <Text className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
-                        קלוריות בצלחת
-                      </Text>
-                      <Text
-                        className="text-white font-black"
-                        style={{ fontSize: 52, lineHeight: 60 }}
-                      >
-                        {Math.round(
-                          (editDraft.protein_per_100 * 4 +
-                            editDraft.carbs_per_100 * 4 +
-                            editDraft.fat_per_100 * 9) *
-                            (editDraft.amount_g / 100)
-                        )}
-                      </Text>
-                      <Text className="text-gray-500 text-sm mb-5">קק״ל</Text>
-                      <View className="flex-row items-center" style={{ gap: 24 }}>
+                  {editDraft && (() => {
+                    const isUnitsEdit = editDraft.measurement_type === 'units';
+                    const heroCalories = isUnitsEdit
+                      ? Math.round((editDraft.calories_per_unit ?? 0) * editDraft.amount_g)
+                      : Math.round((editDraft.calories_per_100 / 100) * editDraft.amount_g);
+                    const heroProtein = isUnitsEdit
+                      ? Math.round((editDraft.protein_per_unit ?? 0) * editDraft.amount_g * 10) / 10
+                      : Math.round(editDraft.protein_per_100 * (editDraft.amount_g / 100) * 10) / 10;
+                    return (
+                      <View className="bg-background-800 border border-lime-500/15 rounded-3xl p-5 mb-7 items-center">
+                        <Text className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
+                          קלוריות בצלחת
+                        </Text>
+                        <Text className="text-white font-black" style={{ fontSize: 52, lineHeight: 60 }}>
+                          {heroCalories}
+                        </Text>
+                        <Text className="text-gray-500 text-sm mb-5">קק״ל</Text>
                         <View className="items-center">
-                          <Text className="text-blue-400 font-black text-xl">
-                            {Math.round(
-                              editDraft.protein_per_100 * (editDraft.amount_g / 100) * 10
-                            ) / 10}
-                            g
-                          </Text>
+                          <Text className="text-blue-400 font-black text-xl">{heroProtein}g</Text>
                           <Text className="text-gray-500 text-xs mt-0.5">חלבון</Text>
                         </View>
-                        <View className="w-px bg-white/10" style={{ height: 32 }} />
-                        <View className="items-center">
-                          <Text className="text-orange-400 font-black text-xl">
-                            {Math.round(editDraft.carbs_per_100 * (editDraft.amount_g / 100) * 10) /
-                              10}
-                            g
-                          </Text>
-                          <Text className="text-gray-500 text-xs mt-0.5">פחמימות</Text>
-                        </View>
-                        <View className="w-px bg-white/10" style={{ height: 32 }} />
-                        <View className="items-center">
-                          <Text className="text-red-400 font-black text-xl">
-                            {Math.round(editDraft.fat_per_100 * (editDraft.amount_g / 100) * 10) /
-                              10}
-                            g
-                          </Text>
-                          <Text className="text-gray-500 text-xs mt-0.5">שומן</Text>
-                        </View>
                       </View>
-                    </View>
-                  )}
+                    );
+                  })()}
 
-                  {/* כמות שאכלת */}
-                  <View className="mb-7 mt-5">
-                    <View className="flex-row-reverse items-center justify-between mb-2">
-                      <Text className="text-white font-bold">כמות שאכלת</Text>
-                      <View className="bg-lime-500/10 border border-lime-500/20 px-4 py-1.5 rounded-full">
-                        <Text className="text-lime-400 font-black text-base">
-                          {editDraft?.amount_g ?? 0}g
-                        </Text>
-                      </View>
-                    </View>
-                    <Slider
-                      style={{ width: '100%', height: 44 }}
-                      minimumValue={0}
-                      maximumValue={1000}
-                      step={5}
-                      value={editDraft?.amount_g ?? 0}
-                      onValueChange={(v) => setEditDraft((d) => d && { ...d, amount_g: v })}
-                      minimumTrackTintColor={colors.lime[500]}
-                      maximumTrackTintColor={colors.background[600]}
-                      thumbTintColor={colors.lime[400]}
-                    />
-                    <View className="flex-row-reverse justify-between" style={{ marginTop: -4 }}>
-                      <Text className="text-gray-700 text-xs">0g</Text>
-                      <Text className="text-gray-700 text-xs">1000g</Text>
-                    </View>
+                  {/* Toggle: סוג מדידה */}
+                  <View className="flex-row-reverse gap-2 mb-5">
+                    <Pressable
+                      onPress={() => setEditDraft((d) => d && { ...d, measurement_type: 'grams' })}
+                      className={`flex-1 py-3 rounded-xl items-center border ${
+                        editDraft?.measurement_type === 'grams'
+                          ? 'bg-lime-500/10 border-lime-500'
+                          : 'bg-background-800 border-background-600'
+                      }`}
+                    >
+                      <Text className={editDraft?.measurement_type === 'grams' ? 'text-lime-400 font-bold text-sm' : 'text-background-400 text-sm'}>
+                        בגרמים
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setEditDraft((d) => d && { ...d, measurement_type: 'units' })}
+                      className={`flex-1 py-3 rounded-xl items-center border ${
+                        editDraft?.measurement_type === 'units'
+                          ? 'bg-lime-500/10 border-lime-500'
+                          : 'bg-background-800 border-background-600'
+                      }`}
+                    >
+                      <Text className={editDraft?.measurement_type === 'units' ? 'text-lime-400 font-bold text-sm' : 'text-background-400 text-sm'}>
+                        ביחידות
+                      </Text>
+                    </Pressable>
                   </View>
+
+                  {/* כמות */}
+                  {editDraft && (() => {
+                    const isUnitsEdit = editDraft.measurement_type === 'units';
+                    return (
+                      <View className="mb-7">
+                        <View className="flex-row-reverse items-center justify-between mb-2">
+                          <Text className="text-white font-bold">כמות</Text>
+                          <View className="bg-lime-500/10 border border-lime-500/20 px-4 py-1.5 rounded-full">
+                            <Text className="text-lime-400 font-black text-base">
+                              {editDraft.amount_g}{isUnitsEdit ? ' יחידות' : 'g'}
+                            </Text>
+                          </View>
+                        </View>
+                        <Slider
+                          style={{ width: '100%', height: 44 }}
+                          minimumValue={0}
+                          maximumValue={isUnitsEdit ? 20 : 1000}
+                          step={isUnitsEdit ? 1 : 5}
+                          value={editDraft.amount_g}
+                          onValueChange={(v) => setEditDraft((d) => d && { ...d, amount_g: v })}
+                          minimumTrackTintColor={colors.lime[500]}
+                          maximumTrackTintColor={colors.background[600]}
+                          thumbTintColor={colors.lime[400]}
+                        />
+                        <View className="flex-row-reverse justify-between" style={{ marginTop: -4 }}>
+                          <Text className="text-gray-700 text-xs">0</Text>
+                          <Text className="text-gray-700 text-xs">{isUnitsEdit ? '20 יחידות' : '1000g'}</Text>
+                        </View>
+                      </View>
+                    );
+                  })()}
 
                   {/* Divider */}
                   <View className="flex-row items-center mb-5">
                     <View className="flex-1 h-px bg-white/5" />
                     <Text className="text-gray-600 text-xs font-bold uppercase tracking-widest px-3">
-                      ערכים ל-100g
+                      ערכים ל{editDraft?.measurement_type === 'units' ? 'יחידה' : '-100 גרם'}
                     </Text>
                     <View className="flex-1 h-px bg-white/5" />
                   </View>
 
-                  {/* חלבון */}
-                  <View className="bg-background-800 rounded-2xl p-4 mb-3 border border-blue-500/20">
-                    <View className="flex-row-reverse items-center justify-between mb-1">
-                      <Text className="text-blue-400 text-sm font-bold">חלבון</Text>
-                      <Text className="text-blue-400 text-xl font-black">
-                        {editDraft?.protein_per_100 ?? 0}g
-                      </Text>
-                    </View>
-                    <Slider
-                      style={{ width: '100%', height: 44 }}
-                      minimumValue={0}
-                      maximumValue={100}
-                      step={0.5}
-                      value={editDraft?.protein_per_100 ?? 0}
-                      onValueChange={(v) =>
-                        setEditDraft((d) => d && { ...d, protein_per_100: Math.round(v * 10) / 10 })
-                      }
-                      minimumTrackTintColor="#60a5fa"
-                      maximumTrackTintColor={colors.background[600]}
-                      thumbTintColor="#60a5fa"
-                    />
-                  </View>
+                  {/* קלוריות — TextInput */}
+                  {editDraft && (() => {
+                    const isUnitsEdit = editDraft.measurement_type === 'units';
+                    const calVal = isUnitsEdit ? (editDraft.calories_per_unit ?? 0) : editDraft.calories_per_100;
+                    return (
+                      <View className="bg-background-800 rounded-2xl p-4 mb-3 border border-lime-500/20">
+                        <View className="flex-row-reverse items-center justify-between mb-2">
+                          <Text className="text-lime-400 text-sm font-bold">
+                            קלוריות ל{isUnitsEdit ? 'יחידה' : '-100 גרם'}
+                          </Text>
+                          <Text className="text-background-400 text-sm">קק״ל</Text>
+                        </View>
+                        <TextInput
+                          value={String(calVal)}
+                          onChangeText={(v) => {
+                            const n = parseFloat(v) || 0;
+                            setEditDraft((d) => d && (isUnitsEdit
+                              ? { ...d, calories_per_unit: n }
+                              : { ...d, calories_per_100: n }));
+                          }}
+                          keyboardType="decimal-pad"
+                          style={{
+                            backgroundColor: colors.background[700],
+                            borderRadius: 10,
+                            padding: 12,
+                            color: colors.white,
+                            textAlign: 'right',
+                            fontSize: 18,
+                            fontWeight: 'bold',
+                            borderWidth: 1,
+                            borderColor: calVal > 0 ? colors.lime[500] + '80' : colors.background[600],
+                          }}
+                        />
+                      </View>
+                    );
+                  })()}
 
-                  {/* פחמימות */}
-                  <View className="bg-background-800 rounded-2xl p-4 mb-3 border border-orange-500/20">
-                    <View className="flex-row-reverse items-center justify-between mb-1">
-                      <Text className="text-orange-400 text-sm font-bold">פחמימות</Text>
-                      <Text className="text-orange-400 text-xl font-black">
-                        {editDraft?.carbs_per_100 ?? 0}g
-                      </Text>
-                    </View>
-                    <Slider
-                      style={{ width: '100%', height: 44 }}
-                      minimumValue={0}
-                      maximumValue={100}
-                      step={0.5}
-                      value={editDraft?.carbs_per_100 ?? 0}
-                      onValueChange={(v) =>
-                        setEditDraft((d) => d && { ...d, carbs_per_100: Math.round(v * 10) / 10 })
-                      }
-                      minimumTrackTintColor={colors.orange[500]}
-                      maximumTrackTintColor={colors.background[600]}
-                      thumbTintColor={colors.orange[500]}
-                    />
-                  </View>
-
-                  {/* שומן */}
-                  <View className="bg-background-800 rounded-2xl p-4 mb-5 border border-red-500/20">
-                    <View className="flex-row-reverse items-center justify-between mb-1">
-                      <Text className="text-red-400 text-sm font-bold">שומן</Text>
-                      <Text className="text-red-400 text-xl font-black">
-                        {editDraft?.fat_per_100 ?? 0}g
-                      </Text>
-                    </View>
-                    <Slider
-                      style={{ width: '100%', height: 44 }}
-                      minimumValue={0}
-                      maximumValue={100}
-                      step={0.5}
-                      value={editDraft?.fat_per_100 ?? 0}
-                      onValueChange={(v) =>
-                        setEditDraft((d) => d && { ...d, fat_per_100: Math.round(v * 10) / 10 })
-                      }
-                      minimumTrackTintColor={colors.red[500]}
-                      maximumTrackTintColor={colors.background[600]}
-                      thumbTintColor={colors.red[500]}
-                    />
-                  </View>
+                  {/* חלבון — Slider */}
+                  {editDraft && (() => {
+                    const isUnitsEdit = editDraft.measurement_type === 'units';
+                    const protVal = isUnitsEdit ? (editDraft.protein_per_unit ?? 0) : editDraft.protein_per_100;
+                    return (
+                      <View className="bg-background-800 rounded-2xl p-4 mb-5 border border-blue-500/20">
+                        <View className="flex-row-reverse items-center justify-between mb-1">
+                          <Text className="text-blue-400 text-sm font-bold">
+                            חלבון ל{isUnitsEdit ? 'יחידה' : '-100 גרם'}
+                          </Text>
+                          <Text className="text-blue-400 text-xl font-black">{protVal}g</Text>
+                        </View>
+                        <Slider
+                          style={{ width: '100%', height: 44 }}
+                          minimumValue={0}
+                          maximumValue={100}
+                          step={0.5}
+                          value={protVal}
+                          onValueChange={(v) =>
+                            setEditDraft((d) => d && (isUnitsEdit
+                              ? { ...d, protein_per_unit: Math.round(v * 10) / 10 }
+                              : { ...d, protein_per_100: Math.round(v * 10) / 10 }))
+                          }
+                          minimumTrackTintColor="#60a5fa"
+                          maximumTrackTintColor={colors.background[600]}
+                          thumbTintColor="#60a5fa"
+                        />
+                      </View>
+                    );
+                  })()}
 
                   {/* כפתור שמור */}
                   <Pressable
