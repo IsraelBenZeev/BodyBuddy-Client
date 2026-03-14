@@ -25,6 +25,7 @@ interface Props {
   isPending: boolean;
   onBack?: () => void;
   mode?: 'standalone' | 'meal-builder';
+  defaultConsumedAmount?: number;
   initialValues?: {
     food_name?: string;
     calories_per_100?: number;
@@ -39,7 +40,7 @@ interface Props {
 const QUICK_SUGGESTIONS = ['חזה עוף', 'ביצה', 'קוואקר', 'גבינה לבנה', 'לחם'];
 const TOTAL_STEPS = 5;
 
-const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialValues }: Props) => {
+const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialValues, defaultConsumedAmount }: Props) => {
   const [step, setStep] = useState(1);
 
   // Step 1
@@ -67,6 +68,9 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
   // Portion modal (שמור + יומן)
   const [showPortionModal, setShowPortionModal] = useState(false);
   const [portionAmount, setPortionAmount] = useState(isUnits ? 1 : 100);
+  const [consumedAmount, setConsumedAmount] = useState(
+    defaultConsumedAmount != null ? String(defaultConsumedAmount) : ''
+  );
 
   const step1Valid = foodName.trim().length > 0;
   const step2Valid = true;
@@ -123,9 +127,14 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
   );
 
   const handleAddToJournal = useCallback(() => {
-    setPortionAmount(isUnits ? 1 : 100);
-    setShowPortionModal(true);
-  }, [isUnits]);
+    const parsed = parseFloat(consumedAmount);
+    if (!isNaN(parsed) && parsed > 0) {
+      onSubmit(buildData(parsed), true);
+    } else {
+      setPortionAmount(isUnits ? 1 : 100);
+      setShowPortionModal(true);
+    }
+  }, [consumedAmount, isUnits, onSubmit, buildData]);
 
   const confirmPortionAndSubmit = useCallback(() => {
     setShowPortionModal(false);
@@ -391,6 +400,42 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
             <Text className="text-background-500 text-[10px]">{Math.round(maxProtein / 2)}</Text>
             <Text className="text-background-500 text-[10px]">{maxProtein}g</Text>
           </View>
+        </View>
+
+        {/* כמה אכלת — אופציונלי */}
+        <View className="bg-background-800 rounded-2xl p-4 mt-4 border border-background-600">
+          <Text className="text-background-400 text-sm font-bold text-right mb-3">
+            כמה אכלת?{' '}
+            <Text className="text-background-600 font-normal">(אופציונלי)</Text>
+          </Text>
+          <View className="flex-row-reverse items-center" style={{ gap: 8 }}>
+            <TextInput
+              value={consumedAmount}
+              onChangeText={setConsumedAmount}
+              keyboardType="decimal-pad"
+              placeholder={isUnits ? '1' : '100'}
+              placeholderTextColor={colors.background[500]}
+              style={{
+                flex: 1,
+                backgroundColor: colors.background[700],
+                borderRadius: 10,
+                padding: 12,
+                color: colors.white,
+                textAlign: 'right',
+                fontSize: 18,
+                fontWeight: 'bold',
+                borderWidth: 1,
+                borderColor:
+                  (parseFloat(consumedAmount) || 0) > 0
+                    ? colors.lime[500] + '80'
+                    : colors.background[600],
+              }}
+            />
+            <Text className="text-background-400 text-sm">{isUnits ? 'יחידות' : 'גרם'}</Text>
+          </View>
+          <Text className="text-background-600 text-xs text-right mt-1.5">
+            מלא רק אם תרצה להוסיף מזון זה ליומן כעת
+          </Text>
         </View>
       </View>
     );

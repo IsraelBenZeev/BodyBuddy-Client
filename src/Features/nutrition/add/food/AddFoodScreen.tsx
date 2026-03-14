@@ -26,6 +26,7 @@ const AddFoodScreen = () => {
     calories_per_100?: string;
     measurement_type?: string;
     category?: string;
+    serving_amount?: string;
   }>();
 
   const initialValues = useMemo(
@@ -37,6 +38,7 @@ const AddFoodScreen = () => {
       calories_per_100: params.calories_per_100 ? parseFloat(params.calories_per_100) : undefined,
       measurement_type: (params.measurement_type as MeasurementType) ?? 'grams',
       category: params.category,
+      serving_amount: params.serving_amount ? parseFloat(params.serving_amount) : undefined,
     }),
     [params]
   );
@@ -130,6 +132,7 @@ const AddFoodScreen = () => {
           onBack={() => router.back()}
           mode="standalone"
           initialValues={initialValues}
+          defaultConsumedAmount={initialValues.serving_amount}
         />
       </View>
     </BackGround>

@@ -36,6 +36,8 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
     try {
       const analysis: AIAnalysisResult = await analyzeNutritionImage(base64, controller.signal);
       if (controller.signal.aborted) return;
+      console.log('AI response: ', analysis);
+
       onClose();
       if (analysis.type === 'food') {
         router.push({
@@ -49,6 +51,7 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
             calories_per_100: String(analysis.calories_per_100),
             measurement_type: analysis.measurement_type ?? 'grams',
             ...(analysis.category != null && { category: analysis.category }),
+            ...(analysis.serving_amount != null && { serving_amount: String(analysis.serving_amount) }),
           },
         });
       } else {

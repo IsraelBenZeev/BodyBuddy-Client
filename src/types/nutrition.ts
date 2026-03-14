@@ -122,12 +122,14 @@ export interface CreateFoodFormData {
 export interface AIFoodResult {
   type: 'food';
   food_name: string;
-  protein_per_100: number;
-  carbs_per_100: number;
-  fat_per_100: number;
   calories_per_100: number;
+  protein_per_100: number;
   measurement_type?: MeasurementType;
+  serving_amount?: number;
   category?: string;
+  // optional לתאימות לאחור
+  carbs_per_100?: number;
+  fat_per_100?: number;
 }
 
 export interface AIMealResultItem {
