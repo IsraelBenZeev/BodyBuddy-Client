@@ -21,6 +21,7 @@ import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /** --- פונקציות עזר למיפוי ערכים --- **/
 
@@ -95,6 +96,7 @@ export default function ProfileScreen() {
   const user = useAuthStore((state) => state.user);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
   const [loading, setLoading] = useState(false);
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
   const { data: workoutStats, isLoading: isStatsLoading } = useUserWorkoutStats(user?.id);
@@ -144,7 +146,7 @@ export default function ProfileScreen() {
       <ScrollView 
         className="flex-1" 
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 60 }}
+        contentContainerStyle={{ paddingBottom: 60 + bottomInset + 20 }}
       >
         
         {/* Header Section */}

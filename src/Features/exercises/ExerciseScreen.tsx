@@ -57,7 +57,11 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           )}
         </View>
         <View className="w-full mt-6" style={{ minHeight: 600 }}>
-          <Buttons exerciseId={exerciseData?.exerciseId} />
+          <Buttons
+            exerciseId={exerciseData.exerciseId}
+            exerciseName={exerciseData.name}
+            exerciseName_he={exerciseData.name_he}
+          />
           <Information exercise={exerciseData} />
           {/* <TabsMenager instructions={exerciseData?.instructions_he} /> */}
           <TabsManager

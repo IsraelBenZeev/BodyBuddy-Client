@@ -2,9 +2,9 @@ import { colors } from '@/colors';
 import AddOptionsSheet from '@/src/Features/nutrition/add/AddOptionsSheet';
 import CameraAIModal from '@/src/Features/nutrition/add/ai/CameraAIModal';
 import ModalAddFoods from '@/src/Features/nutrition/add/ModalAddFoods';
+import MacroPieChart from '@/src/Features/nutrition/review/MacroPieChart';
 import NutritionEntriesList from '@/src/Features/nutrition/review/NutritionEntriesList';
 import ProgressStats from '@/src/Features/nutrition/review/ProgressStats';
-import MacroPieChart from '@/src/Features/nutrition/review/MacroPieChart';
 import {
   useDeleteNutritionEntriesByGroupId,
   useDeleteNutritionEntry,
@@ -16,7 +16,6 @@ import BackGround from '@/src/ui/BackGround';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
 import {
-  calculateMacroSplit,
   calculateNutritionGoals,
   getMotivationMessage,
   getTodayDate,
@@ -53,14 +52,6 @@ const NutritionScreen = () => {
   }, [profile]);
 
   const dailyConsumed = useMemo(() => sumEntriesToDailyConsumed(entries), [entries]);
-
-  const macroSplit = useMemo(() => {
-    return calculateMacroSplit(
-      dailyConsumed.protein_consumed,
-      dailyConsumed.carbs_consumed,
-      dailyConsumed.fat_consumed
-    );
-  }, [dailyConsumed]);
 
   const motivationData = useMemo(() => {
     if (!goals) return null;
@@ -107,8 +98,9 @@ const NutritionScreen = () => {
   return (
     <BackGround>
       <View className="flex-1">
-        <ScrollView className="flex-1 px-5 py-8">
+        <ScrollView className="flex-1 px-5 py-8" contentContainerStyle={{ paddingBottom: 180 }}>
           <Text className="text-white text-3xl font-black mb-2 text-right">תזונה</Text>
+          <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, alignSelf: 'flex-end', marginBottom: 16 }} />
 
           {motivationData && (
             <View className="flex-row-reverse items-center justify-center gap-2 bg-lime-500/10 border border-lime-500/30 rounded-2xl p-4 mb-6">
@@ -128,37 +120,9 @@ const NutritionScreen = () => {
             iconName="flame-outline"
           />
 
-          <ProgressStats
-            label="חלבון"
-            consumed={dailyConsumed.protein_consumed}
-            goal={goals.protein}
-            unit="גרם"
-            color={colors.lime[500]}
-            iconName="barbell-outline"
-          />
-
-          <ProgressStats
-            label="פחמימות"
-            consumed={dailyConsumed.carbs_consumed}
-            goal={goals.carbs}
-            unit="גרם"
-            color={colors.orange[500]}
-            iconName="pizza-outline"
-          />
-
-          <ProgressStats
-            label="שומן"
-            consumed={dailyConsumed.fat_consumed}
-            goal={goals.fat}
-            unit="גרם"
-            color={colors.red[500]}
-            iconName="water-outline"
-          />
-
           <MacroPieChart
-            macroSplit={macroSplit}
-            caloriesConsumed={dailyConsumed.calories_consumed}
-            caloriesGoal={goals?.calories}
+            proteinConsumed={dailyConsumed.protein_consumed}
+            proteinGoal={goals.protein}
           />
 
           <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600">
@@ -167,8 +131,7 @@ const NutritionScreen = () => {
               <Ionicons name="information-circle-outline" size={20} color={colors.lime[500]} />
             </View>
             <Text className="text-background-400 text-sm text-right leading-6">
-              • חלבון: מחושב על פי {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג × משקל ({profile?.weight} ק״ג){'\n'}• שומן: 25% מהקלוריות היומיות{'\n'}•
-              פחמימות: שאר הקלוריות
+              • חלבון: מחושב על פי {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג × משקל ({profile?.weight} ק״ג){'\n'}• קלוריות: מחושבות לפי BMR × פעילות גופנית ± יעד
             </Text>
           </View>
 
@@ -180,21 +143,21 @@ const NutritionScreen = () => {
             isDeletingGroup={isDeletingGroup}
           />
 
-          <View className="pb-24" />
         </ScrollView>
 
         <Pressable
           onPress={() => setShowOptions(true)}
-          className="absolute bottom-6 left-5 flex-row items-center gap-2 rounded-full bg-lime-500 pl-4 pr-5 py-3 border border-lime-400/40 active:opacity-90 mb-12"
+          className="absolute left-5 right-5 flex-row items-center justify-center gap-2 rounded-full bg-lime-500 py-4 active:opacity-90"
           style={{
+            bottom: 90,
             shadowColor: colors.lime[500],
             shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.35,
-            shadowRadius: 8,
-            elevation: 8,
+            shadowOpacity: 0.45,
+            shadowRadius: 12,
+            elevation: 10,
           }}
         >
-          <Ionicons name="add-circle" size={28} color={colors.background[900]} />
+          <Ionicons name="add-circle" size={26} color={colors.background[900]} />
           <Text className="text-background-900 font-bold text-base">הוספת מאכל או ארוחה</Text>
         </Pressable>
       </View>

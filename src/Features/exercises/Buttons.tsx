@@ -1,32 +1,43 @@
 import { colors } from "@/colors";
 import IconButton from "@/src/ui/IconButton";
-import { IconAddToListFitness, IconDislikeBG, IconlikeBG, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
+import { IconAddToListFitness, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
 import { useCallback, useState } from "react";
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Linking, Modal, Pressable, Share, StyleSheet, View } from "react-native";
 import PlanSelector from "../workoutsPlans/PlansSelector";
 
 interface ButtonsProps {
     exerciseId: string;
+    exerciseName: string;
+    exerciseName_he: string;
 }
 
-const Buttons = ({ exerciseId }: ButtonsProps) => {
+const Buttons = ({ exerciseId, exerciseName, exerciseName_he }: ButtonsProps) => {
     const [isShowListWorkoutsPlans, setIsShowListWorkoutsPlans] = useState<boolean>(false);
 
     const handleOpenPlans = useCallback(() => {
         setIsShowListWorkoutsPlans(true);
     }, []);
 
+    const handleGoogle = useCallback(() => {
+        Linking.openURL(`https://www.google.com/search?q=${encodeURIComponent(exerciseName + ' exercise')}`);
+    }, [exerciseName]);
+
+    const handleShare = useCallback(async () => {
+        await Share.share({
+            message: `בדוק את התרגיל: ${exerciseName_he}`,
+            title: exerciseName_he,
+        });
+    }, [exerciseName_he]);
+
     return (
         <View>
             <View className="flex-row justify-center gap-4 px-4 my-8 w-full">
                 {[
-                    { icon: <IconlikeBG size={20} color={colors.lime[500]} />, text: 'אהבתי', onPress: () => console.log('Liked') },
-                    { icon: <IconDislikeBG size={20} color={colors.lime[500]} />, text: 'לא אהבתי', onPress: () => console.log('Disliked') },
-                    { icon: <IconShare size={20} color={colors.lime[500]} />, text: 'שתף', onPress: () => console.log('Shared') },
+                    { icon: <IconShare size={20} color={colors.lime[500]} />, text: 'שתף', onPress: handleShare },
                     {
                         icon: <IconAddToListFitness size={20} color={colors.lime[500]} />, text: 'הוסף', onPress: handleOpenPlans
                     },
-                    { icon: <IconSearchGoogle size={20} color={colors.lime[500]} />, text: 'גוגל', onPress: () => console.log('Google') },
+                    { icon: <IconSearchGoogle size={20} color={colors.lime[500]} />, text: 'גוגל', onPress: handleGoogle },
                 ].map((btn, i) => (
                     <IconButton
                         key={i}

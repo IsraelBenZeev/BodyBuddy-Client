@@ -172,12 +172,12 @@ const styles = StyleSheet.create({
   },
   controlsWrapper: {
     position: 'absolute',
-    bottom: 20,
+    top: 10,
     width: '100%',
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     paddingHorizontal: 30,
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
     zIndex: 20,
   },
   rotateButton: {

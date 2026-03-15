@@ -145,18 +145,6 @@ function MacroBar({ entry }: { entry: NutritionEntry }) {
             חלבון <Text className="text-lime-500 font-bold">{entry.protein}g</Text>
           </Text>
         </View>
-        <View className="flex-row-reverse items-center">
-          <View className="w-2 h-2 rounded-full bg-orange-500 ml-1.5" />
-          <Text className="text-background-300 text-xs">
-            פחמימות <Text className="text-orange-500 font-bold">{entry.carbs}g</Text>
-          </Text>
-        </View>
-        <View className="flex-row-reverse items-center">
-          <View className="w-2 h-2 rounded-full bg-red-500 ml-1.5" />
-          <Text className="text-background-300 text-xs">
-            שומן <Text className="text-red-500 font-bold">{entry.fat}g</Text>
-          </Text>
-        </View>
       </View>
     </View>
   );
@@ -235,30 +223,12 @@ function GroupBlockCard({
           </Text>
           <View className="h-[1px] flex-1 bg-white/5 mx-3" />
         </View>
-        <View className="flex-row-reverse items-center justify-between">
-          <View className="items-center flex-1">
+        <View className="flex-row-reverse items-center justify-center">
+          <View className="items-center">
             <Text className="text-gray-400 text-[10px] mb-1">חלבון</Text>
             <View className="bg-lime-500/10 px-2 py-1 rounded-lg">
               <Text className="text-lime-500 font-bold text-sm">
                 {Math.round(entries.reduce((s, e) => s + (e.protein || 0), 0))}g
-              </Text>
-            </View>
-          </View>
-          <View className="w-[1px] h-8 bg-white/10" />
-          <View className="items-center flex-1">
-            <Text className="text-gray-400 text-[10px] mb-1">פחמימות</Text>
-            <View className="bg-orange-500/10 px-2 py-1 rounded-lg">
-              <Text className="text-orange-500 font-bold text-sm">
-                {Math.round(entries.reduce((s, e) => s + (e.carbs || 0), 0))}g
-              </Text>
-            </View>
-          </View>
-          <View className="w-[1px] h-8 bg-white/10" />
-          <View className="items-center flex-1">
-            <Text className="text-gray-400 text-[10px] mb-1">שומן</Text>
-            <View className="bg-red-500/10 px-2 py-1 rounded-lg">
-              <Text className="text-red-500 font-bold text-sm">
-                {Math.round(entries.reduce((s, e) => s + (e.fat || 0), 0))}g
               </Text>
             </View>
           </View>

@@ -1,118 +1,93 @@
 import { colors } from '@/colors';
-import type { MacroSplit } from '@/src/types/nutrition';
-import { useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { useMemo } from 'react';
+import { Text, View } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 
 const CHART_SIZE = 200;
-const INNER_RADIUS = 60;
 
 interface Props {
-  macroSplit: MacroSplit;
-  /** קלוריות שנצרכו היום – מוצג במרכז הטבעת */
-  caloriesConsumed?: number;
-  /** יעד קלוריות יומי – אופציונלי, להצגת "X / Y" */
-  caloriesGoal?: number;
+  proteinConsumed: number;
+  proteinGoal: number;
 }
 
-type DisplayMode = 'percentage' | 'grams';
-
-const MacroPieChart = ({ macroSplit, caloriesConsumed, caloriesGoal }: Props) => {
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('percentage');
-  const showCenterCalories = typeof caloriesConsumed === 'number' && caloriesConsumed >= 0;
+const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
+  const pct = proteinGoal > 0 ? Math.min(100, Math.round((proteinConsumed / proteinGoal) * 100)) : 0;
+  const remaining = Math.max(0, proteinGoal - proteinConsumed);
 
   const pieData = useMemo(() => {
-    const { protein, carbs, fat } = macroSplit;
-    const v = (n: number) => (displayMode === 'percentage' ? `${n}%` : `${n}g`);
+    if (proteinConsumed === 0) {
+      return [{ value: 1, color: colors.background[600], text: '', tooltipText: 'עוד לא אכלת חלבון היום' }];
+    }
     return [
       {
-        value: displayMode === 'percentage' ? protein.percentage : protein.grams,
+        value: proteinConsumed,
         color: colors.lime[500],
-        text: v(displayMode === 'percentage' ? protein.percentage : protein.grams),
-        tooltipText: `חלבון: ${v(displayMode === 'percentage' ? protein.percentage : protein.grams)}`,
+        text: '',
+        tooltipText: `נצרך: ${proteinConsumed}ג׳`,
       },
       {
-        value: displayMode === 'percentage' ? carbs.percentage : carbs.grams,
-        color: colors.orange[500],
-        text: v(displayMode === 'percentage' ? carbs.percentage : carbs.grams),
-        tooltipText: `פחמימות: ${v(displayMode === 'percentage' ? carbs.percentage : carbs.grams)}`,
-      },
-      {
-        value: displayMode === 'percentage' ? fat.percentage : fat.grams,
-        color: colors.red[500],
-        text: v(displayMode === 'percentage' ? fat.percentage : fat.grams),
-        tooltipText: `שומן: ${v(displayMode === 'percentage' ? fat.percentage : fat.grams)}`,
+        value: remaining,
+        color: colors.background[600],
+        text: '',
+        tooltipText: remaining > 0 ? `נותר: ${remaining}ג׳` : 'השגת את היעד!',
       },
     ];
-  }, [macroSplit, displayMode]);
+  }, [proteinConsumed, remaining]);
 
   return (
-    <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600 items-center justify-center">
-      <Text className="text-white text-lg font-bold mb-4 text-right">פילוח נתונים </Text>
+    <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600 items-center">
+      <Text className="text-white text-lg font-bold mb-4 text-right w-full">יעד חלבון יומי</Text>
 
-      <View
-        className="items-center justify-center mb-4"
-        style={{ width: CHART_SIZE, height: CHART_SIZE }}
-      >
+      <View className="items-center justify-center mb-5" style={{ width: CHART_SIZE, height: CHART_SIZE }}>
         <PieChart
           data={pieData}
           donut
           radius={100}
           backgroundColor={colors.background[800]}
-          innerRadius={70}
+          innerRadius={68}
           showText={false}
           showTooltip
-          tooltipDuration={1000}
-          textSize={14}
-          strokeColor={colors.background[600]}
-          tooltipBackgroundColor={colors.background[800]}
-          tooltipBorderRadius={12}
+          tooltipDuration={1200}
+          strokeColor={colors.background[800]}
+          strokeWidth={3}
+          tooltipBackgroundColor={colors.background[700]}
+          tooltipBorderRadius={10}
+          centerLabelComponent={() => (
+            <View className="items-center justify-center gap-0.5">
+              <Text className="text-white text-2xl font-black leading-tight">
+                {proteinConsumed}ג׳
+              </Text>
+              <Text className="text-background-400 text-xs leading-tight">
+                מתוך {proteinGoal}ג׳
+              </Text>
+              <Text
+                className="text-xs font-bold leading-tight"
+                style={{ color: pct >= 100 ? colors.lime[400] : colors.lime[500] }}
+              >
+                {pct}%
+              </Text>
+            </View>
+          )}
         />
       </View>
 
-      <View className="space-y-2 mb-4 w-full">
-        <View className="flex-row-reverse items-center justify-between">
-          <View className="flex-row-reverse items-center gap-1">
-            <View
-              className="w-4 h-4 rounded-full mr-2"
-              style={{ backgroundColor: colors.lime[500] }}
-            />
-            <Text className="text-white text-sm">חלבון</Text>
-          </View>
-          <Text className="text-background-400 text-sm">{pieData[0].text}</Text>
+      <View className="flex-row-reverse items-center justify-between w-full">
+        <View className="flex-row-reverse items-center gap-2">
+          <View className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.lime[500] }} />
+          <Text className="text-white text-sm">נצרך</Text>
         </View>
-
-        <View className="flex-row-reverse items-center justify-between">
-          <View className="flex-row-reverse items-center gap-1">
-            <View
-              className="w-4 h-4 rounded-full mr-2"
-              style={{ backgroundColor: colors.orange[500] }}
-            />
-            <Text className="text-white text-sm">פחמימות</Text>
-          </View>
-          <Text className="text-background-400 text-sm">{pieData[1].text}</Text>
-        </View>
-
-        <View className="flex-row-reverse items-center justify-between ">
-          <View className="flex-row-reverse items-center gap-1">
-            <View
-              className="w-4 h-4 rounded-full mr-2"
-              style={{ backgroundColor: colors.red[500] }}
-            />
-            <Text className="text-white text-sm">שומן</Text>
-          </View>
-          <Text className="text-background-400 text-sm">{pieData[2].text}</Text>
-        </View>
+        <Text className="text-background-400 text-sm font-medium">{proteinConsumed}ג׳</Text>
       </View>
 
-      <Pressable
-        onPress={() => setDisplayMode((prev) => (prev === 'percentage' ? 'grams' : 'percentage'))}
-        className="bg-background-700 border border-lime-500/30 rounded-xl py-3 w-full"
-      >
-        <Text className="text-lime-500 font-bold text-center text-sm">
-          {displayMode === 'percentage' ? 'הצג בגרמים' : 'הצג באחוזים'}
+      <View className="flex-row-reverse items-center justify-between w-full mt-2">
+        <View className="flex-row-reverse items-center gap-2">
+          <View className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.background[600] }} />
+          <Text className="text-white text-sm">נותר</Text>
+        </View>
+        <Text className="text-background-400 text-sm font-medium">
+          {remaining > 0 ? `${remaining}ג׳` : '✓ השגת יעד'}
         </Text>
-      </Pressable>
+      </View>
     </View>
   );
 };

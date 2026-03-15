@@ -39,8 +39,9 @@ const WorkoutList = () => {
   return (
     <BackGround>
       <View className="flex-1 items-center justify-between py-10">
-        <View className="mt-5">
-          <Text className="text-white text-3xl font-bold tracking-tight">האימונים שלי</Text>
+        <View className="w-full px-6 mt-5 items-end">
+          <Text className="text-white text-3xl font-bold tracking-tight text-right">האימונים שלי</Text>
+          <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, marginTop: 8 }} />
         </View>
         {plansData && plansData.length > 0 ? (
           <View className="w-full flex-1 justify-center">

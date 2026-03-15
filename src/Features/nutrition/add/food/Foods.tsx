@@ -89,14 +89,25 @@ const Foods = ({ userId, date, onClose }: Props) => {
           <ActivityIndicator color="#84cc16" size="large" />
         </View>
       ) : foodItems.length === 0 ? (
-        <View className="flex-1 items-center justify-center px-10">
-          <View className="bg-background-800 p-8 rounded-full mb-6">
+        <View className="flex-1 flex items-center justify-center px-10">
+          <View className="bg-background-800 p-8 rounded-full mb-6 ">
             <Ionicons name="search-outline" size={60} color="#4b5563" />
           </View>
           <Text className="text-white text-xl font-bold text-center">רשימת המאכלים שלך ריקה</Text>
           <Text className="text-gray-400 text-center mt-2 leading-5">
             נראה שעדיין לא הוספת מוצרים. הוסף את המזונות שאתה אוכל בדרך כלל כדי שיופיעו כאן.
           </Text>
+          <Pressable
+            onPress={() => {
+              onClose();
+              router.push('/add-food/standalone');
+            }}
+            className="bg-lime-500 rounded-2xl py-4 px-8 flex-row-reverse items-center justify-center mt-8"
+            style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+          >
+            <Ionicons name="add-circle" size={24} color="#000" />
+            <Text className="text-black font-black text-base mr-2">הוסף מזון ראשון</Text>
+          </Pressable>
         </View>
       ) : (
         <FlatList
@@ -191,26 +202,25 @@ const Foods = ({ userId, date, onClose }: Props) => {
         />
       )}
 
-      {/* כפתור הוספה צף בתחתית */}
-      <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
-        <Pressable
-          onPress={() => {
-            onClose();
-            router.push('/add-food/standalone');
-          }}
-          className="bg-lime-500 rounded-2xl h-16 flex-row-reverse items-center justify-center"
-          style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-        >
-          <Ionicons name="add-circle" size={24} color="#000" />
-          <Text className="text-black font-black text-base mr-2">
-            {foodItems.length === 0 ? 'הוסף מזון ראשון' : 'הוסף מזון חדש למזווה'}
+      {/* כפתור הוספה צף בתחתית — מוצג רק כשיש מאכלים */}
+      {foodItems.length > 0 && (
+        <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
+          <Pressable
+            onPress={() => {
+              onClose();
+              router.push('/add-food/standalone');
+            }}
+            className="bg-lime-500 rounded-2xl h-16 flex-row-reverse items-center justify-center"
+            style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+          >
+            <Ionicons name="add-circle" size={24} color="#000" />
+            <Text className="text-black font-black text-base mr-2">הוסף מזון חדש למזווה</Text>
+          </Pressable>
+          <Text className="text-gray-500 text-[10px] text-center mt-3">
+            * המזונות שתגדיר כאן יהיו זמינים להוספה מהירה ליומן
           </Text>
-        </Pressable>
-        {/* טקסט עזרה קטן מתחת לכפתור */}
-        <Text className="text-gray-500 text-[10px] text-center mt-3">
-          * המזונות שתגדיר כאן יהיו זמינים להוספה מהירה ליומן
-        </Text>
-      </View>
+        </View>
+      )}
 
       <DeleteConfirmModal
         visible={foodToDelete !== null}

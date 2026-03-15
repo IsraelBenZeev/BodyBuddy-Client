@@ -16,8 +16,8 @@ export default function TabsLayout() {
           backgroundColor: colors.background[900], // רקע כהה שמתאים לאפליקציה שלך
           borderTopWidth: 0,
           elevation: 0,
-          height: 60 + insets.bottom,
-          paddingBottom: insets.bottom + 10,
+          height: insets.bottom > 0 ? 60 + insets.bottom : 70,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
 
           position: 'absolute', // הופך את הטאב-בר לשכבה צפה שלא נדחפת
           bottom: 0,            // מצמיד לתחתית
