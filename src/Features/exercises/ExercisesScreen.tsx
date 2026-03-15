@@ -1,4 +1,4 @@
-import { useExercises } from '@/src/hooks/useEcercises';
+import { useFavoriteIds, useToggleFavorite, useExercises } from '@/src/hooks/useEcercises';
 import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
@@ -12,7 +12,7 @@ import MiniAvatar from './MiniAvatar';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useCallback, useMemo, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
@@ -36,7 +36,8 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   );
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const { data: favorites = [] } = useFavoriteIds(user?.id);
+  const { mutate: toggleFavMutate } = useToggleFavorite(user?.id);
   const allExercises = useMemo(() => {
     return data?.pages.flatMap((page) => page.exercises) ?? [];
   }, [data]);
@@ -59,9 +60,9 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     return Array.from(exerciseIndex.keys()).filter((k) => k !== 'all') as BodyPart[];
   }, [exerciseIndex]);
 
-  const toggleFavorite = (id: string) => {
-    setFavorites((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
-  };
+  const toggleFavorite = useCallback((id: string) => {
+    toggleFavMutate({ exerciseId: id, isFav: favorites.includes(id) });
+  }, [favorites, toggleFavMutate]);
 
   const deferredFilter = useDeferredValue(selectedFilter);
   const deferredSearch = useDeferredValue(searchQuery);

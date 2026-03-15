@@ -1,8 +1,11 @@
 import { colors } from "@/colors";
-import IconButton from "@/src/ui/IconButton";
+import { useFavoriteIds, useToggleFavorite } from "@/src/hooks/useEcercises";
+import { useAuthStore } from "@/src/store/useAuthStore";
+import AppButton from "@/src/ui/PressableOpacity";
 import { IconAddToListFitness, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
+import Entypo from "@expo/vector-icons/Entypo";
 import { useCallback, useState } from "react";
-import { Linking, Modal, Pressable, Share, StyleSheet, View } from "react-native";
+import { Linking, Modal, Pressable, Share, StyleSheet, Text, View } from "react-native";
 import PlanSelector from "../workoutsPlans/PlansSelector";
 
 interface ButtonsProps {
@@ -12,6 +15,11 @@ interface ButtonsProps {
 }
 
 const Buttons = ({ exerciseId, exerciseName, exerciseName_he }: ButtonsProps) => {
+    const user = useAuthStore((state) => state.user);
+    const { data: favorites = [] } = useFavoriteIds(user?.id);
+    const { mutate: toggleFavMutate } = useToggleFavorite(user?.id);
+    const isFav = favorites.includes(exerciseId);
+
     const [isShowListWorkoutsPlans, setIsShowListWorkoutsPlans] = useState<boolean>(false);
 
     const handleOpenPlans = useCallback(() => {
@@ -29,24 +37,35 @@ const Buttons = ({ exerciseId, exerciseName, exerciseName_he }: ButtonsProps) =>
         });
     }, [exerciseName_he]);
 
+    const handleToggleFavorite = useCallback(() => {
+        toggleFavMutate({ exerciseId, isFav });
+    }, [exerciseId, isFav, toggleFavMutate]);
+
     return (
         <View>
-            <View className="flex-row justify-center gap-4 px-4 my-8 w-full">
+            <View className="flex-row justify-between px-6 my-8 w-full">
                 {[
+                    {
+                        icon: <Entypo name={isFav ? 'star' : 'star-outlined'} size={20} color={isFav ? colors.lime[400] : colors.lime[500]} />,
+                        text: 'מועדף',
+                        onPress: handleToggleFavorite,
+                    },
                     { icon: <IconShare size={20} color={colors.lime[500]} />, text: 'שתף', onPress: handleShare },
                     {
                         icon: <IconAddToListFitness size={20} color={colors.lime[500]} />, text: 'הוסף', onPress: handleOpenPlans
                     },
                     { icon: <IconSearchGoogle size={20} color={colors.lime[500]} />, text: 'גוגל', onPress: handleGoogle },
                 ].map((btn, i) => (
-                    <IconButton
+                    <AppButton
                         key={i}
-                        text={btn.text}
-                        classNameText="text-zinc-500 text-[10px] mt-1 font-medium"
+                        animationType="opacity"
+                        haptic="medium"
                         onPress={btn.onPress}
+                        className="flex-1 items-center gap-1"
                     >
                         <View style={styles.actionButtonInner}>{btn.icon}</View>
-                    </IconButton>
+                        <Text className="text-zinc-500 text-[10px] font-medium">{btn.text}</Text>
+                    </AppButton>
                 ))}
             </View>
 
@@ -81,7 +100,7 @@ export default Buttons;
 const styles = StyleSheet.create({
     actionButtonInner: {
         backgroundColor: '#1f1f1f',
-        padding: 12,
+        padding: 10,
         borderRadius: 16,
         borderWidth: 1,
         borderColor: '#333',

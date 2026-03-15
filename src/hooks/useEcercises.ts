@@ -1,5 +1,5 @@
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getExerciseByIds, getExercisesByBodyParts } from '../service/exercisesService';
+import { useMutation, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { addFavorite, getFavoriteIds, getExerciseByIds, getExercisesByBodyParts, removeFavorite } from '../service/exercisesService';
 import { BodyPart } from '../types/bodtPart';
 import { Exercise } from '../types/exercise';
 const limit = 30;
@@ -85,6 +85,37 @@ export const useGetExercisesByIds = (ids: string[]) => {
 //   });
 // };
 
+
+export const useFavoriteIds = (userId: string | undefined) => {
+  return useQuery({
+    queryKey: ['favorites', userId],
+    queryFn: () => getFavoriteIds(userId!),
+    staleTime: Infinity,
+    enabled: !!userId,
+  });
+};
+
+export const useToggleFavorite = (userId: string | undefined) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ exerciseId, isFav }: { exerciseId: string; isFav: boolean }) =>
+      isFav ? removeFavorite(userId!, exerciseId) : addFavorite(userId!, exerciseId),
+    onMutate: async ({ exerciseId, isFav }) => {
+      await queryClient.cancelQueries({ queryKey: ['favorites', userId] });
+      const prev = queryClient.getQueryData<string[]>(['favorites', userId]);
+      queryClient.setQueryData<string[]>(['favorites', userId], (old = []) =>
+        isFav ? old.filter((id) => id !== exerciseId) : [...old, exerciseId]
+      );
+      return { prev };
+    },
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(['favorites', userId], ctx?.prev);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['favorites', userId] });
+    },
+  });
+};
 
 // export const useExerciseByIds = (exerciseIds: string[]) => {
 //   return useQuery({

@@ -20,7 +20,6 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /** --- פונקציות עזר למיפוי ערכים --- **/
@@ -50,14 +49,14 @@ const StatBox = ({
 }: {
   title: string;
   value: string;
-  icon: any;
+  icon: string;
   fullWidth?: boolean;
 }) => (
   <View
     className={`${fullWidth ? 'w-full' : 'w-[48%]'} bg-background-800 border border-white/5 rounded-[30px] p-5 mb-4 items-end shadow-sm`}
   >
     <View className="bg-background-700 p-2 rounded-xl mb-3 border border-white/5">
-        <Ionicons name={icon} size={18} color={colors.lime[500]} />
+        <Ionicons name={icon as any} size={18} color={colors.lime[500]} />
     </View>
     <Text className="text-white/40 text-[10px] font-bold uppercase mb-1 tracking-wider">{title}</Text>
     <Text className="text-white text-xl font-black">{value}</Text>
@@ -77,16 +76,16 @@ const WorkoutStatItem = ({
   value,
   label,
 }: {
-  icon: any;
+  icon: string;
   value: string;
   label: string;
 }) => (
-  <View className="items-center flex-1">
-    <View className="bg-background-700 p-2 rounded-xl mb-2 border border-white/5">
-      <Ionicons name={icon} size={16} color={colors.lime[500]} />
+  <View className="items-center flex-1 px-1">
+    <View className="bg-background-700 p-3 rounded-2xl mb-3 border border-white/5">
+      <Ionicons name={icon as any} size={22} color={colors.lime[500]} />
     </View>
-    <Text className="text-white text-lg font-black">{value}</Text>
-    <Text className="text-white/30 text-[9px] font-bold text-center mt-0.5">{label}</Text>
+    <Text className="text-white text-2xl font-black">{value}</Text>
+    <Text className="text-white/30 text-[10px] font-bold text-center mt-1">{label}</Text>
   </View>
 );
 
@@ -114,13 +113,6 @@ export default function ProfileScreen() {
     );
   }, [profile]);
 
-  const offsetIntensity = useMemo(() => {
-    if (!profile?.goal || profile.goal === 'maintain' || profile.calorie_offset == null) {
-      return null;
-    }
-    return getOffsetIntensity(profile.calorie_offset, profile.goal as Goal);
-  }, [profile]);
-
   const handleLogout = useCallback(async () => {
     setLoading(true);
     const { error } = await signOut();
@@ -143,16 +135,16 @@ export default function ProfileScreen() {
 
   return (
     <BackGround>
-      <ScrollView 
-        className="flex-1" 
+      <ScrollView
+        className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 + bottomInset + 20 }}
       >
-        
+
         {/* Header Section */}
         <View className="px-6 pt-12 pb-8">
           <View className="flex-row-reverse items-center justify-start gap-4">
-          <View className="overflow-hidden rounded-full">
+            <View className="overflow-hidden rounded-full">
               <Image
                 source={profile?.avatar_url ?? user.user_metadata.avatar_url}
                 style={{ width: 56, height: 56 }}
@@ -166,35 +158,6 @@ export default function ProfileScreen() {
               </Text>
               <Text className="text-white/30 text-xs text-right mt-1">{user?.email ?? ''}</Text>
             </View>
-          
-          </View>
-        </View>
-
-        {/* Workout Stats Card */}
-        <View className="px-6 mb-6">
-          <View className="bg-background-800 border border-white/5 rounded-[30px] p-5">
-            <View className="flex-row-reverse justify-between">
-              <WorkoutStatItem
-                icon="barbell-outline"
-                value={isStatsLoading ? '...' : String(workoutStats?.weeklyCount ?? 0)}
-                label="אימונים השבוע"
-              />
-              <WorkoutStatItem
-                icon="time-outline"
-                value={isStatsLoading ? '...' : formatMinutes(workoutStats?.weeklyMinutes ?? 0)}
-                label="זמן השבוע"
-              />
-              <WorkoutStatItem
-                icon="flame-outline"
-                value={isStatsLoading ? '...' : `${workoutStats?.streak ?? 0}`}
-                label="רצף שבועות"
-              />
-              <WorkoutStatItem
-                icon="trophy-outline"
-                value={isStatsLoading ? '...' : String(workoutStats?.totalCount ?? 0)}
-                label='סה"כ אימונים'
-              />
-            </View>
           </View>
         </View>
 
@@ -204,102 +167,106 @@ export default function ProfileScreen() {
           </View>
         ) : (
           <>
-            {/* Main Calories Card - Gradient */}
-            <View className="px-6 mb-8">
-              <LinearGradient
-                colors={[colors.lime[300], colors.lime[500], colors.lime[700]]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                locations={[0, 0.5, 1]}
-                style={{ borderRadius: 40, padding: 28, shadowColor: colors.lime[500], shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.25, shadowRadius: 16, elevation: 8 }}
-              >
-                <View className="flex-row-reverse justify-between items-center mb-5">
-                  <Text className="text-black/90 font-black text-lg">יעד קלורי יומי</Text>
-                  <View className="bg-black/15 p-2.5 rounded-full">
-                    <Ionicons name="flash" size={22} color="rgba(0,0,0,0.85)" />
-                  </View>
+            {/* Compact Calorie Row */}
+            {dailyCalories && (
+              <View className="mx-6 mb-6 bg-background-800 border border-white/5 rounded-2xl px-5 py-3 flex-row-reverse justify-between items-center">
+                <View className="flex-row-reverse items-center gap-1.5">
+                  <Ionicons name="flash" size={14} color={colors.lime[500]} />
+                  <Text className="text-white/50 text-xs font-bold">יעד קלורי יומי</Text>
                 </View>
-
-                <View className="items-center py-2 mb-4">
-                  <Text className="text-black text-6xl font-black tracking-tighter">
-                    {dailyCalories?.toLocaleString() ?? '--'}
+                <View className="flex-row-reverse items-center gap-2">
+                  <Text className="text-lime-400 font-black text-base">
+                    {dailyCalories.toLocaleString()} קק״ל
                   </Text>
-                  <Text className="text-black/70 font-bold uppercase tracking-widest text-[10px] mt-2">
-                    קלוריות מומלצות ליום
-                  </Text>
+                  {profile?.goal && (
+                    <Text className="text-white/25 text-xs">• {getGoalLabel(profile.goal)}</Text>
+                  )}
                 </View>
+              </View>
+            )}
 
-                <View className="bg-black/12 h-px w-full mb-5" />
-
+            {/* Workout Stats Card */}
+            <View className="px-6 mb-6">
+              <View className="bg-background-800 border border-white/5 rounded-[30px] p-6">
                 <View className="flex-row-reverse justify-between">
-                  <View className="items-end">
-                    <Text className="text-black/50 text-[10px] font-bold uppercase mb-1">המטרה</Text>
-                    <Text className="text-black font-black text-base">{getGoalLabel(profile?.goal ?? null)}</Text>
-                  </View>
-                  <View className="items-start">
-                    <Text className="text-black/50 text-[10px] font-bold uppercase mb-1">סטטוס יעד</Text>
-                    <Text className="text-black font-black text-base" style={{ color: offsetIntensity?.color ?? 'rgba(0,0,0,0.9)' }}>
-                      {offsetIntensity?.tag ?? 'מאוזן'}
-                    </Text>
-                  </View>
+                  <WorkoutStatItem
+                    icon="barbell-outline"
+                    value={isStatsLoading ? '...' : String(workoutStats?.weeklyCount ?? 0)}
+                    label="אימונים השבוע"
+                  />
+                  <WorkoutStatItem
+                    icon="time-outline"
+                    value={isStatsLoading ? '...' : formatMinutes(workoutStats?.weeklyMinutes ?? 0)}
+                    label="זמן השבוע"
+                  />
+                  <WorkoutStatItem
+                    icon="flame-outline"
+                    value={isStatsLoading ? '...' : `${workoutStats?.streak ?? 0}`}
+                    label="רצף שבועות"
+                  />
+                  <WorkoutStatItem
+                    icon="trophy-outline"
+                    value={isStatsLoading ? '...' : String(workoutStats?.totalCount ?? 0)}
+                    label='סה"כ אימונים'
+                  />
                 </View>
-              </LinearGradient>
+              </View>
             </View>
 
             {/* Stats Grid */}
             <View className="px-6 flex-row-reverse flex-wrap justify-between">
-                <View className="w-[48%] mb-4">
-                  <StatBox
-                    fullWidth
-                    title="משקל"
-                    value={profile?.weight ? `${profile.weight} ק״ג` : '--'}
-                    icon="speedometer-outline"
-                  />
-                  <View className="bg-background-800/80 border border-white/5 rounded-xl px-3 py-2 mr-1 -mt-2 items-end">
-                    <Text className="text-white/40 text-[10px] font-bold uppercase tracking-wider">יחס לחלבון</Text>
-                    <Text className="text-lime-400/90 text-sm font-bold">
-                      {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג
-                    </Text>
-                  </View>
+              <View className="w-[48%] mb-4">
+                <StatBox
+                  fullWidth
+                  title="משקל"
+                  value={profile?.weight ? `${profile.weight} ק״ג` : '--'}
+                  icon="speedometer-outline"
+                />
+                <View className="bg-background-800/80 border border-white/5 rounded-xl px-3 py-2 mr-1 -mt-2 items-end">
+                  <Text className="text-white/40 text-[10px] font-bold uppercase tracking-wider">יחס לחלבון</Text>
+                  <Text className="text-lime-400/90 text-sm font-bold">
+                    {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג
+                  </Text>
                 </View>
-                <StatBox title="גובה" value={profile?.height ? `${profile.height} ס״מ` : '--'} icon="resize-outline" />
-                <StatBox title="גיל" value={profile?.age ? `${profile.age}` : '--'} icon="calendar-outline" />
-                <StatBox title="מין" value={getGenderLabel(profile?.gender ?? null)} icon="person-outline" />
+              </View>
+              <StatBox title="גובה" value={profile?.height ? `${profile.height} ס״מ` : '--'} icon="resize-outline" />
+              <StatBox title="גיל" value={profile?.age ? `${profile.age}` : '--'} icon="calendar-outline" />
+              <StatBox title="מין" value={getGenderLabel(profile?.gender ?? null)} icon="person-outline" />
             </View>
 
             {/* Activity Row */}
             <View className="px-6 mb-8">
-                <View className="bg-background-800 border border-white/5 rounded-[30px] p-6 flex-row-reverse items-center">
-                    <View className="bg-background-700 w-12 h-12 rounded-2xl items-center justify-center ml-4 border border-white/5">
-                        <Ionicons name="fitness-outline" size={24} color={colors.lime[500]} />
-                    </View>
-                    <View className="flex-1">
-                        <Text className="text-white/40 text-[10px] font-bold uppercase text-right mb-1">רמת פעילות גופנית</Text>
-                        <Text className="text-white text-lg font-bold text-right leading-tight">{getActivityLabel(profile?.activity_level ?? null)}</Text>
-                    </View>
+              <View className="bg-background-800 border border-white/5 rounded-[30px] p-6 flex-row-reverse items-center">
+                <View className="bg-background-700 w-12 h-12 rounded-2xl items-center justify-center ml-4 border border-white/5">
+                  <Ionicons name="fitness-outline" size={24} color={colors.lime[500]} />
                 </View>
+                <View className="flex-1">
+                  <Text className="text-white/40 text-[10px] font-bold uppercase text-right mb-1">רמת פעילות גופנית</Text>
+                  <Text className="text-white text-lg font-bold text-right leading-tight">{getActivityLabel(profile?.activity_level ?? null)}</Text>
+                </View>
+              </View>
             </View>
 
             {/* Buttons Section */}
             <View className="px-6 space-y-4">
-                <Pressable
-                  onPress={() => router.push('/UserSetup')}
-                  style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
-                  className="bg-lime-500 h-16 rounded-[24px] flex-row-reverse items-center justify-center shadow-md"
-                >
-                  <Ionicons name="create" size={20} color="black" />
-                  <Text className="text-black font-black text-lg mr-2">עריכת פרטים</Text>
-                </Pressable>
+              <Pressable
+                onPress={() => router.push('/UserSetup')}
+                style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
+                className="bg-lime-500 h-16 rounded-[24px] flex-row-reverse items-center justify-center shadow-md"
+              >
+                <Ionicons name="create" size={20} color="black" />
+                <Text className="text-black font-black text-lg mr-2">עריכת פרטים</Text>
+              </Pressable>
 
-                <Pressable
-                  onPress={handleLogout}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
-                  className="h-16 rounded-[24px] flex-row-reverse items-center justify-center border border-white/10 mt-2"
-                >
-                  <Text className="text-red-500 font-bold text-base">
-                    {loading ? 'מתנתק...' : 'התנתקות מהחשבון'}
-                  </Text>
-                </Pressable>
+              <Pressable
+                onPress={handleLogout}
+                style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+                className="h-16 rounded-[24px] flex-row-reverse items-center justify-center border border-white/10 mt-2"
+              >
+                <Text className="text-red-500 font-bold text-base">
+                  {loading ? 'מתנתק...' : 'התנתקות מהחשבון'}
+                </Text>
+              </Pressable>
             </View>
           </>
         )}

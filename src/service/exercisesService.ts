@@ -1,5 +1,31 @@
 import { supabase } from '../../supabase_client';
 import { Exercise } from '../types/exercise';
+
+export const getFavoriteIds = async (userId: string): Promise<string[]> => {
+  const { data, error } = await supabase
+    .from('favorite_exercises')
+    .select('exercise_id')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data.map((r) => r.exercise_id);
+};
+
+export const addFavorite = async (userId: string, exerciseId: string): Promise<void> => {
+  const { error } = await supabase
+    .from('favorite_exercises')
+    .insert({ user_id: userId, exercise_id: exerciseId });
+  if (error) throw error;
+};
+
+export const removeFavorite = async (userId: string, exerciseId: string): Promise<void> => {
+  const { error } = await supabase
+    .from('favorite_exercises')
+    .delete()
+    .eq('user_id', userId)
+    .eq('exercise_id', exerciseId);
+  if (error) throw error;
+};
 export const getExercisesByBodyParts = async (bodyPart: string[], page: number, limit: number) => {
   const from = (page - 1) * limit;
   const to = from + limit - 1;

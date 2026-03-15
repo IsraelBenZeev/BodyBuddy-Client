@@ -4,6 +4,7 @@ import { useWorkoutStore } from '@/src/store/workoutsStore';
 import BackGround from '@/src/ui/BackGround';
 import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
 import Loading from '@/src/ui/Loading';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
@@ -39,9 +40,19 @@ const WorkoutList = () => {
   return (
     <BackGround>
       <View className="flex-1 items-center justify-between py-10">
-        <View className="w-full px-6 mt-5 items-end">
-          <Text className="text-white text-3xl font-bold tracking-tight text-right">האימונים שלי</Text>
-          <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, marginTop: 8 }} />
+        <View className="w-full px-6 mt-5 flex-row-reverse items-start justify-between">
+          <View className="items-end">
+            <Text className="text-white text-3xl font-bold tracking-tight text-right">האימונים שלי</Text>
+            <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, marginTop: 8 }} />
+          </View>
+          <AppButton
+            animationType="opacity"
+            haptic="light"
+            onPress={() => router.push('/favorites')}
+            className="bg-zinc-800 p-3 rounded-2xl border border-zinc-700"
+          >
+            <Ionicons name="star-outline" size={22} color={colors.lime[500]} />
+          </AppButton>
         </View>
         {plansData && plansData.length > 0 ? (
           <View className="w-full flex-1 justify-center">
