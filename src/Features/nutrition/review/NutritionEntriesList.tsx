@@ -2,7 +2,7 @@ import { colors } from '@/colors';
 import type { NutritionEntry } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
 import { useMemo } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 /** טווחי שעות ליום */
 const TIME_SLOTS: { key: string; label: string; start: number; end: number }[] = [
@@ -143,6 +143,12 @@ function MacroBar({ entry }: { entry: NutritionEntry }) {
           <View className="w-2 h-2 rounded-full bg-lime-500 ml-1.5" />
           <Text className="text-background-300 text-xs">
             חלבון <Text className="text-lime-500 font-bold">{entry.protein}g</Text>
+          </Text>
+        </View>
+        <View className="flex-row-reverse items-center">
+          <View className="w-2 h-2 rounded-full bg-gray-400 ml-1.5"/>
+          <Text className="text-background-300 text-xs">
+            קלוריות <Text className="text-gray-400 font-bold">{entry.calories}</Text>
           </Text>
         </View>
       </View>

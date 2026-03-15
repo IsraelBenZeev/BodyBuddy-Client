@@ -44,12 +44,18 @@ const FavoritesScreen = () => {
       {isLoading || isExercisesLoading ? (
         <Loading />
       ) : isEmpty ? (
-        <View className="flex-1 items-center justify-center gap-3">
+        <View className="flex-1 items-center justify-center gap-4 px-8">
           <Entypo name="star-outlined" size={48} color="#52525b" />
-          <Text className="text-zinc-500 text-base font-medium">אין תרגילים מועדפים עדיין</Text>
-          <Text className="text-zinc-600 text-sm text-center px-8">
-            לחץ על הכוכב בכרטיסיית תרגיל כדי להוסיף
+          <Text className="text-zinc-500 text-base font-medium">עדיין לא נוספו תרגילים מועדפים</Text>
+          <Text className="text-zinc-600 text-sm text-center">
+            גלה תרגילים לפי אזור גוף והוסף אותם למועדפים
           </Text>
+          <Pressable
+            onPress={() => router.push('/(tabs)/')}
+            className="mt-2 bg-lime-500 px-6 py-3 rounded-2xl"
+          >
+            <Text className="text-background-900 font-bold text-base">בחר אזור גוף</Text>
+          </Pressable>
         </View>
       ) : (
         <View className="flex-1 px-2">

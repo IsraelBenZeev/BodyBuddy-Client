@@ -49,8 +49,9 @@ const WorkoutList = () => {
             animationType="opacity"
             haptic="light"
             onPress={() => router.push('/favorites')}
-            className="bg-zinc-800 p-3 rounded-2xl border border-zinc-700"
+            className="bg-zinc-800 px-4 py-3 rounded-2xl border border-zinc-700 flex-row items-center gap-2"
           >
+            <Text className="text-lime-500 font-semibold text-sm">תרגילים מועדפים</Text>
             <Ionicons name="star-outline" size={22} color={colors.lime[500]} />
           </AppButton>
         </View>

@@ -117,6 +117,27 @@ export const useDeleteWorkoutPlan = (user_id: string) => {
   });
 };
 
+export const useDuplicateWorkoutPlan = (user_id: string) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+  return useMutation({
+    mutationFn: (plan: WorkoutPlan) =>
+      createNewWorkoutPlan({
+        user_id: plan.user_id,
+        title: `${plan.title} (עותק)`,
+        description: plan.description,
+        exercise_ids: plan.exercise_ids,
+        time: plan.time,
+        difficulty: plan.difficulty,
+        days_per_week: plan.days_per_week,
+      }),
+    onSuccess: () => {
+      triggerSuccess("שוכפל בהצלחה", "success");
+      queryClient.invalidateQueries({ queryKey: ['workoutPlans', user_id] });
+    },
+  });
+};
+
 export const useGetExercisesIdsByWorkoutPlans = (workoutPlanId: string, user_id: string) => {
   const queryClient = useQueryClient();
   return useQuery({

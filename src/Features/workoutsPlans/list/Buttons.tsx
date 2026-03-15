@@ -1,5 +1,5 @@
 import { colors } from "@/colors";
-import { useDeleteWorkoutPlan } from "@/src/hooks/useWorkout";
+import { useDeleteWorkoutPlan, useDuplicateWorkoutPlan } from "@/src/hooks/useWorkout";
 import { useAuthStore } from "@/src/store/useAuthStore";
 import { useWorkoutStore } from "@/src/store/workoutsStore";
 import { WorkoutPlan } from "@/src/types/workout";
@@ -11,7 +11,7 @@ import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
 import { ReactNode, useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Share, Text, View } from "react-native";
 import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 
 const Button = ({ text, onPress, icon }: { text: string, onPress: () => void, icon: ReactNode }) => {
@@ -35,6 +35,7 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
     const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
     const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
     const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user?.id as string)
+    const { mutate: duplicatePlan, isPending: duplicatePending } = useDuplicateWorkoutPlan(user?.id as string)
     const [isShowButtonOkDelete, setIsShowButtonOkDelete] = useState<boolean>(false)
     const onDelete = (id: string) => {
         setIsShowButtonOkDelete(prev => !prev)
@@ -120,17 +121,25 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
             />
             <Button
                 text="שתף"
-                onPress={() => {
-
+                onPress={async () => {
+                    const days = plan.days_per_week?.join(', ') ?? '';
+                    await Share.share({
+                        message:
+                            `🏋️ תוכנית אימון: ${plan.title}\n` +
+                            `⏱ זמן: ${plan.time} דקות\n` +
+                            `💪 רמת קושי: ${plan.difficulty}/5\n` +
+                            `📅 ימים: ${days}\n` +
+                            `🔢 תרגילים: ${plan.exercise_ids?.length ?? 0}`,
+                    });
                 }}
                 icon={<Feather name="share" size={26} color={colors.lime[500]} />}
             />
             <Button
                 text="שכפל"
-                onPress={() => {
-
-                }}
-                icon={<Ionicons name="duplicate-outline" size={26} color={colors.lime[500]} />}
+                onPress={() => duplicatePlan(plan)}
+                icon={duplicatePending
+                    ? <Loading size="small" />
+                    : <Ionicons name="duplicate-outline" size={26} color={colors.lime[500]} />}
             />
 
         </View>
