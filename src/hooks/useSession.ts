@@ -68,6 +68,7 @@ export const useSessionExerciseLogs = (sessionId: string) => {
     queryKey: ['sessionDetails', sessionId],
     queryFn: () => getSessionExerciseLogs(sessionId),
     enabled: !!sessionId,
+    staleTime: Infinity,
     retry: 0,
   });
 };

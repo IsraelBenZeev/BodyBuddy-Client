@@ -8,12 +8,6 @@ interface WorkoutsState {
 
 export const useWorkoutStore = create<WorkoutsState>((set, get) => ({
   selectedExerciseIds: [],
-  // toggleExercise: (id) =>
-  //   set((state) => ({
-  //     selectedExerciseIds: state.selectedExerciseIds.includes(id)
-  //       ? state.selectedExerciseIds.filter((exId) => exId !== id)
-  //       : [...state.selectedExerciseIds, id],
-  //   })),
   toggleExercise: (input) => {
     set((state) => {
       const idsToToggle = Array.isArray(input) ? input : [input];

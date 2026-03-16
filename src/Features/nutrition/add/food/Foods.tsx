@@ -3,6 +3,8 @@ import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc
 import { useCreateNutritionEntry, useDeleteFoodItem, useFoodItems } from '@/src/hooks/useNutrition';
 import type { FoodItem } from '@/src/types/nutrition';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
+import EmptyState from '@/src/ui/EmptyState';
+import ScreenHeader from '@/src/ui/ScreenHeader';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
@@ -74,41 +76,26 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
   return (
     <View className="flex-1 bg-background-900 px-5 pt-6">
-      {/* Header */}
-      <View className="mb-6">
-        <Text className="text-white text-3xl font-black text-right mb-1">רשימת המאכלים שלי</Text>
-        <Text className="text-gray-400 text-sm text-right font-medium">
-          {foodItems.length > 0
-            ? `בחר מאכל מתוך ${foodItems.length} פריטים`
-            : 'עדיין לא הוספת מזונות'}
-        </Text>
-      </View>
+      <ScreenHeader
+        title="רשימת המאכלים שלי"
+        subtitle={foodItems.length > 0 ? `בחר מאכל מתוך ${foodItems.length} פריטים` : 'עדיין לא הוספת מזונות'}
+      />
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator color="#84cc16" size="large" />
         </View>
       ) : foodItems.length === 0 ? (
-        <View className="flex-1 flex items-center justify-center px-10">
-          <View className="bg-background-800 p-8 rounded-full mb-6 ">
-            <Ionicons name="search-outline" size={60} color="#4b5563" />
-          </View>
-          <Text className="text-white text-xl font-bold text-center">רשימת המאכלים שלך ריקה</Text>
-          <Text className="text-gray-400 text-center mt-2 leading-5">
-            נראה שעדיין לא הוספת מוצרים. הוסף את המזונות שאתה אוכל בדרך כלל כדי שיופיעו כאן.
-          </Text>
-          <Pressable
-            onPress={() => {
-              onClose();
-              router.push('/add-food/standalone');
-            }}
-            className="bg-lime-500 rounded-2xl py-4 px-8 flex-row-reverse items-center justify-center mt-8"
-            style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-          >
-            <Ionicons name="add-circle" size={24} color="#000" />
-            <Text className="text-black font-black text-base mr-2">הוסף מזון ראשון</Text>
-          </Pressable>
-        </View>
+        <EmptyState
+          icon={<Ionicons name="search-outline" size={60} color="#4b5563" />}
+          title="רשימת המאכלים שלך ריקה"
+          description="נראה שעדיין לא הוספת מוצרים. הוסף את המזונות שאתה אוכל בדרך כלל כדי שיופיעו כאן."
+          action={{
+            label: "הוסף מזון ראשון",
+            onPress: () => { onClose(); router.push('/add-food/standalone'); },
+            icon: <Ionicons name="add-circle" size={24} color="#000" />,
+          }}
+        />
       ) : (
         <FlatList
           data={foodItems}

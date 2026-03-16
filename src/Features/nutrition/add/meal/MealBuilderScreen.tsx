@@ -16,7 +16,7 @@ import Handle from '@/src/ui/Handle';
 import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -29,6 +29,54 @@ import {
 } from 'react-native';
 
 type MealItemState = MealItemForm & { isPendingCreate?: boolean };
+
+interface MealItemRowProps {
+  item: MealItemState;
+  index: number;
+  onEdit: (index: number) => void;
+  onRemove: (index: number) => void;
+}
+
+const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowProps) => {
+  const nutrients = useMemo(() => calculateNutrients(
+    { ...item, id: item.food_item_id, is_active: true, created_at: '', updated_at: '', calories_per_unit: item.calories_per_unit ?? null, protein_per_unit: item.protein_per_unit ?? null, carbs_per_unit: item.carbs_per_unit ?? null, fat_per_unit: item.fat_per_unit ?? null },
+    item.amount_g
+  ), [item.food_item_id, item.amount_g, item.calories_per_unit, item.protein_per_unit, item.carbs_per_unit, item.fat_per_unit]);
+
+  const cal = Math.round(nutrients.calories);
+  const amountLabel = item.measurement_type === 'units' ? `${item.amount_g} יחידה` : `${item.amount_g}g`;
+
+  return (
+    <View className="bg-background-800 border border-white/5 rounded-2xl p-4">
+      <View className="flex-row-reverse items-center mb-2">
+        <View className="bg-background-700 w-10 h-10 rounded-xl items-center justify-center ml-3">
+          <Ionicons name="nutrition" size={18} color="#fb923c" />
+        </View>
+        <Text className="text-white font-bold text-base flex-1 text-right" numberOfLines={1}>
+          {item.name}
+        </Text>
+        <View className="flex-row gap-2">
+          <Pressable onPress={() => onEdit(index)} className="bg-background-700 p-2 rounded-xl" hitSlop={10}>
+            <Ionicons name="pencil-outline" size={16} color="#a3a3a3" />
+          </Pressable>
+          <Pressable onPress={() => onRemove(index)} className="bg-red-500/10 p-2 rounded-xl" hitSlop={10}>
+            <Ionicons name="trash-outline" size={16} color="#f87171" />
+          </Pressable>
+        </View>
+      </View>
+      <View className="flex-row-reverse items-center gap-2 mb-1">
+        <Text className="text-gray-400 text-xs">{amountLabel}</Text>
+        <View className="w-1 h-1 rounded-full bg-gray-600" />
+        <Text className="text-lime-400 text-xs font-bold">{cal} קק״ל</Text>
+      </View>
+      <View className="flex-row-reverse gap-3">
+        <Text className="text-blue-400 text-xs">P {nutrients.protein}g</Text>
+        <Text className="text-orange-400 text-xs">C {nutrients.carbs}g</Text>
+        <Text className="text-red-400 text-xs">F {nutrients.fat}g</Text>
+      </View>
+    </View>
+  );
+});
 
 const MealBuilderScreen = () => {
   const params = useLocalSearchParams<{
@@ -441,64 +489,9 @@ const MealBuilderScreen = () => {
               </Text>
             </View>
           }
-          renderItem={({ item, index }) => {
-            const nutrients = calculateNutrients(
-              { ...item, id: item.food_item_id, is_active: true, created_at: '', updated_at: '', calories_per_unit: item.calories_per_unit ?? null, protein_per_unit: item.protein_per_unit ?? null, carbs_per_unit: item.carbs_per_unit ?? null, fat_per_unit: item.fat_per_unit ?? null },
-              item.amount_g
-            );
-            const cal = Math.round(nutrients.calories);
-            const pActual = nutrients.protein;
-            const cActual = nutrients.carbs;
-            const fActual = nutrients.fat;
-            const amountLabel =
-              item.measurement_type === 'units'
-                ? `${item.amount_g} יחידה`
-                : `${item.amount_g}g`;
-            return (
-              <View className="bg-background-800 border border-white/5 rounded-2xl p-4">
-                {/* שורה 1: אייקון + שם + כפתורים */}
-                <View className="flex-row-reverse items-center mb-2">
-                  <View className="bg-background-700 w-10 h-10 rounded-xl items-center justify-center ml-3">
-                    <Ionicons name="nutrition" size={18} color="#fb923c" />
-                  </View>
-                  <Text
-                    className="text-white font-bold text-base flex-1 text-right"
-                    numberOfLines={1}
-                  >
-                    {item.name}
-                  </Text>
-                  <View className="flex-row gap-2">
-                    <Pressable
-                      onPress={() => openEditItem(index)}
-                      className="bg-background-700 p-2 rounded-xl"
-                      hitSlop={10}
-                    >
-                      <Ionicons name="pencil-outline" size={16} color="#a3a3a3" />
-                    </Pressable>
-                    <Pressable
-                      onPress={() => removeItem(index)}
-                      className="bg-red-500/10 p-2 rounded-xl"
-                      hitSlop={10}
-                    >
-                      <Ionicons name="trash-outline" size={16} color="#f87171" />
-                    </Pressable>
-                  </View>
-                </View>
-                {/* שורה 2: כמות + קלוריות */}
-                <View className="flex-row-reverse items-center gap-2 mb-1">
-                  <Text className="text-gray-400 text-xs">{amountLabel}</Text>
-                  <View className="w-1 h-1 rounded-full bg-gray-600" />
-                  <Text className="text-lime-400 text-xs font-bold">{cal} קק״ל</Text>
-                </View>
-                {/* שורה 3: מאקרו בפועל */}
-                <View className="flex-row-reverse gap-3">
-                  <Text className="text-blue-400 text-xs">P {pActual}g</Text>
-                  <Text className="text-orange-400 text-xs">C {cActual}g</Text>
-                  <Text className="text-red-400 text-xs">F {fActual}g</Text>
-                </View>
-              </View>
-            );
-          }}
+          renderItem={({ item, index }) => (
+            <MealItemRow item={item} index={index} onEdit={openEditItem} onRemove={removeItem} />
+          )}
         />
 
         {/* כפתורי פעולה בתחתית הרשימה */}

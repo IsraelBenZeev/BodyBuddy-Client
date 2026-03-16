@@ -216,8 +216,8 @@ function GroupBlockCard({
         )}
       </View>
 
-      {entries.map((entry, index) => (
-        <View key={entry.id || index} className="px-4 py-2">
+      {entries.map((entry) => (
+        <View key={entry.id} className="px-4 py-2">
           <FoodEntryRow entry={entry} onDelete={onDelete} isDeleting={isDeleting} />
         </View>
       ))}

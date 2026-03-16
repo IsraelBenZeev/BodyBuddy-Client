@@ -18,13 +18,3 @@ export const daysInHebrew = {
   "ו": 'שישי',
   "ש": 'שבת',
 };
-// export type formFailds = {
-//   user_id: string;
-//   title: string;
-//   description: string;
-//   exercise_ids: string[];
-//   time: number;
-//   difficulty: number;
-//   days_per_week: dayType[];
-//   id?: string;
-// }

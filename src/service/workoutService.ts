@@ -12,7 +12,7 @@ export const getWorkoutsByUserUserId = async (user_id: string) => {
     if (error) throw error;
     return data as WorkoutPlan[];
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };
@@ -23,7 +23,7 @@ export const getWorkoutPlanById = async (id: string) => {
     if (error) throw error;
     return data as WorkoutPlan;
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };
@@ -33,7 +33,7 @@ export const createNewWorkoutPlan = async (newPlan: WorkoutPlan) => {
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };
@@ -46,31 +46,16 @@ export const addExerciseToPlan = async (idExercise: string, planIds: string[]) =
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };
-// export const getWorkoutPlanById = async (id: string) => {
-//   try {
-//     const { data, error } = await supabase
-//       .from('workouts_plans')
-//       .select('*')
-//       .eq('id', id)
-//       .single();
-
-//     if (error) throw error;
-//     return data as WorkoutPlan;
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };
-export const deleteWorkoutPlan = async (id: string) => {
+export const deleteWorkoutPlan = async (id: string, userId: string) => {
   try {
-    const { error } = await supabase.from('workouts_plans').delete().eq('id', id);
+    const { error } = await supabase.from('workouts_plans').delete().eq('id', id).eq('user_id', userId);
     if (error) throw error;
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };
@@ -83,7 +68,7 @@ export const getExercisesIdsByWorkoutPlanId = async (workoutPlanId: string) => {
     if (error) throw error;
     return data as ExerciseLogDBType[];
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };

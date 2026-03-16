@@ -2,6 +2,8 @@ import { colors } from '@/colors';
 import { useDeleteMeal, useMealsWithItems } from '@/src/hooks/useNutrition';
 import type { MealWithItems } from '@/src/types/meal';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
+import EmptyState from '@/src/ui/EmptyState';
+import ScreenHeader from '@/src/ui/ScreenHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
@@ -42,48 +44,22 @@ export default function Meals({ userId, date, onClose }: Props) {
 
   if (meals.length === 0) {
     return (
-      <View className="flex-1 px-2 py-6">
-        <Text className="text-lime-400 text-2xl font-black mb-2 text-right">
-          הארוחות שלי
-        </Text>
-        <Text className="text-background-400 text-sm mb-6 text-right">
-          צור ארוחות מוכנות כדי להוסיף אותן במהירות ליום
-        </Text>
-        <View className="flex-1 items-center justify-center px-5">
-          <Ionicons
-            name="restaurant-outline"
-            size={64}
-            color={colors.background[400]}
-          />
-          <Text className="text-white text-lg font-bold text-center mt-4">
-            עדיין אין לך ארוחות
-          </Text>
-          <Text className="text-background-400 text-center mt-2 mb-6">
-            צור את הארוחה הראשונה שלך – תבחר מאכלים וכמויות ותשמור כארוחה
-          </Text>
-          <Pressable
-            onPress={handleCreateFirstMeal}
-            className="bg-lime-500 rounded-2xl py-4 px-8 flex-row-reverse items-center justify-center"
-          >
-            <Ionicons name="add-circle-outline" size={24} color={colors.background[900]} />
-            <Text className="text-background-900 font-black text-base mr-2">
-              צור את הארוחה הראשונה שלך
-            </Text>
-          </Pressable>
-        </View>
-      </View>
+      <EmptyState
+        icon={<Ionicons name="restaurant-outline" size={64} color={colors.background[400]} />}
+        title="עדיין אין לך ארוחות"
+        description="צור את הארוחה הראשונה שלך – תבחר מאכלים וכמויות ותשמור כארוחה"
+        action={{
+          label: "צור את הארוחה הראשונה שלך",
+          onPress: handleCreateFirstMeal,
+          icon: <Ionicons name="add-circle-outline" size={24} color={colors.background[900]} />,
+        }}
+      />
     );
   }
 
 return (
   <View className="flex-1 bg-background-900 px-5 pt-6">
-    {/* Header */}
-    <View className="mb-6">
-      <Text className="text-white text-3xl font-black text-right mb-1">הארוחות שלי</Text>
-      <Text className="text-gray-400 text-sm text-right font-medium">
-        בחר ארוחה מוכנה כדי להוסיף ליום שלך
-      </Text>
-    </View>
+    <ScreenHeader title="הארוחות שלי" subtitle="בחר ארוחה מוכנה כדי להוסיף ליום שלך" />
 
     <FlatList
       data={meals}

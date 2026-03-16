@@ -105,9 +105,9 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
 
         <View className="flex-row-reverse flex-wrap gap-2 mt-4">
           <CalendarClock size={18} color={colors.lime[500]} strokeWidth={1.25} />
-          {plan?.days_per_week.map((day, index) => (
+          {plan?.days_per_week.map((day) => (
             <View
-              key={index}
+              key={day}
               className="bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700"
             >
               <Text className="text-zinc-300 text-[10px]">{daysInHebrew[day]}</Text>

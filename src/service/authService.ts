@@ -27,7 +27,7 @@ export const signUpWithEmail = async (email: string, password: string): Promise<
     if (error) throw error;
     return { data, error: null };
   } catch (error) {
-    console.error('Sign up error:', error);
+    if (__DEV__) console.error('Sign up error:', error);
     return { data: null, error: error as Error };
   }
 };
@@ -41,7 +41,7 @@ export const signInWithEmail = async (email: string, password: string): Promise<
     if (error) throw error;
     return { data, error: null };
   } catch (error) {
-    console.error('Sign in error:', error);
+    if (__DEV__) console.error('Sign in error:', error);
     return { data: null, error: error as Error };
   }
 };
@@ -52,7 +52,7 @@ export const signOut = async (): Promise<ErrorResponse> => {
     if (error) throw error;
     return { error: null };
   } catch (error) {
-    console.error('Sign out error:', error);
+    if (__DEV__) console.error('Sign out error:', error);
     return { error: error as Error };
   }
 };
@@ -70,7 +70,7 @@ export const getCurrentUser = async (): Promise<{
     if (error) throw error;
     return { user, error: null };
   } catch (error) {
-    console.error('Get user error:', error);
+    if (__DEV__) console.error('Get user error:', error);
     return { user: null, error: error as Error };
   }
 };
@@ -87,7 +87,7 @@ export const getCurrentSession = async (): Promise<{
     if (error) throw error;
     return { session, error: null };
   } catch (error) {
-    console.error('Get session error:', error);
+    if (__DEV__) console.error('Get session error:', error);
     return { session: null, error: error as Error };
   }
 };
@@ -163,7 +163,7 @@ export const signInWithGoogle = async () => {
   });
 
   if (error) {
-    console.error('Auth error:', error.message);
+    if (__DEV__) console.error('Auth error:', error.message);
     return;
   }
 
@@ -194,7 +194,7 @@ export const signInWithGoogle = async () => {
         refresh_token: tokens.refresh_token,
       });
       if (sessionError) {
-        console.error('setSession error:', sessionError.message);
+        if (__DEV__) console.error('setSession error:', sessionError.message);
         return;
       }
 
@@ -214,7 +214,7 @@ export const signInWithGoogle = async () => {
       }
     } catch (err) {
       cleanup();
-      console.error('signInWithGoogle error:', err);
+      if (__DEV__) console.error('signInWithGoogle error:', err);
     }
   }
 };

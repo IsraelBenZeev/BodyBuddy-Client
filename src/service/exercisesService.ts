@@ -41,7 +41,7 @@ export const getExercisesByBodyParts = async (bodyPart: string[], page: number, 
     if (error) throw error;
     return { exercises: data as Exercise[], totalCount: count || 0 };
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };
@@ -55,7 +55,7 @@ export const getExerciseById = async (exerciseId: string) => {
     if (error) throw error;
     return data as Exercise;
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };
@@ -68,7 +68,7 @@ export const getExerciseByIds = async (exerciseId: string[]) => {
     if (error) throw error;
     return data as Exercise[];
   } catch (error) {
-    console.error(error);
+    if (__DEV__) console.error(error);
     throw error;
   }
 };

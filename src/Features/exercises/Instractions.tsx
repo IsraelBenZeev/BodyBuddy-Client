@@ -15,7 +15,7 @@ const Instractions = ({ instructions }: InstractionsProps) => {
 
             {/* רשימת ההוראות */}
             {instructions.map((step, index) => (
-                <View key={index} className="flex-row-reverse mb-6">
+                <View key={`${index}-${step.slice(0, 20)}`} className="flex-row-reverse mb-6">
                     
                     {/* ציר זמן ומספר */}
                     <View className="items-center ml-4">

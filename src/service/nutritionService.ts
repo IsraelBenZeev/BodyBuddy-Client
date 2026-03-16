@@ -26,7 +26,7 @@ export const getNutritionEntries = async (
     if (error) throw error;
     return (data ?? []).map(normalizeNutritionEntry);
   } catch (error) {
-    console.error('Get nutrition entries error:', error);
+    if (__DEV__) console.error('Get nutrition entries error:', error);
     throw error;
   }
 };
@@ -80,7 +80,7 @@ export const createNutritionEntry = async (
     if (error) throw error;
     return normalizeNutritionEntry(data as Record<string, unknown>);
   } catch (error) {
-    console.error('Create nutrition entry error:', error);
+    if (__DEV__) console.error('Create nutrition entry error:', error);
     throw error;
   }
 };
@@ -116,7 +116,7 @@ export const createNutritionEntriesBulk = async (
       normalizeNutritionEntry(row as Record<string, unknown>)
     );
   } catch (error) {
-    console.error('Create nutrition entries bulk error:', error);
+    if (__DEV__) console.error('Create nutrition entries bulk error:', error);
     throw error;
   }
 };
@@ -137,7 +137,7 @@ export const deleteNutritionEntry = async (
 
     if (error) throw error;
   } catch (error) {
-    console.error('Delete nutrition entry error:', error);
+    if (__DEV__) console.error('Delete nutrition entry error:', error);
     throw error;
   }
 };
@@ -158,7 +158,7 @@ export const deleteNutritionEntriesByGroupId = async (
 
     if (error) throw error;
   } catch (error) {
-    console.error('Delete nutrition entries by group error:', error);
+    if (__DEV__) console.error('Delete nutrition entries by group error:', error);
     throw error;
   }
 };
@@ -167,6 +167,7 @@ export const deleteNutritionEntriesByGroupId = async (
  * מחזיר את כל המאכלים שהמשתמש יכול לבחור: גלובליים (user_id null) + המאכלים שלו.
  */
 export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
+  if (!userId || typeof userId !== 'string') throw new Error('Invalid user ID');
   try {
     const { data, error } = await supabase
       .from('food_items')
@@ -184,7 +185,7 @@ export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
     if (error) throw error;
     return (data ?? []).map(normalizeFoodItem);
   } catch (error) {
-    console.error('Get food items error:', error);
+    if (__DEV__) console.error('Get food items error:', error);
     throw error;
   }
 };
@@ -263,7 +264,7 @@ export const createFoodItem = async (
     if (error) throw error;
     return normalizeFoodItem(data as Record<string, unknown>);
   } catch (error) {
-    console.error('Create food item error:', error);
+    if (__DEV__) console.error('Create food item error:', error);
     throw error;
   }
 };
@@ -281,7 +282,7 @@ export const deleteFoodItem = async (foodItemId: string, userId: string): Promis
 
     if (error) throw error;
   } catch (error) {
-    console.error('Delete food item error:', error);
+    if (__DEV__) console.error('Delete food item error:', error);
     throw error;
   }
 };
@@ -291,13 +292,6 @@ export const deleteFoodItem = async (foodItemId: string, userId: string): Promis
  */
 export const deleteMeal = async (mealId: string, userId: string): Promise<void> => {
   try {
-    const { error: itemsError } = await supabase
-      .from('meal_items')
-      .delete()
-      .eq('meal_id', mealId);
-
-    if (itemsError) throw itemsError;
-
     const { error: mealError } = await supabase
       .from('meals')
       .delete()
@@ -305,8 +299,15 @@ export const deleteMeal = async (mealId: string, userId: string): Promise<void> 
       .eq('user_id', userId);
 
     if (mealError) throw mealError;
+
+    const { error: itemsError } = await supabase
+      .from('meal_items')
+      .delete()
+      .eq('meal_id', mealId);
+
+    if (itemsError) throw itemsError;
   } catch (error) {
-    console.error('Delete meal error:', error);
+    if (__DEV__) console.error('Delete meal error:', error);
     throw error;
   }
 };
@@ -336,7 +337,7 @@ export const getMeals = async (userId: string): Promise<Meal[]> => {
     if (error) throw error;
     return (data ?? []).map(normalizeMeal);
   } catch (error) {
-    console.error('Get meals error:', error);
+    if (__DEV__) console.error('Get meals error:', error);
     throw error;
   }
 };
@@ -406,7 +407,7 @@ export const getMealsWithItems = async (
       return { ...meal, meal_items };
     });
   } catch (error) {
-    console.error('Get meals with items error:', error);
+    if (__DEV__) console.error('Get meals with items error:', error);
     throw error;
   }
 };
@@ -442,14 +443,14 @@ export const createMealWithItems = async (
 
     return normalizeMeal(mealRow as Record<string, unknown>);
   } catch (error) {
-    console.error('Create meal with items error:', error);
+    if (__DEV__) console.error('Create meal with items error:', error);
     throw error;
   }
 };
 
 // ── AI Image Analysis ──────────────────────────────────────────────────────────
 
-const AI_AGENT_URL = 'https://mail2-whats-app-sever.vercel.app/nutrition/analyze-food';
+const AI_AGENT_URL = process.env.EXPO_PUBLIC_AI_AGENT_URL ?? '';
 
 export const analyzeNutritionImage = async (imageBase64: string, signal?: AbortSignal): Promise<AIAnalysisResult> => {
   const response = await fetch(AI_AGENT_URL, {

@@ -110,6 +110,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                                 plan={plan}
                                 selectedIds={selectedIds}
                                 toggleSelection={toggleSelection}
+                                isAlreadyAdded={plan.exercise_ids?.includes(idExercise)}
                             />
                         ))}
                     </ScrollView>
@@ -119,22 +120,26 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                             <IconsFitnessTools size={36} color={colors.lime[500]} />
                         </View>
                         <Text className="text-white text-lg font-semibold text-center mb-2">
-                            עדיין אין לך תוכניות אימון
+                            {plansData?.length ? 'התרגיל כבר קיים בכל התוכניות' : 'עדיין אין לך תוכניות אימון'}
                         </Text>
                         <Text className="text-zinc-500 text-center mb-8 text-sm leading-5">
-                            {`זה הזמן ליצור את האימון הראשון שלך\nולהתחיל להתקדם למטרה!`}
+                            {plansData?.length
+                                ? 'התרגיל הזה כבר נמצא בכל תוכניות האימון שלך'
+                                : `זה הזמן ליצור את האימון הראשון שלך\nולהתחיל להתקדם למטרה!`}
                         </Text>
-                        <AppButton
-                            animationType="both"
-                            haptic="light"
-                            onPress={handleGoToCreate}
-                            className="bg-lime-500 flex-row items-center px-7 py-3.5 rounded-2xl"
-                        >
-                            <Text className="text-background-900 font-bold text-base mr-2">
-                                עבור ליצירת תוכנית
-                            </Text>
-                            <IconAddToList color={colors.background[900]} size={20} />
-                        </AppButton>
+                        {!plansData?.length && (
+                            <AppButton
+                                animationType="both"
+                                haptic="light"
+                                onPress={handleGoToCreate}
+                                className="bg-lime-500 flex-row items-center px-7 py-3.5 rounded-2xl"
+                            >
+                                <Text className="text-background-900 font-bold text-base mr-2">
+                                    עבור ליצירת תוכנית
+                                </Text>
+                                <IconAddToList color={colors.background[900]} size={20} />
+                            </AppButton>
+                        )}
                     </View>
                 )}
             </View>

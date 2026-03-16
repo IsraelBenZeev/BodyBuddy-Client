@@ -2,6 +2,7 @@ import { colors } from '@/colors';
 import { useWorkoutsPlans } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import BackGround from '@/src/ui/BackGround';
+import EmptyState from '@/src/ui/EmptyState';
 import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
 import Loading from '@/src/ui/Loading';
 import { Ionicons } from '@expo/vector-icons';
@@ -67,27 +68,16 @@ const WorkoutList = () => {
             />
           </View>
         ) : (
-          <View className="items-center justify-center px-10 flex-1">
-            <View className="bg-background-800 p-8 rounded-full mb-6 opacity-80">
-              <IconsFitnessTools size={80} color={colors.lime[500]} />
-            </View>
-            <Text className="text-white text-xl font-semibold text-center mb-2">
-              עדיין אין לך תוכניות אימון
-            </Text>
-            <Text className="text-gray-400 text-center mb-8">
-              זה הזמן ליצור את האימון הראשון שלך ולהתחיל להתקדם למטרה!
-            </Text>
-
-            <AppButton
-              haptic="medium"
-              animationType="opacity"
-              onPress={handleCreateNew}
-              className="bg-lime-500 flex-row items-center px-8 py-4 rounded-2xl shadow-lg"
-            >
-              <Text className="text-background-900 font-bold text-lg mr-2">צור אימון חדש</Text>
-              <IconAddToList color={colors.background[900]} size={24} />
-            </AppButton>
-          </View>
+          <EmptyState
+            icon={<IconsFitnessTools size={80} color={colors.lime[500]} />}
+            title="עדיין אין לך תוכניות אימון"
+            description="זה הזמן ליצור את האימון הראשון שלך ולהתחיל להתקדם למטרה!"
+            action={{
+              label: "צור אימון חדש",
+              onPress: handleCreateNew,
+              icon: <IconAddToList color={colors.background[900]} size={24} />,
+            }}
+          />
         )}
 
         {/* כפתור הוספה צף (רק כשיש אימונים) */}

@@ -7,15 +7,17 @@ interface Props {
     plan: WorkoutPlan;
     selectedIds: string[];
     toggleSelection: (id: string) => void;
+    isAlreadyAdded?: boolean;
 }
 
-const Card = ({ plan, selectedIds, toggleSelection }: Props) => {
+const Card = ({ plan, selectedIds, toggleSelection, isAlreadyAdded }: Props) => {
     const isSelected = plan.id ? selectedIds.includes(plan.id) : false;
 
     return (
         <Pressable
-            onPress={() => plan.id && toggleSelection(plan.id)}
+            onPress={() => !isAlreadyAdded && plan.id && toggleSelection(plan.id)}
             style={{
+                opacity: isAlreadyAdded ? 0.4 : 1,
                 shadowColor: isSelected ? colors.lime[500] : 'transparent',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: isSelected ? 0.12 : 0,
@@ -28,14 +30,20 @@ const Card = ({ plan, selectedIds, toggleSelection }: Props) => {
                     : 'bg-background-800/60 border-zinc-800/50'
             }`}
         >
-            {/* Selection indicator */}
-            <View
-                className={`w-[22px] h-[22px] rounded-full items-center justify-center ${
-                    isSelected ? 'bg-lime-500' : 'border-2 border-zinc-700'
-                }`}
-            >
-                {isSelected && <Check size={13} color={colors.background[900]} strokeWidth={3.5} />}
-            </View>
+            {/* Selection indicator / already added badge */}
+            {isAlreadyAdded ? (
+                <View className="bg-lime-500/20 px-2 py-0.5 rounded-full border border-lime-500/40">
+                    <Text className="text-lime-400 text-[10px] font-bold">קיים</Text>
+                </View>
+            ) : (
+                <View
+                    className={`w-[22px] h-[22px] rounded-full items-center justify-center ${
+                        isSelected ? 'bg-lime-500' : 'border-2 border-zinc-700'
+                    }`}
+                >
+                    {isSelected && <Check size={13} color={colors.background[900]} strokeWidth={3.5} />}
+                </View>
+            )}
 
             {/* Content */}
             <View className="flex-1 ml-3">

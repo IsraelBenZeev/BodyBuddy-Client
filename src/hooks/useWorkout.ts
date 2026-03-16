@@ -106,10 +106,9 @@ export const useDeleteWorkoutPlan = (user_id: string) => {
   const queryClient = useQueryClient();
   const { triggerSuccess } = useUIStore();
   return useMutation({
-    mutationFn: (planId: string) => deleteWorkoutPlan(planId),
+    mutationFn: (planId: string) => deleteWorkoutPlan(planId, user_id),
     onSuccess: async () => {
       triggerSuccess("נמחק בהצלחה", "success");
-      queryClient.refetchQueries({ queryKey: ['workoutsPlans', user_id] });
       return await queryClient.invalidateQueries({
         queryKey: ['workoutPlans', user_id]
       });

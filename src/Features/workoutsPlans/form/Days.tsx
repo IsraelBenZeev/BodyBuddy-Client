@@ -45,7 +45,7 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
                                 return (
                                     <AppButton
                                         disabled={isPendingCreate}
-                                        key={index}
+                                        key={day}
                                         animationType="opacity"
                                         haptic="medium"
                                         activeOpacity={0.7}

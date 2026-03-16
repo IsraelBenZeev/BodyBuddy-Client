@@ -1,7 +1,7 @@
 import { colors } from '@/colors';
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet'; // הסרנו את ה-Backdrop מהייבוא
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { forwardRef, ReactNode, useCallback, useMemo } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 interface ModalBottomProps {
   children?: ReactNode;
@@ -10,9 +10,9 @@ interface ModalBottomProps {
   maxHeight?: string | number;
   title?: string;
   enablePanDownToClose?: boolean;
-  useScrollView?: boolean; // prop חדש
+  useScrollView?: boolean;
   onClose?: () => void;
-  onChange?: (isOpen: boolean) => void; // prop חדש
+  onChange?: (isOpen: boolean) => void;
 }
 
 const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
@@ -23,7 +23,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     maxHeight = '40%',
     title,
     enablePanDownToClose = false,
-    useScrollView = true, // ברירת מחדל true
+    useScrollView = true,
     onChange,
     onClose,
   } = props;
@@ -32,29 +32,19 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
 
   const renderHandle = useCallback(
     () => (
-      <View style={styles.handleContainer}>
-        <View style={styles.indicator} />
-        {title && <Text style={styles.titleText}>{title}</Text>}
+      <View className="items-center py-3 bg-background-900 rounded-t-[20px]">
+        <View className="w-10 h-1 bg-lime-400 rounded-sm" />
+        {title && (
+          <Text className="text-lime-400 text-lg font-bold mt-2.5 text-center">{title}</Text>
+        )}
       </View>
     ),
     [title]
   );
-  // const handleSheetChange = useCallback(
-  //   (index: number) => {
-  //     if (onChange) {
-  //       // אם האינדקס הוא 1 (הנקודה הגבוהה - maxHeight), נחזיר true כדי לנעול את Expo.
-  //       // אם האינדקס הוא 0 (הנקודה הנמוכה - minHeight), נחזיר false כדי לשחרר את הגרירה של Expo.
-  //       onChange(index > 0);
-  //     }
-  //   },
-  //   [onChange]
-  // );
+
   const handleSheetChange = useCallback(
     (index: number) => {
       if (onChange) {
-        // כאן התיקון:
-        // אנחנו מחשיבים את המודל כ"פתוח" (נועל את האפליקציה)
-        // כל עוד האינדקס הוא לא 1- (סגור לגמרי)
         onChange(index !== -1);
       }
       if (index === -1 && onClose) {
@@ -82,7 +72,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     >
       {useScrollView ? (
         <BottomSheetScrollView
-          contentContainerStyle={styles.contentContainer}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
         >
           {children}
@@ -92,33 +82,6 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
       )}
     </BottomSheet>
   );
-});
-
-const styles = StyleSheet.create({
-  handleContainer: {
-    alignItems: 'center',
-    paddingVertical: 12,
-    backgroundColor: colors.background[900],
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  indicator: {
-    width: 40,
-    height: 4,
-    backgroundColor: colors.lime[400],
-    borderRadius: 2,
-  },
-  titleText: {
-    color: colors.lime[400],
-    fontSize: 18,
-    fontWeight: '700',
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
 });
 
 ModalBottom.displayName = 'ModalBottom';
