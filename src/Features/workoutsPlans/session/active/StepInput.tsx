@@ -88,6 +88,7 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
                 className={'bg-background-800 rounded-full p-2'}
                 haptic="medium"
                 animationType="both"
+                accessibilityLabel={`הפחת ${label}`}
               >
                 <MaterialCommunityIcons name="minus" size={24} color="white" />
               </AppButton>
@@ -115,6 +116,7 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
                 className={'bg-lime-500 rounded-full p-2'}
                 haptic="medium"
                 animationType="both"
+                accessibilityLabel={`הגדל ${label}`}
               >
                 <MaterialCommunityIcons name="plus" size={24} color="black" />
               </AppButton>

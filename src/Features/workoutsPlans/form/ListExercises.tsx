@@ -171,6 +171,7 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
               params: { exerciseId: exercise.exerciseId },
             })}
             className="flex-row-reverse items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
+            accessibilityLabel={`${exercise.name_he || exercise.name} - הצג פרטי תרגיל`}
           >
             {/* כפתור מחיקה רק במצב עריכה */}
             {mode === 'edit' && (
@@ -179,6 +180,7 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
                 haptic="medium"
                 onPress={() => toggleExercise?.(exercise.exerciseId)}
                 className="w-10 h-10 items-center justify-center rounded-full bg-red-500/10 mr-2"
+                accessibilityLabel={`הסר ${exercise.name_he || exercise.name}`}
               >
                 <MaterialCommunityIcons name="close" size={20} color="#f87171" />
               </AppButton>
@@ -221,6 +223,7 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
           onPress={navigateToPicker}
           className="bg-zinc-900 py-3 rounded-xl mt-2 mb-4 border border-zinc-800"
           disabled={isPendingCreate}
+          accessibilityLabel="הוסף תרגילים נוספים"
         >
           <Text className="text-lime-400 text-center font-bold">הוסף תרגילים נוספים +</Text>
         </AppButton>

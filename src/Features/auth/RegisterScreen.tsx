@@ -213,6 +213,7 @@ export default function RegisterScreen() {
               className="w-full bg-background-800 border border-background-600 py-4 rounded-2xl"
               animationType="opacity"
               haptic="light"
+              accessibilityLabel="הירשם באמצעות Google"
             >
               <View className="flex-row-reverse items-center justify-center gap-3">
                 <Ionicons name="logo-google" size={24} color={colors.lime[500]} />
@@ -229,6 +230,8 @@ export default function RegisterScreen() {
                     params: { params: 'entry' },
                   } as never)
                 }
+                accessibilityRole="button"
+                accessibilityLabel="התחבר כאן"
               >
                 <Text className="text-background-400 text-center text-base">
                   כבר יש לך חשבון? <Text className="text-lime-400 font-semibold">התחבר כאן</Text>

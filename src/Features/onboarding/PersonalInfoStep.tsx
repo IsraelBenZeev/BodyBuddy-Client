@@ -107,6 +107,9 @@ const PersonalInfoStep = ({
                           ? 'border-lime-500 bg-background-700'
                           : 'border-background-600 bg-background-800'
                       }`}
+                      accessibilityRole="button"
+                      accessibilityLabel={option.label}
+                      accessibilityState={{ selected: isSelected }}
                     >
                       <Ionicons
                         name={option.icon as 'male' | 'female'}
@@ -171,6 +174,8 @@ const PersonalInfoStep = ({
           onPress={handleNext}
           disabled={isPending}
           className="flex-row-reverse items-center justify-center gap-2 bg-lime-500 w-full py-4 rounded-2xl shadow-lg disabled:opacity-70 active:opacity-90"
+          accessibilityRole="button"
+          accessibilityLabel="הבא"
         >
           <Ionicons name="arrow-back" size={22} color={colors.background[900]} />
           <Text className="text-black font-extrabold text-base">הבא</Text>
@@ -181,6 +186,8 @@ const PersonalInfoStep = ({
             onPress={handleFinishAndSave}
             disabled={isPending}
             className="flex-row-reverse items-center justify-center gap-2 py-4 rounded-2xl border-2 border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
+            accessibilityRole="button"
+            accessibilityLabel="סיום ושמירה"
           >
             {isPending ? (
               <ActivityIndicator color={colors.lime[500]} size="small" />

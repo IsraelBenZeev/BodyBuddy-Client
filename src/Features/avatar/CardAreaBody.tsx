@@ -41,6 +41,7 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
         className="bg-lime-500 flex-row items-center justify-center py-[18px] rounded-[20px] gap-[12px] shadow-lime-500 shadow-offset-[0/8] shadow-opacity-30 shadow-radius-[15px] elevation-5"
         haptic="medium"
         animationType="opacity"
+        accessibilityLabel="למעבר לתרגילים"
         onPress={() => {
           if (selectedPart.length > 0) {
             router.push({

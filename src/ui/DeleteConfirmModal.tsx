@@ -49,6 +49,8 @@ export default function DeleteConfirmModal({
               onPress={onCancel}
               disabled={isDeleting}
               className="flex-1 py-4 items-center border-l border-white/10"
+              accessibilityRole="button"
+              accessibilityLabel="ביטול"
             >
               <Text className="text-white font-bold text-base">ביטול</Text>
             </Pressable>
@@ -56,6 +58,8 @@ export default function DeleteConfirmModal({
               onPress={onConfirm}
               disabled={isDeleting}
               className="flex-1 py-4 items-center bg-red-500/10"
+              accessibilityRole="button"
+              accessibilityLabel="מחק"
             >
               {isDeleting ? (
                 <ActivityIndicator size="small" color="#ef4444" />

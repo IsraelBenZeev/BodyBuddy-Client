@@ -8,7 +8,7 @@ interface ChestProps {
 export const Chest = ({ isSelected, handleTogglePart }: ChestProps) => {
   const bodyPart: BodyPart = 'chest';
   return (
-    <G id="chest">
+    <G id="chest" accessible={true} accessibilityLabel={`חזה - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected(bodyPart) }}>
       <Path
         d="M285.5 372C283.2 403.5 291.4 441.5 316.7 456.6C326 462.1 336.8 464.6 347.4 466.7C380.7 473.4 421 456.8 424.3 426.4C427.8 393.8 432.7 354.8 418.1 326.3C408.4 307.3 399 307.3 388.4 306.2C377.8 305.1 345 304 332.2 309.9C315.6 317.5 295.9 328.6 290.1 347C287.8 354.3 286.2 362.9 285.5 372.1V372Z"
         fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}

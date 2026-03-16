@@ -79,6 +79,8 @@ const AvatarSelectorScreen = () => {
                 setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front'));
                 // setSelectedParts([]);
               }}
+              accessibilityRole="button"
+              accessibilityLabel="סובב מודל"
             >
               <View style={styles.rotateIconContainer}>
                 <IconSwithBody size={26} color="black" />

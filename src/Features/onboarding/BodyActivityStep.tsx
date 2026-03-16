@@ -222,6 +222,9 @@ const BodyActivityStep = ({
                             ? 'border-lime-500 bg-background-700'
                             : 'border-background-600 bg-background-800'
                         }`}
+                        accessibilityRole="button"
+                        accessibilityLabel={option.label}
+                        accessibilityState={{ selected: isSelected }}
                       >
                         <View
                           className={`w-12 h-12 rounded-xl items-center justify-center ml-4 ${
@@ -274,6 +277,8 @@ const BodyActivityStep = ({
             onPress={onBack}
             disabled={isPending}
             className="flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-4 bg-background-800 border border-background-600 disabled:opacity-70 active:opacity-90"
+            accessibilityRole="button"
+            accessibilityLabel="חזרה"
           >
             <Ionicons
               name="arrow-forward"
@@ -287,6 +292,8 @@ const BodyActivityStep = ({
             onPress={handleNext}
             disabled={isPending}
             className="flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-4 shadow-lg bg-lime-500 disabled:opacity-70 active:opacity-90"
+            accessibilityRole="button"
+            accessibilityLabel="הבא"
           >
             <Ionicons name="arrow-back" size={22} color={colors.background[900]} />
             <Text className="text-black font-extrabold text-base">הבא</Text>
@@ -298,6 +305,8 @@ const BodyActivityStep = ({
             onPress={handleFinishAndSave}
             disabled={isPending}
             className="flex-row-reverse items-center justify-center gap-2 py-4 rounded-2xl border-2 border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
+            accessibilityRole="button"
+            accessibilityLabel="סיום ושמירה"
           >
             {isPending ? (
               <ActivityIndicator color={colors.lime[500]} size="small" />

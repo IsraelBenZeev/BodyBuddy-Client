@@ -32,7 +32,13 @@ const TabButton = ({ routeName, children, onPress, label }: TabButtonProps) => {
   }, [focused]);
 
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable
+      onPress={onPress}
+      style={styles.container}
+      accessibilityRole="tab"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: focused }}
+    >
       <View style={styles.contentWrapper} className="">
         <Animatable.View
           ref={viewRef}

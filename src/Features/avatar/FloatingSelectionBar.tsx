@@ -47,7 +47,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
           <Text style={{ color: '#71717a', fontSize: 11, fontWeight: '700', letterSpacing: 1 }}>
             {selectedParts.length} אזורים נבחרו
           </Text>
-          <AppButton animationType="scale" haptic="light" onPress={onClearAll}>
+          <AppButton animationType="scale" haptic="light" onPress={onClearAll} accessibilityLabel="נקה את כל הבחירות">
             <Text style={{ color: '#f87171', fontSize: 11, fontWeight: '700' }}>נקה הכל</Text>
           </AppButton>
         </View>
@@ -76,7 +76,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
               <Text style={{ color: '#d9f99d', fontSize: 12, fontWeight: '700' }}>
                 {partsBodyHebrew[part]}
               </Text>
-              <AppButton animationType="scale" haptic="light" onPress={() => onDeselectPart(part)}>
+              <AppButton animationType="scale" haptic="light" onPress={() => onDeselectPart(part)} accessibilityLabel={`הסר ${partsBodyHebrew[part]}`}>
                 <Ionicons name="close-circle" size={14} color="rgba(132, 204, 22, 0.45)" />
               </AppButton>
             </View>
@@ -84,7 +84,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
         </ScrollView>
 
         {/* CTA Button עם gradient */}
-        <AppButton animationType="scale" haptic="success" onPress={onNavigate} className="w-full">
+        <AppButton animationType="scale" haptic="success" onPress={onNavigate} className="w-full" accessibilityLabel="צפה בתרגילים לאזורים הנבחרים">
           <LinearGradient
             colors={['#a3e635', '#84cc16']}
             start={{ x: 0, y: 0 }}

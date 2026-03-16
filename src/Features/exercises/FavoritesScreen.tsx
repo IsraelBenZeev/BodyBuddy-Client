@@ -30,7 +30,7 @@ const FavoritesScreen = () => {
     <BackGround>
       {/* Header */}
       <View className="px-6 pt-12 pb-4 flex-row-reverse items-center gap-3">
-        <Pressable onPress={() => router.back()} className="bg-zinc-800 p-2 rounded-xl">
+        <Pressable onPress={() => router.back()} className="bg-zinc-800 p-2 rounded-xl" accessibilityRole="button" accessibilityLabel="חזרה">
           <Entypo name="chevron-right" size={22} color="white" />
         </Pressable>
         <View className="flex-1">
@@ -53,6 +53,8 @@ const FavoritesScreen = () => {
           <Pressable
             onPress={() => router.push('/(tabs)/')}
             className="mt-2 bg-lime-500 px-6 py-3 rounded-2xl"
+            accessibilityRole="button"
+            accessibilityLabel="בחר אזור גוף"
           >
             <Text className="text-background-900 font-bold text-base">בחר אזור גוף</Text>
           </Pressable>

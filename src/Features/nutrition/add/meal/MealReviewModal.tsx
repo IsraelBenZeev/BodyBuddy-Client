@@ -163,7 +163,7 @@ export default function MealReviewModal({
     >
       <View style={{ flex: 1, backgroundColor: colors.background[900] }}>
         <View className="flex-row items-center justify-between border-b border-background-700 px-4 py-3">
-          <Pressable onPress={onClose} className="p-2">
+          <Pressable onPress={onClose} className="p-2" accessibilityRole="button" accessibilityLabel="סגור">
             <Ionicons name="close" size={24} color={colors.white} />
           </Pressable>
           <Text className="text-white text-lg font-bold" numberOfLines={1}>
@@ -204,6 +204,8 @@ export default function MealReviewModal({
             className={`rounded-2xl py-4 flex-row-reverse items-center justify-center ${
               isPending || items.length === 0 ? 'bg-background-700 opacity-60' : 'bg-lime-500'
             }`}
+            accessibilityRole="button"
+            accessibilityLabel="הוסף ליומן"
           >
             {isPending ? (
               <ActivityIndicator color={colors.background[900]} size="small" />
@@ -274,6 +276,8 @@ function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReview
           <Pressable
             onPress={() => onQuantityChange(1)}
             className="w-10 h-10 items-center justify-center bg-lime-500/10 rounded-lg active:bg-lime-500/20"
+            accessibilityRole="button"
+            accessibilityLabel={`הגדל כמות ${info.name}`}
           >
             <Ionicons name="add" size={22} color="#84cc16" />
           </Pressable>
@@ -286,6 +290,8 @@ function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReview
           <Pressable
             onPress={() => onQuantityChange(-1)}
             className="w-10 h-10 items-center justify-center bg-white/5 rounded-lg active:bg-white/10"
+            accessibilityRole="button"
+            accessibilityLabel={`הפחת כמות ${info.name}`}
           >
             <Ionicons name="remove" size={22} color="#f87171" />
           </Pressable>

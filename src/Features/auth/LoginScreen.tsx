@@ -164,6 +164,7 @@ export default function LoginScreen() {
               className="w-full items-center justify-center bg-lime-500 py-4 rounded-2xl mb-4"
               animationType="opacity"
               haptic="light"
+              accessibilityLabel="התחבר"
             >
               <Text className="text-black font-extrabold text-base">
                 {loading ? 'מתחבר...' : 'התחבר'}
@@ -176,6 +177,7 @@ export default function LoginScreen() {
               className="w-full bg-background-800 border border-background-600 py-4 rounded-2xl"
               animationType="opacity"
               haptic="light"
+              accessibilityLabel="התחבר באמצעות Google"
             >
               <View className="flex-row-reverse items-center justify-center gap-3">
                 <Ionicons name="logo-google" size={24} color={colors.lime[500]} />
@@ -192,6 +194,8 @@ export default function LoginScreen() {
                     params: { params: 'AUTH_PARAM' },
                   } as never)
                 }
+                accessibilityRole="button"
+                accessibilityLabel="הירשם כאן"
               >
                 <Text className="text-background-400 text-center text-base">
                   אין לך חשבון? <Text className="text-lime-400 font-semibold">הירשם כאן</Text>

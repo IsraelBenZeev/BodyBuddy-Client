@@ -73,6 +73,8 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
           <Pressable
             onPress={() => handleQuantityChange(1)}
             className="w-14 h-14 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
+            accessibilityRole="button"
+            accessibilityLabel={`הגדל כמות`}
           >
             <Ionicons name="add" size={28} color="#000" />
           </Pressable>
@@ -87,6 +89,8 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
           <Pressable
             onPress={() => handleQuantityChange(-1)}
             className="w-14 h-14 items-center justify-center bg-background-700 rounded-xl active:scale-95"
+            accessibilityRole="button"
+            accessibilityLabel="הפחת כמות"
           >
             <Ionicons name="remove" size={28} color="#fff" />
           </Pressable>
@@ -98,12 +102,16 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
             <Pressable
               onPress={handleHalfUnit}
               className="flex-1 bg-background-700 rounded-xl py-2 items-center border border-white/5"
+              accessibilityRole="button"
+              accessibilityLabel={`חצי ${unitLabel}`}
             >
               <Text className="text-gray-400 text-xs font-bold">½ {unitLabel}</Text>
             </Pressable>
             <Pressable
               onPress={() => setQuantity(1)}
               className="flex-1 bg-background-700 rounded-xl py-2 items-center border border-white/5"
+              accessibilityRole="button"
+              accessibilityLabel="איפוס כמות"
             >
               <Text className="text-gray-400 text-xs font-bold">איפוס</Text>
             </Pressable>
@@ -150,6 +158,8 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
           <Pressable
             onPress={onBack}
             className="bg-background-700 h-16 rounded-2xl items-center justify-center border border-white/5"
+            accessibilityRole="button"
+            accessibilityLabel="חזור"
           >
             <Text className="text-gray-400 font-bold">חזור</Text>
           </Pressable>
@@ -160,6 +170,8 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
             disabled={isPending}
             style={({ pressed }) => [{ opacity: pressed || isPending ? 0.8 : 1 }]}
             className="bg-lime-500 h-16 rounded-2xl items-center justify-center shadow-lg shadow-lime-500/20"
+            accessibilityRole="button"
+            accessibilityLabel={submitLabel}
           >
             <Text className="text-black text-lg font-black">
               {isPending ? 'מעדכן...' : submitLabel}

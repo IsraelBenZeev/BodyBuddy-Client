@@ -22,6 +22,7 @@ const Button = ({ text, onPress, icon }: { text: string, onPress: () => void, ic
                 haptic="medium"
                 onPress={onPress}
                 className="p-2 rounded-full bg-background-900"
+                accessibilityLabel={text}
             >
                 {icon}
             </AppButton>
@@ -68,6 +69,7 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
                     <AppButton
                         animationType="opacity"
                         haptic="medium"
+                        accessibilityLabel="אשר מחיקה"
                         onPress={() => deleteWorkoutPlanMutation(plan?.id as string)}>
                         <View className={`flex-row items-center order  rounded-full p-2 ${deletePending ? 'opacity-50 ' : 'border border-lime-500'}`}>
                             {deletePending ? <Loading size="small" /> : <AntDesign name="check" size={16} color={colors.lime[500]} />}
@@ -76,6 +78,7 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
                     <AppButton
                         animationType="opacity"
                         haptic="medium"
+                        accessibilityLabel="בטל מחיקה"
                         onPress={() => setIsShowButtonOkDelete(false)}>
                         <View className="flex-row items-center  rounded-full p-2 border border-red-500">
                             <AntDesign name="close" size={16} color="red" />

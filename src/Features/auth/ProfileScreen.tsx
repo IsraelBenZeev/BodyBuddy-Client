@@ -253,6 +253,8 @@ export default function ProfileScreen() {
                 onPress={() => router.push('/UserSetup')}
                 style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
                 className="bg-lime-500 h-16 rounded-[24px] flex-row-reverse items-center justify-center shadow-md"
+                accessibilityRole="button"
+                accessibilityLabel="עריכת פרטים"
               >
                 <Ionicons name="create" size={20} color="black" />
                 <Text className="text-black font-black text-lg mr-2">עריכת פרטים</Text>
@@ -262,6 +264,8 @@ export default function ProfileScreen() {
                 onPress={handleLogout}
                 style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
                 className="h-16 rounded-[24px] flex-row-reverse items-center justify-center border border-white/10 mt-2"
+                accessibilityRole="button"
+                accessibilityLabel="התנתקות מהחשבון"
               >
                 <Text className="text-red-500 font-bold text-base">
                   {loading ? 'מתנתק...' : 'התנתקות מהחשבון'}

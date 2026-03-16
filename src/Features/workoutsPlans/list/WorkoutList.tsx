@@ -51,6 +51,7 @@ const WorkoutList = () => {
             haptic="light"
             onPress={() => router.push('/favorites')}
             className="bg-zinc-800 px-4 py-3 rounded-2xl border border-zinc-700 flex-row items-center gap-2"
+            accessibilityLabel="תרגילים מועדפים"
           >
             <Text className="text-lime-500 font-semibold text-sm">תרגילים מועדפים</Text>
             <Ionicons name="star-outline" size={22} color={colors.lime[500]} />
@@ -88,6 +89,7 @@ const WorkoutList = () => {
               animationType="opacity"
               onPress={handleCreateNew}
               className="bg-lime-500 items-center justify-center rounded-full w-16 h-16 shadow-2xl"
+              accessibilityLabel="צור אימון חדש"
               style={{
                 elevation: 10,
                 shadowColor: colors.lime[500],

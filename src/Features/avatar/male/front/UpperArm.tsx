@@ -9,7 +9,7 @@ interface UpperArmProps {
 export const UpperArms = ({ isSelected, handleTogglePart }: UpperArmProps) => {
   const bodyPart: BodyPart = 'upper arms';
   return (
-    <G id="upper arms">
+    <G id="upper arms" accessible={true} accessibilityLabel={`יד עליונה - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected(bodyPart) }}>
       <Path
         d="M253.7 454.8C244.7 488.1 210.2 562.4 209.7 564.1C208.3 568.4 211 574 214.5 576.6C220 580.6 225.8 572.1 228.7 568.5C248.7 543.8 266.4 497.4 269.2 486C272.6 472.4 283.3 453.1 279 430.2C274.7 407.3 270.7 396.5 268.8 399C266.2 402.2 265.7 409 264.7 412.8C262 423.2 260.6 434 257.6 444.2C256.6 447.8 254.8 451.2 253.8 454.8H253.7Z"
         fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}

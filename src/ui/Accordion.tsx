@@ -85,6 +85,8 @@ const Accordion = ({ title, children, defaultOpen = false, isOpen: controlledIsO
         activeOpacity={0.7}
         onPress={toggleAccordion}
         className="flex-row items-center justify-between p-4"
+        accessibilityRole="button"
+        accessibilityState={{ expanded: isOpen }}
       >
         {/* כותרת - יכולה להיות מורכבת מ-JSX */}
         <View className="flex-1 mr-4">{title}</View>

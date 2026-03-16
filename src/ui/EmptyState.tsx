@@ -33,6 +33,7 @@ const EmptyState = ({ icon, title, description, action }: EmptyStateProps) => {
           animationType="opacity"
           onPress={action.onPress}
           className="bg-lime-500 flex-row items-center px-8 py-4 rounded-2xl"
+          accessibilityLabel={action.label}
         >
           <Text className="text-background-900 font-bold text-lg">
             {action.label}

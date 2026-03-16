@@ -148,6 +148,8 @@ const NutritionScreen = () => {
         <Pressable
           onPress={() => setShowOptions(true)}
           className="absolute left-5 right-5 flex-row items-center justify-center gap-2 rounded-full bg-lime-500 py-4 active:opacity-90"
+          accessibilityRole="button"
+          accessibilityLabel="הוספת מאכל או ארוחה"
           style={{
             bottom: 90,
             shadowColor: colors.lime[500],

@@ -11,7 +11,7 @@ interface UpperLegProps {
 export const UpperLeg = ({ isSelected, handleTogglePart }: UpperLegProps) => {
   const bodyPart = 'upper legs';
   return (
-    <G id="upper legs">
+    <G id="upper legs" accessible={true} accessibilityLabel={`רגל עליונה - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected(bodyPart) }}>
       <Path
         fillRule="evenodd"
         clipRule="evenodd"

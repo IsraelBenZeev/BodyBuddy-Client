@@ -50,6 +50,8 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
                                         haptic="medium"
                                         activeOpacity={0.7}
                                         onPress={() => handleToggle(day)}
+                                        accessibilityLabel={`יום ${day}`}
+                                        accessibilityState={{ selected: isSelected }}
                                         className={`
                                         w-10 h-10 items-center justify-center rounded-full
                                         ${isSelected ? "bg-lime-500" : "bg-transparent"}

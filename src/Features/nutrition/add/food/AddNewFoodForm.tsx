@@ -233,6 +233,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
             key={s}
             onPress={() => setFoodName(s)}
             className="bg-background-800 border border-background-600 rounded-full px-3 py-1.5"
+            accessibilityRole="button"
+            accessibilityLabel={s}
           >
             <Text className="text-background-300 text-sm">{s}</Text>
           </Pressable>
@@ -259,6 +261,9 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               ? 'border-lime-500 bg-lime-500/10'
               : 'border-background-600 bg-background-800'
           }`}
+          accessibilityRole="button"
+          accessibilityLabel="מדידה בגרמים"
+          accessibilityState={{ selected: measurementType === 'grams' }}
         >
           <View
             className={`w-12 h-12 rounded-xl items-center justify-center ${
@@ -292,6 +297,9 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               ? 'border-lime-500 bg-lime-500/10'
               : 'border-background-600 bg-background-800'
           }`}
+          accessibilityRole="button"
+          accessibilityLabel="מדידה ביחידות"
+          accessibilityState={{ selected: measurementType === 'units' }}
         >
           <View
             className={`w-12 h-12 rounded-xl items-center justify-center ${
@@ -464,6 +472,9 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                   ? 'border-lime-500 bg-lime-500/15'
                   : 'border-background-600 bg-background-800'
               }`}
+              accessibilityRole="button"
+              accessibilityLabel={cat.label}
+              accessibilityState={{ selected: isSelected }}
             >
               <MaterialCommunityIcons
                 name={cat.icon}
@@ -486,6 +497,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
       <Pressable
         onPress={() => { setSelectedCategoryId(null); setStep(5); }}
         className="border border-background-600 rounded-2xl py-3.5 items-center"
+        accessibilityRole="button"
+        accessibilityLabel="דלג על קטגוריה"
       >
         <Text className="text-background-300 font-bold text-base">דלג על קטגוריה</Text>
       </Pressable>
@@ -578,6 +591,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               <Pressable
                 onPress={handleBack}
                 className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="חזרה"
               >
                 <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
               </Pressable>
@@ -587,6 +602,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl h-14 ${
                   canProceed ? 'bg-lime-500' : 'bg-background-700'
                 }`}
+                accessibilityRole="button"
+                accessibilityLabel="המשך"
               >
                 <Text
                   className={`font-black text-base ${
@@ -602,6 +619,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               <Pressable
                 onPress={handleBack}
                 className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="חזרה"
               >
                 <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
               </Pressable>
@@ -611,6 +630,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl h-14 ${
                   isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'
                 }`}
+                accessibilityRole="button"
+                accessibilityLabel="שמור והוסף לארוחה"
               >
                 <MaterialCommunityIcons
                   name="silverware-fork-knife"
@@ -627,6 +648,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               <Pressable
                 onPress={handleBack}
                 className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="חזרה"
               >
                 <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
               </Pressable>
@@ -636,6 +659,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl border border-white/10 h-14 ${
                   isPending ? 'bg-background-700 opacity-50' : 'bg-background-800'
                 }`}
+                accessibilityRole="button"
+                accessibilityLabel="שמור"
               >
                 <MaterialCommunityIcons name="content-save-outline" size={20} color={colors.white} />
                 <Text className="text-white font-black text-sm mr-2">
@@ -648,6 +673,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl h-14 ${
                   isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'
                 }`}
+                accessibilityRole="button"
+                accessibilityLabel="שמור והוסף ליומן"
               >
                 <MaterialCommunityIcons
                   name="notebook-plus-outline"
@@ -729,6 +756,8 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 className={`rounded-2xl h-14 items-center justify-center ${
                   isPending ? 'bg-background-700 opacity-50' : 'bg-lime-500'
                 }`}
+                accessibilityRole="button"
+                accessibilityLabel="הוסף ליומן"
               >
                 <Text className="text-background-900 font-black text-base">
                   {isPending ? 'שומר...' : 'הוסף ליומן'}

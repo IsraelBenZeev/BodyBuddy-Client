@@ -192,6 +192,8 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             onPress={previewPDF}
             disabled={isExporting}
             className="flex-row items-center gap-1.5 bg-background-800 px-3 py-2 rounded-xl border border-gray-700"
+            accessibilityRole="button"
+            accessibilityLabel="תצוגה מקדימה של PDF"
           >
             <Eye size={15} color={colors.background[400]} />
             <Text className="text-gray-400 font-bold text-sm">תצוגה מקדימה</Text>
@@ -201,6 +203,8 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             onPress={exportPDF}
             disabled={isExporting}
             className="flex-row items-center gap-1.5 bg-lime-500/10 px-3 py-2 rounded-xl border border-lime-500/30"
+            accessibilityRole="button"
+            accessibilityLabel="שמור PDF"
           >
             {isExporting
               ? <ActivityIndicator size="small" color={colors.lime[500]} />
@@ -224,6 +228,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
               })}
               animationType="opacity"
               haptic="medium"
+              accessibilityLabel={`הצג תרגיל: ${isLoadingExercises ? '' : (exerciseInfo?.name_he ?? '')}`}
             >
               <View className="flex-row items-center justify-between bg-background-800 px-4 py-3 border-b border-gray-800">
                 <View className="bg-white/10 rounded-lg overflow-hidden border border-gray-700">

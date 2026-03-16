@@ -23,7 +23,8 @@ const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
             animationType='opacity'
             haptic='medium'
             onPress={() => router.back()}
-            className="bg-white/10 p-2 rounded-full">
+            className="bg-white/10 p-2 rounded-full"
+            accessibilityLabel="סגור">
             <Ionicons name="close" size={20} color={colors.lime[400]} />
           </AppButton>
         </View>

@@ -81,6 +81,8 @@ const AddOptionsSheet = ({
                   key={opt.key}
                   onPress={handlers[opt.key]}
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={opt.label}
                   className={`flex-row-reverse items-center p-4 rounded-2xl border ${
                     opt.highlight
                       ? 'border-lime-500/30 bg-lime-500/10'
@@ -101,7 +103,7 @@ const AddOptionsSheet = ({
               ))}
             </View>
 
-            <Pressable onPress={onClose} className="mt-4 h-12 items-center justify-center">
+            <Pressable onPress={onClose} className="mt-4 h-12 items-center justify-center" accessibilityRole="button" accessibilityLabel="ביטול">
               <Text className="text-gray-400 font-bold">ביטול</Text>
             </Pressable>
           </View>

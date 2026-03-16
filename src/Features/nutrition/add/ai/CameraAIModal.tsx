@@ -140,6 +140,8 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                 <Pressable
                   onPress={handleCapture}
                   className="bg-lime-500 rounded-2xl h-14 items-center justify-center flex-row gap-2"
+                  accessibilityRole="button"
+                  accessibilityLabel="צלם ארוחה"
                 >
                   <Ionicons name="camera" size={20} color="#000" />
                   <Text className="text-black font-black text-base">צלם ארוחה</Text>
@@ -147,11 +149,13 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                 <Pressable
                   onPress={handlePickFromGallery}
                   className="mt-3 bg-background-800 border border-white/10 rounded-2xl h-14 items-center justify-center flex-row gap-2"
+                  accessibilityRole="button"
+                  accessibilityLabel="בחר מהגלריה"
                 >
                   <Ionicons name="images-outline" size={20} color="#fff" />
                   <Text className="text-white font-bold text-base">בחר מהגלריה</Text>
                 </Pressable>
-                <Pressable onPress={handleClose} className="mt-3 h-12 items-center justify-center">
+                <Pressable onPress={handleClose} className="mt-3 h-12 items-center justify-center" accessibilityRole="button" accessibilityLabel="ביטול">
                   <Text className="text-gray-400 font-bold">ביטול</Text>
                 </Pressable>
               </>
@@ -163,6 +167,8 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                 <Pressable
                   onPress={handleCancel}
                   className="mt-6 bg-background-800 border border-white/10 rounded-2xl h-12 w-full items-center justify-center"
+                  accessibilityRole="button"
+                  accessibilityLabel="בטל ניתוח"
                 >
                   <Text className="text-gray-400 font-bold">ביטול</Text>
                 </Pressable>
@@ -181,10 +187,12 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                 <Pressable
                   onPress={handleRetry}
                   className="bg-lime-500 rounded-2xl h-14 items-center justify-center"
+                  accessibilityRole="button"
+                  accessibilityLabel="נסה שוב"
                 >
                   <Text className="text-black font-black text-base">נסה שוב</Text>
                 </Pressable>
-                <Pressable onPress={handleClose} className="mt-3 h-12 items-center justify-center">
+                <Pressable onPress={handleClose} className="mt-3 h-12 items-center justify-center" accessibilityRole="button" accessibilityLabel="ביטול">
                   <Text className="text-gray-400 font-bold">ביטול</Text>
                 </Pressable>
               </>

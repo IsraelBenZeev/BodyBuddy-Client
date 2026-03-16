@@ -128,6 +128,7 @@ const AppButton = ({
 
     return (
         <AnimatedPressable
+            accessibilityRole="button"
             {...props}
             onPress={onPress}
             onPressIn={handlePressIn}

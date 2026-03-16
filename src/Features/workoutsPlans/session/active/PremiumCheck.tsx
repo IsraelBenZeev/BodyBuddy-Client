@@ -62,6 +62,9 @@ const PremiumCheck = ({ checked, onPress }: Props) => {
             onPress={handlePress}
             style={[animatedStyle]}
             className="w-9 h-9 rounded-xl border-2 items-center justify-center"
+            accessibilityRole="checkbox"
+            accessibilityLabel={checked ? 'סט הושלם' : 'סמן סט כהושלם'}
+            accessibilityState={{ checked }}
         >
             {checked && (
                 <Animated.View

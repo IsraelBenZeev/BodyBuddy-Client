@@ -8,7 +8,7 @@ interface UpperLegProps {
 const UpperLeg = ({ isSelected, handleTogglePart }: UpperLegProps) => {
   const bodyPart: BodyPart = 'upper legs';
   return (
-    <G id="upper legs">
+    <G id="upper legs" accessible={true} accessibilityLabel={`רגל עליונה - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected(bodyPart) }}>
       <Path
         d="M373.6 953.8C382.4 961.6 406.9 1004.8 399.1 1046.7C391.3 1088.6 411.2 1019.8 415.7 992.9C419.2 971.6 421.4 955.3 417.4 951.8C411.1 946.3 373.6 953.8 373.6 953.8Z"
         fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}

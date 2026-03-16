@@ -108,6 +108,8 @@ const Foods = ({ userId, date, onClose }: Props) => {
               onPress={() => handleFoodSelect(item)}
               style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
               className="bg-background-800 border border-white/5 rounded-3xl overflow-hidden shadow-sm"
+              accessibilityRole="button"
+              accessibilityLabel={`${item.name} - בחר מאכל`}
             >
               <View className="flex-row-reverse items-center p-4">
                 {/* אייקון קטגוריה משודרג */}
@@ -149,6 +151,8 @@ const Foods = ({ userId, date, onClose }: Props) => {
                       }}
                       hitSlop={8}
                       className="bg-red-500/10 rounded-xl p-2 ml-2"
+                      accessibilityRole="button"
+                      accessibilityLabel={`מחק ${item.name}`}
                     >
                       <Ionicons name="trash-outline" size={16} color="#ef4444" />
                     </Pressable>
@@ -199,6 +203,8 @@ const Foods = ({ userId, date, onClose }: Props) => {
             }}
             className="bg-lime-500 rounded-2xl h-16 flex-row-reverse items-center justify-center"
             style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+            accessibilityRole="button"
+            accessibilityLabel="הוסף מזון חדש למזווה"
           >
             <Ionicons name="add-circle" size={24} color="#000" />
             <Text className="text-black font-black text-base mr-2">הוסף מזון חדש למזווה</Text>

@@ -76,6 +76,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
                 }}
                 haptic="medium"
                 animationType="both"
+                accessibilityLabel={`הצג פרטי ${getSessionTitle(session.started_at)}`}
                 className="bg-background-800 p-2 rounded-full ml-4">
                 <ChevronRight size={20} color={colors.lime[500]} />
             </AppButton>

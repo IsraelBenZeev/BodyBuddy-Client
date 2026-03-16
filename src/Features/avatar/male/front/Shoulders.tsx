@@ -9,7 +9,7 @@ interface ShouldersProps {
 export const Shoulders = ({ isSelected, handleTogglePart }: ShouldersProps) => {
   const bodyPart: BodyPart = 'shoulders';
   return (
-    <G id="shoulders">
+    <G id="shoulders" accessible={true} accessibilityLabel={`כתפיים - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected(bodyPart) }}>
       <Path
         d="M317.3 309.5C312.9 312.4 306.9 313.7 302.1 315.9C288 322.4 275 329.4 275.1 346.7C275.2 360.1 276.8 374.7 269.5 386C264.9 393.2 258.8 399.2 253.3 405.8C247.9 412.3 244.8 418.2 235.6 413.4C214.2 402.2 199.4 380.2 201.3 355.5C202.3 341.9 208.5 328.7 218.2 319.1C229 308.4 239.4 297.9 253.4 291.2C272.5 281.9 293.7 285.4 310.9 297.2C317.1 301.5 317.3 309.5 317.3 309.5Z"
         fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}

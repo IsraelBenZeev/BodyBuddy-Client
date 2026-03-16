@@ -24,7 +24,9 @@ const Header = ({ workoutPlan, }: Props) => {
                 <AppButton
                     haptic="light"
                     animationType="opacity"
-                    onPress={handleClose} className="p-2">
+                    onPress={handleClose}
+                    accessibilityLabel="סגור"
+                    className="p-2">
                     <CircleX size={24} color={colors.lime[500]} strokeWidth={2} />
                 </AppButton>
             </View>

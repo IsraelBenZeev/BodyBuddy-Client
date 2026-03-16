@@ -60,6 +60,8 @@ export interface HoldButtonProps {
   hapticOnComplete?: HoldButtonHapticType;
   /** משך האנימציה לאיפוס כשמשחררים (מילי־שניות, ברירת מחדל: 200) */
   resetDurationMs?: number;
+  /** תיאור לקורא מסך */
+  accessibilityLabel?: string;
   children: React.ReactNode;
 }
 
@@ -100,6 +102,7 @@ const HoldButton = ({
   overlayClassName,
   hapticOnComplete = 'success',
   resetDurationMs = DEFAULT_RESET_MS,
+  accessibilityLabel,
   children,
 }: HoldButtonProps) => {
   const progress = useSharedValue(0);
@@ -150,6 +153,8 @@ const HoldButton = ({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       className={`overflow-hidden ${className}`}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
     >
       {fillVariant === 'fill-both-sides' ? (
         <View pointerEvents="none" style={fillContainerStyle}>

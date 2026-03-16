@@ -41,6 +41,8 @@ const ModalAddFoods = ({ visible, onClose, userId, date }: ModalAddFoodsProps) =
           <Pressable
             onPress={onClose}
             style={{ position: 'absolute' as const, left: 16, top: 12 }}
+            accessibilityRole="button"
+            accessibilityLabel="סגור"
           >
             <Ionicons name="close" size={24} color={colors.white} />
           </Pressable>

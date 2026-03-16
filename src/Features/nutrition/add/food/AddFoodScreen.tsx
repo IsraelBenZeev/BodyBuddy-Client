@@ -122,6 +122,8 @@ const AddFoodScreen = () => {
             onPress={() => router.back()}
             className="bg-background-800 w-10 h-10 rounded-xl items-center justify-center border border-white/10"
             hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="סגור"
           >
             <Ionicons name="close" size={20} color="#fff" />
           </Pressable>

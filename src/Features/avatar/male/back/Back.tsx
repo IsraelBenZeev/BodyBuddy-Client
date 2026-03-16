@@ -11,6 +11,9 @@ const Back = ({ isSelected, handleTogglePart }: BackProps) => {
   return (
     <G
       id="back"
+      accessible={true}
+      accessibilityLabel={`גב - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`}
+      accessibilityState={{ selected: isSelected(bodyPart) }}
     >
       <Path
         d="M323 284.6C336.2 298.5 351.1 353.1 359.6 381.9C369.4 415 376.5 435.5 402 477C419.2 504.9 418.1 523.1 421.8 520.2C426.9 463.9 438.6 310.2 418.9 294.1C399.1 278 392.6 280.9 370.6 278C348.7 275.1 323 284.6 323 284.6Z"

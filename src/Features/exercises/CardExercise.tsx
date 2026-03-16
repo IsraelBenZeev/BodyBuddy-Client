@@ -42,6 +42,8 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
       animationType="scale"
       haptic="medium"
       onPress={handleMainPress}
+      accessibilityLabel={mode === 'picker' ? `${item.name_he}${isSelected ? ', נבחר' : ''}` : item.name_he}
+      accessibilityState={mode === 'picker' ? { selected: isSelected } : undefined}
       // הסרנו צלליות מורכבות מה-className כדי למנוע קריסת Navigation
       className={`
         flex-row-reverse items-center mb-4 p-3 rounded-[24px] border-[1.5px]
@@ -77,7 +79,8 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
                 haptic="light"
                 onPress={() => toggleFavorite(item.exerciseId)}
                 className="bg-zinc-950/70 rounded-lg p-1"
-                hitSlop={10} // מגדיל את אזור הלחיצה בלי להגדיל את הכפתור
+                hitSlop={10}
+                accessibilityLabel={favorites.includes(item.exerciseId) ? 'הסר ממועדפים' : 'הוסף למועדפים'}
              >
                 {favorites.includes(item.exerciseId) ? <ButtonRemoveFavorit /> : <ButtonAddFavorit />}
              </AppButton>

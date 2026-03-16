@@ -191,6 +191,8 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
                             haptic='medium'
                             onPress={() => animateTo(index)}
                             className="flex-1 items-center justify-center z-10"
+                            accessibilityLabel={tab.title}
+                            accessibilityState={{ selected: activeTab === index }}
                         >
                             <Text className={`font-bold ${activeTab === index ? 'text-background-950' : 'text-gray-500'}`}>
                                 {tab.title}

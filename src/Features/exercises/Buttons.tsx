@@ -62,6 +62,7 @@ const Buttons = ({ exerciseId, exerciseName, exerciseName_he }: ButtonsProps) =>
                         haptic="medium"
                         onPress={btn.onPress}
                         className="flex-1 items-center gap-1"
+                        accessibilityLabel={btn.text}
                     >
                         <View style={styles.actionButtonInner}>{btn.icon}</View>
                         <Text className="text-zinc-500 text-[10px] font-medium">{btn.text}</Text>
@@ -81,6 +82,8 @@ const Buttons = ({ exerciseId, exerciseName, exerciseName_he }: ButtonsProps) =>
                     <Pressable
                         className="flex-1"
                         onPress={() => setIsShowListWorkoutsPlans(false)}
+                        accessibilityRole="button"
+                        accessibilityLabel="סגור"
                     />
                     {/* Content */}
                     <View style={styles.modalContent}>

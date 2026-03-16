@@ -94,6 +94,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
           hapticOnComplete="success"
           holdDurationMs={1500}
           resetDurationMs={200}
+          accessibilityLabel="התחל אימון - החזק לאישור"
         >
           <View className="flex-row justify-center items-center">
             <Text className="text-black font-black text-xl mr-2">התחל אימון</Text>

@@ -8,8 +8,10 @@ const ButtonBack = () => {
   return (
     <Pressable
       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-      className="bg-blue-500 py-2.5 px-5 rounded-lg self-start m-2.5"
+      className="bg-background-800 py-2.5 px-5 rounded-lg self-start m-2.5"
       onPress={() => router.back()}
+      accessibilityRole="button"
+      accessibilityLabel="חזור"
     >
       <CircleX size={36} strokeWidth={1.25} color={colors.lime[500]} />
     </Pressable>

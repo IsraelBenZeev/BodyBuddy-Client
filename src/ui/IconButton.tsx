@@ -5,15 +5,17 @@ interface IconButtonProps {
   text?: string;
   classNameText?: string;
   onPress?: () => void;
+  accessibilityLabel?: string;
 }
-const IconButton = ({ children, text, classNameText, onPress }: IconButtonProps) => {
+const IconButton = ({ children, text, classNameText, onPress, accessibilityLabel }: IconButtonProps) => {
   return (
     <AppButton
       animationType="opacity"
       haptic="medium"
       style={styles.button}
       className="gap-2 items-center w-[15%] h-10 justify-center rounded-lg"
-      onPress={onPress}>
+      onPress={onPress}
+      accessibilityLabel={accessibilityLabel ?? text}>
 
       {children}
       {text && <Text

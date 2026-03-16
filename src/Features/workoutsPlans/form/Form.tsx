@@ -161,6 +161,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
           onPress={handleSubmit(onSubmit)}
           activeOpacity={0.8}
           className="bg-lime-500 p-4 rounded-2xl items-center flex-row justify-center shadow-lg shadow-lime-500/20"
+          accessibilityLabel={mode === 'create' ? 'צור אימון חדש' : 'עדכן את האימון'}
         >
           <Text className="font-bold text-background-950 text-xl tracking-wide">{isPendingCreate ?
             <View className='flex-row items-center gap-2'>

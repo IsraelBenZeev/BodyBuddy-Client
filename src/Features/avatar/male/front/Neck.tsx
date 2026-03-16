@@ -7,7 +7,7 @@ interface NeckProps {
 }
 export const Neck = ({ isSelected, handleTogglePart }: NeckProps) => {
   return (
-    <G id="neck">
+    <G id="neck" accessible={true} accessibilityLabel={`צוואר - ${isSelected('neck') ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected('neck') }}>
       <Path
         d="M388.5 197.9C405 211.2 405.3 225.7 412.5 240.2C433.4 281.9 425.8 307.1 420.9 301.9C406.8 286.8 392.1 238.5 389.9 234.5C387.7 230.5 388.4 197.9 388.4 197.9H388.5Z"
         fill={isSelected('neck') ? colors.lime[600] : '#3F3F3F'}

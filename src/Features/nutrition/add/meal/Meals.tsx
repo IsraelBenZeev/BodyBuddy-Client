@@ -102,6 +102,8 @@ return (
         onPress={handleCreateFirstMeal}
         style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
         className="bg-background-800 border border-lime-500/30 rounded-2xl h-16 flex-row-reverse items-center justify-center"
+        accessibilityRole="button"
+        accessibilityLabel="צור ארוחה חדשה לשמירה"
       >
         <Ionicons name="add-circle" size={24} color="#84cc16" />
         <Text className="text-lime-500 font-black text-base mr-2">
@@ -155,6 +157,8 @@ function MealCard({
       onPress={onPress}
       style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
       className="bg-background-800 border border-white/5 rounded-3xl overflow-hidden shadow-sm"
+      accessibilityRole="button"
+      accessibilityLabel={`${meal.name_meal || 'ארוחה'} - בחר ארוחה`}
     >
       <View className="flex-row-reverse items-center p-4">
         {/* אייקון ארוחה מעוצב */}
@@ -192,6 +196,8 @@ function MealCard({
             }}
             hitSlop={8}
             className="bg-red-500/10 rounded-xl p-2 ml-2"
+            accessibilityRole="button"
+            accessibilityLabel={`מחק ${meal.name_meal || 'ארוחה'}`}
           >
             <Ionicons name="trash-outline" size={16} color="#ef4444" />
           </Pressable>

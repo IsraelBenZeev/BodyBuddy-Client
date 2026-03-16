@@ -8,7 +8,7 @@ interface LowerArmProps {
 const LowerArm = ({ isSelected, handleTogglePart }: LowerArmProps) => {
   const bodyPart: BodyPart = 'lower arms';
   return (
-    <G id="lower arms">
+    <G id="lower arms" accessible={true} accessibilityLabel={`יד תחתונה - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected(bodyPart) }}>
       <Path
         d="M172.4 589.6C173 596 174.1 602.4 174.2 609C174.4 621.6 170.2 647.7 182.1 656.7C192.7 646.7 196.9 629.1 196.1 615C195.6 606.9 188 601.6 183.1 595.8C179.3 591.4 175.7 586.9 172.1 582.4C172.1 584.8 172.2 587.3 172.5 589.7L172.4 589.6Z"
         fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}

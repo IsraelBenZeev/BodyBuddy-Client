@@ -126,6 +126,8 @@ function FoodEntryRow({ entry, onDelete, isDeleting }: FoodEntryRowProps) {
           onPress={() => onDelete(entry.id)}
           disabled={isDeleting}
           className="bg-red-500/10 rounded-xl p-2"
+          accessibilityRole="button"
+          accessibilityLabel={`מחק ${entry.food_name}`}
         >
           <Ionicons name="trash-outline" size={18} color={colors.red[500]} />
         </Pressable>
@@ -209,6 +211,8 @@ function GroupBlockCard({
             onPress={() => onDeleteGroup(groupId)}
             disabled={isDeletingGroup}
             className="bg-red-500/20 rounded-xl p-2.5 mr-2 flex-row-reverse items-center"
+            accessibilityRole="button"
+            accessibilityLabel={`מחק ארוחה ${groupName}`}
           >
             <Ionicons name="trash-outline" size={18} color={colors.red[500]} />
             <Text className="text-red-400 text-[10px] font-bold mt-0.5">מחק ארוחה</Text>

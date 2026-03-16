@@ -133,6 +133,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
                 haptic="medium"
                 animationType="opacity"
                 className='bg-lime-500 px-3 py-2 rounded-2xl items-center'
+                accessibilityLabel={`הצג אימון: ${plan.title}`}
                 onPress={() => {
                   router.push({
                     pathname: '/workout_plan/[paramse]',
@@ -148,9 +149,9 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
                 haptic="medium"
                 animationType="opacity"
                 className='items-center justify-center border border-lime-500 rounded-full p-1'
+                accessibilityLabel="אפשרויות"
                 onPress={() => {
                   if (isActive) {
-                    // קורא לפונקציה אחת בלבד שמנהלת הכל!
                     handlePress();
                   }
                 }}>

@@ -44,6 +44,8 @@ export default function NotSignedInMessage({
             } as never)
           }
           className="bg-lime-500 px-6 py-3 rounded-2xl"
+          accessibilityRole="button"
+          accessibilityLabel="התחבר"
         >
           <Text className="text-black font-bold text-base">התחבר</Text>
         </Pressable>
@@ -55,6 +57,8 @@ export default function NotSignedInMessage({
             } as never)
           }
           className="bg-background-700 border border-background-600 px-6 py-3 rounded-2xl"
+          accessibilityRole="button"
+          accessibilityLabel="הירשם"
         >
           <Text className="text-lime-400 font-bold text-base">הירשם</Text>
         </Pressable>

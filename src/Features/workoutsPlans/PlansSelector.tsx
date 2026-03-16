@@ -72,6 +72,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                     haptic="light"
                     animationType="both"
                     className="w-9 h-9 rounded-full bg-background-800 items-center justify-center border border-zinc-800"
+                    accessibilityLabel="סגור"
                 >
                     <X color={colors.background[300]} strokeWidth={2.5} size={16} />
                 </AppButton>
@@ -133,6 +134,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                                 haptic="light"
                                 onPress={handleGoToCreate}
                                 className="bg-lime-500 flex-row items-center px-7 py-3.5 rounded-2xl"
+                                accessibilityLabel="עבור ליצירת תוכנית אימון"
                             >
                                 <Text className="text-background-900 font-bold text-base mr-2">
                                     עבור ליצירת תוכנית

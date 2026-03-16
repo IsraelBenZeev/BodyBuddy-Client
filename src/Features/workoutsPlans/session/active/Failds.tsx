@@ -83,6 +83,7 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                                     className="bg-red-500/10  py-1 px-2  w-full rounded-2xl flex-row justify-center items-center"
                                     haptic="medium"
                                     animationType="both"
+                                    accessibilityLabel={`מחק סט ${index + 1}`}
                                 >
                                     <Text className="text-red-500 font-bold ml-2">מחק</Text>
                                     {/* <Trash2 size={24} color="red" /> */}
@@ -97,6 +98,7 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                 className="bg-lime-500/10 border border-lime-500/50 py-3 rounded-2xl flex-row justify-center items-center"
                 haptic="medium"
                 animationType="both"
+                accessibilityLabel="הוסף סט"
             >
                 {/* <MaterialCommunityIcons name="plus" size={20} color="#bef264" /> */}
                 <Text className="text-lime-500 font-bold ml-2">הוסף סט</Text>

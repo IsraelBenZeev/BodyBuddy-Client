@@ -23,6 +23,8 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: F
           onPress={() => setSelectedFilter('all')}
           className={`px-5 py-2 rounded-full border ${selectedFilter === 'all' ? 'bg-white border-white' : 'bg-transparent border-gray-500'
           }`}
+          accessibilityLabel="הצג הכל"
+          accessibilityState={{ selected: selectedFilter === 'all' }}
           >
           <Text className={selectedFilter === 'all' ? 'text-black font-bold' : 'text-white'}>
             הכל
@@ -39,6 +41,8 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: F
             ? 'bg-lime-500 border-lime-500'
             : 'bg-background-1000 border-background-100'
           }`}
+          accessibilityLabel={partsBodyHebrew[part] || part}
+          accessibilityState={{ selected: selectedFilter === part }}
           >
             <Text className="text-white font-medium">{partsBodyHebrew[part] || part}</Text>
           </AppButton>
@@ -49,6 +53,7 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: F
           haptic='medium'
             className="bg-zinc-700 w-10 h-10 rounded-full items-center justify-center border border-zinc-600"
             onPress={() => router.back()}
+            accessibilityLabel="הוסף אזורי גוף"
           >
             <Text className="text-white text-lg">+</Text>
           </AppButton>

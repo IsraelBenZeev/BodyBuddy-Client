@@ -16,6 +16,9 @@ const Card = ({ plan, selectedIds, toggleSelection, isAlreadyAdded }: Props) => 
     return (
         <Pressable
             onPress={() => !isAlreadyAdded && plan.id && toggleSelection(plan.id)}
+            accessibilityRole="button"
+            accessibilityLabel={isAlreadyAdded ? `${plan.title} - כבר קיים` : plan.title}
+            accessibilityState={{ selected: isSelected, disabled: !!isAlreadyAdded }}
             style={{
                 opacity: isAlreadyAdded ? 0.4 : 1,
                 shadowColor: isSelected ? colors.lime[500] : 'transparent',

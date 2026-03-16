@@ -12,6 +12,9 @@ export const Neck = ({ isSelected, handleTogglePart }: NeckProps) => {
   return (
     <G
       id="neck"
+      accessible={true}
+      accessibilityLabel={`צוואר - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`}
+      accessibilityState={{ selected: isSelected(bodyPart) }}
     >
       <Path
         fillRule="evenodd"

@@ -151,6 +151,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                     haptic="medium"
                     animationType="both"
                     disabled={isPendingCreateSession || isPendingCreateExerciseLog}
+                    accessibilityLabel="סיים אימון"
                 >
                     {isPendingCreateSession || isPendingCreateExerciseLog ? (
                         <Loading size="small" color={colors.background[900]}/>

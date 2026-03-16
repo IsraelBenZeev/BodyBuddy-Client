@@ -56,10 +56,10 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
           {item.name}
         </Text>
         <View className="flex-row gap-2">
-          <Pressable onPress={() => onEdit(index)} className="bg-background-700 p-2 rounded-xl" hitSlop={10}>
+          <Pressable onPress={() => onEdit(index)} className="bg-background-700 p-2 rounded-xl" hitSlop={10} accessibilityRole="button" accessibilityLabel={`ערוך ${item.name}`}>
             <Ionicons name="pencil-outline" size={16} color="#a3a3a3" />
           </Pressable>
-          <Pressable onPress={() => onRemove(index)} className="bg-red-500/10 p-2 rounded-xl" hitSlop={10}>
+          <Pressable onPress={() => onRemove(index)} className="bg-red-500/10 p-2 rounded-xl" hitSlop={10} accessibilityRole="button" accessibilityLabel={`מחק ${item.name}`}>
             <Ionicons name="trash-outline" size={16} color="#f87171" />
           </Pressable>
         </View>
@@ -446,6 +446,8 @@ const MealBuilderScreen = () => {
             onPress={() => router.back()}
             className="bg-background-800 w-10 h-10 rounded-xl items-center justify-center border border-white/10"
             hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="סגור"
           >
             <Ionicons name="close" size={20} color="#fff" />
           </Pressable>
@@ -499,6 +501,8 @@ const MealBuilderScreen = () => {
           <Pressable
             onPress={openAddModal}
             className="bg-background-800 border border-dashed border-white/20 rounded-2xl py-4 flex-row-reverse items-center justify-center"
+            accessibilityRole="button"
+            accessibilityLabel="הוסף מאכל לארוחה"
           >
             <Ionicons name="add-circle" size={22} color="#84cc16" />
             <Text className="text-lime-500 font-bold text-base mr-2">הוסף מאכל לארוחה</Text>
@@ -511,6 +515,8 @@ const MealBuilderScreen = () => {
               className={`rounded-2xl h-14 flex-row-reverse items-center justify-center border border-white/10 ${
                 canSave ? 'bg-background-800' : 'bg-background-700 opacity-50'
               }`}
+              accessibilityRole="button"
+              accessibilityLabel="הוסף לרשימה בלבד"
             >
               {savingMode === 'list' && isSaving ? (
                 <ActivityIndicator color="#fff" size="small" />
@@ -527,6 +533,8 @@ const MealBuilderScreen = () => {
               className={`rounded-2xl h-16 flex-row-reverse items-center justify-center shadow-lg ${
                 canSave ? 'bg-lime-500 shadow-lime-500/20' : 'bg-background-700 opacity-50'
               }`}
+              accessibilityRole="button"
+              accessibilityLabel="הוסף לרשימה וליומן"
             >
               {savingMode === 'list-and-journal' && (isSaving || isAddingToJournal) ? (
                 <ActivityIndicator color="#000" size="small" />
@@ -617,6 +625,9 @@ const MealBuilderScreen = () => {
                           ? 'bg-lime-500/10 border-lime-500'
                           : 'bg-background-800 border-background-600'
                       }`}
+                      accessibilityRole="button"
+                      accessibilityLabel="מדידה בגרמים"
+                      accessibilityState={{ selected: editDraft?.measurement_type === 'grams' }}
                     >
                       <Text className={editDraft?.measurement_type === 'grams' ? 'text-lime-400 font-bold text-sm' : 'text-background-400 text-sm'}>
                         בגרמים
@@ -629,6 +640,9 @@ const MealBuilderScreen = () => {
                           ? 'bg-lime-500/10 border-lime-500'
                           : 'bg-background-800 border-background-600'
                       }`}
+                      accessibilityRole="button"
+                      accessibilityLabel="מדידה ביחידות"
+                      accessibilityState={{ selected: editDraft?.measurement_type === 'units' }}
                     >
                       <Text className={editDraft?.measurement_type === 'units' ? 'text-lime-400 font-bold text-sm' : 'text-background-400 text-sm'}>
                         ביחידות
@@ -749,6 +763,8 @@ const MealBuilderScreen = () => {
                   <Pressable
                     onPress={confirmEditItem}
                     className="bg-lime-500 rounded-2xl h-14 items-center justify-center"
+                    accessibilityRole="button"
+                    accessibilityLabel="שמור שינויים"
                   >
                     <Text className="text-black font-black text-base">שמור</Text>
                   </Pressable>

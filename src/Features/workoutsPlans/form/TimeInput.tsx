@@ -63,10 +63,10 @@ const TimeInput = ({ control, name, isPendingCreate }: Props) => {
                                 <View className='bg-background-800 p-4 rounded-t-2xl'>
 
                                     <View className="flex-row justify-between mb-4 px-3">
-                                        <Pressable onPress={handleCancel}>
+                                        <Pressable onPress={handleCancel} accessibilityRole="button" accessibilityLabel="ביטול">
                                             <Text className="text-red-600 text-lg">ביטול</Text>
                                         </Pressable>
-                                        <Pressable onPress={handleConfirm}>
+                                        <Pressable onPress={handleConfirm} accessibilityRole="button" accessibilityLabel="אישור בחירת זמן">
                                             <Text className="text-lime-500 text-lg font-bold">אישור</Text>
                                         </Pressable>
                                     </View>

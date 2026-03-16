@@ -12,6 +12,9 @@ export const UpperLeg = ({ isSelected, handleTogglePart }: UpperLegProps) => {
   return (
     <G
       id="upper legs"
+      accessible={true}
+      accessibilityLabel={`רגל עליונה - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`}
+      accessibilityState={{ selected: isSelected(bodyPart) }}
     >
       <Path
         fillRule="evenodd"

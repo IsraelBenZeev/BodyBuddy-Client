@@ -12,6 +12,9 @@ export const Back = ({ isSelected, handleTogglePart }: BackProps) => {
   return (
     <G
       id="back"
+      accessible={true}
+      accessibilityLabel={`גב - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`}
+      accessibilityState={{ selected: isSelected(bodyPart) }}
     >
       <Path
         fillRule="evenodd"

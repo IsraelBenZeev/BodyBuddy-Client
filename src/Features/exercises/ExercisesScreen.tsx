@@ -131,6 +131,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                   onPress={() => setSearchQuery('')}
                   haptic="light"
                   animationType="opacity"
+                  accessibilityLabel="נקה חיפוש"
                 >
                   <Ionicons name="close-circle" size={18} color="#a3a3a3" />
                 </AppButton>
@@ -155,6 +156,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                     haptic="medium"
                     animationType="scale"
                     className="bg-red-500/10 px-4 py-2 rounded-xl border border-red-500/20"
+                    accessibilityLabel="נקה כל הבחירות"
                   >
                     <Text className="text-red-400 font-bold text-sm">נקה הכל</Text>
                   </AppButton>
@@ -192,6 +194,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 haptic="success"
                 onPress={() => router.back()}
                 className="bg-lime-500 w-full h-16 rounded-2xl items-center justify-center shadow-lime-500 shadow-offset-[0/10] shadow-opacity-30 shadow-radius-[20px] elevation-10"
+                accessibilityLabel="שמור וסיים"
               >
                 <Text className="text-zinc-950 font-bold text-lg">שמור וסיים</Text>
               </AppButton>
