@@ -1,7 +1,7 @@
 import { SessionDBType } from '@/src/types/session';
 import { WorkoutPlan } from '@/src/types/workout';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import { View as AnimatedView } from 'react-native-animatable';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -25,6 +25,8 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
 
   const { height } = useWindowDimensions();
   const [selectedSession, setSelectedSession] = useState<SessionDBType | null>(null);
+  const handleStartWorkout = useCallback(() => setIsStart(true), [setIsStart]);
+  const handleCloseSession = useCallback(() => setSelectedSession(null), []);
   useEffect(() => {
     if (selectedSession?.id) {
       setTimeout(() => {
@@ -80,7 +82,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
         className="absolute bottom-10 left-0 right-0 px-10"
       >
         {/* <AppButton
-          onPress={() => setIsStart(true)}
+          onPress={handleStartWorkout}
           className="bg-lime-500 w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl"
           haptic="medium"
           animationType="both"
@@ -89,7 +91,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
           <MaterialCommunityIcons name="play" size={28} color="black" />
         </AppButton> */}
         <HoldButton
-          onPress={() => setIsStart(true)}
+          onPress={handleStartWorkout}
           className="bg-lime-500 w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl"
           hapticOnComplete="success"
           holdDurationMs={1500}
@@ -110,7 +112,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
         minHeight="50%"
         maxHeight="90%"
         enablePanDownToClose={true}
-        onClose={() => setSelectedSession(null)}
+        onClose={handleCloseSession}
       >
         <SessionInformation sessionId={selectedSession?.id || ''} session={selectedSession} workoutPlanTitle={workoutPlan.title} />
       </ModalBottom>

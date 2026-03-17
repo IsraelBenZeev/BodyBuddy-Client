@@ -8,6 +8,7 @@ import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import React, { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface CardExerciseProps {
@@ -26,7 +27,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
   const isSelected = mode === 'picker' && isSelectedId;
 
   // פונקציית ניווט/בחירה מרכזית
-  const handleMainPress = () => {
+  const handleMainPress = useCallback(() => {
     if (mode === 'view') {
       router.push({
         pathname: '/exercise/[exerciseId]',
@@ -35,7 +36,11 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
     } else {
       toggleExercise(item.exerciseId);
     }
-  };
+  }, [mode, router, item.exerciseId, toggleExercise]);
+
+  const handleToggleFavorite = useCallback(() => {
+    toggleFavorite(item.exerciseId);
+  }, [toggleFavorite, item.exerciseId]);
 
   return (
     <AppButton
@@ -77,7 +82,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
              <AppButton
                 animationType="opacity"
                 haptic="light"
-                onPress={() => toggleFavorite(item.exerciseId)}
+                onPress={handleToggleFavorite}
                 className="bg-zinc-950/70 rounded-lg p-1"
                 hitSlop={10}
                 accessibilityLabel={favorites.includes(item.exerciseId) ? 'הסר ממועדפים' : 'הוסף למועדפים'}
@@ -137,7 +142,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
     </AppButton>
   );
 };
-export default CardExercise;
+export default React.memo(CardExercise);
 
 const styles = StyleSheet.create({
   exerciseCard: {

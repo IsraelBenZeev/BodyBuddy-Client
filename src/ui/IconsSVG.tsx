@@ -1,3 +1,4 @@
+import React from 'react';
 import { View } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 interface IconsSvgProps {
@@ -5,7 +6,7 @@ interface IconsSvgProps {
   color: string;
   className?: string;
 }
-export const IconFoodsTab = ({ size, color, className }: IconsSvgProps) => {
+export const IconFoodsTab = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -18,8 +19,8 @@ export const IconFoodsTab = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconUser = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconUser = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -32,8 +33,8 @@ export const IconUser = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconHome = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconHome = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -46,9 +47,9 @@ export const IconHome = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
+});
 
-export const IconsFitnessTools = ({ size, color, className }: IconsSvgProps) => {
+export const IconsFitnessTools = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 479" fill="none">
@@ -61,8 +62,8 @@ export const IconsFitnessTools = ({ size, color, className }: IconsSvgProps) => 
       </Svg>
     </View>
   );
-};
-export const IconTargetMuscle = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconTargetMuscle = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 448 440" fill="none">
@@ -75,8 +76,8 @@ export const IconTargetMuscle = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconSecondaryMuscle = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconSecondaryMuscle = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 472 400" fill="none">
@@ -89,8 +90,8 @@ export const IconSecondaryMuscle = ({ size, color, className }: IconsSvgProps) =
       </Svg>
     </View>
   );
-};
-export const IconDislikeBG = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconDislikeBG = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -103,8 +104,8 @@ export const IconDislikeBG = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconDislikeBorder = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconDislikeBorder = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -117,8 +118,8 @@ export const IconDislikeBorder = ({ size, color, className }: IconsSvgProps) => 
       </Svg>
     </View>
   );
-};
-export const IconlikeBG = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconlikeBG = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -131,8 +132,8 @@ export const IconlikeBG = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconlikeBorder = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconlikeBorder = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -145,8 +146,8 @@ export const IconlikeBorder = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconSearchGoogle = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconSearchGoogle = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -159,8 +160,8 @@ export const IconSearchGoogle = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconShare = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconShare = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -173,8 +174,8 @@ export const IconShare = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconAddToListFitness = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconAddToListFitness = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -187,8 +188,8 @@ export const IconAddToListFitness = ({ size, color, className }: IconsSvgProps) 
       </Svg>
     </View>
   );
-};
-export const IconSwithBody = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconSwithBody = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -201,8 +202,8 @@ export const IconSwithBody = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
-export const IconAddToList = ({ size, color, className }: IconsSvgProps) => {
+});
+export const IconAddToList = React.memo(({ size, color, className }: IconsSvgProps) => {
   return (
     <View className={className ? className : ''}>
       <Svg width={size} height={size} viewBox="0 0 512 488" fill="none">
@@ -215,4 +216,4 @@ export const IconAddToList = ({ size, color, className }: IconsSvgProps) => {
       </Svg>
     </View>
   );
-};
+});

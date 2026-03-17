@@ -124,6 +124,7 @@ import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import React, { useCallback } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 
@@ -158,60 +159,13 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
         </View>
       ) : (
         selectedExercisesData.map((exercise, index) => (
-          <AnimatedPressable
-            animationType="scale"
-            haptic="medium"
+          <ExerciseItem
             key={exercise.exerciseId}
-            // אנימציית כניסה ב"מפל" (Stagger)
-            entering={FadeInDown.delay(index * 100).springify()}
-            exiting={FadeOutLeft.duration(400)}
-            layout={LinearTransition.springify()}
-            onPress={() => router.push({
-              pathname: '/exercise/[exerciseId]',
-              params: { exerciseId: exercise.exerciseId },
-            })}
-            className="flex-row-reverse items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
-            accessibilityLabel={`${exercise.name_he || exercise.name} - הצג פרטי תרגיל`}
-          >
-            {/* כפתור מחיקה רק במצב עריכה */}
-            {mode === 'edit' && (
-              <AppButton
-                animationType="scale"
-                haptic="medium"
-                onPress={() => toggleExercise?.(exercise.exerciseId)}
-                className="w-10 h-10 items-center justify-center rounded-full bg-red-500/10 mr-2"
-                accessibilityLabel={`הסר ${exercise.name_he || exercise.name}`}
-              >
-                <MaterialCommunityIcons name="close" size={20} color="#f87171" />
-              </AppButton>
-            )}
-
-            {/* תמונת התרגיל */}
-            <View className="bg-white/5 rounded-xl overflow-hidden">
-              {exercise.gif_available === false ? (
-                <DumbbellAnimation size={56} />
-              ) : (
-                <Image
-                  source={{ uri: exercise.gifUrl }}
-                  style={{ width: 56, height: 56 }}
-                  contentFit="cover"
-                />
-              )}
-            </View>
-
-            {/* פרטי התרגיל */}
-            <View className="flex-1 mr-4 items-end">
-              <Text className="text-white font-semibold text-base text-right" numberOfLines={1}>
-                {exercise.name_he || exercise.name}
-              </Text>
-              <View className="flex-row items-center mt-1">
-                <Text className="text-zinc-400 text-xs mr-1 text-right">
-                  {exercise.targetMuscles_he?.[0] || exercise.targetMuscles?.[0]}
-                </Text>
-                <MaterialCommunityIcons name="arm-flex" size={12} color="#a1a1aa" />
-              </View>
-            </View>
-          </AnimatedPressable>
+            exercise={exercise}
+            index={index}
+            mode={mode}
+            toggleExercise={toggleExercise}
+          />
         ))
       )}
 
@@ -233,3 +187,66 @@ const ListExercise = ({ toggleExercise, navigateToPicker, isPendingCreate, mode,
 };
 
 export default ListExercise;
+
+const ExerciseItem = React.memo(function ExerciseItem({
+  exercise,
+  index,
+  mode,
+  toggleExercise,
+}: {
+  exercise: any;
+  index: number;
+  mode: 'edit' | 'preview';
+  toggleExercise?: (id: string) => void;
+}) {
+  const router = useRouter();
+  const handlePress = useCallback(() => {
+    router.push({ pathname: '/exercise/[exerciseId]', params: { exerciseId: exercise.exerciseId } });
+  }, [router, exercise.exerciseId]);
+  const handleRemove = useCallback(() => {
+    toggleExercise?.(exercise.exerciseId);
+  }, [toggleExercise, exercise.exerciseId]);
+
+  return (
+    <AnimatedPressable
+      animationType="scale"
+      haptic="medium"
+      entering={FadeInDown.delay(index * 100).springify()}
+      exiting={FadeOutLeft.duration(400)}
+      layout={LinearTransition.springify()}
+      onPress={handlePress}
+      className="flex-row-reverse items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
+      accessibilityLabel={`${exercise.name_he || exercise.name} - הצג פרטי תרגיל`}
+    >
+      {mode === 'edit' && (
+        <AppButton
+          animationType="scale"
+          haptic="medium"
+          onPress={handleRemove}
+          className="w-10 h-10 items-center justify-center rounded-full bg-red-500/10 mr-2"
+          accessibilityLabel={`הסר ${exercise.name_he || exercise.name}`}
+        >
+          <MaterialCommunityIcons name="close" size={20} color="#f87171" />
+        </AppButton>
+      )}
+      <View className="bg-white/5 rounded-xl overflow-hidden">
+        {exercise.gif_available === false ? (
+          <DumbbellAnimation size={56} />
+        ) : (
+          <Image source={{ uri: exercise.gifUrl }} style={{ width: 56, height: 56 }} contentFit="cover" />
+        )}
+      </View>
+      <View className="flex-1 mr-4 items-end">
+        <Text className="text-white font-semibold text-base text-right" numberOfLines={1}>
+          {exercise.name_he || exercise.name}
+        </Text>
+        <View className="flex-row items-center mt-1">
+          <Text className="text-zinc-400 text-xs mr-1 text-right">
+            {exercise.targetMuscles_he?.[0] || exercise.targetMuscles?.[0]}
+          </Text>
+          <MaterialCommunityIcons name="arm-flex" size={12} color="#a1a1aa" />
+        </View>
+      </View>
+    </AnimatedPressable>
+  );
+});

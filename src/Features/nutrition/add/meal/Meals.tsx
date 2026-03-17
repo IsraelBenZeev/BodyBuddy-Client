@@ -6,7 +6,7 @@ import EmptyState from '@/src/ui/EmptyState';
 import ScreenHeader from '@/src/ui/ScreenHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     ActivityIndicator,
     FlatList,
@@ -33,6 +33,23 @@ export default function Meals({ userId, date, onClose }: Props) {
     onClose();
     router.push('MealBuilder/create' as never);
   }, [onClose, router]);
+
+  const handleCloseReview = useCallback(() => setReviewMeal(null), []);
+  const handleCancelDelete = useCallback(() => setMealToDelete(null), []);
+  const handleConfirmDelete = useCallback(() => {
+    if (!mealToDelete) return;
+    const id = mealToDelete.id;
+    setMealToDelete(null);
+    deleteMeal(id);
+  }, [mealToDelete, deleteMeal]);
+
+  const renderItem = useCallback(({ item }: { item: MealWithItems }) => (
+    <MealCard
+      meal={item}
+      onPress={() => setReviewMeal(item)}
+      onDelete={() => setMealToDelete(item)}
+    />
+  ), []);
 
   if (isLoading) {
     return (
@@ -67,13 +84,7 @@ return (
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={() => <View className="h-4" />}
       contentContainerStyle={{ paddingBottom: 140 }}
-      renderItem={({ item }) => (
-        <MealCard
-          meal={item}
-          onPress={() => setReviewMeal(item)}
-          onDelete={() => setMealToDelete(item)}
-        />
-      )}
+      renderItem={renderItem}
       ListEmptyComponent={() => (
         <View className="flex-1 items-center justify-center mt-20 px-10">
           <View className="bg-background-800 p-8 rounded-full mb-6">
@@ -92,7 +103,7 @@ return (
       meal={reviewMeal}
       userId={userId}
       date={date}
-      onClose={() => setReviewMeal(null)}
+      onClose={handleCloseReview}
       onSuccess={onClose}
     />
 
@@ -118,19 +129,14 @@ return (
       message={`האם למחוק את "${mealToDelete?.name_meal}" מהרשימה?`}
       infoNote="מחיקת ארוחה מהרשימה שלך לא תשפיע על הרשומות שכבר קיימות ביומן התזונה"
       isDeleting={isDeletingMeal}
-      onCancel={() => setMealToDelete(null)}
-      onConfirm={() => {
-        if (!mealToDelete) return;
-        const id = mealToDelete.id;
-        setMealToDelete(null);
-        deleteMeal(id);
-      }}
+      onCancel={handleCancelDelete}
+      onConfirm={handleConfirmDelete}
     />
   </View>
 );
 }
 
-function MealCard({
+const MealCard = React.memo(function MealCard({
   meal,
   onPress,
   onDelete,
@@ -215,4 +221,4 @@ function MealCard({
       </View>
     </Pressable>
   );
-}
+});

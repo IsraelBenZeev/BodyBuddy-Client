@@ -14,7 +14,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useRouter } from "expo-router";
 import { Eye, FileDown } from "lucide-react-native";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
@@ -155,7 +155,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
       </html>`;
   };
 
-  const previewPDF = async () => {
+  const previewPDF = useCallback(async () => {
     if (isExporting) return;
     setIsExporting(true);
     try {
@@ -165,9 +165,9 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
     } finally {
       setIsExporting(false);
     }
-  };
+  }, [isExporting, buildHTML]);
 
-  const exportPDF = async () => {
+  const exportPDF = useCallback(async () => {
     if (isExporting) return;
     setIsExporting(true);
     try {
@@ -180,7 +180,11 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
     } finally {
       setIsExporting(false);
     }
-  };
+  }, [isExporting, buildHTML, fileName]);
+
+  const handleNavigateToExercise = useCallback((exerciseId: string) => {
+    router.push({ pathname: '/exercise/[exerciseId]', params: { exerciseId } });
+  }, [router]);
 
   if (isLoadingExerciseLogs) return <Loading />;
 
@@ -222,10 +226,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
         return (
           <View key={group.exercise_id} className="mb-6 bg-background-850 rounded-2xl border border-gray-800 overflow-hidden shadow-sm">
             <AppButton
-              onPress={() => router.push({
-                pathname: '/exercise/[exerciseId]',
-                params: { exerciseId: group.exercise_id },
-              })}
+              onPress={() => handleNavigateToExercise(group.exercise_id)}
               animationType="opacity"
               haptic="medium"
               accessibilityLabel={`הצג תרגיל: ${isLoadingExercises ? '' : (exerciseInfo?.name_he ?? '')}`}

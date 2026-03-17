@@ -24,13 +24,19 @@ const FavoritesScreen = () => {
     [favoriteIds, toggleFavMutate]
   );
 
+  const handleBack = useCallback(() => router.back(), [router]);
+  const handleNavigateHome = useCallback(() => router.push('/(tabs)/'), [router]);
+  const renderItem = useCallback(({ item }: { item: any }) => (
+    <CardExercise item={item} favorites={favoriteIds} toggleFavorite={toggleFavorite} mode="view" />
+  ), [favoriteIds, toggleFavorite]);
+
   const isEmpty = !isLoading && !isExercisesLoading && exercises.length === 0;
 
   return (
     <BackGround>
       {/* Header */}
       <View className="px-6 pt-12 pb-4 flex-row-reverse items-center gap-3">
-        <Pressable onPress={() => router.back()} className="bg-zinc-800 p-2 rounded-xl" accessibilityRole="button" accessibilityLabel="חזרה">
+        <Pressable onPress={handleBack} className="bg-zinc-800 p-3 rounded-xl" accessibilityRole="button" accessibilityLabel="חזרה">
           <Entypo name="chevron-right" size={22} color="white" />
         </Pressable>
         <View className="flex-1">
@@ -51,7 +57,7 @@ const FavoritesScreen = () => {
             גלה תרגילים לפי אזור גוף והוסף אותם למועדפים
           </Text>
           <Pressable
-            onPress={() => router.push('/(tabs)/')}
+            onPress={handleNavigateHome}
             className="mt-2 bg-lime-500 px-6 py-3 rounded-2xl"
             accessibilityRole="button"
             accessibilityLabel="בחר אזור גוף"
@@ -63,14 +69,7 @@ const FavoritesScreen = () => {
         <View className="flex-1 px-2">
           <FlashList
             data={exercises}
-            renderItem={({ item }) => (
-              <CardExercise
-                item={item}
-                favorites={favoriteIds}
-                toggleFavorite={toggleFavorite}
-                mode="view"
-              />
-            )}
+            renderItem={renderItem}
             keyExtractor={(item) => item.exerciseId}
             estimatedItemSize={110}
             ListFooterComponent={<View className="h-20" />}

@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Pressable } from 'react-native';
 import Animated, {
     interpolateColor,
@@ -48,14 +48,14 @@ const PremiumCheck = ({ checked, onPress }: Props) => {
         };
     });
 
-    const handlePress = () => {
+    const handlePress = useCallback(() => {
         if (!checked) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } else {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }
         onPress();
-    };
+    }, [checked, onPress]);
 
     return (
         <AnimatedPressable

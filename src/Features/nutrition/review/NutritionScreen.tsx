@@ -33,9 +33,26 @@ const NutritionScreen = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
 
-  const closeAddFoodSheet = useCallback(() => {
-    setIsAddFoodOpen(false);
+  const closeAddFoodSheet = useCallback(() => setIsAddFoodOpen(false), []);
+  const handleShowOptions = useCallback(() => setShowOptions(true), []);
+  const handleCloseOptions = useCallback(() => setShowOptions(false), []);
+  const handleSelectFromList = useCallback(() => {
+    setShowOptions(false);
+    setIsAddFoodOpen(true);
   }, []);
+  const handleAddNewFood = useCallback(() => {
+    setShowOptions(false);
+    router.push('/add-food/create');
+  }, [router]);
+  const handleAddMeal = useCallback(() => {
+    setShowOptions(false);
+    router.push('/MealBuilder/create');
+  }, [router]);
+  const handleCameraAI = useCallback(() => {
+    setShowOptions(false);
+    setShowCameraModal(true);
+  }, []);
+  const handleCloseCameraModal = useCallback(() => setShowCameraModal(false), []);
 
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
   const { data: entries = [], isLoading: isEntriesLoading } = useNutritionEntries(user?.id, today);
@@ -146,7 +163,7 @@ const NutritionScreen = () => {
         </ScrollView>
 
         <Pressable
-          onPress={() => setShowOptions(true)}
+          onPress={handleShowOptions}
           className="absolute left-5 right-5 flex-row items-center justify-center gap-2 rounded-full bg-lime-500 py-4 active:opacity-90"
           accessibilityRole="button"
           accessibilityLabel="הוספת מאכל או ארוחה"
@@ -166,28 +183,16 @@ const NutritionScreen = () => {
 
       <AddOptionsSheet
         visible={showOptions}
-        onClose={() => setShowOptions(false)}
-        onSelectFromList={() => {
-          setShowOptions(false);
-          setIsAddFoodOpen(true);
-        }}
-        onAddNewFood={() => {
-          setShowOptions(false);
-          router.push('/add-food/create');
-        }}
-        onAddMeal={() => {
-          setShowOptions(false);
-          router.push('/MealBuilder/create');
-        }}
-        onCameraAI={() => {
-          setShowOptions(false);
-          setShowCameraModal(true);
-        }}
+        onClose={handleCloseOptions}
+        onSelectFromList={handleSelectFromList}
+        onAddNewFood={handleAddNewFood}
+        onAddMeal={handleAddMeal}
+        onCameraAI={handleCameraAI}
       />
 
       <CameraAIModal
         visible={showCameraModal}
-        onClose={() => setShowCameraModal(false)}
+        onClose={handleCloseCameraModal}
       />
 
       <ModalAddFoods

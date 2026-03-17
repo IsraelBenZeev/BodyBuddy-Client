@@ -1,7 +1,7 @@
 import { colors } from '@/colors';
 import type { NutritionEntry } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
-import { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 /** טווחי שעות ליום */
@@ -107,7 +107,8 @@ interface FoodEntryRowProps {
   isDeleting: boolean;
 }
 
-function FoodEntryRow({ entry, onDelete, isDeleting }: FoodEntryRowProps) {
+const FoodEntryRow = React.memo(function FoodEntryRow({ entry, onDelete, isDeleting }: FoodEntryRowProps) {
+  const handleDelete = useCallback(() => onDelete(entry.id), [onDelete, entry.id]);
   return (
     <View className="bg-background-800 rounded-2xl border border-background-600 overflow-hidden">
       <View className="flex-row-reverse items-center p-3.5">
@@ -123,7 +124,7 @@ function FoodEntryRow({ entry, onDelete, isDeleting }: FoodEntryRowProps) {
           </Text>
         </View>
         <Pressable
-          onPress={() => onDelete(entry.id)}
+          onPress={handleDelete}
           disabled={isDeleting}
           className="bg-red-500/10 rounded-xl p-2"
           accessibilityRole="button"
@@ -135,9 +136,9 @@ function FoodEntryRow({ entry, onDelete, isDeleting }: FoodEntryRowProps) {
       <MacroBar entry={entry} />
     </View>
   );
-}
+});
 
-function MacroBar({ entry }: { entry: NutritionEntry }) {
+const MacroBar = React.memo(function MacroBar({ entry }: { entry: NutritionEntry }) {
   return (
     <View className="flex-row-reverse border-t border-background-700 px-3.5 py-2.5">
       <View className="flex-row-reverse items-center flex-1 justify-around">
@@ -156,11 +157,11 @@ function MacroBar({ entry }: { entry: NutritionEntry }) {
       </View>
     </View>
   );
-}
+});
 
 // —— כרטיס רשומה בודדת (משתמש ב-FoodEntryRow) ——
 
-function SingleEntryCard({
+const SingleEntryCard = React.memo(function SingleEntryCard({
   entry,
   onDelete,
   isDeleting,
@@ -170,11 +171,11 @@ function SingleEntryCard({
   isDeleting: boolean;
 }) {
   return <FoodEntryRow entry={entry} onDelete={onDelete} isDeleting={isDeleting} />;
-}
+});
 
 // —— כרטיס ארוחה (משתמש ב-FoodEntryRow לכל מאכל + אופציה למחיקת ארוחה) ——
 
-function GroupBlockCard({
+const GroupBlockCard = React.memo(function GroupBlockCard({
   groupName,
   groupId,
   entries,
@@ -192,6 +193,7 @@ function GroupBlockCard({
   isDeletingGroup?: boolean;
 }) {
   const totalCal = entries.reduce((sum, e) => sum + e.calories, 0);
+  const handleDeleteGroup = useCallback(() => onDeleteGroup?.(groupId), [onDeleteGroup, groupId]);
 
   return (
     <View className="bg-background-800 rounded-3xl border border-white/5 overflow-hidden shadow-lg mb-4">
@@ -208,7 +210,7 @@ function GroupBlockCard({
         </View>
         {onDeleteGroup != null && (
           <Pressable
-            onPress={() => onDeleteGroup(groupId)}
+            onPress={handleDeleteGroup}
             disabled={isDeletingGroup}
             className="bg-red-500/20 rounded-xl p-2.5 mr-2 flex-row-reverse items-center"
             accessibilityRole="button"
@@ -246,11 +248,11 @@ function GroupBlockCard({
       </View>
     </View>
   );
-}
+});
 
 // —— רינדור סקשן ציר זמן (כותרת + רשימת בלוקים) ——
 
-function TimeSlotSection({
+const TimeSlotSection = React.memo(function TimeSlotSection({
   slotLabel,
   slotKey,
   blocks,
@@ -309,7 +311,7 @@ function TimeSlotSection({
       )}
     </View>
   );
-}
+});
 
 const NutritionEntriesList = ({
   entries,

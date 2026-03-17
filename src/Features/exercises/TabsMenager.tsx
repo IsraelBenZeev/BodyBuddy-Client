@@ -1,5 +1,5 @@
 import AppButton from '@/src/ui/PressableOpacity';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Animated, Dimensions, Text, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
@@ -118,7 +118,7 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
     const tabTranslateX = useRef(new Animated.Value(initialTab)).current;
     
     const { width: SCREEN_WIDTH } = Dimensions.get('window');
-    const animateTo = (index: number) => {
+    const animateTo = useCallback((index: number) => {
         setActiveTab(index);
         Animated.spring(tabTranslateX, {
             toValue: index,
@@ -126,7 +126,7 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
             bounciness: 4,
             speed: 12,
         }).start();
-    };
+    }, [tabTranslateX]);
 
     // const onGestureEvent = (event: any) => {
     //     const { translationX, state } = event.nativeEvent;

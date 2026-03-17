@@ -3,6 +3,7 @@ import { Dimensions, View } from 'react-native';
 import Svg from 'react-native-svg';
 import { Back } from './Back';
 import { General } from './General';
+import { Glutes } from './Glutes';
 import { LowerArms } from './LowerArm';
 import { LowerLeg } from './LowerLeg';
 import { Shoulders } from './Shoulders';
@@ -30,6 +31,7 @@ const AvatarFemaleBack = ({ isSelected, handleTogglePart, svgWidthOverride }: Av
         preserveAspectRatio="xMidYMax meet"
       >
         <General />
+        <Glutes isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <UpperLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <Shoulders isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <Back isSelected={isSelected} handleTogglePart={handleTogglePart} />

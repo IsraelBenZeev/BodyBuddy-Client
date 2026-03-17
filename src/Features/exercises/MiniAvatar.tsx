@@ -5,8 +5,12 @@ import { useCallback } from 'react';
 import { View } from 'react-native';
 
 const MINI_WIDTH = 65;
+const MINI_WIDTH_DUAL = 50;
 const FIGMA_ASPECT = 1726 / 871;
 const CONTAINER_HEIGHT = Math.ceil(MINI_WIDTH * FIGMA_ASPECT * 0.9) + 2;
+const CONTAINER_HEIGHT_DUAL = Math.ceil(MINI_WIDTH_DUAL * FIGMA_ASPECT * 0.9) + 2;
+
+const BACK_ONLY_PARTS: BodyPart[] = ['back'];
 
 const noop = () => {};
 
@@ -21,27 +25,54 @@ const MiniAvatar = ({ selectedParts, gender }: MiniAvatarProps) => {
     [selectedParts]
   );
 
+  const hasFrontParts = selectedParts.some((p) => !BACK_ONLY_PARTS.includes(p));
+  const hasBackParts = selectedParts.some((p) => BACK_ONLY_PARTS.includes(p));
+  const showBoth = hasFrontParts && hasBackParts;
+  const avatarSide = !hasFrontParts ? 'back' : 'front';
+
+  const AvatarComponent = gender === 'female' ? AvatarFemale : AvatarMale;
+
+  if (showBoth) {
+    return (
+      <View className="flex-row gap-1" pointerEvents="none">
+        <View
+          className="overflow-hidden"
+          style={{ width: MINI_WIDTH_DUAL, height: CONTAINER_HEIGHT_DUAL }}
+        >
+          <AvatarComponent
+            avatarSide="front"
+            isSelected={isSelected}
+            handleTogglePart={noop}
+            svgWidthOverride={MINI_WIDTH_DUAL}
+          />
+        </View>
+        <View
+          className="overflow-hidden"
+          style={{ width: MINI_WIDTH_DUAL, height: CONTAINER_HEIGHT_DUAL }}
+        >
+          <AvatarComponent
+            avatarSide="back"
+            isSelected={isSelected}
+            handleTogglePart={noop}
+            svgWidthOverride={MINI_WIDTH_DUAL}
+          />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View
       className="overflow-hidden"
       style={{ width: MINI_WIDTH, height: CONTAINER_HEIGHT }}
       pointerEvents="none"
     >
-      {gender === 'female' ? (
-        <AvatarFemale
-          avatarSide="front"
-          isSelected={isSelected}
-          handleTogglePart={noop}
-          svgWidthOverride={MINI_WIDTH}
-        />
-      ) : (
-        <AvatarMale
-          avatarSide="front"
-          isSelected={isSelected}
-          handleTogglePart={noop}
-          svgWidthOverride={MINI_WIDTH}
-        />
-      )}
+      <AvatarComponent
+        avatarSide={avatarSide}
+        isSelected={isSelected}
+        handleTogglePart={noop}
+        svgWidthOverride={MINI_WIDTH}
+      />
     </View>
   );
 };

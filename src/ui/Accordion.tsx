@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
 import { ChevronDown } from 'lucide-react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Platform, TouchableOpacity, UIManager, View } from 'react-native';
 
 // הפעלת אנימציות באנדרואיד
@@ -26,22 +26,22 @@ const Accordion = ({ title, children, defaultOpen = false, isOpen: controlledIsO
   const contentRef = useRef<View>(null);
   const [contentHeight, setContentHeight] = useState<number | null>(null);
 
-  const toggleAccordion = () => {
+  const toggleAccordion = useCallback(() => {
     if (onToggle) {
       // controlled mode - קורא ל-callback
       onToggle();
     } else {
       // uncontrolled mode - משנה state פנימי
-      setInternalIsOpen(!internalIsOpen);
+      setInternalIsOpen((prev) => !prev);
     }
-  };
+  }, [onToggle]);
 
-  const handleContentLayout = (event: any) => {
+  const handleContentLayout = useCallback((event: any) => {
     const { height } = event.nativeEvent.layout;
     if (height > 0) {
       setContentHeight(height);
     }
-  };
+  }, []);
 
   const heightInterpolation = animatedHeight.interpolate({
     inputRange: [0, 1],

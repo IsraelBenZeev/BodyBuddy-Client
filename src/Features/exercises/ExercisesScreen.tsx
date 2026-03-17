@@ -75,11 +75,11 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     );
   }, [exerciseIndex, deferredFilter, deferredSearch]);
 
-  const handleEndReached = () => {
+  const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
   return (
     <BackGround>
       {mode === 'view' && (

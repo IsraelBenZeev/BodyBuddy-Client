@@ -3,7 +3,7 @@ import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc
 import { useCreateNutritionEntriesBulk } from '@/src/hooks/useNutrition';
 import type { MealItem, MealItemFoodInfo, MealWithItems } from '@/src/types/meal';
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     ActivityIndicator,
     Modal,
@@ -163,7 +163,7 @@ export default function MealReviewModal({
     >
       <View style={{ flex: 1, backgroundColor: colors.background[900] }}>
         <View className="flex-row items-center justify-between border-b border-background-700 px-4 py-3">
-          <Pressable onPress={onClose} className="p-2" accessibilityRole="button" accessibilityLabel="סגור">
+          <Pressable onPress={onClose} className="p-3" accessibilityRole="button" accessibilityLabel="סגור">
             <Ionicons name="close" size={24} color={colors.white} />
           </Pressable>
           <Text className="text-white text-lg font-bold" numberOfLines={1}>
@@ -229,7 +229,7 @@ interface MealReviewRowProps {
   onQuantityChange: (delta: number) => void;
 }
 
-function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReviewRowProps) {
+const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReviewRowProps) {
   const info = mealItem.food_item!;
   const isUnits = info.measurement_type === 'units';
   const unitLabel = isUnits ? 'יחידה' : 'גרם';
@@ -275,7 +275,7 @@ function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReview
         <View className="flex-row-reverse items-center bg-background-700 rounded-xl p-1 shadow-inner">
           <Pressable
             onPress={() => onQuantityChange(1)}
-            className="w-10 h-10 items-center justify-center bg-lime-500/10 rounded-lg active:bg-lime-500/20"
+            className="w-11 h-11 items-center justify-center bg-lime-500/10 rounded-lg active:bg-lime-500/20"
             accessibilityRole="button"
             accessibilityLabel={`הגדל כמות ${info.name}`}
           >
@@ -289,7 +289,7 @@ function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReview
 
           <Pressable
             onPress={() => onQuantityChange(-1)}
-            className="w-10 h-10 items-center justify-center bg-white/5 rounded-lg active:bg-white/10"
+            className="w-11 h-11 items-center justify-center bg-white/5 rounded-lg active:bg-white/10"
             accessibilityRole="button"
             accessibilityLabel={`הפחת כמות ${info.name}`}
           >
@@ -311,4 +311,4 @@ function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReview
       </View>
     </View>
   );
-}
+});

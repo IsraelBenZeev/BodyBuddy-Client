@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useMemo } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 interface Props {
@@ -54,12 +55,12 @@ const AddOptionsSheet = ({
   onAddMeal,
   onCameraAI,
 }: Props) => {
-  const handlers: Record<string, () => void> = {
+  const handlers = useMemo<Record<string, () => void>>(() => ({
     list: onSelectFromList,
     food: onAddNewFood,
     meal: onAddMeal,
     camera: onCameraAI,
-  };
+  }), [onSelectFromList, onAddNewFood, onAddMeal, onCameraAI]);
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>

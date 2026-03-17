@@ -3,6 +3,7 @@ import { Dimensions, View } from 'react-native';
 import Svg from 'react-native-svg';
 import Back from './Back';
 import General from './General';
+import Glutes from './Glutes';
 import LowerArm from './LowerArm';
 import LowerLeg from './LowerLeg';
 import Shoulders from './Shoulders';
@@ -34,6 +35,7 @@ const AvatarMaleBack = ({ isSelected, handleTogglePart, svgWidthOverride }: Avat
         <Shoulders isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <UpperArm isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <LowerArm isSelected={isSelected} handleTogglePart={handleTogglePart} />
+        <Glutes isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <UpperLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <LowerLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
       </Svg>

@@ -1,7 +1,7 @@
 import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics'; // ייבוא הרטט
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import AnimatedNumbers from 'react-native-animated-numbers';
@@ -61,12 +61,12 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
   };
 
   // עצירת הלחיצה
-  const handleLongPressEnd = () => {
+  const handleLongPressEnd = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-  };
+  }, []);
 
   return (
     <View className="flex-1  items-center justify-center gap-2 ">

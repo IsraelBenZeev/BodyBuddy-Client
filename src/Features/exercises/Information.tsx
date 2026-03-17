@@ -1,10 +1,13 @@
 import { Exercise } from "@/src/types/exercise";
 import { IconSecondaryMuscle, IconsFitnessTools, IconTargetMuscle } from "@/src/ui/IconsSVG";
+import { BodyPart } from "@/src/types/bodtPart";
+import MiniAvatar from "./MiniAvatar";
 import { Text, View } from "react-native";
 interface InformationProps {
     exercise: Exercise;
+    gender?: 'male' | 'female';
 }
-const Information = ({ exercise }: InformationProps) => {
+const Information = ({ exercise, gender }: InformationProps) => {
     return (
         <View className="px-5 w-full space-y-3 mt-4 gap-3">
             {/* כרטיס שריר עיקרי */}
@@ -18,6 +21,12 @@ const Information = ({ exercise }: InformationProps) => {
                         {exercise?.targetMuscles_he}
                     </Text>
                 </View>
+                {gender && exercise.bodyParts.length > 0 && (
+                    <MiniAvatar
+                        selectedParts={exercise.bodyParts as BodyPart[]}
+                        gender={gender}
+                    />
+                )}
             </View>
 
             {/* שורה כפולה לציוד ושרירים מסייעים */}

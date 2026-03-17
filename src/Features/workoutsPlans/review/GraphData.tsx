@@ -1,6 +1,6 @@
 import { colors } from "@/colors";
 import { ExerciseLogDBType } from "@/src/types/session";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
@@ -102,6 +102,8 @@ const GraphData = ({ logs }: Props) => {
         }));
     }, [logs]);
 
+    const handleTabPress = useCallback((type: GraphType) => setActiveTab(type), []);
+
     const getCurrentData = () => {
         switch (activeTab) {
             case "weight":
@@ -136,7 +138,7 @@ const GraphData = ({ logs }: Props) => {
                 {(["weight", "reps", "sets"] as GraphType[]).map((type) => (
                     <Pressable
                         key={type}
-                        onPress={() => setActiveTab(type)}
+                        onPress={() => handleTabPress(type)}
                         className={`flex-1 py-2 px-3 rounded-xl border ${activeTab === type
                             ? "bg-lime-500/20 border-lime-500/50"
                             : "bg-zinc-800/50 border-zinc-700/50"

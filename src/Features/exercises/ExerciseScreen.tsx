@@ -1,5 +1,7 @@
 import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
+import { useProfile } from '@/src/hooks/useProfile';
+import { useAuthStore } from '@/src/store/useAuthStore';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
@@ -12,6 +14,8 @@ import Instractions from './Instractions';
 import TabsManager from './TabsMenager';
 
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
+  const user = useAuthStore((state) => state.user);
+  const { data: profile } = useProfile(user?.id);
   const { data: exercises, isLoading: isExerciseLoading } = useGetExercisesByIds([exerciseId]);
   const exerciseData = exercises?.[0];
   if (isExerciseLoading || !exerciseData) {
@@ -62,7 +66,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             exerciseName={exerciseData.name}
             exerciseName_he={exerciseData.name_he}
           />
-          <Information exercise={exerciseData} />
+          <Information exercise={exerciseData} gender={profile?.gender as 'male' | 'female' | undefined} />
           {/* <TabsMenager instructions={exerciseData?.instructions_he} /> */}
           <TabsManager
             tabs={[

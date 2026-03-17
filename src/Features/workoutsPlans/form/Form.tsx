@@ -7,7 +7,7 @@ import { WorkoutPlan } from '@/src/types/workout';
 import FormInput from '@/src/ui/FormInput';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Days from './Days';
@@ -59,13 +59,13 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
   const resetExercise = useWorkoutStore((state) => state.clearAllExercises);
 
   const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user?.id as string, mode)
-  const navigateToPicker = () => {
+  const navigateToPicker = useCallback(() => {
     router.push({
       pathname: '/exercises/[parts]',
       params: { parts: JSON.stringify(bodyParts), mode: 'picker' },
     });
-  };
-  const onSubmit = (data: WorkoutPlan) => {
+  }, [router]);
+  const onSubmit = useCallback((data: WorkoutPlan) => {
     if (!data.description) {
       data.description = '';
     }
@@ -73,7 +73,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
     data.exercise_ids = selectedIds;
     createWorkoutPlan(data)
     resetExercise()
-  };
+  }, [user?.id, selectedIds, createWorkoutPlan, resetExercise]);
 
   useEffect(() => {
     if (isSuccessCreate) {

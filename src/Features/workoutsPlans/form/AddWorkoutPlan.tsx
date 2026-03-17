@@ -2,6 +2,7 @@ import { colors } from '@/colors';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { Text, View } from 'react-native';
 import Form from './Form';
 import AppButton from '@/src/ui/PressableOpacity';
@@ -11,6 +12,7 @@ interface AddWorkoutPlanProps {
 }
 const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
   const router = useRouter();
+  const handleBack = useCallback(() => router.back(), [router]);
   return (
     <View className="flex-1 bg-background-1200/90">
       <View className="bg-background-1100 rounded-t-3xl border-b border-white/10">
@@ -22,8 +24,8 @@ const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
           <AppButton
             animationType='opacity'
             haptic='medium'
-            onPress={() => router.back()}
-            className="bg-white/10 p-2 rounded-full"
+            onPress={handleBack}
+            className="bg-white/10 p-3 rounded-full"
             accessibilityLabel="סגור">
             <Ionicons name="close" size={20} color={colors.lime[400]} />
           </AppButton>

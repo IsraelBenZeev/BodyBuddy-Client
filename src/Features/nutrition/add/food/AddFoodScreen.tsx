@@ -120,7 +120,7 @@ const AddFoodScreen = () => {
         <View className="flex-row justify-end px-5 pb-2">
           <Pressable
             onPress={() => router.back()}
-            className="bg-background-800 w-10 h-10 rounded-xl items-center justify-center border border-white/10"
+            className="bg-background-800 w-11 h-11 rounded-xl items-center justify-center border border-white/10"
             hitSlop={8}
             accessibilityRole="button"
             accessibilityLabel="סגור"

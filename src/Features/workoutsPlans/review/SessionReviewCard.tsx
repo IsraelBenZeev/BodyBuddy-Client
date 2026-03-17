@@ -4,7 +4,7 @@ import AppButton from '@/src/ui/PressableOpacity';
 import { format } from 'date-fns'; // ספרייה מומלצת לטיפול בתאריכים
 import { he } from 'date-fns/locale';
 import { Calendar, ChevronRight, Clock, NotepadText } from 'lucide-react-native';
-import { Dispatch, SetStateAction } from 'react';
+import React, { useCallback, useMemo, Dispatch, SetStateAction } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 
@@ -19,13 +19,19 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
     // פורמט תאריך: "יום שישי, 23 בינואר"
     const dateDisplay = format(new Date(session.started_at), "EEEE, d MMMM", { locale: he });
     const timeDisplay = format(new Date(session.started_at), "HH:mm");
-    const getSessionTitle = (dateString: string) => {
-        const hour = new Date(dateString).getHours();
+    const sessionTitle = useMemo(() => {
+        const hour = new Date(session.started_at).getHours();
         if (hour < 12) return "אימון בוקר";
         if (hour < 17) return "אימון צהריים";
         if (hour < 21) return "אימון ערב";
         return "אימון לילה";
-    };
+    }, [session.started_at]);
+
+    const handlePress = useCallback(() => {
+        setSelectedSession(session);
+        sheetRef.current?.snapToIndex(1);
+    }, [setSelectedSession, session, sheetRef]);
+
     return (
         <Animated.View
             // entering={FadeInDown.duration(400).springify().damping(15)}
@@ -45,7 +51,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
 
                 {/* שם האימון (אפשר למשוך את שם התוכנית אם יש) */}
                 <Text className="text-white text-lg font-bold mb-2 text-right">
-                    {getSessionTitle(session.started_at)}
+                    {sessionTitle}
                 </Text>
 
                 {/* שורת נתונים: זמן והערות */}
@@ -70,17 +76,14 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
 
             {/* כפתור מעבר לפרטים */}
             <AppButton
-                onPress={() => {
-                    setSelectedSession(session)
-                    sheetRef.current?.snapToIndex(1);
-                }}
+                onPress={handlePress}
                 haptic="medium"
                 animationType="both"
-                accessibilityLabel={`הצג פרטי ${getSessionTitle(session.started_at)}`}
-                className="bg-background-800 p-2 rounded-full ml-4">
+                accessibilityLabel={`הצג פרטי ${sessionTitle}`}
+                className="bg-background-800 p-3 rounded-full ml-4">
                 <ChevronRight size={20} color={colors.lime[500]} />
             </AppButton>
         </Animated.View>
     );
 };
-export default SessionReviewCard;
+export default React.memo(SessionReviewCard);

@@ -2,10 +2,31 @@ import { colors } from '@/colors';
 import { IconFoodsTab, IconHome, IconsFitnessTools, IconUser } from '@/src/ui/IconsSVG';
 import TabButton from '@/src/ui/TabButton';
 import { Tabs } from 'expo-router';
+import { useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
+
+  const nutritionIcon = useCallback(({ focused }: { focused: boolean }) => (
+    <IconFoodsTab size={24} color={focused ? 'black' : colors.background[100]} />
+  ), []);
+  const nutritionButton = useCallback((props: any) => <TabButton {...props} routeName="/nutrition" label="תזונה" />, []);
+
+  const workoutsIcon = useCallback(({ focused }: { focused: boolean }) => (
+    <IconsFitnessTools size={24} color={focused ? 'black' : colors.background[100]} />
+  ), []);
+  const workoutsButton = useCallback((props: any) => <TabButton {...props} routeName="/workouts" label="אימונים" />, []);
+
+  const homeIcon = useCallback(({ focused }: { focused: boolean }) => (
+    <IconHome size={24} color={focused ? 'black' : colors.background[100]} />
+  ), []);
+  const homeButton = useCallback((props: any) => <TabButton {...props} routeName="/index" label="בית" />, []);
+
+  const profileIcon = useCallback(({ focused }: { focused: boolean }) => (
+    <IconUser size={24} color={focused ? 'black' : colors.background[100]} />
+  ), []);
+  const profileButton = useCallback((props: any) => <TabButton {...props} routeName="/profile" label="פרופיל" />, []);
 
   return (
     <Tabs
@@ -37,10 +58,8 @@ export default function TabsLayout() {
         options={{
           title: 'תזונה',
           tabBarLabelStyle: { color: colors.background[900] },
-          tabBarIcon: ({ focused }) => (
-            <IconFoodsTab size={24} color={focused ? 'black' : colors.background[100]} />
-          ),
-          tabBarButton: (props) => <TabButton {...props} routeName="/nutrition" label="תזונה" />,
+          tabBarIcon: nutritionIcon,
+          tabBarButton: nutritionButton,
         }}
       />
       <Tabs.Screen
@@ -48,10 +67,8 @@ export default function TabsLayout() {
         options={{
           title: 'אימונים',
           tabBarLabelStyle: { color: colors.background[900] },
-          tabBarIcon: ({ focused }) => (
-            <IconsFitnessTools size={24} color={focused ? 'black' : colors.background[100]} />
-          ),
-          tabBarButton: (props) => <TabButton {...props} routeName="/workouts" label="אימונים" />,
+          tabBarIcon: workoutsIcon,
+          tabBarButton: workoutsButton,
         }}
       />
       <Tabs.Screen
@@ -59,8 +76,8 @@ export default function TabsLayout() {
         options={{
           title: 'בית',
           tabBarLabelStyle: { color: colors.background[900] },
-          tabBarIcon: ({ focused }) => <IconHome size={24} color={focused ? 'black' : colors.background[100]} />,
-          tabBarButton: (props) => <TabButton {...props} routeName="/index" label="בית" />,
+          tabBarIcon: homeIcon,
+          tabBarButton: homeButton,
         }}
       />
       <Tabs.Screen
@@ -68,8 +85,8 @@ export default function TabsLayout() {
         options={{
           title: 'פרופיל',
           tabBarLabelStyle: { color: colors.background[900] },
-          tabBarIcon: ({ focused }) => <IconUser size={24} color={focused ? 'black' : colors.background[100]} />,
-          tabBarButton: (props) => <TabButton {...props} routeName="/profile" label="פרופיל" />,
+          tabBarIcon: profileIcon,
+          tabBarButton: profileButton,
         }}
       />
     </Tabs>

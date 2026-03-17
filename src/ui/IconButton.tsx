@@ -1,3 +1,4 @@
+import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import AppButton from './PressableOpacity';
 interface IconButtonProps {
@@ -7,13 +8,13 @@ interface IconButtonProps {
   onPress?: () => void;
   accessibilityLabel?: string;
 }
-const IconButton = ({ children, text, classNameText, onPress, accessibilityLabel }: IconButtonProps) => {
+const IconButton = React.memo(({ children, text, classNameText, onPress, accessibilityLabel }: IconButtonProps) => {
   return (
     <AppButton
       animationType="opacity"
       haptic="medium"
       style={styles.button}
-      className="gap-2 items-center w-[15%] h-10 justify-center rounded-lg"
+      className="gap-2 items-center w-[15%] h-11 justify-center rounded-lg"
       onPress={onPress}
       accessibilityLabel={accessibilityLabel ?? text}>
 
@@ -23,7 +24,7 @@ const IconButton = ({ children, text, classNameText, onPress, accessibilityLabel
         className={classNameText ? classNameText : ''}>{text}</Text>}
     </AppButton>
   );
-};
+});
 
 export default IconButton;
 const styles = StyleSheet.create({

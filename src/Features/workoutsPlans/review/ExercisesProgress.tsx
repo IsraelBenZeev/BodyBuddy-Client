@@ -2,7 +2,7 @@ import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import { useGetExercisesIdsByWorkoutPlans } from '@/src/hooks/useWorkout';
 import Accordion from '@/src/ui/Accordion';
 import Loading from '@/src/ui/Loading';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { CardEmptyExercise, CardExerciseProgress, Title } from './CardExerciseProgress';
 import { useAuthStore } from '@/src/store/useAuthStore';
@@ -52,6 +52,10 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
 
   const [openAccordionId, setOpenAccordionId] = useState<string | null>(null);
 
+  const handleToggle = useCallback((exerciseId: string) => {
+    setOpenAccordionId((prev) => (prev === exerciseId ? null : exerciseId));
+  }, []);
+
 
 
   if (isPending || (isPendingDetails && exercisesLog ? exercisesLog?.length > 0 : false))
@@ -77,9 +81,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
           <Accordion
             key={exercise.id}
             isOpen={openAccordionId === exercise.id}
-            onToggle={() => {
-              setOpenAccordionId(openAccordionId === exercise.id ? null : exercise.id);
-            }}
+            onToggle={() => handleToggle(exercise.id)}
             title={
               <Title exerciseDetails={exerciseDetails} />
             }

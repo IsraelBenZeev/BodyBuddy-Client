@@ -20,14 +20,16 @@ const AvatarSelectorScreen = () => {
   const { data: profile } = useProfile(user?.id);
   const router = useRouter();
 
-  const handleTogglePart = (partName: BodyPart) => {
+  const handleTogglePart = useCallback((partName: BodyPart) => {
     setSelectedParts(
       (prev) =>
         prev.includes(partName)
           ? prev.filter((p) => p !== partName) // מסיר
           : [...prev, partName] // מוסיף
     );
-  };
+  }, []);
+
+  const handleToggleSide = useCallback(() => setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front')), []);
 
   const handleNavigate = useCallback(() => {
     router.push({
@@ -75,10 +77,7 @@ const AvatarSelectorScreen = () => {
                 styles.rotateButton,
                 pressed && { opacity: 0.7, transform: [{ scale: 0.95 }] },
               ]}
-              onPress={() => {
-                setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front'));
-                // setSelectedParts([]);
-              }}
+              onPress={handleToggleSide}
               accessibilityRole="button"
               accessibilityLabel="סובב מודל"
             >

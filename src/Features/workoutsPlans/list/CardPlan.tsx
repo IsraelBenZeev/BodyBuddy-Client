@@ -35,6 +35,13 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
     }
   }, [deletePending, deleteSuccess])
   const translateY = useSharedValue(0);
+  const handleViewWorkout = useCallback(() => {
+    router.push({
+      pathname: '/workout_plan/[paramse]',
+      params: { paramse: plan.id || '' },
+    });
+  }, [plan.id]);
+
   const handlePress = useCallback(() => {
     const isOpening = translateY.value === 0;
     const gentleConfig = {
@@ -52,6 +59,11 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
       setIsShowButtons(false);
     }
   }, [translateY]);
+
+  const handleOptions = useCallback(() => {
+    if (isActive) handlePress();
+  }, [isActive, handlePress]);
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));
@@ -134,27 +146,17 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
                 animationType="opacity"
                 className='bg-lime-500 px-3 py-2 rounded-2xl items-center'
                 accessibilityLabel={`הצג אימון: ${plan.title}`}
-                onPress={() => {
-                  router.push({
-                    pathname: '/workout_plan/[paramse]',
-                    params: {
-                      paramse: plan.id || '',
-                    },
-                  });
-                }} ><Text className='text-background-850 text-lg font-bold'>הצג אימון</Text>
+                onPress={handleViewWorkout}><Text className='text-background-850 text-lg font-bold'>הצג אימון</Text>
               </AppButton>
             </View>
             <View className='flex-col items-center gap-1'>
               <AppButton
                 haptic="medium"
                 animationType="opacity"
+                hitSlop={6}
                 className='items-center justify-center border border-lime-500 rounded-full p-1'
                 accessibilityLabel="אפשרויות"
-                onPress={() => {
-                  if (isActive) {
-                    handlePress();
-                  }
-                }}>
+                onPress={handleOptions}>
                 <SimpleLineIcons name="options" size={24} color={colors.lime[500]} />
               </AppButton>
               {/* <Text className='text-lime-500 text-xs'>אפשרויות</Text> */}

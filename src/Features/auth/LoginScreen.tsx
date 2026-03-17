@@ -8,7 +8,7 @@ import FormInput from '@/src/ui/FormInput';
 import AppButton from '@/src/ui/PressableOpacity';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
@@ -39,6 +39,10 @@ export default function LoginScreen() {
       password: '',
     },
   });
+
+  const handleNavigateToRegister = useCallback(() =>
+    router.replace({ pathname: '/auth/signup/[params]', params: { params: 'AUTH_PARAM' } } as never),
+  [router]);
 
   const onSubmit = async (formData: LoginFormData) => {
     setLoading(true);
@@ -188,12 +192,7 @@ export default function LoginScreen() {
             {/* Register Link */}
             <View className="mt-8">
               <Pressable
-                onPress={() =>
-                  router.replace({
-                    pathname: '/auth/signup/[params]',
-                    params: { params: 'AUTH_PARAM' },
-                  } as never)
-                }
+                onPress={handleNavigateToRegister}
                 accessibilityRole="button"
                 accessibilityLabel="הירשם כאן"
               >

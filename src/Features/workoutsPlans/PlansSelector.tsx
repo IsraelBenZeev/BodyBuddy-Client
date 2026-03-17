@@ -71,7 +71,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                     onPress={handleClose}
                     haptic="light"
                     animationType="both"
-                    className="w-9 h-9 rounded-full bg-background-800 items-center justify-center border border-zinc-800"
+                    className="w-11 h-11 rounded-full bg-background-800 items-center justify-center border border-zinc-800"
                     accessibilityLabel="סגור"
                 >
                     <X color={colors.background[300]} strokeWidth={2.5} size={16} />

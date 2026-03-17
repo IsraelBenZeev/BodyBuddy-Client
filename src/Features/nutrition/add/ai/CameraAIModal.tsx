@@ -5,7 +5,7 @@ import ScanAnimation from '@/src/ui/Animations/ScanAnimation';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 interface Props {
@@ -29,7 +29,7 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
     }
   }, [visible]);
 
-  const handleAnalyze = async (base64: string) => {
+  const handleAnalyze = useCallback(async (base64: string) => {
     const controller = new AbortController();
     abortControllerRef.current = controller;
     setState('loading');
@@ -69,16 +69,16 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
       setErrorMsg('שגיאה בניתוח התמונה. נסה שוב.');
       setState('error');
     }
-  };
+  }, [onClose, router]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     abortControllerRef.current?.abort();
     setState('idle');
     onClose();
     triggerSuccess('בקשתך בוטלה', 'success');
-  };
+  }, [onClose, triggerSuccess]);
 
-  const handleCapture = async () => {
+  const handleCapture = useCallback(async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
       setErrorMsg('נדרשת הרשאת מצלמה');
@@ -88,9 +88,9 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
     const result = await ImagePicker.launchCameraAsync({ base64: true, quality: 0.7 });
     if (result.canceled || !result.assets[0]?.base64) return;
     await handleAnalyze(result.assets[0].base64);
-  };
+  }, [handleAnalyze]);
 
-  const handlePickFromGallery = async () => {
+  const handlePickFromGallery = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       setErrorMsg('נדרשת הרשאת גישה לגלריה');
@@ -100,18 +100,18 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
     const result = await ImagePicker.launchImageLibraryAsync({ base64: true, quality: 0.7 });
     if (result.canceled || !result.assets[0]?.base64) return;
     await handleAnalyze(result.assets[0].base64);
-  };
+  }, [handleAnalyze]);
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     setErrorMsg('');
     setState('idle');
-  };
+  }, []);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setErrorMsg('');
     setState('idle');
     onClose();
-  };
+  }, [onClose]);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>

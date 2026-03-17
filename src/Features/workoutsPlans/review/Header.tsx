@@ -3,15 +3,14 @@ import { WorkoutPlan } from "@/src/types/workout";
 import AppButton from "@/src/ui/PressableOpacity";
 import { useRouter } from "expo-router";
 import { CircleX } from "lucide-react-native";
+import { useCallback } from "react";
 import { Text, View } from "react-native-animatable";
 interface Props {
     workoutPlan: WorkoutPlan;
 }
 const Header = ({ workoutPlan, }: Props) => {
     const router = useRouter();
-    const handleClose = () => {
-        router.back();
-    };
+    const handleClose = useCallback(() => { router.back(); }, [router]);
     return (
         <View className="flex-row items-center px-4 py-4 bg-background border-b border-secondary border-b-background-1200">
             <View className="flex-1" />

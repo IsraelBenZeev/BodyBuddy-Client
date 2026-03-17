@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 import {
   StyleProp,
@@ -36,13 +36,14 @@ const FormInput = <T extends FieldValues>({
   ...rest
 }: FormInputProps<T>) => {
   const inputRef = useRef<TextInput>(null);
+  const handleFocus = useCallback(() => inputRef.current?.focus(), []);
   return (
     <View style={containerStyle}>
       {label && (
         <AppButton
           animationType="opacity"
           haptic="medium"
-          onPress={() => inputRef.current?.focus()} disabled={isPendingCreate} activeOpacity={0.7}
+          onPress={handleFocus} disabled={isPendingCreate} activeOpacity={0.7}
         >
 
           <Text style={labelStyle}>{label}</Text>

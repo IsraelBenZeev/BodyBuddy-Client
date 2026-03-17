@@ -10,18 +10,18 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
-import { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Share, Text, View } from "react-native";
 import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 
-const Button = ({ text, onPress, icon }: { text: string, onPress: () => void, icon: ReactNode }) => {
+const Button = React.memo(({ text, onPress, icon }: { text: string, onPress: () => void, icon: ReactNode }) => {
     return (
         <View className="flex-col items-center" >
             <AppButton
                 animationType="scale"
                 haptic="medium"
                 onPress={onPress}
-                className="p-2 rounded-full bg-background-900"
+                className="p-3 rounded-full bg-background-900"
                 accessibilityLabel={text}
             >
                 {icon}
@@ -29,7 +29,7 @@ const Button = ({ text, onPress, icon }: { text: string, onPress: () => void, ic
             <Text className="text-lime-500 text-xs">{text}</Text>
         </View >
     )
-}
+});
 const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
     const user = useAuthStore((state) => state.user);
     const router = useRouter();
@@ -38,10 +38,39 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
     const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user?.id as string)
     const { mutate: duplicatePlan, isPending: duplicatePending } = useDuplicateWorkoutPlan(user?.id as string)
     const [isShowButtonOkDelete, setIsShowButtonOkDelete] = useState<boolean>(false)
-    const onDelete = (id: string) => {
+    const onDelete = useCallback((id: string) => {
         setIsShowButtonOkDelete(prev => !prev)
         // deleteWorkoutPlanMutation(id);
-    }
+    }, []);
+
+    const handleConfirmDelete = useCallback(() => {
+        deleteWorkoutPlanMutation(plan?.id as string);
+    }, [deleteWorkoutPlanMutation, plan?.id]);
+
+    const handleCancelDelete = useCallback(() => setIsShowButtonOkDelete(false), []);
+
+    const handleEdit = useCallback(() => {
+        clearAllExercises();
+        toggleExercise(plan?.exercise_ids as string[]);
+        router.push({
+            pathname: '/form_create_Workout/[mode]',
+            params: { mode: 'edit', workout_plan_id: plan?.id },
+        });
+    }, [clearAllExercises, toggleExercise, plan?.exercise_ids, plan?.id]);
+
+    const handleShare = useCallback(async () => {
+        const days = plan.days_per_week?.join(', ') ?? '';
+        await Share.share({
+            message:
+                `🏋️ תוכנית אימון: ${plan.title}\n` +
+                `⏱ זמן: ${plan.time} דקות\n` +
+                `💪 רמת קושי: ${plan.difficulty}/5\n` +
+                `📅 ימים: ${days}\n` +
+                `🔢 תרגילים: ${plan.exercise_ids?.length ?? 0}`,
+        });
+    }, [plan]);
+
+    const handleDuplicate = useCallback(() => duplicatePlan(plan), [duplicatePlan, plan]);
     useEffect(() => {
         if (deleteSuccess) {
             setIsShowButtonOkDelete(false)
@@ -70,8 +99,9 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
                         animationType="opacity"
                         haptic="medium"
                         accessibilityLabel="אשר מחיקה"
-                        onPress={() => deleteWorkoutPlanMutation(plan?.id as string)}>
-                        <View className={`flex-row items-center order  rounded-full p-2 ${deletePending ? 'opacity-50 ' : 'border border-lime-500'}`}>
+                        hitSlop={4}
+                        onPress={handleConfirmDelete}>
+                        <View className={`flex-row items-center order  rounded-full p-3 ${deletePending ? 'opacity-50 ' : 'border border-lime-500'}`}>
                             {deletePending ? <Loading size="small" /> : <AntDesign name="check" size={16} color={colors.lime[500]} />}
                         </View>
                     </AppButton>
@@ -79,8 +109,9 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
                         animationType="opacity"
                         haptic="medium"
                         accessibilityLabel="בטל מחיקה"
-                        onPress={() => setIsShowButtonOkDelete(false)}>
-                        <View className="flex-row items-center  rounded-full p-2 border border-red-500">
+                        hitSlop={4}
+                        onPress={handleCancelDelete}>
+                        <View className="flex-row items-center  rounded-full p-3 border border-red-500">
                             <AntDesign name="close" size={16} color="red" />
                         </View>
                     </AppButton>
@@ -105,41 +136,22 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
         >
             <Button
                 text="מחק"
-                onPress={() => {
-                    onDelete(plan?.id as string)
-                }}
+                onPress={() => onDelete(plan?.id as string)}
                 icon={<MaterialCommunityIcons name="trash-can-outline" size={26} color={colors.lime[500]} />}
             />
             <Button
                 text="ערוך"
-                onPress={() => {
-                    clearAllExercises();
-                    toggleExercise(plan?.exercise_ids as string[])
-                    router.push({
-                        pathname: '/form_create_Workout/[mode]',
-                        params: { mode: 'edit', workout_plan_id: plan?.id },
-                    });
-                }}
+                onPress={handleEdit}
                 icon={<MaterialCommunityIcons name="pencil-outline" size={26} color={colors.lime[500]} />}
             />
             <Button
                 text="שתף"
-                onPress={async () => {
-                    const days = plan.days_per_week?.join(', ') ?? '';
-                    await Share.share({
-                        message:
-                            `🏋️ תוכנית אימון: ${plan.title}\n` +
-                            `⏱ זמן: ${plan.time} דקות\n` +
-                            `💪 רמת קושי: ${plan.difficulty}/5\n` +
-                            `📅 ימים: ${days}\n` +
-                            `🔢 תרגילים: ${plan.exercise_ids?.length ?? 0}`,
-                    });
-                }}
+                onPress={handleShare}
                 icon={<Feather name="share" size={26} color={colors.lime[500]} />}
             />
             <Button
                 text="שכפל"
-                onPress={() => duplicatePlan(plan)}
+                onPress={handleDuplicate}
                 icon={duplicatePending
                     ? <Loading size="small" />
                     : <Ionicons name="duplicate-outline" size={26} color={colors.lime[500]} />}

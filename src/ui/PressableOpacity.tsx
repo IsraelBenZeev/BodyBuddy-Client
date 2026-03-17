@@ -48,7 +48,7 @@
 
 
 import * as Haptics from 'expo-haptics';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Pressable, PressableProps } from 'react-native';
 import Animated, { 
   useAnimatedStyle, 
@@ -104,7 +104,7 @@ const AppButton = ({
         return styles;
     });
 
-    const triggerHaptic = (type: HapticType) => {
+    const triggerHaptic = useCallback((type: HapticType) => {
         switch (type) {
             case 'light': Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); break;
             case 'medium': Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); break;
@@ -113,18 +113,18 @@ const AppButton = ({
             case 'warning': Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning); break;
             case 'error': Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); break;
         }
-    };
+    }, []);
 
-    const handlePressIn = (event: any) => {
+    const handlePressIn = useCallback((event: any) => {
         triggerHaptic(haptic);
-        pressedValue.value = 1; // מעדכן למצב לחוץ
+        pressedValue.value = 1;
         props.onPressIn?.(event);
-    };
+    }, [triggerHaptic, haptic, pressedValue, props.onPressIn]);
 
-    const handlePressOut = (event: any) => {
-        pressedValue.value = 0; // חוזר למצב רגיל
+    const handlePressOut = useCallback((event: any) => {
+        pressedValue.value = 0;
         props.onPressOut?.(event);
-    };
+    }, [pressedValue, props.onPressOut]);
 
     return (
         <AnimatedPressable

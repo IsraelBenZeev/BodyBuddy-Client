@@ -103,6 +103,11 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
         return () => clearInterval(interval);
     }, []);
 
+    const handleIndexChange = useCallback((index: number) => setActiveIndex(index), []);
+    const renderItem = useCallback((item: any, isActive: boolean, _isSwiped: boolean, activeId: string) => (
+        <Card item={item} isActive={isActive} activeId={activeId} control={control} />
+    ), [control]);
+
     if (isLoading)
         return (
             <View className="flex-1 bg-background-900 justify-center items-center">
@@ -133,10 +138,8 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                     widthCard={SCREEN_WIDTH * 0.95}
                     variant="center"
                     keyField="exerciseId"
-                    onIndexChange={(index) => setActiveIndex(index)} // המשתנה onIndexChange מקבל את ה-index
-                    renderItem={(item, isActive, isSwiped, activeId) => (
-                        <Card item={item} isActive={isActive} activeId={activeId} control={control} />
-                    )}
+                    onIndexChange={handleIndexChange}
+                    renderItem={renderItem}
                 />
             </View>
 

@@ -5,6 +5,7 @@ import AppButton from '@/src/ui/PressableOpacity';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
+import React, { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 interface CardAreaBodyProps {
   selectedPart: BodyPart[];
@@ -13,6 +14,15 @@ interface CardAreaBodyProps {
 
 const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
   const router = useRouter();
+
+  const handleNavigate = useCallback(() => {
+    if (selectedPart.length > 0) {
+      router.push({
+        pathname: '/exercises/[parts]',
+        params: { parts: JSON.stringify(selectedPart), mode: 'view' as modeListExercises },
+      });
+    }
+  }, [selectedPart, router]);
 
   return (
     <View className="">
@@ -42,17 +52,7 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
         haptic="medium"
         animationType="opacity"
         accessibilityLabel="למעבר לתרגילים"
-        onPress={() => {
-          if (selectedPart.length > 0) {
-            router.push({
-              pathname: '/exercises/[parts]',
-              params: {
-                parts: JSON.stringify(selectedPart),
-                mode: 'view' as modeListExercises,
-              },
-            });
-          }
-        }}
+        onPress={handleNavigate}
       >
         <AntDesign name="arrow-left" size={20} color="black" />
         <Text style={styles.buttonText}>למעבר לתרגילים</Text>
@@ -82,4 +82,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardAreaBody;
+export default React.memo(CardAreaBody);

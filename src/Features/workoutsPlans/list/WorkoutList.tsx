@@ -7,6 +7,7 @@ import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
 import Loading from '@/src/ui/Loading';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { Text, View } from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
 import CustomCarousel from '../../../ui/CustomCarousel';
@@ -22,13 +23,15 @@ const WorkoutList = () => {
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const router = useRouter();
 
-  const handleCreateNew = () => {
+  const handleNavigateToFavorites = useCallback(() => router.push('/favorites'), [router]);
+
+  const handleCreateNew = useCallback(() => {
     clearAllExercises();
     router.push({
       pathname: '/form_create_Workout/[mode]',
       params: { mode: 'create' },
     });
-  };
+  }, [clearAllExercises, router]);
 
   if (isLoadingPlans) {
     return (
@@ -49,7 +52,7 @@ const WorkoutList = () => {
           <AppButton
             animationType="opacity"
             haptic="light"
-            onPress={() => router.push('/favorites')}
+            onPress={handleNavigateToFavorites}
             className="bg-zinc-800 px-4 py-3 rounded-2xl border border-zinc-700 flex-row items-center gap-2"
             accessibilityLabel="תרגילים מועדפים"
           >

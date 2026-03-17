@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
 import * as Haptics from 'expo-haptics';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { LinearGradient } from 'react-native-svg';
@@ -22,10 +22,10 @@ const TimeInput = ({ control, name, isPendingCreate }: Props) => {
     const [visible, setVisible] = useState(false);
     const [tempTime, setTempTime] = useState<time>({ hours: 0, minutes: 0 });
     // פונקציה לפתיחת המודאל שבודקת חסימה
-    const handleOpen = () => {
+    const handleOpen = useCallback(() => {
         if (isPendingCreate) return;
         setVisible(true);
-    };
+    }, [isPendingCreate]);
     return (
         <Controller
             control={control}
