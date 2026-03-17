@@ -1,6 +1,6 @@
 import { Exercise } from "@/src/types/exercise";
-import { IconSecondaryMuscle, IconsFitnessTools, IconTargetMuscle } from "@/src/ui/IconsSVG";
-import { BodyPart, targetMuscleToBodyParts } from "@/src/types/bodtPart";
+import { IconSecondaryMuscle, IconsFitnessTools } from "@/src/ui/IconsSVG";
+import { BACK_BODY_MUSCLES, BodyPart, FRONT_BODY_MUSCLES, targetMuscleToBodyParts } from "@/src/types/bodtPart";
 import MiniAvatar from "./MiniAvatar";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
@@ -18,25 +18,29 @@ const Information = ({ exercise, gender }: InformationProps) => {
         return Array.from(parts);
     }, [exercise.targetMuscles]);
 
+    const preferBack = useMemo(() => {
+        const hasBack = exercise.targetMuscles.some((m) => BACK_BODY_MUSCLES.has(m));
+        const hasFront = exercise.targetMuscles.some((m) => FRONT_BODY_MUSCLES.has(m));
+        return hasBack && !hasFront;
+    }, [exercise.targetMuscles]);
+
     return (
         <View className="px-5 w-full space-y-3 mt-4 gap-3">
             {/* כרטיס שריר עיקרי */}
             <View className="flex-row-reverse items-center bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl">
-                <View className="bg-[#D7FF00] w-12 h-12 rounded-2xl items-center justify-center shadow-lg shadow-lime-500/20">
-                    <IconTargetMuscle size={24} color="black" />
-                </View>
+                {gender && targetParts.length > 0 && (
+                    <MiniAvatar
+                        selectedParts={targetParts}
+                        gender={gender}
+                        preferBack={preferBack}
+                    />
+                )}
                 <View className="flex-1 mr-4">
                     <Text className="text-zinc-500 text-xs font-bold text-right mb-1 uppercase tracking-tighter">שריר עיקרי</Text>
                     <Text className="text-white text-lg font-bold text-right">
                         {exercise?.targetMuscles_he}
                     </Text>
                 </View>
-                {gender && targetParts.length > 0 && (
-                    <MiniAvatar
-                        selectedParts={targetParts}
-                        gender={gender}
-                    />
-                )}
             </View>
 
             {/* שורה כפולה לציוד ושרירים מסייעים */}

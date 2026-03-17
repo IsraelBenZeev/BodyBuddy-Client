@@ -32,6 +32,14 @@ export const targetMuscleToBodyParts: Record<string, BodyPart[]> = {
   'upper back': ['back'],
 };
 
+export const BACK_BODY_MUSCLES = new Set([
+  'glutes', 'hamstrings', 'lats', 'upper back', 'traps', 'spine', 'levator scapulae',
+]);
+
+export const FRONT_BODY_MUSCLES = new Set([
+  'abs', 'pectorals', 'serratus anterior', 'quads', 'biceps',
+]);
+
 export const targetMusclesHebrew: Record<string, string> = {
   abductors: 'מרחיקים',
   abs: 'בטן',
