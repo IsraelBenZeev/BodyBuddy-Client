@@ -16,6 +16,7 @@ import { useDeferredValue, useCallback, useMemo, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
+import MuscleFilters from './MuscleFilters';
 
 interface ExercisesScreenProps {
   bodyParts: string | string[] | undefined;
@@ -35,6 +36,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     selectedPartsArray
   );
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
+  const [selectedMuscle, setSelectedMuscle] = useState<string | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const { data: favorites = [] } = useFavoriteIds(user?.id);
   const { mutate: toggleFavMutate } = useToggleFavorite(user?.id);
@@ -60,20 +62,45 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     return Array.from(exerciseIndex.keys()).filter((k) => k !== 'all') as BodyPart[];
   }, [exerciseIndex]);
 
+  const handleSetSelectedFilter = useCallback((filter: string | 'all') => {
+    setSelectedFilter(filter);
+    setSelectedMuscle('all');
+  }, []);
+
   const toggleFavorite = useCallback((id: string) => {
     toggleFavMutate({ exerciseId: id, isFav: favorites.includes(id) });
   }, [favorites, toggleFavMutate]);
 
   const deferredFilter = useDeferredValue(selectedFilter);
+  const deferredMuscle = useDeferredValue(selectedMuscle);
   const deferredSearch = useDeferredValue(searchQuery);
+
+  const muscleIndex = useMemo(() => {
+    const index = new Map<string, typeof allExercises>();
+    const base = exerciseIndex.get(deferredFilter) ?? exerciseIndex.get('all') ?? [];
+    index.set('all', base);
+    for (const exercise of base) {
+      for (const muscle of exercise.targetMuscles) {
+        if (!index.has(muscle)) index.set(muscle, []);
+        index.get(muscle)!.push(exercise);
+      }
+    }
+    return index;
+  }, [exerciseIndex, deferredFilter]);
+
+  const uniqueMuscles = useMemo(
+    () => Array.from(muscleIndex.keys()).filter((k) => k !== 'all'),
+    [muscleIndex]
+  );
+
   const filteredExercises = useMemo(() => {
-    const byPart = exerciseIndex.get(deferredFilter) ?? exerciseIndex.get('all') ?? [];
-    if (!deferredSearch.trim()) return byPart;
+    const byMuscle = muscleIndex.get(deferredMuscle) ?? muscleIndex.get('all') ?? [];
+    if (!deferredSearch.trim()) return byMuscle;
     const q = deferredSearch.toLowerCase();
-    return byPart.filter(
+    return byMuscle.filter(
       (ex) => ex.name.toLowerCase().includes(q) || ex.name_he.includes(deferredSearch)
     );
-  }, [exerciseIndex, deferredFilter, deferredSearch]);
+  }, [muscleIndex, deferredMuscle, deferredSearch]);
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -113,8 +140,15 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
               <Filters
                 uniqueBodyParts={uniqueBodyParts}
                 selectedFilter={selectedFilter}
-                setSelectedFilter={setSelectedFilter}
+                setSelectedFilter={handleSetSelectedFilter}
                 mode={mode as modeListExercises}
+              />
+            )}
+            {uniqueMuscles.length > 1 && (
+              <MuscleFilters
+                uniqueMuscles={uniqueMuscles}
+                selectedMuscle={selectedMuscle}
+                setSelectedMuscle={setSelectedMuscle}
               />
             )}
             <View className="flex-row-reverse items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-4 mx-2 mb-3 mt-2">

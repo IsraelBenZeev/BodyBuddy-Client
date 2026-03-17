@@ -1,13 +1,23 @@
 import { Exercise } from "@/src/types/exercise";
 import { IconSecondaryMuscle, IconsFitnessTools, IconTargetMuscle } from "@/src/ui/IconsSVG";
-import { BodyPart } from "@/src/types/bodtPart";
+import { BodyPart, targetMuscleToBodyParts } from "@/src/types/bodtPart";
 import MiniAvatar from "./MiniAvatar";
+import { useMemo } from "react";
 import { Text, View } from "react-native";
 interface InformationProps {
     exercise: Exercise;
     gender?: 'male' | 'female';
 }
 const Information = ({ exercise, gender }: InformationProps) => {
+    const targetParts = useMemo(() => {
+        const parts = new Set<BodyPart>();
+        for (const muscle of exercise.targetMuscles) {
+            const mapped = targetMuscleToBodyParts[muscle] ?? [];
+            mapped.forEach((p) => parts.add(p));
+        }
+        return Array.from(parts);
+    }, [exercise.targetMuscles]);
+
     return (
         <View className="px-5 w-full space-y-3 mt-4 gap-3">
             {/* כרטיס שריר עיקרי */}
@@ -21,9 +31,9 @@ const Information = ({ exercise, gender }: InformationProps) => {
                         {exercise?.targetMuscles_he}
                     </Text>
                 </View>
-                {gender && exercise.bodyParts.length > 0 && (
+                {gender && targetParts.length > 0 && (
                     <MiniAvatar
-                        selectedParts={exercise.bodyParts as BodyPart[]}
+                        selectedParts={targetParts}
                         gender={gender}
                     />
                 )}
