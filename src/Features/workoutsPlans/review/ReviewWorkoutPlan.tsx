@@ -29,9 +29,10 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
   const handleCloseSession = useCallback(() => setSelectedSession(null), []);
   useEffect(() => {
     if (selectedSession?.id) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         sheetRef.current?.snapToIndex(1);
       }, 50);
+      return () => clearTimeout(timer);
     }
   }, [selectedSession]);
   return (

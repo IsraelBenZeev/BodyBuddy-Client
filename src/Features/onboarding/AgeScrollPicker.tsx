@@ -110,13 +110,14 @@ const AgeScrollPicker = ({
       const index = value - min;
       const offset = index * ITEM_WIDTH;
       const isInitial = lastScrolledValue.current === null;
-      setTimeout(
+      const timer = setTimeout(
         () => {
           flatListRef.current?.scrollToOffset({ offset, animated: !isInitial });
           lastScrolledValue.current = value;
         },
         isInitial ? 50 : 0,
       );
+      return () => clearTimeout(timer);
     }
   }, [value, min, containerWidth]);
 

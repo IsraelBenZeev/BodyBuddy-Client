@@ -1,7 +1,7 @@
 import { Exercise } from '@/src/types/exercise';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import { Image } from 'expo-image';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Control } from 'react-hook-form';
 import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import Failds from './Failds';
@@ -50,8 +50,16 @@ interface CardProps {
 const Card = ({ item, isActive, activeId, control }: CardProps) => {
   const { width, height } = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
+  }, []);
+
   const scrollToBottom = () => {
-    setTimeout(() => {
+    scrollTimeoutRef.current = setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 100);
   };

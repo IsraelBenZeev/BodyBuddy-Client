@@ -43,7 +43,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
     if (flatListRef.current && lastScrolledValue.current !== value) {
       const index = value - min;
       const isInitial = lastScrolledValue.current === null;
-      setTimeout(
+      const timer = setTimeout(
         () => {
           flatListRef.current?.scrollToOffset({
             offset: index * TICK_SPACING,
@@ -54,6 +54,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
         },
         isInitial ? 100 : 0
       );
+      return () => clearTimeout(timer);
     }
   }, [value, min]);
 
