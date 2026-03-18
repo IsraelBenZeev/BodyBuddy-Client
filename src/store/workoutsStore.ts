@@ -1,31 +1,27 @@
 import { create } from 'zustand';
 interface WorkoutsState {
-  selectedExerciseIds: string[];
+  selectedExerciseIds: Set<string>;
   toggleExercise: (id: string | string[]) => void;
   isExerciseSelected: (id: string) => boolean;
   clearAllExercises: () => void;
 }
 
 export const useWorkoutStore = create<WorkoutsState>((set, get) => ({
-  selectedExerciseIds: [],
+  selectedExerciseIds: new Set(),
   toggleExercise: (input) => {
     set((state) => {
       const idsToToggle = Array.isArray(input) ? input : [input];
-      let newSelectedIds = [...state.selectedExerciseIds];
-
+      const newSet = new Set(state.selectedExerciseIds);
       idsToToggle.forEach((id) => {
-        if (newSelectedIds.includes(id)) {
-          newSelectedIds = newSelectedIds.filter((exId) => exId !== id);
+        if (newSet.has(id)) {
+          newSet.delete(id);
         } else {
-          newSelectedIds.push(id);
+          newSet.add(id);
         }
       });
-
-      const uniqueIds = Array.from(new Set(newSelectedIds));
-
-      return { selectedExerciseIds: uniqueIds };
-    })
+      return { selectedExerciseIds: newSet };
+    });
   },
-  isExerciseSelected: (id) => get().selectedExerciseIds.includes(id),
-  clearAllExercises: () => set({ selectedExerciseIds: [] }),
+  isExerciseSelected: (id) => get().selectedExerciseIds.has(id),
+  clearAllExercises: () => set({ selectedExerciseIds: new Set() }),
 }));

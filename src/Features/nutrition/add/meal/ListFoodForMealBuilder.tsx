@@ -93,6 +93,9 @@ const ListFoodForMealBuilder = ({
             contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 60, paddingTop: 8 }}
             ItemSeparatorComponent={() => <View className="h-4" />}
             showsVerticalScrollIndicator={false}
+            initialNumToRender={8}
+            maxToRenderPerBatch={5}
+            removeClippedSubviews={true}
             ListEmptyComponent={() => (
               <View className="items-center justify-center mt-20">
                 <View className="bg-background-800 p-6 rounded-full mb-4">

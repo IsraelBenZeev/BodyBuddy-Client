@@ -21,7 +21,7 @@ interface CardExerciseProps {
 const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExerciseProps) => {
   const router = useRouter();
   const isSelectedId = useWorkoutStore((state) =>
-    state.selectedExerciseIds.includes(item.exerciseId)
+    state.selectedExerciseIds.has(item.exerciseId)
   );
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
   const isSelected = mode === 'picker' && isSelectedId;

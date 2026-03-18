@@ -174,9 +174,9 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             {mode === 'picker' && (
               <View className="flex-row-reverse items-center justify-between bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 mx-2 mb-3">
                 <View className="flex-row-reverse items-center">
-                  <View className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.length > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}>
-                    <Text className={`${exerciseSelectedIds.length > 0 ? 'text-zinc-950' : 'text-zinc-400'} font-black text-base`}>
-                      {exerciseSelectedIds.length}
+                  <View className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.size > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}>
+                    <Text className={`${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'} font-black text-base`}>
+                      {exerciseSelectedIds.size}
                     </Text>
                   </View>
                   <Text className="text-zinc-300 font-bold text-base">
@@ -184,7 +184,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                   </Text>
                 </View>
 
-                {exerciseSelectedIds.length > 0 && (
+                {exerciseSelectedIds.size > 0 && (
                   <AppButton
                     onPress={clearAllExercises}
                     haptic="medium"
@@ -208,6 +208,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 />
               )}
               keyExtractor={(item) => item.exerciseId}
+              estimatedItemSize={110}
               onEndReached={handleEndReached}
               onEndReachedThreshold={0.5}
               ListFooterComponent={

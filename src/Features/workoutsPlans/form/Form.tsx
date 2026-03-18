@@ -70,7 +70,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       data.description = '';
     }
     data.user_id = user?.id as string;
-    data.exercise_ids = selectedIds;
+    data.exercise_ids = [...selectedIds];
     createWorkoutPlan(data)
     resetExercise()
   }, [user?.id, selectedIds, createWorkoutPlan, resetExercise]);

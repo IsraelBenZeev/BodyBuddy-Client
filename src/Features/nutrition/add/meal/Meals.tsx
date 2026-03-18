@@ -85,6 +85,9 @@ return (
       ItemSeparatorComponent={() => <View className="h-4" />}
       contentContainerStyle={{ paddingBottom: 140 }}
       renderItem={renderItem}
+      initialNumToRender={6}
+      maxToRenderPerBatch={4}
+      removeClippedSubviews={true}
       ListEmptyComponent={() => (
         <View className="flex-1 items-center justify-center mt-20 px-10">
           <View className="bg-background-800 p-8 rounded-full mb-6">

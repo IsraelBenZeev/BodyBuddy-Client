@@ -123,6 +123,9 @@ const Foods = ({ userId, date, onClose }: Props) => {
           contentContainerStyle={{ paddingBottom: 160 }}
           ItemSeparatorComponent={() => <View className="h-4" />}
           renderItem={renderItem}
+          initialNumToRender={8}
+          maxToRenderPerBatch={5}
+          removeClippedSubviews={true}
         />
       )}
 
