@@ -7,7 +7,7 @@ import { WorkoutPlan } from '@/src/types/workout';
 import FormInput from '@/src/ui/FormInput';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Days from './Days';
@@ -57,6 +57,18 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
   const selectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
   const resetExercise = useWorkoutStore((state) => state.clearAllExercises);
+  const editInitialized = useRef(false);
+
+  // במצב עריכה – טוען את התרגילים הקיימים לסטור פעם אחת
+  useEffect(() => {
+    if (mode === 'edit' && !isLoadingWorkoutPlan && workoutPlanData?.exercise_ids && !editInitialized.current) {
+      editInitialized.current = true;
+      resetExercise();
+      if (workoutPlanData.exercise_ids.length > 0) {
+        toggleExercise(workoutPlanData.exercise_ids);
+      }
+    }
+  }, [mode, isLoadingWorkoutPlan, workoutPlanData]);
 
   const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user?.id as string, mode)
   const navigateToPicker = useCallback(() => {
@@ -100,14 +112,14 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       >
         <HeaderForm
           navigateToPicker={navigateToPicker}
-          selectedIds={selectedIds || []}
+          selectedIds={[...selectedIds]}
         />
 
         <View className="mb-8" style={{ maxHeight: SCREEN_HEIGHT * 0.25 }}>
           <ListExercise
             toggleExercise={toggleExercise}
             navigateToPicker={navigateToPicker}
-            selectExercisesIds={selectedIds}
+            selectExercisesIds={[...selectedIds]}
             mode={"edit"}
             isPendingCreate={isPendingCreate}
           />
