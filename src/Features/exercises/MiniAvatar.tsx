@@ -1,7 +1,7 @@
 import AvatarFemale from '@/src/Features/avatar/female/AvatarFemale';
 import AvatarMale from '@/src/Features/avatar/male/AvatarMale';
 import { BodyPart } from '@/src/types/bodtPart';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 
 const MINI_WIDTH = 50;
@@ -26,8 +26,10 @@ const MiniAvatar = ({ selectedParts, gender, preferBack = false }: MiniAvatarPro
     [selectedParts]
   );
 
-  const hasFrontParts = !preferBack && selectedParts.some((p) => !BACK_ONLY_PARTS.includes(p));
-  const hasBackParts = preferBack || selectedParts.some((p) => BACK_ONLY_PARTS.includes(p));
+  const { hasFrontParts, hasBackParts } = useMemo(() => ({
+    hasFrontParts: !preferBack && selectedParts.some((p) => !BACK_ONLY_PARTS.includes(p)),
+    hasBackParts: preferBack || selectedParts.some((p) => BACK_ONLY_PARTS.includes(p)),
+  }), [selectedParts, preferBack]);
   const showBoth = hasFrontParts && hasBackParts;
   const avatarSide = !hasFrontParts ? 'back' : 'front';
 

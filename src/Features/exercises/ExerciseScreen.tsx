@@ -6,6 +6,7 @@ import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import { Image } from 'expo-image';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Buttons from './Buttons';
 import ExerciseHistory from './ExerciseHistory';
@@ -14,6 +15,7 @@ import Instractions from './Instractions';
 import TabsManager from './TabsMenager';
 
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
+  const [imgError, setImgError] = useState(false);
   const user = useAuthStore((state) => state.user);
   const { data: profile } = useProfile(user?.id);
   const { data: exercises, isLoading: isExerciseLoading } = useGetExercisesByIds([exerciseId]);
@@ -45,7 +47,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           <View className="h-1 w-20 bg-lime-500 rounded-full self-end mt-2" />
         </View>
         <View style={styles.imageWrapper} className="self-center">
-          {exerciseData?.gif_available === false ? (
+          {exerciseData?.gif_available === false || imgError ? (
             <>
               <DumbbellAnimation size={200} />
               <Text className="text-zinc-400 text-sm font-medium mt-1">תרגיל זה אינו זמין כרגע</Text>
@@ -57,6 +59,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
               contentFit="contain"
               transition={500}
               cachePolicy={'disk'}
+              onError={() => setImgError(true)}
             />
           )}
         </View>

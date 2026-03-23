@@ -7,7 +7,7 @@ import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as Crypto from 'expo-crypto';
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Text, View } from 'react-native';
 import Card from './Card';
@@ -18,18 +18,31 @@ import { useUIStore } from '@/src/store/useUIStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+const formatTime = (totalSeconds: number): string => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const TimerDisplay = memo(() => {
+    const [totalTime, setTotalTime] = useState(0);
+    useEffect(() => {
+        const interval = setInterval(() => setTotalTime((p) => p + 1), 1000);
+        return () => clearInterval(interval);
+    }, []);
+    return <Text className="text-lime-500 font-mono text-xl">{formatTime(totalTime)}</Text>;
+});
+
 interface Props {
-    setIsStart: any;
+    setIsStart: (value: boolean) => void;
     workoutPlan: WorkoutPlan;
-
-
 }
+
 const Session = ({ setIsStart, workoutPlan }: Props) => {
     const user = useAuthStore((state) => state.user);
     const triggerSuccess = useUIStore((state) => state.triggerSuccess);
     const user_id = user?.id as string;
     const { data: exercises, isLoading } = useGetExercisesByIds(workoutPlan.exercise_ids);
-    const [totalTime, setTotalTime] = useState(0);
     const [activeIndex, setActiveIndex] = useState(0);
     const { control, handleSubmit } = useForm<SessionFormData>({
         defaultValues: {
@@ -40,15 +53,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
 
     const { mutateAsync: createSession, isPending: isPendingCreateSession } = useSessionCreateWorkout(user_id, workoutPlan.id as string);
     const { mutateAsync: createExerciseLog, isPending: isPendingCreateExerciseLog } = useSessionCreateExerciseLog(user_id, workoutPlan.id as string);
-    const formatTime = (totalSeconds: number): string => {
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
 
-        const paddedMinutes = minutes.toString().padStart(2, '0');
-        const paddedSeconds = seconds.toString().padStart(2, '0');
-
-        return `${paddedMinutes}:${paddedSeconds}`;
-    };
     const saveSession = async (data: SessionFormData, idSession: string) => {
         const completedAt = new Date().toISOString();
         const startTime = new Date(data.started_at).getTime();
@@ -68,6 +73,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             session: finalData,
         });
     }
+
     const saveExerciseLog = async (data: SessionFormData, idSession: string) => {
         const allSets: ExerciseLogDBType[] = [];
         Object.entries(data.exercises).forEach(([exerciseId, exerciseDetails]: [string, any]) => {
@@ -87,6 +93,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             exerciseLog: allSets,
         });
     }
+
     const onSubmit = useCallback(async (data: SessionFormData) => {
         try {
             const idSession = Crypto.randomUUID();
@@ -99,13 +106,6 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             triggerSuccess('שגיאה בשמירת האימון', 'failed');
         }
     }, [createSession, createExerciseLog, triggerSuccess]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTotalTime((prev) => prev + 1);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
 
     const handleIndexChange = useCallback((index: number) => setActiveIndex(index), []);
     const renderItem = useCallback((item: any, isActive: boolean, _isSwiped: boolean, activeId: string) => (
@@ -121,13 +121,13 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
 
     return (
         <Animated.View className="flex-1 bg-background-900"
-            entering={FadeIn.duration(600)} // משך זמן הכניסה במילי-שניות
-            exiting={FadeOut.duration(400)}  // משך זמן היציאה
+            entering={FadeIn.duration(600)}
+            exiting={FadeOut.duration(400)}
         >
             <View className="px-6 flex-row justify-between items-center py-4">
                 <Text className="text-white text-2xl font-black">{workoutPlan.title}</Text>
                 <View className="bg-background-800 px-4 py-2 rounded-2xl border border-white/5">
-                    <Text className="text-lime-500 font-mono text-xl">{formatTime(totalTime)}</Text>
+                    <TimerDisplay />
                 </View>
             </View>
 

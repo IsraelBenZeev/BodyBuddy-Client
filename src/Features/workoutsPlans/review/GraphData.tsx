@@ -13,6 +13,19 @@ type GraphType = "weight" | "reps" | "sets";
 const GraphData = ({ logs }: Props) => {
     const [activeTab, setActiveTab] = useState<GraphType>("weight");
 
+    // Map אחד של session_id → created_at — משמש לכל שלושת ה-sort (O(n) במקום O(n²))
+    const sessionDateMap = useMemo(
+        () => new Map(logs.map((l) => [l.session_id, l.created_at])),
+        [logs]
+    );
+
+    const sortByDate = (a: [string, number], b: [string, number]) => {
+        const dateA = sessionDateMap.get(a[0]);
+        const dateB = sessionDateMap.get(b[0]);
+        if (dateA && dateB) return new Date(dateA).getTime() - new Date(dateB).getTime();
+        return a[0].localeCompare(b[0]);
+    };
+
     // עיבוד נתונים למשקלים - מקסימום משקל לכל session
     const weightData = useMemo(() => {
         if (!logs || logs.length === 0) return [];
@@ -25,24 +38,14 @@ const GraphData = ({ logs }: Props) => {
             }
         });
 
-        const sortedSessions = Object.entries(sessionData)
-            .sort((a, b) => {
-                // מיון לפי created_at אם יש, אחרת לפי session_id
-                const logA = logs.find((l) => l.session_id === a[0]);
-                const logB = logs.find((l) => l.session_id === b[0]);
-                if (logA?.created_at && logB?.created_at) {
-                    return new Date(logA.created_at).getTime() - new Date(logB.created_at).getTime();
-                }
-                return a[0].localeCompare(b[0]);
-            })
-            .map(([, weight]) => weight);
-
-        return sortedSessions.map((weight, index) => ({
-            value: weight,
-            dataPointText: `${weight}`,
-            label: `${index + 1}`,
-        }));
-    }, [logs]);
+        return Object.entries(sessionData)
+            .sort(sortByDate)
+            .map(([, weight], index) => ({
+                value: weight,
+                dataPointText: `${weight}`,
+                label: `${index + 1}`,
+            }));
+    }, [logs, sessionDateMap]);
 
     // עיבוד נתונים לחזרות - מקסימום חזרות לכל session
     const repsData = useMemo(() => {
@@ -56,23 +59,14 @@ const GraphData = ({ logs }: Props) => {
             }
         });
 
-        const sortedSessions = Object.entries(sessionData)
-            .sort((a, b) => {
-                const logA = logs.find((l) => l.session_id === a[0]);
-                const logB = logs.find((l) => l.session_id === b[0]);
-                if (logA?.created_at && logB?.created_at) {
-                    return new Date(logA.created_at).getTime() - new Date(logB.created_at).getTime();
-                }
-                return a[0].localeCompare(b[0]);
-            })
-            .map(([, reps]) => reps);
-
-        return sortedSessions.map((reps, index) => ({
-            value: reps,
-            dataPointText: `${reps}`,
-            label: `${index + 1}`,
-        }));
-    }, [logs]);
+        return Object.entries(sessionData)
+            .sort(sortByDate)
+            .map(([, reps], index) => ({
+                value: reps,
+                dataPointText: `${reps}`,
+                label: `${index + 1}`,
+            }));
+    }, [logs, sessionDateMap]);
 
     // עיבוד נתונים לסטים - כמות סטים לכל session
     const setsData = useMemo(() => {
@@ -84,23 +78,14 @@ const GraphData = ({ logs }: Props) => {
             sessionData[sessionId] = (sessionData[sessionId] || 0) + 1;
         });
 
-        const sortedSessions = Object.entries(sessionData)
-            .sort((a, b) => {
-                const logA = logs.find((l) => l.session_id === a[0]);
-                const logB = logs.find((l) => l.session_id === b[0]);
-                if (logA?.created_at && logB?.created_at) {
-                    return new Date(logA.created_at).getTime() - new Date(logB.created_at).getTime();
-                }
-                return a[0].localeCompare(b[0]);
-            })
-            .map(([, sets]) => sets);
-
-        return sortedSessions.map((sets, index) => ({
-            value: sets,
-            dataPointText: `${sets}`,
-            label: `${index + 1}`,
-        }));
-    }, [logs]);
+        return Object.entries(sessionData)
+            .sort(sortByDate)
+            .map(([, sets], index) => ({
+                value: sets,
+                dataPointText: `${sets}`,
+                label: `${index + 1}`,
+            }));
+    }, [logs, sessionDateMap]);
 
     const handleTabPress = useCallback((type: GraphType) => setActiveTab(type), []);
 

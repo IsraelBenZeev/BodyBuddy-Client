@@ -233,7 +233,7 @@ const ExerciseItem = React.memo(function ExerciseItem({
         {exercise.gif_available === false ? (
           <DumbbellAnimation size={56} />
         ) : (
-          <Image source={{ uri: exercise.gifUrl }} style={{ width: 56, height: 56 }} contentFit="cover" />
+          <Image source={{ uri: exercise.gifUrl }} style={{ width: 56, height: 56 }} contentFit="cover" cachePolicy="disk" />
         )}
       </View>
       <View className="flex-1 mr-4 items-end">

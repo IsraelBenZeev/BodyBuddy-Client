@@ -8,7 +8,7 @@ import AppButton from '@/src/ui/PressableOpacity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface CardExerciseProps {
@@ -19,6 +19,7 @@ interface CardExerciseProps {
 }
 
 const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExerciseProps) => {
+  const [imgError, setImgError] = useState(false);
   const router = useRouter();
   const isSelectedId = useWorkoutStore((state) =>
     state.selectedExerciseIds.has(item.exerciseId)
@@ -65,7 +66,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
     >
       {/* תמונה / GIF */}
       <View style={styles.imageContainer}>
-        {item.gif_available === false ? (
+        {item.gif_available === false || imgError ? (
           <DumbbellAnimation size={85} />
         ) : (
           <Image
@@ -73,6 +74,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
             style={styles.image}
             contentFit="cover"
             transition={400}
+            onError={() => setImgError(true)}
           />
         )}
         

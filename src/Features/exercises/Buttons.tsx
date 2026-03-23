@@ -4,7 +4,7 @@ import { useAuthStore } from "@/src/store/useAuthStore";
 import AppButton from "@/src/ui/PressableOpacity";
 import { IconAddToListFitness, IconSearchGoogle, IconShare } from "@/src/ui/IconsSVG";
 import Entypo from "@expo/vector-icons/Entypo";
-import { useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { Linking, Modal, Pressable, Share, StyleSheet, Text, View } from "react-native";
 import PlanSelector from "../workoutsPlans/PlansSelector";
 
@@ -98,7 +98,7 @@ const Buttons = ({ exerciseId, exerciseName, exerciseName_he }: ButtonsProps) =>
     );
 };
 
-export default Buttons;
+export default memo(Buttons);
 
 const styles = StyleSheet.create({
     actionButtonInner: {

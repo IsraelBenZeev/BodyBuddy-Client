@@ -8,16 +8,15 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { router, useFocusEffect } from 'expo-router';
 import { CalendarClock, Dumbbell } from 'lucide-react-native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Image, Text, View } from 'react-native';
-import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Buttons from './Buttons';
 import { useAuthStore } from '@/src/store/useAuthStore';
 interface CardPlanProps {
   plan: WorkoutPlan;
   isActive: boolean;
   isSwiped: boolean;
-  translateY: SharedValue<number>;
 }
 const CardPlan = ({ plan, isActive }: CardPlanProps) => {
   const [deleteId, setDeleteId] = useState<string>("");
@@ -25,7 +24,6 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
   const { mutateAsync: deleteWorkoutPlanMutation, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteWorkoutPlan(user?.id as string)
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);  // const handleDelete = (id: string) => {
   const [isShowButtons, setIsShowButtons] = useState<boolean>(false);
 
 

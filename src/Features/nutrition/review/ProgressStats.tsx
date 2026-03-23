@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { calculateRemaining, calculateProgress } from '@/src/utils/calculateNutritionMetrics';
@@ -51,4 +52,4 @@ const ProgressStats = ({ label, consumed, goal, unit, color, iconName }: Props) 
   );
 };
 
-export default ProgressStats;
+export default memo(ProgressStats);
