@@ -71,18 +71,11 @@ export const useCreateWorkoutPlan = (user_id: string, mode: modeAddWorkoutPlan) 
 };
 export const useAddExerciseToPlan = (user_id: string) => {
   const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
 
   return useMutation({
     mutationFn: ({ idExercise, planIds }: { idExercise: string, planIds: string[] }) =>
       addExerciseToPlan(idExercise, planIds),
-    // onSuccess: async () => {
-    //   console.log("Exercises added, invalidating cache...");
-    //   return await queryClient.invalidateQueries({
-    //     queryKey: ['workoutPlans', user_id]
-    //         // queryKey: ['workoutPlan', planId],
-
-    //   });
-    // },
 
     onSuccess: async (data, variables) => {
       const refreshList = queryClient.invalidateQueries({
@@ -98,6 +91,7 @@ export const useAddExerciseToPlan = (user_id: string) => {
 
     onError: (error) => {
       console.error("Mutation error:", error);
+      triggerSuccess('שגיאה בהוספת התרגיל לתוכנית', 'failed');
     }
   });
 };

@@ -165,7 +165,8 @@ export default function LoginScreen() {
             {/* Login Button */}
             <AppButton
               onPress={handleSubmit(onSubmit)}
-              className="w-full items-center justify-center bg-lime-500 py-4 rounded-2xl mb-4"
+              disabled={loading}
+              className={`w-full items-center justify-center bg-lime-500 py-4 rounded-2xl mb-4 ${loading ? 'opacity-50' : ''}`}
               animationType="opacity"
               haptic="light"
               accessibilityLabel="התחבר"

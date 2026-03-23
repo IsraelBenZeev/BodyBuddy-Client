@@ -4,10 +4,11 @@ interface ButtonPrimaryProps {
     onPress: () => void;
     classNameButton?: string;
     classNameText?: string;
+    disabled?: boolean;
 }
-const ButtonPrimary = ({ title, onPress, classNameButton, classNameText }: ButtonPrimaryProps) => {
+const ButtonPrimary = ({ title, onPress, classNameButton, classNameText, disabled }: ButtonPrimaryProps) => {
     return (
-        <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={title} className={`bg-lime-500 w-full py-4 rounded-2xl items-center shadow-lg ${classNameButton}`}>
+        <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel={title} className={`bg-lime-500 w-full py-4 rounded-2xl items-center shadow-lg ${disabled ? 'opacity-50' : ''} ${classNameButton}`}>
             <Text className={`text-center text-black font-extrabold text-base ${classNameText}`}>{title}</Text>
         </Pressable>
     );

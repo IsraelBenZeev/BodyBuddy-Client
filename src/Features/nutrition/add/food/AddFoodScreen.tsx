@@ -102,9 +102,13 @@ const AddFoodScreen = () => {
                 portion_unit: portionUnit,
                 food_item_id: newFood.id,
               },
-              { onSuccess: () => router.back() }
+              {
+                onSuccess: () => router.back(),
+                onError: () => triggerSuccess('שגיאה בהוספה ליומן', 'failed'),
+              }
             );
           },
+          onError: () => triggerSuccess('שגיאה בשמירת המזון', 'failed'),
         }
       );
     },

@@ -210,6 +210,7 @@ export default function RegisterScreen() {
               title={loading ? 'נרשם...' : 'הירשם'}
               onPress={handleSubmit(onSubmit)}
               classNameButton="mb-4"
+              disabled={loading}
             />
             {/* Google Button */}
             <AppButton
