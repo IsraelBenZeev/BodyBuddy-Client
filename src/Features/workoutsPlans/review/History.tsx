@@ -1,6 +1,6 @@
 import { useGetSessions } from "@/src/hooks/useSession";
 import { SessionDBType } from "@/src/types/session";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, memo, useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import SessionReviewCard from "./SessionReviewCard";
@@ -42,4 +42,4 @@ const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef 
     );
 };
 
-export default History;
+export default memo(History);

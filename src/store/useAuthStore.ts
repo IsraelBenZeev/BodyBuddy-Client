@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, Subscription } from '@supabase/supabase-js';
 import { supabase } from '@/supabase_client';
 
 interface AuthState {
@@ -9,6 +9,7 @@ interface AuthState {
   isLoading: boolean;
   isInitialized: boolean;
   pendingAuthUrl: string | null;
+  _authSubscription: Subscription | null;
 
   // Actions
   setUser: (user: User | null) => void;
@@ -19,13 +20,14 @@ interface AuthState {
   initialize: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   // Initial State
   user: null,
   session: null,
   isLoading: false,
   isInitialized: false,
   pendingAuthUrl: null,
+  _authSubscription: null,
 
   // Actions
   setUser: (user) => set({ user }),
@@ -36,6 +38,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   // Initialize: טעינת session קיים + listener לשינויים
   initialize: async () => {
+    // ביטול listener קודם למניעת דליפת זיכרון
+    get()._authSubscription?.unsubscribe();
+
     set({ isLoading: true });
 
     // טעינת session קיים מAsyncStorage
@@ -51,13 +56,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
 
     // Listener לשינויי auth state (login/logout/refresh)
-    supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       set({
         user: session?.user ?? null,
         session: session ?? null,
       });
     });
 
-    set({ isLoading: false, isInitialized: true });
+    set({ isLoading: false, isInitialized: true, _authSubscription: subscription });
   },
 }));

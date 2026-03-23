@@ -14,6 +14,7 @@ import Card from './Card';
 import { colors } from '@/colors';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import { useUIStore } from '@/src/store/useUIStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -25,6 +26,7 @@ interface Props {
 }
 const Session = ({ setIsStart, workoutPlan }: Props) => {
     const user = useAuthStore((state) => state.user);
+    const triggerSuccess = useUIStore((state) => state.triggerSuccess);
     const user_id = user?.id as string;
     const { data: exercises, isLoading } = useGetExercisesByIds(workoutPlan.exercise_ids);
     const [totalTime, setTotalTime] = useState(0);
@@ -91,10 +93,12 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             await saveSession(data, idSession);
             await saveExerciseLog(data, idSession);
             setIsStart(false);
+            triggerSuccess('האימון נשמר!', 'success');
         } catch (error) {
             console.error("שגיאה בתהליך השמירה:", error);
+            triggerSuccess('שגיאה בשמירת האימון', 'failed');
         }
-    }, [createSession, createExerciseLog]);
+    }, [createSession, createExerciseLog, triggerSuccess]);
 
     useEffect(() => {
         const interval = setInterval(() => {

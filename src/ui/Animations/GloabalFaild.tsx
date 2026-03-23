@@ -11,7 +11,7 @@ export default function GlobalFaild() {
         if (!isSuccessVisible || type !== 'failed') return;
         const timer = setTimeout(hideSuccess, 3000);
         return () => clearTimeout(timer);
-    }, [isSuccessVisible]);
+    }, [isSuccessVisible, hideSuccess, type]);
 
     if (!isSuccessVisible || type !== 'failed') return null;
 

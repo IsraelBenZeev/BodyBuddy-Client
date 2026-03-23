@@ -11,7 +11,7 @@ export default function GlobalSuccess() {
         if (!isSuccessVisible || type !== 'success') return;
         const timer = setTimeout(hideSuccess, 3000);
         return () => clearTimeout(timer);
-    }, [isSuccessVisible]);
+    }, [isSuccessVisible, hideSuccess, type]);
 
     if (!isSuccessVisible || type !== 'success') return null;
 
