@@ -1,5 +1,42 @@
+# Dependencies
+node_modules/
+
+# Expo and Build folders
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native folders (If using Prebuild)
+ios/
+android/
+
+# Development Tools
 .agent/
 .cursor/
 .vscode/
 .claude/
-node_modules/
+
+# Debug and Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# System files
+.DS_Store
+*.pem
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Others
+app-example/
+.metro-health-check*
+*.tsbuildinfo
