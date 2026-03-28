@@ -34,7 +34,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
   }, [deletePending, deleteSuccess])
   const translateY = useSharedValue(0);
   const handleViewWorkout = useCallback(() => {
-    router.push({
+    router.navigate({
       pathname: '/workout_plan/[paramse]',
       params: { paramse: plan.id || '' },
     });
@@ -109,7 +109,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           {plan?.description}
         </Text>
         <View className="flex-row items-center gap-2 self-end">
-          <Text className="text-zinc-300 text-[10px]">{plan?.exercise_ids.length} תרגילים</Text>
+          <Text className="text-zinc-300 text-xs">{plan?.exercise_ids.length} תרגילים</Text>
           <Dumbbell size={18} color={colors.lime[500]} strokeWidth={1.25} />
         </View>
 
@@ -120,7 +120,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
               key={day}
               className="bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700"
             >
-              <Text className="text-zinc-300 text-[10px]">{daysInHebrew[day]}</Text>
+              <Text className="text-zinc-300 text-xs">{daysInHebrew[day]}</Text>
             </View>
           ))}
         </View>

@@ -17,7 +17,7 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
 
   const handleNavigate = useCallback(() => {
     if (selectedPart.length > 0) {
-      router.push({
+      router.navigate({
         pathname: '/exercises/[parts]',
         params: { parts: JSON.stringify(selectedPart), mode: 'view' as modeListExercises },
       });
@@ -55,7 +55,7 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
         onPress={handleNavigate}
       >
         <AntDesign name="arrow-left" size={20} color="black" />
-        <Text style={styles.buttonText}>למעבר לתרגילים</Text>
+        <Text className="text-black text-lg font-black">למעבר לתרגילים</Text>
       </AppButton>
     </View>
   );
@@ -75,11 +75,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
  
-  buttonText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: '900',
-  },
 });
 
 export default React.memo(CardAreaBody);

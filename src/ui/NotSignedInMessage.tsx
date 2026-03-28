@@ -38,7 +38,7 @@ export default function NotSignedInMessage({
       <View className="flex-row gap-4 mb-8">
         <Pressable
           onPress={() =>
-            router.push({
+            router.navigate({
               pathname: '/auth/login/[params]',
               params: { params: AUTH_PARAM },
             } as never)
@@ -51,7 +51,7 @@ export default function NotSignedInMessage({
         </Pressable>
         <Pressable
           onPress={() =>
-            router.push({
+            router.navigate({
               pathname: '/auth/signup/[params]',
               params: { params: AUTH_PARAM },
             } as never)

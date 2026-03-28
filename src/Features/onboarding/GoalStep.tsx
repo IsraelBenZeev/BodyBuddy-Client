@@ -7,6 +7,7 @@ import {
   ProfileFormData,
 } from '@/src/types/profile';
 import { calculateDailyCalories } from '@/src/utils/calculateMetrics';
+import { differenceInYears, isValid, parseISO } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 import { Slider } from '@miblanchard/react-native-slider';
 import { useCallback, useMemo, useRef } from 'react';
@@ -88,11 +89,16 @@ const GoalStep = ({
 
   const dailyCalories = useMemo(() => {
     if (!formValues.goal) return null;
+    const dob = formValues.date_of_birth;
+    const parsedDate = dob ? parseISO(dob) : null;
+    const age = parsedDate && isValid(parsedDate)
+      ? differenceInYears(new Date(), parsedDate)
+      : null;
     return calculateDailyCalories(
       formValues.gender || null,
       formValues.weight ?? null,
       formValues.height ?? null,
-      formValues.age ?? null,
+      age,
       formValues.activity_level || null,
       formValues.goal,
       formValues.calorie_offset ?? null,
@@ -101,7 +107,7 @@ const GoalStep = ({
     formValues.gender,
     formValues.weight,
     formValues.height,
-    formValues.age,
+    formValues.date_of_birth,
     formValues.activity_level,
     formValues.goal,
     formValues.calorie_offset,
@@ -326,26 +332,26 @@ const GoalStep = ({
       </ScrollView>
 
       {/* כפתורי פעולה – חזרה, סיום ושמירה */}
-      <View className="flex-row-reverse gap-3 pt-2 pb-4">
+      <View className="flex-row-reverse gap-3 pt-1 pb-3">
         <Pressable
           onPress={onBack}
           disabled={isPending}
-          className="flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-4 bg-background-800 border border-background-600 disabled:opacity-70 active:opacity-90"
+          className="flex-row-reverse items-center justify-center gap-1.5 flex-1 rounded-xl py-2 disabled:opacity-70 active:opacity-70"
           accessibilityRole="button"
           accessibilityLabel="חזרה"
         >
           <Ionicons
             name="arrow-forward"
-            size={22}
-            color={colors.background[200]}
+            size={16}
+            color={colors.background[400]}
           />
-          <Text className="text-background-200 font-bold text-base">חזרה</Text>
+          <Text className="text-background-400 font-medium text-sm">חזרה</Text>
         </Pressable>
 
         <Pressable
           onPress={handleSubmit}
           disabled={isPending}
-          className={`flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-4 shadow-lg ${
+          className={`flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-3 shadow-lg ${
             isPending ? 'bg-lime-700' : 'bg-lime-500'
           } disabled:opacity-70 active:opacity-90`}
           accessibilityRole="button"
@@ -357,7 +363,7 @@ const GoalStep = ({
             <>
               <Ionicons
                 name="checkmark-circle"
-                size={24}
+                size={20}
                 color={colors.background[900]}
               />
               <Text className="text-black font-extrabold text-base">

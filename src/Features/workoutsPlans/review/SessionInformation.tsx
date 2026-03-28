@@ -246,7 +246,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
                   )}
                 </View>
                 <View className="flex-1 pr-3">
-                  <Text className="text-gray-400 text-[10px] text-right font-bold uppercase tracking-widest">תרגיל</Text>
+                  <Text className="text-gray-400 text-xs text-right font-bold uppercase tracking-widest">תרגיל</Text>
                   <Text className="text-lime-500 font-bold text-right text-lg leading-6">
                     {isLoadingExercises ? "טוען..." : exerciseInfo?.name_he}
                   </Text>

@@ -31,7 +31,7 @@ export default function Meals({ userId, date, onClose }: Props) {
 
   const handleCreateFirstMeal = useCallback(() => {
     onClose();
-    router.push('MealBuilder/create' as never);
+    router.push('/MealBuilder/create');
   }, [onClose, router]);
 
   const handleCloseReview = useCallback(() => setReviewMeal(null), []);
@@ -186,11 +186,11 @@ const MealCard = React.memo(function MealCard({
               {Math.round(stats.calories)} קק״ל
             </Text>
             <View className="w-1 h-1 rounded-full bg-gray-600 mx-2" />
-            <Text className="text-gray-400 text-[10px]">
+            <Text className="text-gray-400 text-xs">
               {(meal.meal_items ?? []).length} מרכיבים
             </Text>
             <View className="w-1 h-1 rounded-full bg-gray-600 mx-2" />
-            <Text className="text-gray-500 text-[10px]">
+            <Text className="text-gray-500 text-xs">
               {Math.round(stats.weight)}ג׳ סה״כ
             </Text>
           </View>
@@ -218,7 +218,7 @@ const MealCard = React.memo(function MealCard({
 
       {/* תצוגה ויזואלית קטנה של המרכיבים (אופציונלי - מוסיף המון) */}
       <View className="bg-white/5 px-4 py-2 border-t border-white/5">
-        <Text className="text-gray-500 text-[9px] text-right" numberOfLines={1}>
+        <Text className="text-gray-500 text-xs text-right" numberOfLines={1}>
           כולל: {(meal.meal_items ?? []).map((i: any) => i.food_item?.name).join(', ')}
         </Text>
       </View>

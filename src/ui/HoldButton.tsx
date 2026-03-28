@@ -62,6 +62,10 @@ export interface HoldButtonProps {
   resetDurationMs?: number;
   /** תיאור לקורא מסך */
   accessibilityLabel?: string;
+  /** נקרא כשהמשתמש מתחיל ללחוץ */
+  onPressIn?: () => void;
+  /** נקרא כשהמשתמש משחרר */
+  onPressOut?: () => void;
   children: React.ReactNode;
 }
 
@@ -103,6 +107,8 @@ const HoldButton = ({
   hapticOnComplete = 'success',
   resetDurationMs = DEFAULT_RESET_MS,
   accessibilityLabel,
+  onPressIn: onPressInProp,
+  onPressOut: onPressOutProp,
   children,
 }: HoldButtonProps) => {
   const progress = useSharedValue(0);
@@ -113,16 +119,18 @@ const HoldButton = ({
   }, [onPress, hapticOnComplete]);
 
   const handlePressIn = useCallback(() => {
+    onPressInProp?.();
     cancelAnimation(progress);
     progress.value = withTiming(1, { duration: holdDurationMs }, (finished) => {
       if (finished) runOnJS(onHoldComplete)();
     });
-  }, [progress, holdDurationMs, onHoldComplete]);
+  }, [progress, holdDurationMs, onHoldComplete, onPressInProp]);
 
   const handlePressOut = useCallback(() => {
+    onPressOutProp?.();
     cancelAnimation(progress);
     progress.value = withTiming(0, { duration: resetDurationMs });
-  }, [progress, resetDurationMs]);
+  }, [progress, resetDurationMs, onPressOutProp]);
 
   const darkenOverlayStyle = useAnimatedStyle(() => ({
     position: 'absolute',

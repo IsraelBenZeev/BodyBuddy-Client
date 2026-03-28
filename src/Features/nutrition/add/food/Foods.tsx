@@ -142,7 +142,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
             <Ionicons name="add-circle" size={24} color="#000" />
             <Text className="text-black font-black text-base mr-2">הוסף מזון חדש למזווה</Text>
           </Pressable>
-          <Text className="text-gray-500 text-[10px] text-center mt-3">
+          <Text className="text-gray-500 text-xs text-center mt-3">
             * המזונות שתגדיר כאן יהיו זמינים להוספה מהירה ליומן
           </Text>
         </View>
@@ -205,7 +205,7 @@ const FoodCard = React.memo(function FoodCard({
             <Text className="text-lime-400 text-xs font-bold">
               {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100}{' '}קק״ל
             </Text>
-            <Text className="text-gray-500 text-[10px] mr-1">
+            <Text className="text-gray-500 text-xs mr-1">
               {item.measurement_type === 'units' ? `/ ליחידה` : '/ ל-100 גרם'}
             </Text>
           </View>
@@ -234,21 +234,21 @@ const FoodCard = React.memo(function FoodCard({
           <Text className="text-lime-500 font-black text-xs">
             {item.measurement_type === 'units' ? item.protein_per_unit : item.protein_per_100}g
           </Text>
-          <Text className="text-gray-500 text-[9px] uppercase font-bold mt-0.5">חלבון</Text>
+          <Text className="text-gray-500 text-xs uppercase font-bold mt-0.5">חלבון</Text>
         </View>
         <View className="w-[1px] h-4 bg-white/10" />
         <View className="items-center flex-1">
           <Text className="text-orange-500 font-black text-xs">
             {item.measurement_type === 'units' ? item.carbs_per_unit : item.carbs_per_100}g
           </Text>
-          <Text className="text-gray-500 text-[9px] uppercase font-bold mt-0.5">פחמימה</Text>
+          <Text className="text-gray-500 text-xs uppercase font-bold mt-0.5">פחמימה</Text>
         </View>
         <View className="w-[1px] h-4 bg-white/10" />
         <View className="items-center flex-1">
           <Text className="text-red-500 font-black text-xs">
             {item.measurement_type === 'units' ? item.fat_per_unit : item.fat_per_100}g
           </Text>
-          <Text className="text-gray-500 text-[9px] uppercase font-bold mt-0.5">שומן</Text>
+          <Text className="text-gray-500 text-xs uppercase font-bold mt-0.5">שומן</Text>
         </View>
       </View>
     </Pressable>

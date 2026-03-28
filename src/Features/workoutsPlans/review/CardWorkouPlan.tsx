@@ -14,21 +14,21 @@ const CardWorkouPlan = ({workoutPlan}: Props) => {
                         {/* זמן */}
                         <View className="items-center">
                             <Clock size={24} color={colors.lime[400]} />
-                            <Text className="text-white font-bold mt-1">{workoutPlan?.time} דק׳</Text>
+                            <Text className="text-white text-base font-bold mt-1">{workoutPlan?.time} דק׳</Text>
                             <Text className="text-zinc-500 text-xs">זמן משוער</Text>
                         </View>
 
                         {/* קושי */}
                         <View className="items-center border-x border-zinc-800 px-8">
                             <Zap size={24} color={colors.lime[400]} />
-                            <Text className="text-white font-bold mt-1">{workoutPlan?.difficulty}/10</Text>
+                            <Text className="text-white text-base font-bold mt-1">{workoutPlan?.difficulty}/10</Text>
                             <Text className="text-zinc-500 text-xs">רמת קושי</Text>
                         </View>
 
                         {/* ימים */}
                         <View className="items-center">
                             <CalendarDays size={24} color={colors.lime[400]} />
-                            <Text className="text-white font-bold mt-1">{workoutPlan?.days_per_week?.length}</Text>
+                            <Text className="text-white text-base font-bold mt-1">{workoutPlan?.days_per_week?.length}</Text>
                             <Text className="text-zinc-500 text-xs">ימים בשבוע</Text>
                         </View>
                     </View>
@@ -36,7 +36,7 @@ const CardWorkouPlan = ({workoutPlan}: Props) => {
                     {/* תיאור (אם קיים) */}
                     {workoutPlan?.description && (
                         <View className="mt-6 bg-zinc-900/40 p-4 rounded-2xl border-r-4 border-lime-500">
-                            <Text className="text-zinc-300 text-right leading-6">
+                            <Text className="text-zinc-300 text-sm text-right leading-6">
                                 {workoutPlan.description}
                             </Text>
                         </View>

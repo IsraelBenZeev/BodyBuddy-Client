@@ -48,7 +48,7 @@ const TabButton = ({ routeName, children, onPress, label }: TabButtonProps) => {
           {children}
         </Animatable.View>
 
-        <Text style={[styles.labelText, { color: focused ? colors.lime[400] : colors.background[100] }]}>{label}</Text>
+        <Text className="text-xs font-semibold -mt-2.5" style={{ color: focused ? colors.lime[400] : colors.background[100] }}>{label}</Text>
       </View>
     </Pressable>
   );
@@ -71,11 +71,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  labelText: {
-    fontSize: 11,
-    marginTop: -10, // מספר שלילי "ימשוך" את הטקסט למעלה לכיוון האייקון
-    fontWeight: '600',
   },
 });
 export default TabButton;

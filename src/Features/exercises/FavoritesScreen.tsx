@@ -25,7 +25,7 @@ const FavoritesScreen = () => {
   );
 
   const handleBack = useCallback(() => router.back(), [router]);
-  const handleNavigateHome = useCallback(() => router.push('/(tabs)/'), [router]);
+  const handleNavigateHome = useCallback(() => router.replace('/(tabs)/'), [router]);
   const renderItem = useCallback(({ item }: { item: any }) => (
     <CardExercise item={item} favorites={favoriteIds} toggleFavorite={toggleFavorite} mode="view" />
   ), [favoriteIds, toggleFavorite]);

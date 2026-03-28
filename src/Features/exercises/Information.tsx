@@ -51,7 +51,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
                     <View className="bg-zinc-800 p-2 rounded-xl mb-3">
                         <IconsFitnessTools size={20} color="#D7FF00" />
                     </View>
-                    <Text className="text-zinc-500 text-[10px] font-bold uppercase mb-1">ציוד</Text>
+                    <Text className="text-zinc-500 text-xs font-bold uppercase mb-1">ציוד</Text>
                     <Text className="text-white text-sm font-bold text-right" numberOfLines={1}>
                         {exercise?.equipments_he}
                     </Text>
@@ -62,7 +62,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
                     <View className="bg-zinc-800 p-2 rounded-xl mb-3">
                         <IconSecondaryMuscle size={20} color="#D7FF00" />
                     </View>
-                    <Text className="text-zinc-500 text-[10px] font-bold uppercase mb-1">מסייעים</Text>
+                    <Text className="text-zinc-500 text-xs font-bold uppercase mb-1">מסייעים</Text>
                     <Text className="text-white text-sm font-bold text-right" numberOfLines={1}>
                         {exercise?.secondaryMuscles_he.join(', ')}
                     </Text>

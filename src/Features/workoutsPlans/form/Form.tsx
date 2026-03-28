@@ -72,7 +72,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
 
   const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user?.id as string, mode)
   const navigateToPicker = useCallback(() => {
-    router.push({
+    router.navigate({
       pathname: '/exercises/[parts]',
       params: { parts: JSON.stringify(bodyParts), mode: 'picker' },
     });

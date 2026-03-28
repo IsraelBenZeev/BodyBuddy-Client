@@ -4,9 +4,8 @@ import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
 import { useCallback, useState } from 'react';
-import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors } from '../../../colors';
 import FloatingSelectionBar from './FloatingSelectionBar';
 import AvatarFemale from './female/AvatarFemale';
 import AvatarMale from './male/AvatarMale';
@@ -21,18 +20,18 @@ const AvatarSelectorScreen = () => {
   const router = useRouter();
 
   const handleTogglePart = useCallback((partName: BodyPart) => {
-    setSelectedParts(
-      (prev) =>
-        prev.includes(partName)
-          ? prev.filter((p) => p !== partName) // מסיר
-          : [...prev, partName] // מוסיף
+    setSelectedParts((prev) =>
+      prev.includes(partName) ? prev.filter((p) => p !== partName) : [...prev, partName]
     );
   }, []);
 
-  const handleToggleSide = useCallback(() => setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front')), []);
+  const handleToggleSide = useCallback(
+    () => setSideAvatar((prev) => (prev === 'front' ? 'back' : 'front')),
+    []
+  );
 
   const handleNavigate = useCallback(() => {
-    router.push({
+    router.navigate({
       pathname: '/exercises/[parts]',
       params: {
         parts: JSON.stringify(selectedParts),
@@ -42,20 +41,29 @@ const AvatarSelectorScreen = () => {
   }, [selectedParts, router]);
 
   const isSelected = (partName: BodyPart) => selectedParts.includes(partName);
+
   return (
     <BackGround>
-      <View style={styles.mainContainer} className="">
-        {/* --- Header: כותרת עליונה --- */}
-        <View style={styles.headerSection}>
-          <Text style={styles.subTitle}>Target Area</Text>
-          <Text style={styles.mainTitle}>בחירת אזור</Text>
-          <View style={styles.titleLine} />
+      <View className="flex-1 relative">
+        {/* --- Header --- */}
+        <View className="px-[30px] items-end h-[120px] z-10">
+          <Text className="text-zinc-500 text-xs font-bold uppercase tracking-[2px]">
+            Target Area
+          </Text>
+          <Text className="text-white text-4xl font-black text-right">בחירת אזור</Text>
+          <View className="h-1.5 w-20 bg-lime-500 rounded-[10px] mt-2" />
         </View>
+
         {/* --- Content: אזור האווטאר --- */}
-        <View style={styles.avatarSection} className="">
-          {/* אפקט הילה מאחורי המודל */}
-          <View style={styles.glowEffect} />
-          <View style={styles.avatarScaleWrapper}>
+        <View className="flex-1 justify-center items-center relative pt-10 mb-12">
+          {/* אפקט הילה - גודל דינמי, חייב style */}
+          <View
+            className="absolute rounded-full bg-lime-500 opacity-[0.08] z-[1]"
+            style={{ width: width * 0.6, height: width * 0.6 }}
+          />
+
+          {/* גובה דינמי, חייב style */}
+          <View className="justify-center items-center z-[5]" style={{ height: height * 0.5 }}>
             {profile?.gender === 'female' ? (
               <AvatarFemale
                 avatarSide={sideAvatar}
@@ -70,35 +78,47 @@ const AvatarSelectorScreen = () => {
               />
             )}
           </View>
-          {/* כפתור סיבוב צף - Glassmorphism */}
-          <View style={styles.controlsWrapper}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.rotateButton,
-                pressed && { opacity: 0.7, transform: [{ scale: 0.95 }] },
-              ]}
-              onPress={handleToggleSide}
-              accessibilityRole="button"
-              accessibilityLabel="סובב מודל"
+        </View>
+        {/* כפתור סיבוב + חיווי צד */}
+        <View
+          className="absolute left-[30px] z-20"
+          style={{ top: '63%', left: 30, transform: [{ translateY: -30 }] }}
+        >
+          <Pressable
+            className="items-center active:opacity-70 active:scale-95"
+            onPress={handleToggleSide}
+            accessibilityRole="button"
+            accessibilityLabel="סובב מודל"
+          >
+            {/* צל עם צבע lime מותאם - חייב style */}
+            <View
+              className="bg-lime-500 p-3.5 rounded-[22px]"
+              style={{
+                shadowColor: '#84cc16',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.4,
+                shadowRadius: 12,
+                elevation: 10,
+              }}
             >
-              <View style={styles.rotateIconContainer}>
-                <IconSwithBody size={26} color="black" />
-              </View>
-              <Text style={styles.rotateText}>סובב מודל</Text>
-            </Pressable>
-
-            {/* חיווי צד נוכחי */}
-            <View style={styles.sideBadge}>
-              <Text style={styles.sideBadgeText}>
-                {sideAvatar === 'front' ? 'מבט קדמי' : 'מבט אחורי'}
-              </Text>
+              <IconSwithBody size={26} color="black" />
             </View>
-          </View>
+            <Text className="text-white text-xs font-bold mt-1.5">סובב מודל</Text>
+          </Pressable>
+        </View>
+        {/* חיווי צד נוכחי */}
+        <View
+          className="absolute left-[30px] z-20 bg-white/[0.06] px-3 py-1.5 rounded-xl border border-white/10"
+          style={{ top: '67%', right: 30, transform: [{ translateY: -30 }] }}
+        >
+          <Text className="text-zinc-400 text-xs font-bold">
+            {sideAvatar === 'front' ? 'מבט קדמי' : 'מבט אחורי'}
+          </Text>
         </View>
 
-        {/* --- Footer: הנחיה למשתמש --- */}
-        <View style={styles.footerSection} className="">
-          <Text style={styles.instructionText}>
+        {/* --- Footer --- */}
+        <View className="h-[100px] justify-end items-center px-10 mb-5 z-10">
+          <Text className="text-zinc-600 text-xs text-center leading-[18px]">
             לחץ על חלקי הגוף במודל כדי לראות תרגילים רלוונטיים
           </Text>
         </View>
@@ -116,117 +136,5 @@ const AvatarSelectorScreen = () => {
     </BackGround>
   );
 };
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    // paddingTop: Platform.OS === 'ios' ? 60 : 40,
-  },
-  headerSection: {
-    paddingHorizontal: 30,
-    alignItems: 'flex-end',
-    height: 120, // גובה קבוע כדי שלא יזוז
-    zIndex: 10,
-  },
-  subTitle: {
-    color: '#71717a', // zinc-500
-    fontSize: 12,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    letterSpacing: 2,
-  },
-  mainTitle: {
-    color: 'white',
-    fontSize: 48,
-    fontWeight: '900',
-    textAlign: 'right',
-  },
-  titleLine: {
-    height: 6,
-    width: 80,
-    backgroundColor: colors.lime[500],
-    borderRadius: 10,
-    marginTop: 8,
-  },
-  avatarSection: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-    paddingTop: 40,
-  },
-  avatarScaleWrapper: {
-    // כאן אנחנו שולטים בגודל האווטאר שלא יברח
-    height: height * 0.5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 5,
-  },
-  glowEffect: {
-    position: 'absolute',
-    width: width * 0.6,
-    height: width * 0.6,
-    borderRadius: width,
-    backgroundColor: colors.lime[500],
-    opacity: 0.08,
-    zIndex: 1,
-  },
-  controlsWrapper: {
-    position: 'absolute',
-    top: 10,
-    width: '100%',
-    flexDirection: 'row-reverse',
-    justifyContent: 'space-between',
-    paddingHorizontal: 30,
-    alignItems: 'flex-start',
-    zIndex: 20,
-  },
-  rotateButton: {
-    alignItems: 'center',
-  },
-  rotateIconContainer: {
-    backgroundColor: colors.lime[500],
-    padding: 14,
-    borderRadius: 22,
-    shadowColor: colors.lime[500],
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 10,
-  },
-  rotateText: {
-    color: 'white',
-    fontSize: 10,
-    fontWeight: 'bold',
-    marginTop: 6,
-  },
-  sideBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  sideBadgeText: {
-    color: '#a1a1aa',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  footerSection: {
-    height: 100,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingHorizontal: 40,
-    marginBottom: 20,
-    zIndex: 10,
-  },
-  instructionText: {
-    color: '#52525b', // zinc-600
-    fontSize: 12,
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-});
 
 export default AvatarSelectorScreen;

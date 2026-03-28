@@ -404,9 +404,9 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
             thumbTintColor={colors.lime[500]}
           />
           <View className="flex-row-reverse justify-between px-1 mt-1">
-            <Text className="text-background-500 text-[10px]">0</Text>
-            <Text className="text-background-500 text-[10px]">{Math.round(maxProtein / 2)}</Text>
-            <Text className="text-background-500 text-[10px]">{maxProtein}g</Text>
+            <Text className="text-background-500 text-xs">0</Text>
+            <Text className="text-background-500 text-xs">{Math.round(maxProtein / 2)}</Text>
+            <Text className="text-background-500 text-xs">{maxProtein}g</Text>
           </View>
         </View>
 

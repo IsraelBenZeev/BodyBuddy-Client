@@ -101,12 +101,20 @@ const NutritionScreen = () => {
   if (!goals) {
     return (
       <BackGround>
-        <View className="flex-1 items-center justify-center px-5">
+        <View className="flex-1 items-center justify-center px-5 gap-4">
           <Ionicons name="nutrition-outline" size={60} color={colors.background[400]} />
-          <Text className="text-white text-xl font-bold text-center mt-4">אין מספיק נתונים</Text>
-          <Text className="text-background-400 text-center mt-2">
+          <Text className="text-white text-xl font-bold text-center">אין מספיק נתונים</Text>
+          <Text className="text-background-400 text-center">
             עדכן את פרטי הפרופיל שלך כדי לראות יעדי תזונה
           </Text>
+          <Pressable
+            onPress={() => router.navigate('/UserSetup')}
+            className="mt-2 bg-lime-500 px-8 py-4 rounded-full"
+            accessibilityRole="button"
+            accessibilityLabel="עדכון פרופיל"
+          >
+            <Text className="text-black font-black text-base">עדכון פרופיל</Text>
+          </Pressable>
         </View>
       </BackGround>
     );

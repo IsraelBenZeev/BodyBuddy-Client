@@ -4,7 +4,8 @@ import BackGround from '@/src/ui/BackGround';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import {
   ActivityLevel,
   CreateProfilePayload,
@@ -13,12 +14,14 @@ import {
   Goal,
   ProfileFormData,
 } from '@/src/types/profile';
+import ActivityLevelStep from './ActivityLevelStep';
 import BodyActivityStep from './BodyActivityStep';
 import GoalStep from './GoalStep';
 import PersonalInfoStep from './PersonalInfoStep';
 import StepDots from './StepDots';
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
+const CURRENT_YEAR = new Date().getFullYear();
 
 const UserDetails = () => {
   const router = useRouter();
@@ -33,7 +36,7 @@ const UserDetails = () => {
   const defaultValues = useMemo<ProfileFormData>(
     () => ({
       full_name: user?.user_metadata?.full_name ?? '',
-      age: 25,
+      date_of_birth: `${CURRENT_YEAR - 25}-06-15`,
       height: 170,
       weight: 70,
       gender: '' as Gender | '',
@@ -53,9 +56,16 @@ const UserDetails = () => {
   // כשמגיע פרופיל קיים מ-Supabase – מעדכנים את הטופס עם הנתונים
   useEffect(() => {
     if (existingProfile) {
+      // fallback לפרופילים ישנים שיש להם age אבל לא date_of_birth
+      const dateOfBirth =
+        existingProfile.date_of_birth ??
+        (existingProfile.age != null
+          ? `${CURRENT_YEAR - existingProfile.age}-06-15`
+          : `${CURRENT_YEAR - 25}-06-15`);
+
       reset({
         full_name: existingProfile.full_name ?? user?.user_metadata?.full_name ?? '',
-        age: existingProfile.age ?? 25,
+        date_of_birth: dateOfBirth,
         height: existingProfile.height ?? 170,
         weight: existingProfile.weight ?? 70,
         gender: (existingProfile.gender as Gender) ?? '',
@@ -81,7 +91,7 @@ const UserDetails = () => {
     (data: ProfileFormData) => {
       const payload: CreateProfilePayload = {
         full_name: data.full_name.trim(),
-        age: data.age,
+        date_of_birth: data.date_of_birth,
         height: data.height,
         weight: data.weight,
         gender: data.gender as Gender,
@@ -94,11 +104,15 @@ const UserDetails = () => {
 
       mutate(payload, {
         onSuccess: () => {
-          router.replace('/(tabs)');
+          if (existingProfile) {
+            router.back();
+          } else {
+            router.replace('/(tabs)');
+          }
         },
       });
     },
-    [mutate, user?.user_metadata?.avatar_url, router],
+    [mutate, user?.user_metadata?.avatar_url, router, existingProfile],
   );
 
   const handleFinish = useCallback(() => {
@@ -123,6 +137,13 @@ const UserDetails = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
       >
+        {/* Close Button – מוצג רק כשיש פרופיל קיים (מצב עריכה) */}
+        {existingProfile && (
+          <Pressable onPress={() => router.back()} className="self-end px-6 pt-4 pb-2" accessibilityRole="button" accessibilityLabel="סגירה">
+            <Ionicons name="close" size={26} color="white" />
+          </Pressable>
+        )}
+
         {/* Progress Dots */}
         <StepDots totalSteps={TOTAL_STEPS} currentStep={currentStep} />
 
@@ -149,6 +170,17 @@ const UserDetails = () => {
         )}
 
         {currentStep === 2 && (
+          <ActivityLevelStep
+            control={control}
+            trigger={trigger}
+            onBack={handleBack}
+            onNext={handleNext}
+            onSubmit={handleFinish}
+            isPending={isPending}
+          />
+        )}
+
+        {currentStep === 3 && (
           <GoalStep
             control={control}
             trigger={trigger}

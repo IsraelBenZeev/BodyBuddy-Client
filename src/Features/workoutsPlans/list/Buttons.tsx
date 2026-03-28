@@ -52,7 +52,7 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
     const handleEdit = useCallback(() => {
         clearAllExercises();
         toggleExercise(plan?.exercise_ids as string[]);
-        router.push({
+        router.navigate({
             pathname: '/form_create_Workout/[mode]',
             params: { mode: 'edit', workout_plan_id: plan?.id },
         });

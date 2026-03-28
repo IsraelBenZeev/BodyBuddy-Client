@@ -18,20 +18,35 @@ export const getProfile = async (userId: string): Promise<Profile | null> => {
   }
 };
 
-/** יצירה או עדכון פרופיל – upsert אחד במקום select + insert/update */
+/** יצירה או עדכון פרופיל */
 export const createOrUpdateProfile = async (
   userId: string,
   payload: CreateProfilePayload,
 ): Promise<Profile> => {
   try {
-    const { data, error } = await supabase
+    // נסה לעדכון קיים
+    const { data: updated, error: updateError } = await supabase
       .from('profiles')
-      .upsert({ user_id: userId, ...payload }, { onConflict: 'user_id' })
+      .update(payload)
+      .eq('user_id', userId)
       .select()
       .single();
 
-    if (error) throw error;
-    return data as Profile;
+    if (!updateError) return updated as Profile;
+
+    // אם לא קיים – הכנס חדש
+    if (updateError.code === 'PGRST116') {
+      const { data: inserted, error: insertError } = await supabase
+        .from('profiles')
+        .insert({ user_id: userId, ...payload })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+      return inserted as Profile;
+    }
+
+    throw updateError;
   } catch (error) {
     console.error('Create/update profile error:', error);
     throw error;

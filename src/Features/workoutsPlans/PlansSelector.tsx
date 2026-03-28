@@ -79,7 +79,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
 
                 {!!plansData?.length && (
                     <View className="items-end">
-                        <Text className="text-zinc-500 text-[10px] font-bold tracking-[2px] uppercase">
+                        <Text className="text-zinc-500 text-xs font-bold tracking-[2px] uppercase">
                             Add to plan
                         </Text>
                         <Text className="text-white text-xl font-black">

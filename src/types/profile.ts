@@ -4,6 +4,7 @@ export interface Profile {
   user_id: string;
   full_name: string | null;
   age: number | null;
+  date_of_birth: string | null;
   height: number | null;
   weight: number | null;
   gender: string | null;
@@ -28,7 +29,7 @@ export type Goal = 'cut' | 'bulk' | 'maintain';
 
 export interface ProfileFormData {
   full_name: string;
-  age: number;
+  date_of_birth: string;
   height: number;
   weight: number;
   gender: Gender | '';
@@ -40,7 +41,7 @@ export interface ProfileFormData {
 
 export interface CreateProfilePayload {
   full_name: string;
-  age: number;
+  date_of_birth: string;
   height: number;
   weight: number;
   gender: Gender;

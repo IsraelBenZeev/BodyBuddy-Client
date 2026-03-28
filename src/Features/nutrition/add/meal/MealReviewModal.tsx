@@ -266,7 +266,7 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
         </View>
         <View className="items-end">
           <Text className="text-lime-500 font-bold text-lg">{calories}</Text>
-          <Text className="text-gray-500 text-[10px] font-medium">קק״ל</Text>
+          <Text className="text-gray-500 text-xs font-medium">קק״ל</Text>
         </View>
       </View>
 
@@ -284,7 +284,7 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
 
           <View className="px-4 items-center">
             <Text className="text-white font-black text-lg">{state.quantity}</Text>
-            <Text className="text-gray-500 text-[9px] uppercase font-bold">{unitLabel}</Text>
+            <Text className="text-gray-500 text-xs uppercase font-bold">{unitLabel}</Text>
           </View>
 
           <Pressable

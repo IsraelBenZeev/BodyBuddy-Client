@@ -1,5 +1,6 @@
 import type { MacroSplit, NutritionGoals } from '@/src/types/nutrition';
 import type { Profile } from '@/src/types/profile';
+import { differenceInYears, isValid, parseISO } from 'date-fns';
 import { calculateDailyCalories } from './calculateMetrics';
 
 const DEFAULT_PROTEIN_PER_KG = 1.7;
@@ -16,11 +17,17 @@ export const calculateNutritionGoals = (
 ): NutritionGoals | null => {
   if (!profile || !profile.weight) return null;
 
+  const parsedDob = profile.date_of_birth ? parseISO(profile.date_of_birth) : null;
+  const age =
+    parsedDob && isValid(parsedDob)
+      ? differenceInYears(new Date(), parsedDob)
+      : profile.age; // fallback לפרופילים ישנים
+
   const dailyCalories = calculateDailyCalories(
     profile.gender,
     profile.weight,
     profile.height,
-    profile.age,
+    age,
     profile.activity_level,
     profile.goal,
     profile.calorie_offset,

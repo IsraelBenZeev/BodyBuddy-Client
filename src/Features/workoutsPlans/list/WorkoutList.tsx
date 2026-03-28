@@ -23,11 +23,11 @@ const WorkoutList = () => {
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const router = useRouter();
 
-  const handleNavigateToFavorites = useCallback(() => router.push('/favorites'), [router]);
+  const handleNavigateToFavorites = useCallback(() => router.navigate('/favorites'), [router]);
 
   const handleCreateNew = useCallback(() => {
     clearAllExercises();
-    router.push({
+    router.navigate({
       pathname: '/form_create_Workout/[mode]',
       params: { mode: 'create' },
     });
@@ -46,7 +46,7 @@ const WorkoutList = () => {
       <View className="flex-1 items-center justify-between py-10">
         <View className="w-full px-6 mt-5 flex-row-reverse items-start justify-between">
           <View className="items-end">
-            <Text className="text-white text-3xl font-bold tracking-tight text-right">האימונים שלי</Text>
+            <Text className="text-white text-3xl font-black tracking-tight text-right">האימונים שלי</Text>
             <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, marginTop: 8 }} />
           </View>
           <AppButton

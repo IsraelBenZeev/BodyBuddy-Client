@@ -36,7 +36,7 @@ const Card = ({ plan, selectedIds, toggleSelection, isAlreadyAdded }: Props) => 
             {/* Selection indicator / already added badge */}
             {isAlreadyAdded ? (
                 <View className="bg-lime-500/20 px-2 py-0.5 rounded-full border border-lime-500/40">
-                    <Text className="text-lime-400 text-[10px] font-bold">קיים</Text>
+                    <Text className="text-lime-400 text-xs font-bold">קיים</Text>
                 </View>
             ) : (
                 <View
@@ -52,7 +52,7 @@ const Card = ({ plan, selectedIds, toggleSelection, isAlreadyAdded }: Props) => 
             <View className="flex-1 ml-3">
                 <Text
                     numberOfLines={1}
-                    className={`text-[15px] font-bold text-right ${
+                    className={`text-base font-bold text-right ${
                         isSelected ? 'text-white' : 'text-zinc-300'
                     }`}
                 >
@@ -62,7 +62,7 @@ const Card = ({ plan, selectedIds, toggleSelection, isAlreadyAdded }: Props) => 
                 {/* Meta info */}
                 <View className="flex-row items-center gap-2.5 mt-1.5 justify-end">
                     <View className="flex-row items-center gap-1">
-                        <Text className="text-zinc-500 text-[11px] font-medium">
+                        <Text className="text-zinc-500 text-xs font-medium">
                             {plan.exercise_ids?.length || 0} תרגילים
                         </Text>
                         <Dumbbell size={11} color={isSelected ? colors.lime[500] : colors.background[400]} strokeWidth={2} />
@@ -71,7 +71,7 @@ const Card = ({ plan, selectedIds, toggleSelection, isAlreadyAdded }: Props) => 
                     <View className="w-[3px] h-[3px] rounded-full bg-zinc-700" />
 
                     <View className="flex-row items-center gap-1">
-                        <Text className="text-zinc-500 text-[11px] font-medium">
+                        <Text className="text-zinc-500 text-xs font-medium">
                             {plan.time} דק׳
                         </Text>
                         <Clock size={11} color={isSelected ? colors.lime[500] : colors.background[400]} strokeWidth={2} />

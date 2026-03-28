@@ -29,7 +29,7 @@ const SessionManager = ({ id }: Props) => {
 
   return (
     <View className="flex-1 bg-background-900">
-      <Header workoutPlan={workoutPlan} />
+      <Header workoutPlan={workoutPlan} isStart={isStart} />
 
       {!isStart && <ReviewWorkoutPlan workoutPlan={workoutPlan} setIsStart={setIsStart} />}
       {isStart && <Session setIsStart={setIsStart} workoutPlan={workoutPlan} />}

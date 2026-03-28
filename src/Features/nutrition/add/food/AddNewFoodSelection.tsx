@@ -62,7 +62,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
           </Text>
           <View className="bg-lime-500/10 px-3 py-1 rounded-full flex-row-reverse items-center">
             <Ionicons name="scale-outline" size={14} color="#84cc16" />
-            <Text className="text-lime-500 text-[11px] font-bold mr-1">
+            <Text className="text-lime-500 text-xs font-bold mr-1">
               {isUnits ? `${quantity} ${unitLabel}` : `${portionAmount} גרם`}
             </Text>
           </View>
@@ -81,7 +81,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
 
           <View className="items-center">
             <Text className="text-white font-black text-4xl">{quantity}</Text>
-            <Text className="text-gray-500 text-[10px] font-bold uppercase">
+            <Text className="text-gray-500 text-xs font-bold uppercase">
               {isUnits ? unitLabel : 'מנות'}
             </Text>
           </View>
@@ -121,7 +121,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
 
       {/* כרטיס ערכים תזוניים */}
       <View className="bg-background-800 rounded-3xl p-6 border border-white/5 mb-8">
-        <Text className="text-gray-400 text-[11px] font-bold uppercase tracking-widest text-center mb-5">
+        <Text className="text-gray-400 text-xs font-bold uppercase tracking-widest text-center mb-5">
           {isUnits
             ? `ערכים תזוניים ל-${quantity} ${unitLabel}`
             : `ערכים תזוניים ל-${portionAmount} גרם`}
@@ -130,17 +130,17 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
         <View className="flex-row-reverse justify-around items-end mb-6">
           <View className="items-center">
             <Text className="text-lime-500 text-2xl font-black">{calculatedMacros.protein}g</Text>
-            <Text className="text-gray-500 text-[10px] mt-1">חלבון</Text>
+            <Text className="text-gray-500 text-xs mt-1">חלבון</Text>
           </View>
           <View className="w-[1px] h-8 bg-white/5" />
           <View className="items-center">
             <Text className="text-orange-500 text-2xl font-black">{calculatedMacros.carbs}g</Text>
-            <Text className="text-gray-500 text-[10px] mt-1">פחמימות</Text>
+            <Text className="text-gray-500 text-xs mt-1">פחמימות</Text>
           </View>
           <View className="w-[1px] h-8 bg-white/5" />
           <View className="items-center">
             <Text className="text-red-500 text-2xl font-black">{calculatedMacros.fat}g</Text>
-            <Text className="text-gray-500 text-[10px] mt-1">שומן</Text>
+            <Text className="text-gray-500 text-xs mt-1">שומן</Text>
           </View>
         </View>
 

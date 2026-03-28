@@ -44,11 +44,11 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
       >
         {/* שורת כותרת + נקה */}
         <View className="flex-row-reverse items-center justify-between">
-          <Text style={{ color: '#71717a', fontSize: 11, fontWeight: '700', letterSpacing: 1 }}>
+          <Text className="text-xs font-bold text-zinc-500 tracking-wide">
             {selectedParts.length} אזורים נבחרו
           </Text>
           <AppButton animationType="scale" haptic="light" onPress={onClearAll} accessibilityLabel="נקה את כל הבחירות">
-            <Text style={{ color: '#f87171', fontSize: 11, fontWeight: '700' }}>נקה הכל</Text>
+            <Text className="text-xs font-bold text-red-400">נקה הכל</Text>
           </AppButton>
         </View>
 
@@ -73,7 +73,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
                 gap: 5,
               }}
             >
-              <Text style={{ color: '#d9f99d', fontSize: 12, fontWeight: '700' }}>
+              <Text className="text-xs font-bold text-lime-200">
                 {partsBodyHebrew[part]}
               </Text>
               <AppButton animationType="scale" haptic="light" onPress={() => onDeselectPart(part)} accessibilityLabel={`הסר ${partsBodyHebrew[part]}`}>
@@ -101,7 +101,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
               shadowRadius: 14,
             }}
           >
-            <Text style={{ color: '#09090b', fontSize: 16, fontWeight: '900', letterSpacing: 0.5 }}>
+            <Text className="text-base font-black text-zinc-950">
               צפה בתרגילים
             </Text>
           </LinearGradient>

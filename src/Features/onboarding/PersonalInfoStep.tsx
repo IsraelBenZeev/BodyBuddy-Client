@@ -8,10 +8,7 @@ import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
 import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInRight } from 'react-native-reanimated';
-import AgeScrollPicker from './AgeScrollPicker';
-
-const AGE_MIN = 10;
-const AGE_MAX = 120;
+import BirthDatePicker from './BirthDatePicker';
 
 interface PersonalInfoStepProps {
   control: Control<ProfileFormData>;
@@ -29,13 +26,13 @@ const PersonalInfoStep = ({
   isPending = false,
 }: PersonalInfoStepProps) => {
   const handleNext = useCallback(async () => {
-    const isValid = await trigger(['full_name', 'gender', 'age']);
+    const isValid = await trigger(['full_name', 'gender', 'date_of_birth']);
     if (isValid) onNext();
   }, [trigger, onNext]);
 
   const handleFinishAndSave = useCallback(async () => {
     if (!onSubmit) return;
-    const isValid = await trigger(['full_name', 'gender', 'age']);
+    const isValid = await trigger(['full_name', 'gender', 'date_of_birth']);
     if (isValid) onSubmit();
   }, [trigger, onSubmit]);
 
@@ -137,26 +134,19 @@ const PersonalInfoStep = ({
         />
       </View>
 
-      {/* Age - Horizontal Scroll Picker */}
+      {/* תאריך לידה */}
       <View className="mb-4">
         <Text className="text-background-200 text-sm font-semibold text-right mb-2">
-          גיל
+          תאריך לידה
         </Text>
         <Controller
           control={control}
-          name="age"
-          rules={{
-            validate: (v) => (v >= AGE_MIN && v <= AGE_MAX) || 'גיל לא תקין',
-          }}
+          name="date_of_birth"
+          rules={{ required: 'חובה לבחור תאריך לידה' }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View>
-              <View className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden py-3">
-                <AgeScrollPicker
-                  min={AGE_MIN}
-                  max={AGE_MAX}
-                  value={value}
-                  onChange={onChange}
-                />
+              <View className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden py-3 px-2">
+                <BirthDatePicker value={value} onChange={onChange} />
               </View>
               {error && (
                 <Text className="text-red-400 text-xs text-right mt-1">
@@ -169,15 +159,15 @@ const PersonalInfoStep = ({
       </View>
 
       {/* כפתורי פעולה */}
-      <View className="mt-auto gap-3">
+      <View className="mt-auto gap-2">
         <Pressable
           onPress={handleNext}
           disabled={isPending}
-          className="flex-row-reverse items-center justify-center gap-2 bg-lime-500 w-full py-4 rounded-2xl shadow-lg disabled:opacity-70 active:opacity-90"
+          className="flex-row-reverse items-center justify-center gap-2 bg-lime-500 w-full py-3 rounded-2xl shadow-lg disabled:opacity-70 active:opacity-90"
           accessibilityRole="button"
           accessibilityLabel="הבא"
         >
-          <Ionicons name="arrow-back" size={22} color={colors.background[900]} />
+          <Ionicons name="arrow-back" size={20} color={colors.background[900]} />
           <Text className="text-black font-extrabold text-base">הבא</Text>
         </Pressable>
 
@@ -185,7 +175,7 @@ const PersonalInfoStep = ({
           <Pressable
             onPress={handleFinishAndSave}
             disabled={isPending}
-            className="flex-row-reverse items-center justify-center gap-2 py-4 rounded-2xl border-2 border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
+            className="flex-row-reverse items-center justify-center gap-2 py-2.5 rounded-xl border border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
             accessibilityRole="button"
             accessibilityLabel="סיום ושמירה"
           >
@@ -195,7 +185,7 @@ const PersonalInfoStep = ({
               <>
                 <Ionicons
                   name="checkmark-circle"
-                  size={24}
+                  size={20}
                   color={colors.lime[500]}
                 />
                 <Text className="text-lime-500 font-bold text-base">

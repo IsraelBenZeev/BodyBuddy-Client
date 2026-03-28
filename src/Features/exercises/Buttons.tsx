@@ -65,7 +65,7 @@ const Buttons = ({ exerciseId, exerciseName, exerciseName_he }: ButtonsProps) =>
                         accessibilityLabel={btn.text}
                     >
                         <View style={styles.actionButtonInner}>{btn.icon}</View>
-                        <Text className="text-zinc-500 text-[10px] font-medium">{btn.text}</Text>
+                        <Text className="text-zinc-500 text-xs font-medium">{btn.text}</Text>
                     </AppButton>
                 ))}
             </View>

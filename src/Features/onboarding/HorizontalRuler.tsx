@@ -116,23 +116,16 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
         />
         {isMajor && (
           <Text
-            style={{
-              fontSize: 11,
-              fontWeight: '600',
-              color: colors.background[300],
-              marginTop: 3,
-            }}
+            className="text-xs font-semibold"
+            style={{ color: colors.background[300], marginTop: 3 }}
           >
             {item}
           </Text>
         )}
         {!isMajor && isMedium && (
           <Text
-            style={{
-              fontSize: 9,
-              color: colors.background[500],
-              marginTop: 2,
-            }}
+            className="text-xs"
+            style={{ color: colors.background[500], marginTop: 2 }}
           >
             {item}
           </Text>
@@ -148,7 +141,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
       {/* ערך נבחר */}
       <View className="flex-row items-baseline justify-center mb-3">
         <Text className="text-background-400 text-lg font-semibold mr-2">{unit}</Text>
-        <Text className="text-white text-5xl font-black">{displayValue}</Text>
+        <Text className="text-white text-2xl font-black">{displayValue}</Text>
       </View>
 
       {/* סרגל */}

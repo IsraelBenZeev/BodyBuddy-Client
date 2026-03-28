@@ -48,7 +48,7 @@ const ListFoodForMealBuilder = ({
           {addStep === 'amount' && selectedFood && (
             <View className="flex-row-reverse items-center mt-1">
               <Ionicons name="cart-outline" size={12} color="#84cc16" />
-              <Text className="text-lime-500 text-[11px] font-bold text-right mr-1 uppercase tracking-tighter">
+              <Text className="text-lime-500 text-xs font-bold text-right mr-1 uppercase tracking-tighter">
                 מוסיף ל: {nameMeal || 'ארוחה חדשה'}
               </Text>
             </View>
@@ -130,14 +130,14 @@ const ListFoodForMealBuilder = ({
                   </Text>
                   <View className="flex-row-reverse items-center mt-1.5">
                     <View className="bg-background-900 px-2 py-0.5 rounded-md border border-white/5">
-                      <Text className="text-orange-400 text-[11px] font-black">
+                      <Text className="text-orange-400 text-xs font-black">
                         {item.measurement_type === 'units'
                           ? item.calories_per_unit
                           : item.calories_per_100}{' '}
                         קק״ל
                       </Text>
                     </View>
-                    <Text className="text-gray-500 text-[10px] text-right mr-2 font-medium">
+                    <Text className="text-gray-500 text-xs text-right mr-2 font-medium">
                       {item.measurement_type === 'units'
                         ? `ליחידה`
                         : 'ל-100 ג׳'}

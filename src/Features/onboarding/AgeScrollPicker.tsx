@@ -65,13 +65,7 @@ const AgeItem: React.FC<{
           opacity,
         }}
       >
-        <Text
-          style={{
-            color: '#FFFFFF',
-            fontSize: 32,
-            fontWeight: '800',
-          }}
-        >
+        <Text className="text-3xl font-extrabold text-white">
           {item}
         </Text>
       </Animated.View>
@@ -87,7 +81,7 @@ const AgeScrollPicker = ({
   onChange,
 }: AgeScrollPickerProps) => {
   const flatListRef = useRef<FlatList<number>>(null);
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const scrollX = useRef(new Animated.Value((value - min) * ITEM_WIDTH)).current;
   const lastHapticValue = useRef(value);
   /** עוקב אחרי הערך האחרון שגללנו אליו – מונע גלילה מיותרת אחרי scroll פנימי */
   const lastScrolledValue = useRef<number | null>(null);

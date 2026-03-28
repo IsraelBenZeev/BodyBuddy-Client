@@ -76,7 +76,7 @@ export default function RegisterScreen() {
           <View className="flex-1 px-5 py-12 justify-center">
             {/* Logo/Title */}
             <View className="mb-12 items-center">
-              <BodyBuddyLogo width={220} height={154} />
+              <BodyBuddyLogo width={220} height={120} />
               <Text className="text-background-400 text-base text-center mt-4">התחבר למערכת</Text>
             </View>
             {/* Email Input */}

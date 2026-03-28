@@ -30,7 +30,7 @@ const TimerDisplay = memo(() => {
         const interval = setInterval(() => setTotalTime((p) => p + 1), 1000);
         return () => clearInterval(interval);
     }, []);
-    return <Text className="text-lime-500 font-mono text-xl">{formatTime(totalTime)}</Text>;
+    return <Text className="text-lime-500 font-mono text-2xl">{formatTime(totalTime)}</Text>;
 });
 
 interface Props {

@@ -217,7 +217,7 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
             accessibilityLabel={`מחק ארוחה ${groupName}`}
           >
             <Ionicons name="trash-outline" size={18} color={colors.red[500]} />
-            <Text className="text-red-400 text-[10px] font-bold mt-0.5">מחק ארוחה</Text>
+            <Text className="text-red-400 text-xs font-bold mt-0.5">מחק ארוחה</Text>
           </Pressable>
         )}
       </View>
@@ -230,14 +230,14 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
 
       <View className="bg-background-900/50 px-4 py-4 border-t border-white/5">
         <View className="flex-row-reverse justify-between items-center mb-3 px-1">
-          <Text className="text-background-400 text-[11px] font-bold tracking-widest uppercase">
+          <Text className="text-background-400 text-xs font-bold tracking-widest uppercase">
             סיכום ערכים לארוחה
           </Text>
           <View className="h-[1px] flex-1 bg-white/5 mx-3" />
         </View>
         <View className="flex-row-reverse items-center justify-center">
           <View className="items-center">
-            <Text className="text-gray-400 text-[10px] mb-1">חלבון</Text>
+            <Text className="text-gray-400 text-xs mb-1">חלבון</Text>
             <View className="bg-lime-500/10 px-2 py-1 rounded-lg">
               <Text className="text-lime-500 font-bold text-sm">
                 {Math.round(entries.reduce((s, e) => s + (e.protein || 0), 0))}g
@@ -279,7 +279,7 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
         <View className="bg-background-700/80 rounded-xl px-3 py-1.5">
           <Text className="text-lime-400 font-bold text-sm">{slotLabel}</Text>
           {slotInfo != null && (
-            <Text className="text-background-400 text-[10px] text-right">
+            <Text className="text-background-400 text-xs text-right">
               {slotInfo.start === 21 ? '21:00–06:00' : `${slotInfo.start}:00–${slotInfo.end}:00`}
             </Text>
           )}
