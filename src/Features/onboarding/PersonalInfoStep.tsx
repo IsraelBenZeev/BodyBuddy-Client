@@ -143,18 +143,32 @@ const PersonalInfoStep = ({
           control={control}
           name="date_of_birth"
           rules={{ required: 'חובה לבחור תאריך לידה' }}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <View>
-              <View className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden py-3 px-2">
-                <BirthDatePicker value={value} onChange={onChange} />
-              </View>
-              {error && (
-                <Text className="text-red-400 text-xs text-right mt-1">
-                  {error.message}
+          render={({ field: { onChange, value }, fieldState: { error } }) => {
+            const birthDate = new Date(value);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+
+            return (
+              <View>
+                <View className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden py-3 px-2">
+                  <BirthDatePicker value={value} onChange={onChange} />
+                </View>
+                <Text className="text-base font-semibold text-background-400 text-right mt-2">
+                  גיל: {age}
                 </Text>
-              )}
-            </View>
-          )}
+                <Text className="text-xs text-background-500 text-right mt-1">
+                  * BodyBuddy מיועד לגילאי 18 ומעלה בלבד
+                </Text>
+                {error && (
+                  <Text className="text-red-400 text-xs text-right mt-1">
+                    {error.message}
+                  </Text>
+                )}
+              </View>
+            );
+          }}
         />
       </View>
 

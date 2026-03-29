@@ -117,7 +117,7 @@ const BodyActivityStep = ({
       </View>
 
       {/* כפתורי פעולה – חזרה, הבא, סיום ושמירה */}
-      <View className="pt-1 pb-3 gap-2">
+      <View className="mt-auto pt-1 pb-3 gap-2">
         <View className="flex-row-reverse gap-3">
           <Pressable
             onPress={onBack}

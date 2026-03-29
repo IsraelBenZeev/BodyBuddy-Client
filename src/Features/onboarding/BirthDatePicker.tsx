@@ -31,21 +31,23 @@ const MONTH_LABELS = [
   'דצמבר',
 ];
 
-const CURRENT_YEAR = new Date().getFullYear();
+const TODAY = new Date();
+const CURRENT_YEAR = TODAY.getFullYear();
 const MIN_YEAR = CURRENT_YEAR - 100;
-const MAX_YEAR = CURRENT_YEAR - 10;
-const YEARS = Array.from({ length: MAX_YEAR - MIN_YEAR + 1 }, (_, i) => MIN_YEAR + i);
+const MAX_BIRTH_YEAR = CURRENT_YEAR - 18;
+const MAX_BIRTH_MONTH = TODAY.getMonth(); // 0-indexed
+const MAX_BIRTH_DAY = TODAY.getDate();
+const YEARS = Array.from({ length: MAX_BIRTH_YEAR - MIN_YEAR + 1 }, (_, i) => MIN_YEAR + i);
 
 // ─── PickerItem ───────────────────────────────────────────────
 interface PickerItemProps {
   item: string | number;
   index: number;
   scrollY: Animated.Value;
-  selectedIndex: number;
 }
 
 const PickerItem: React.FC<PickerItemProps> = React.memo(
-  ({ item, index, scrollY, selectedIndex }) => {
+  ({ item, index, scrollY }) => {
     const realIndex = index - PADDING;
 
     const inputRange = [
@@ -84,9 +86,9 @@ const PickerItem: React.FC<PickerItemProps> = React.memo(
       >
         <Text
           style={{
-            color: realIndex === selectedIndex ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.75)',
+            color: 'rgba(255,255,255,0.75)',
             fontSize: 14,
-            fontWeight: realIndex === selectedIndex ? '900' : '600',
+            fontWeight: '600',
           }}
         >
           {String(item)}
@@ -172,9 +174,9 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
 
   const renderItem = useCallback(
     ({ item, index }: { item: string | number; index: number }) => (
-      <PickerItem item={item} index={index} scrollY={scrollY} selectedIndex={selectedIndex} />
+      <PickerItem item={item} index={index} scrollY={scrollY} />
     ),
-    [scrollY, selectedIndex]
+    [scrollY]
   );
 
   const keyExtractor = useCallback((_: unknown, index: number) => String(index), []);
@@ -250,19 +252,27 @@ const BirthDatePicker: React.FC<BirthDatePickerProps> = ({ value, onChange }) =>
 
   const { year, month, day } = parsed;
 
+  const isMaxYear = year === MAX_BIRTH_YEAR;
+  const isMaxMonth = isMaxYear && month - 1 === MAX_BIRTH_MONTH;
+
   const daysInCurrentMonth = useMemo(
     () => getDaysInMonth(new Date(year, month - 1)),
     [year, month]
   );
 
-  const days = useMemo(
-    () => Array.from({ length: daysInCurrentMonth }, (_, i) => i + 1),
-    [daysInCurrentMonth]
+  const months = useMemo(
+    () => (isMaxYear ? MONTH_LABELS.slice(0, MAX_BIRTH_MONTH + 1) : MONTH_LABELS),
+    [isMaxYear]
   );
 
+  const days = useMemo(() => {
+    const maxDay = isMaxMonth ? Math.min(daysInCurrentMonth, MAX_BIRTH_DAY) : daysInCurrentMonth;
+    return Array.from({ length: maxDay }, (_, i) => i + 1);
+  }, [daysInCurrentMonth, isMaxMonth]);
+
   const yearIndex = Math.max(0, YEARS.indexOf(year));
-  const monthIndex = month - 1;
-  const dayIndex = Math.min(day - 1, daysInCurrentMonth - 1);
+  const monthIndex = Math.min(month - 1, months.length - 1);
+  const dayIndex = Math.min(day - 1, days.length - 1);
 
   const handleDaySelect = useCallback(
     (index: number) => {
@@ -275,7 +285,9 @@ const BirthDatePicker: React.FC<BirthDatePickerProps> = ({ value, onChange }) =>
     (index: number) => {
       const newMonth = index + 1;
       const newDaysInMonth = getDaysInMonth(new Date(year, index));
-      const clampedDay = Math.min(day, newDaysInMonth);
+      const isNewMaxMonth = year === MAX_BIRTH_YEAR && index === MAX_BIRTH_MONTH;
+      const maxDay = isNewMaxMonth ? Math.min(newDaysInMonth, MAX_BIRTH_DAY) : newDaysInMonth;
+      const clampedDay = Math.min(day, maxDay);
       onChange(
         `${year}-${String(newMonth).padStart(2, '0')}-${String(clampedDay).padStart(2, '0')}`
       );
@@ -286,10 +298,14 @@ const BirthDatePicker: React.FC<BirthDatePickerProps> = ({ value, onChange }) =>
   const handleYearSelect = useCallback(
     (index: number) => {
       const newYear = YEARS[index];
-      const newDaysInMonth = getDaysInMonth(new Date(newYear, month - 1));
-      const clampedDay = Math.min(day, newDaysInMonth);
+      const isNewMaxYear = newYear === MAX_BIRTH_YEAR;
+      const clampedMonth = isNewMaxYear ? Math.min(month, MAX_BIRTH_MONTH + 1) : month;
+      const newDaysInMonth = getDaysInMonth(new Date(newYear, clampedMonth - 1));
+      const isNewMaxMonth = isNewMaxYear && clampedMonth - 1 === MAX_BIRTH_MONTH;
+      const maxDay = isNewMaxMonth ? Math.min(newDaysInMonth, MAX_BIRTH_DAY) : newDaysInMonth;
+      const clampedDay = Math.min(day, maxDay);
       onChange(
-        `${newYear}-${String(month).padStart(2, '0')}-${String(clampedDay).padStart(2, '0')}`
+        `${newYear}-${String(clampedMonth).padStart(2, '0')}-${String(clampedDay).padStart(2, '0')}`
       );
     },
     [month, day, onChange]
@@ -305,7 +321,7 @@ const BirthDatePicker: React.FC<BirthDatePickerProps> = ({ value, onChange }) =>
         label="יום"
       />
       <PickerColumn
-        data={MONTH_LABELS}
+        data={months}
         selectedIndex={monthIndex}
         onSelect={handleMonthSelect}
         flex={2.2}
