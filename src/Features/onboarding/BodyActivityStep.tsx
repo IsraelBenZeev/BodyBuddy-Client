@@ -39,10 +39,10 @@ const BodyActivityStep = ({
     <Animated.View entering={FadeInLeft.duration(400)} className="flex-1 px-6">
       {/* Header */}
       <View className="mb-6">
-        <Text className="text-white text-3xl font-black text-right mb-2">
+        <Text className="typo-h1 text-white text-right mb-2">
           המדדים שלך
         </Text>
-        <Text className="text-background-400 text-lg text-right">
+        <Text className="typo-h4 text-background-400 text-right">
           גובה ומשקל לחישוב מדויק של תוכניתך
         </Text>
       </View>
@@ -50,7 +50,7 @@ const BodyActivityStep = ({
       <View>
         {/* Height - Horizontal Ruler */}
         <View className="mb-6">
-          <Text className="text-background-200 text-sm font-semibold text-right mb-3">
+          <Text className="typo-label text-background-200 text-right mb-3">
             גובה
           </Text>
           <Controller
@@ -72,7 +72,7 @@ const BodyActivityStep = ({
                   />
                 </View>
                 {error && (
-                  <Text className="text-red-400 text-xs text-right mt-1">
+                  <Text className="typo-caption text-red-400 text-right mt-1">
                     {error.message}
                   </Text>
                 )}
@@ -83,7 +83,7 @@ const BodyActivityStep = ({
 
         {/* Weight - Horizontal Ruler */}
         <View className="mb-6">
-          <Text className="text-background-200 text-sm font-semibold text-right mb-3">
+          <Text className="typo-label text-background-200 text-right mb-3">
             משקל
           </Text>
           <Controller
@@ -105,7 +105,7 @@ const BodyActivityStep = ({
                   />
                 </View>
                 {error && (
-                  <Text className="text-red-400 text-xs text-right mt-1">
+                  <Text className="typo-caption text-red-400 text-right mt-1">
                     {error.message}
                   </Text>
                 )}
@@ -131,7 +131,7 @@ const BodyActivityStep = ({
               size={16}
               color={colors.background[400]}
             />
-            <Text className="text-background-400 font-medium text-sm">חזרה</Text>
+            <Text className="typo-label text-background-400">חזרה</Text>
           </Pressable>
 
           <Pressable
@@ -142,7 +142,7 @@ const BodyActivityStep = ({
             accessibilityLabel="הבא"
           >
             <Ionicons name="arrow-back" size={20} color={colors.background[900]} />
-            <Text className="text-black font-extrabold text-base">הבא</Text>
+            <Text className="typo-btn-cta text-black">הבא</Text>
           </Pressable>
         </View>
 
@@ -163,7 +163,7 @@ const BodyActivityStep = ({
                   size={20}
                   color={colors.lime[500]}
                 />
-                <Text className="text-lime-500 font-bold text-base">
+                <Text className="typo-btn-cta text-lime-500">
                   סיום ושמירה
                 </Text>
               </>

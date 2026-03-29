@@ -168,7 +168,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
     helper?: string;
   }) => (
     <View className="mb-4">
-      <Text className="text-background-400 text-sm mb-2 text-right">{label}</Text>
+      <Text className="typo-label text-background-400 mb-2 text-right">{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChange}
@@ -187,7 +187,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
         }}
       />
       {helper != null && (
-        <Text className="text-background-500 text-xs mt-1.5 text-right">{helper}</Text>
+        <Text className="typo-caption text-background-500 mt-1.5 text-right">{helper}</Text>
       )}
     </View>
   );
@@ -195,10 +195,10 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
   // ── Step 1: שם ───────────────────────────────────────────────────────────────
   const renderStep1 = () => (
     <View className="flex-1">
-      <Text className="text-lime-400 text-2xl font-black mb-2 text-right">
+      <Text className="typo-h2 text-lime-400 mb-2 text-right">
         {mode === 'meal-builder' ? 'הוספת מזון חדש לארוחה' : 'בואו נוסיף מזון חדש'}
       </Text>
-      <Text className="text-background-400 text-sm mb-8 text-right">
+      <Text className="typo-label text-background-400 mb-8 text-right">
         איך קוראים למזון הזה? תן לו שם שתזהה אותו בקלות
       </Text>
 
@@ -226,7 +226,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
         </View>
       </View>
 
-      <Text className="text-background-500 text-xs text-center mb-3">הצעות מהירות</Text>
+      <Text className="typo-caption text-background-500 text-center mb-3">הצעות מהירות</Text>
       <View style={{ flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
         {QUICK_SUGGESTIONS.map((s) => (
           <Pressable
@@ -236,7 +236,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
             accessibilityRole="button"
             accessibilityLabel={s}
           >
-            <Text className="text-background-300 text-sm">{s}</Text>
+            <Text className="typo-label text-background-300">{s}</Text>
           </Pressable>
         ))}
       </View>
@@ -246,10 +246,10 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
   // ── Step 2: סוג מדידה ─────────────────────────────────────────────────────────
   const renderStep2 = () => (
     <View className="flex-1">
-      <Text className="text-lime-400 text-2xl font-black mb-2 text-right">
+      <Text className="typo-h2 text-lime-400 mb-2 text-right">
         איך בדרך כלל מודדים את זה?
       </Text>
-      <Text className="text-background-400 text-sm mb-8 text-right">
+      <Text className="typo-label text-background-400 mb-8 text-right">
         זה יקבע איך נשאל אותך בכל פעם שתוסיף את המזון הזה ליומן
       </Text>
 
@@ -278,13 +278,13 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           </View>
           <View className="flex-1 mr-3">
             <Text
-              className={`text-base font-bold text-right ${
+              className={`typo-body-primary text-right ${
                 measurementType === 'grams' ? 'text-lime-400' : 'text-white'
               }`}
             >
               בגרמים / מ״ל
             </Text>
-            <Text className="text-background-400 text-xs text-right mt-1">
+            <Text className="typo-caption text-background-400 text-right mt-1">
               מתאים לאורז, בשר, ירקות, שתייה
             </Text>
           </View>
@@ -314,13 +314,13 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           </View>
           <View className="flex-1 mr-3">
             <Text
-              className={`text-base font-bold text-right ${
+              className={`typo-body-primary text-right ${
                 measurementType === 'units' ? 'text-lime-400' : 'text-white'
               }`}
             >
               ביחידות
             </Text>
-            <Text className="text-background-400 text-xs text-right mt-1">
+            <Text className="typo-caption text-background-400 text-right mt-1">
               מתאים לביצה, פרי, פרוסת לחם, כוס
             </Text>
           </View>
@@ -337,10 +337,10 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
 
     return (
       <View className="flex-1">
-        <Text className="text-lime-400 text-2xl font-black mb-2 text-right">
+        <Text className="typo-h2 text-lime-400 mb-2 text-right">
           {isUnits ? `כמה יש ב${unitLabel} אחד?` : `כמה יש ב-100 גרם?`}
         </Text>
-        <Text className="text-background-400 text-sm mb-6 text-right">
+        <Text className="typo-label text-background-400 mb-6 text-right">
           {isUnits
             ? 'הכנס את הערכים עבור יחידה אחת בלבד'
             : 'את הערכים האלה תמצא על גב האריזה, או בחיפוש מהיר'}
@@ -348,7 +348,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
 
         {/* קלוריות — ידני בלבד */}
         <View className="bg-background-800 rounded-2xl p-4 mb-4 border border-background-600">
-          <Text className="text-background-400 text-sm font-bold text-right mb-3">
+          <Text className="typo-label text-background-400 text-right mb-3">
             קלוריות ל{isUnits ? unitLabel : '-100 גרם'}
           </Text>
           <View className="flex-row-reverse items-center" style={{ gap: 8 }}>
@@ -374,19 +374,19 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                     : colors.background[600],
               }}
             />
-            <Text className="text-background-400 text-sm">קק״ל</Text>
+            <Text className="typo-label text-background-400">קק״ל</Text>
           </View>
         </View>
 
         {/* חלבון — Slider */}
         <View className="bg-background-800 rounded-2xl p-4 border border-background-600">
           <View className="flex-row-reverse items-center justify-between mb-4">
-            <Text className="text-background-400 text-sm font-bold">
+            <Text className="typo-label text-background-400">
               חלבון ל{isUnits ? unitLabel : '-100 גרם'}
             </Text>
             <View className="flex-row-reverse items-center" style={{ gap: 4 }}>
-              <Text className="text-white text-2xl font-black">{Math.round(proteinValue)}</Text>
-              <Text className="text-background-400 text-sm">גרם</Text>
+              <Text className="typo-h2 text-white">{Math.round(proteinValue)}</Text>
+              <Text className="typo-label text-background-400">גרם</Text>
             </View>
           </View>
           <Slider
@@ -404,17 +404,17 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
             thumbTintColor={colors.lime[500]}
           />
           <View className="flex-row-reverse justify-between px-1 mt-1">
-            <Text className="text-background-500 text-xs">0</Text>
-            <Text className="text-background-500 text-xs">{Math.round(maxProtein / 2)}</Text>
-            <Text className="text-background-500 text-xs">{maxProtein}g</Text>
+            <Text className="typo-caption text-background-500">0</Text>
+            <Text className="typo-caption text-background-500">{Math.round(maxProtein / 2)}</Text>
+            <Text className="typo-caption text-background-500">{maxProtein}g</Text>
           </View>
         </View>
 
         {/* כמה אכלת — אופציונלי */}
         <View className="bg-background-800 rounded-2xl p-4 mt-4 border border-background-600">
-          <Text className="text-background-400 text-sm font-bold text-right mb-3">
+          <Text className="typo-label text-background-400 text-right mb-3">
             כמה אכלת?{' '}
-            <Text className="text-background-600 font-normal">(אופציונלי)</Text>
+            <Text className="text-background-600">(אופציונלי)</Text>
           </Text>
           <View className="flex-row-reverse items-center" style={{ gap: 8 }}>
             <TextInput
@@ -439,9 +439,9 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                     : colors.background[600],
               }}
             />
-            <Text className="text-background-400 text-sm">{isUnits ? 'יחידות' : 'גרם'}</Text>
+            <Text className="typo-label text-background-400">{isUnits ? 'יחידות' : 'גרם'}</Text>
           </View>
-          <Text className="text-background-600 text-xs text-right mt-1.5">
+          <Text className="typo-caption text-background-600 text-right mt-1.5">
             מלא רק אם תרצה להוסיף מזון זה ליומן כעת
           </Text>
         </View>
@@ -452,10 +452,10 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
   // ── Step 4: קטגוריה ───────────────────────────────────────────────────────────
   const renderStep4 = () => (
     <View className="flex-1">
-      <Text className="text-lime-400 text-2xl font-black mb-2 text-right">
+      <Text className="typo-h2 text-lime-400 mb-2 text-right">
         שים אותו בקטגוריה?
       </Text>
-      <Text className="text-background-400 text-sm mb-5 text-right">
+      <Text className="typo-label text-background-400 mb-5 text-right">
         לא חובה, אבל עוזר למצוא אותו מהר יותר ברשימה
       </Text>
 
@@ -482,7 +482,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 color={isSelected ? colors.lime[500] : colors.background[400]}
               />
               <Text
-                className={`text-xs font-bold mr-1.5 ${
+                className={`typo-caption-bold mr-1.5 ${
                   isSelected ? 'text-lime-400' : 'text-background-400'
                 }`}
               >
@@ -500,7 +500,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
         accessibilityRole="button"
         accessibilityLabel="דלג על קטגוריה"
       >
-        <Text className="text-background-300 font-bold text-base">דלג על קטגוריה</Text>
+        <Text className="typo-body-primary text-background-300">דלג על קטגוריה</Text>
       </Pressable>
     </View>
   );
@@ -512,41 +512,41 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
 
     return (
       <View className="flex-1">
-        <Text className="text-lime-400 text-2xl font-black mb-2 text-right">
+        <Text className="typo-h2 text-lime-400 mb-2 text-right">
           הכל נראה טוב!
         </Text>
-        <Text className="text-background-400 text-sm mb-6 text-right">
+        <Text className="typo-label text-background-400 mb-6 text-right">
           בדוק שהכל נכון לפני השמירה
         </Text>
 
         <View className="bg-background-800 rounded-2xl p-5 border border-background-600 gap-3">
           <View className="flex-row-reverse items-center justify-between">
-            <Text className="text-background-400 text-sm">שם</Text>
-            <Text className="text-white font-bold text-right flex-1 mr-4">{foodName}</Text>
+            <Text className="typo-label text-background-400">שם</Text>
+            <Text className="typo-body-primary text-white text-right flex-1 mr-4">{foodName}</Text>
           </View>
           <View className="h-[1px] bg-background-700" />
           <View className="flex-row-reverse items-center justify-between">
-            <Text className="text-background-400 text-sm">מדידה</Text>
-            <Text className="text-white font-bold">
+            <Text className="typo-label text-background-400">מדידה</Text>
+            <Text className="typo-body-primary text-white">
               {isUnits ? `ביחידות (${unitLabel})` : 'בגרמים'}
             </Text>
           </View>
           <View className="h-[1px] bg-background-700" />
           <View className="flex-row-reverse items-center justify-between">
-            <Text className="text-background-400 text-sm">קלוריות ל{unitLabel}</Text>
-            <Text className="text-lime-400 font-bold">{cal} קק״ל</Text>
+            <Text className="typo-label text-background-400">קלוריות ל{unitLabel}</Text>
+            <Text className="typo-body-primary text-lime-400">{cal} קק״ל</Text>
           </View>
           <View className="flex-row-reverse items-center justify-between">
-            <Text className="text-background-400 text-sm">חלבון ל{unitLabel}</Text>
-            <Text className="text-lime-400 font-bold">{proteinValue}g</Text>
+            <Text className="typo-label text-background-400">חלבון ל{unitLabel}</Text>
+            <Text className="typo-body-primary text-lime-400">{proteinValue}g</Text>
           </View>
 
           {selectedCategoryId != null && (
             <>
               <View className="h-[1px] bg-background-700" />
               <View className="flex-row-reverse items-center justify-between">
-                <Text className="text-background-400 text-sm">קטגוריה</Text>
-                <Text className="text-white font-bold">
+                <Text className="typo-label text-background-400">קטגוריה</Text>
+                <Text className="typo-body-primary text-white">
                   {getCategoryById(selectedCategoryId)?.label}
                 </Text>
               </View>
@@ -606,7 +606,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 accessibilityLabel="המשך"
               >
                 <Text
-                  className={`font-black text-base ${
+                  className={`typo-btn-cta ${
                     canProceed ? 'text-background-900' : 'text-background-500'
                   }`}
                 >
@@ -638,7 +638,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                   size={20}
                   color={colors.background[900]}
                 />
-                <Text className="mr-2 font-black text-base text-background-900">
+                <Text className="typo-btn-cta mr-2 text-background-900">
                   {isPending ? 'שומר...' : 'שמור והוסף לארוחה'}
                 </Text>
               </Pressable>
@@ -663,7 +663,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 accessibilityLabel="שמור"
               >
                 <MaterialCommunityIcons name="content-save-outline" size={20} color={colors.white} />
-                <Text className="text-white font-black text-sm mr-2">
+                <Text className="typo-label text-white mr-2">
                   {isPending ? 'שומר...' : 'שמור'}
                 </Text>
               </Pressable>
@@ -681,7 +681,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                   size={20}
                   color={colors.background[900]}
                 />
-                <Text className="mr-2 font-black text-sm text-background-900">
+                <Text className="typo-label mr-2 text-background-900">
                   שמור + יומן
                 </Text>
               </Pressable>
@@ -708,10 +708,10 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 <View className="w-12 h-1.5 bg-white/10 rounded-full" />
               </View>
 
-              <Text className="text-white text-xl font-black text-right mb-1">
+              <Text className="typo-h3 text-white text-right mb-1">
                 כמה אכלת?
               </Text>
-              <Text className="text-background-400 text-sm text-right mb-6">
+              <Text className="typo-label text-background-400 text-right mb-6">
                 {isUnits ? 'מספר יחידות' : 'כמות בגרמים'}
               </Text>
 
@@ -720,7 +720,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 <Text className="text-white font-black" style={{ fontSize: 52, lineHeight: 60 }}>
                   {Math.round(portionAmount)}
                 </Text>
-                <Text className="text-background-400 text-base mt-1">
+                <Text className="typo-body text-background-400 mt-1">
                   {isUnits ? 'יחידות' : 'גרם'}
                 </Text>
               </View>
@@ -741,10 +741,10 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 thumbTintColor={colors.lime[500]}
               />
               <View className="flex-row-reverse justify-between px-1 mt-1 mb-6">
-                <Text className="text-background-500 text-xs">
+                <Text className="typo-caption text-background-500">
                   {isUnits ? '0.5' : '10'}
                 </Text>
-                <Text className="text-background-500 text-xs">
+                <Text className="typo-caption text-background-500">
                   {isUnits ? '20 יחידות' : '1000g'}
                 </Text>
               </View>
@@ -759,7 +759,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 accessibilityRole="button"
                 accessibilityLabel="הוסף ליומן"
               >
-                <Text className="text-background-900 font-black text-base">
+                <Text className="typo-btn-cta text-background-900">
                   {isPending ? 'שומר...' : 'הוסף ליומן'}
                 </Text>
               </Pressable>

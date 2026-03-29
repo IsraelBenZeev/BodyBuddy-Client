@@ -93,8 +93,8 @@ return (
           <View className="bg-background-800 p-8 rounded-full mb-6">
             <Ionicons name="book-outline" size={60} color="#4b5563" />
           </View>
-          <Text className="text-white text-xl font-bold text-center">אין ארוחות שמורות</Text>
-          <Text className="text-gray-400 text-center mt-2">
+          <Text className="typo-h3 text-white text-center">אין ארוחות שמורות</Text>
+          <Text className="typo-body text-gray-400 text-center mt-2">
             צור ארוחה חדשה והיא תופיע כאן לשימוש חוזר
           </Text>
         </View>
@@ -120,7 +120,7 @@ return (
         accessibilityLabel="צור ארוחה חדשה לשמירה"
       >
         <Ionicons name="add-circle" size={24} color="#84cc16" />
-        <Text className="text-lime-500 font-black text-base mr-2">
+        <Text className="typo-btn-cta text-lime-500 mr-2">
           צור ארוחה חדשה לשמירה
         </Text>
       </Pressable>
@@ -177,20 +177,20 @@ const MealCard = React.memo(function MealCard({
 
         {/* פרטי הארוחה */}
         <View className="flex-1">
-          <Text className="text-white text-lg font-bold text-right" numberOfLines={1}>
+          <Text className="typo-h4 text-white text-right" numberOfLines={1}>
             {meal.name_meal || 'ארוחה ללא שם'}
           </Text>
 
           <View className="flex-row-reverse items-center mt-1">
-            <Text className="text-orange-400 text-xs font-bold">
+            <Text className="typo-caption-bold text-orange-400">
               {Math.round(stats.calories)} קק״ל
             </Text>
             <View className="w-1 h-1 rounded-full bg-gray-600 mx-2" />
-            <Text className="text-gray-400 text-xs">
+            <Text className="typo-caption text-gray-400">
               {(meal.meal_items ?? []).length} מרכיבים
             </Text>
             <View className="w-1 h-1 rounded-full bg-gray-600 mx-2" />
-            <Text className="text-gray-500 text-xs">
+            <Text className="typo-caption text-gray-500">
               {Math.round(stats.weight)}ג׳ סה״כ
             </Text>
           </View>
@@ -218,7 +218,7 @@ const MealCard = React.memo(function MealCard({
 
       {/* תצוגה ויזואלית קטנה של המרכיבים (אופציונלי - מוסיף המון) */}
       <View className="bg-white/5 px-4 py-2 border-t border-white/5">
-        <Text className="text-gray-500 text-xs text-right" numberOfLines={1}>
+        <Text className="typo-caption text-gray-500 text-right" numberOfLines={1}>
           כולל: {(meal.meal_items ?? []).map((i: any) => i.food_item?.name).join(', ')}
         </Text>
       </View>

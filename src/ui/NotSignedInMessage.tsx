@@ -29,10 +29,10 @@ export default function NotSignedInMessage({
     <View
       className={`flex-1 items-center justify-center px-8 py-12 ${className}`}
     >
-      <Text className="text-lime-400 text-2xl font-black text-center mb-3">
+      <Text className="typo-h2 text-lime-400 text-center mb-3">
         {DEFAULT_TITLE}
       </Text>
-      <Text className="text-background-400 text-base text-center leading-6 mb-6">
+      <Text className="typo-body text-background-400 text-center leading-6 mb-6">
         {DEFAULT_SUBTEXT}
       </Text>
       <View className="flex-row gap-4 mb-8">
@@ -47,7 +47,7 @@ export default function NotSignedInMessage({
           accessibilityRole="button"
           accessibilityLabel="התחבר"
         >
-          <Text className="text-black font-bold text-base">התחבר</Text>
+          <Text className="typo-btn-cta text-black">התחבר</Text>
         </Pressable>
         <Pressable
           onPress={() =>
@@ -60,7 +60,7 @@ export default function NotSignedInMessage({
           accessibilityRole="button"
           accessibilityLabel="הירשם"
         >
-          <Text className="text-lime-400 font-bold text-base">הירשם</Text>
+          <Text className="typo-btn-secondary text-lime-400">הירשם</Text>
         </Pressable>
       </View>
       {children}

@@ -26,7 +26,7 @@ const Button = React.memo(({ text, onPress, icon }: { text: string, onPress: () 
             >
                 {icon}
             </AppButton>
-            <Text className="text-lime-500 text-xs">{text}</Text>
+            <Text className="typo-caption text-lime-500">{text}</Text>
         </View >
     )
 });
@@ -116,7 +116,7 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
                         </View>
                     </AppButton>
                 </View>
-                <Text className="text-lime-500 text-xl font-semibold">האם למחוק?</Text>
+                <Text className="typo-h3 text-lime-500">האם למחוק?</Text>
             </Animated.View>
         )
     }

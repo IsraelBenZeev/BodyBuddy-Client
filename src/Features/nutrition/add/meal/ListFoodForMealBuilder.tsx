@@ -42,13 +42,13 @@ const ListFoodForMealBuilder = ({
       {/* Header - משופר עם היררכיה ברורה */}
       <View className="flex-row-reverse items-center justify-between px-6 py-4 border-b border-white/5">
         <View className="flex-1">
-          <Text className="text-white text-2xl font-black text-right tracking-tight">
+          <Text className="typo-h2 text-white text-right tracking-tight">
             {addStep === 'list' ? 'בחירת מאכל' : addStep === 'amount' ? 'כמות והגשה' : 'מאכל חדש'}
           </Text>
           {addStep === 'amount' && selectedFood && (
             <View className="flex-row-reverse items-center mt-1">
               <Ionicons name="cart-outline" size={12} color="#84cc16" />
-              <Text className="text-lime-500 text-xs font-bold text-right mr-1 uppercase tracking-tighter">
+              <Text className="typo-caption-bold text-lime-500 text-right mr-1 uppercase tracking-tighter">
                 מוסיף ל: {nameMeal || 'ארוחה חדשה'}
               </Text>
             </View>
@@ -84,7 +84,7 @@ const ListFoodForMealBuilder = ({
             accessibilityLabel="הוסף מאכל חדש לרשימה"
           >
             <Ionicons name="add-circle-outline" size={20} color="#84cc16" />
-            <Text className="text-lime-400 font-bold text-sm mr-2">הוסף מאכל חדש לרשימה</Text>
+            <Text className="typo-label text-lime-400 mr-2">הוסף מאכל חדש לרשימה</Text>
           </Pressable>
 
           <FlatList
@@ -101,8 +101,8 @@ const ListFoodForMealBuilder = ({
                 <View className="bg-background-800 p-6 rounded-full mb-4">
                   <Ionicons name="file-tray-outline" size={40} color="#374151" />
                 </View>
-                <Text className="text-gray-500 font-bold text-lg">הרשימה ריקה</Text>
-                <Text className="text-gray-600 text-sm mt-1 text-center px-10">
+                <Text className="typo-h4 text-gray-500">הרשימה ריקה</Text>
+                <Text className="typo-label text-gray-600 mt-1 text-center px-10">
                   לחץ על &quot;הוסף מאכל חדש&quot; למעלה כדי להתחיל
                 </Text>
               </View>
@@ -125,19 +125,19 @@ const ListFoodForMealBuilder = ({
                 </View>
 
                 <View className="flex-1">
-                  <Text className="text-white font-black text-lg text-right tracking-tight">
+                  <Text className="typo-h4 text-white text-right tracking-tight">
                     {item.name}
                   </Text>
                   <View className="flex-row-reverse items-center mt-1.5">
                     <View className="bg-background-900 px-2 py-0.5 rounded-md border border-white/5">
-                      <Text className="text-orange-400 text-xs font-black">
+                      <Text className="typo-caption-bold text-orange-400">
                         {item.measurement_type === 'units'
                           ? item.calories_per_unit
                           : item.calories_per_100}{' '}
                         קק״ל
                       </Text>
                     </View>
-                    <Text className="text-gray-500 text-xs text-right mr-2 font-medium">
+                    <Text className="typo-caption text-gray-500 text-right mr-2">
                       {item.measurement_type === 'units'
                         ? `ליחידה`
                         : 'ל-100 ג׳'}

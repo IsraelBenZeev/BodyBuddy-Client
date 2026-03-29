@@ -237,11 +237,11 @@ const ExerciseItem = React.memo(function ExerciseItem({
         )}
       </View>
       <View className="flex-1 mr-4 items-end">
-        <Text className="text-white font-semibold text-base text-right" numberOfLines={1}>
+        <Text className="typo-body-primary text-white text-right" numberOfLines={1}>
           {exercise.name_he || exercise.name}
         </Text>
         <View className="flex-row items-center mt-1">
-          <Text className="text-zinc-400 text-xs mr-1 text-right">
+          <Text className="typo-caption text-zinc-400 mr-1 text-right">
             {exercise.targetMuscles_he?.[0] || exercise.targetMuscles?.[0]}
           </Text>
           <MaterialCommunityIcons name="arm-flex" size={12} color="#a1a1aa" />

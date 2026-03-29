@@ -85,10 +85,9 @@ const PickerItem: React.FC<PickerItemProps> = React.memo(
         }}
       >
         <Text
+          className="typo-label"
           style={{
             color: 'rgba(255,255,255,0.75)',
-            fontSize: 14,
-            fontWeight: '600',
           }}
         >
           {String(item)}

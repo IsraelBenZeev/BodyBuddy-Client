@@ -52,7 +52,7 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
         <View className="bg-background-700 w-10 h-10 rounded-xl items-center justify-center ml-3">
           <Ionicons name="nutrition" size={18} color="#fb923c" />
         </View>
-        <Text className="text-white font-bold text-base flex-1 text-right" numberOfLines={1}>
+        <Text className="typo-body-primary text-white flex-1 text-right" numberOfLines={1}>
           {item.name}
         </Text>
         <View className="flex-row gap-2">
@@ -65,14 +65,14 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
         </View>
       </View>
       <View className="flex-row-reverse items-center gap-2 mb-1">
-        <Text className="text-gray-400 text-xs">{amountLabel}</Text>
+        <Text className="typo-caption text-gray-400">{amountLabel}</Text>
         <View className="w-1 h-1 rounded-full bg-gray-600" />
-        <Text className="text-lime-400 text-xs font-bold">{cal} קק״ל</Text>
+        <Text className="typo-caption-bold text-lime-400">{cal} קק״ל</Text>
       </View>
       <View className="flex-row-reverse gap-3">
-        <Text className="text-blue-400 text-xs">P {nutrients.protein}g</Text>
-        <Text className="text-orange-400 text-xs">C {nutrients.carbs}g</Text>
-        <Text className="text-red-400 text-xs">F {nutrients.fat}g</Text>
+        <Text className="typo-caption text-blue-400">P {nutrients.protein}g</Text>
+        <Text className="typo-caption text-orange-400">C {nutrients.carbs}g</Text>
+        <Text className="typo-caption text-red-400">F {nutrients.fat}g</Text>
       </View>
     </View>
   );
@@ -441,7 +441,7 @@ const MealBuilderScreen = () => {
           <Handle />
         </View>
         <View className="flex-row-reverse items-center justify-between mb-6">
-          <Text className="text-white text-3xl font-black text-right">בניית ארוחה</Text>
+          <Text className="typo-h1 text-white text-right">בניית ארוחה</Text>
           <Pressable
             onPress={() => router.back()}
             className="bg-background-800 w-10 h-10 rounded-xl items-center justify-center border border-white/10"
@@ -454,7 +454,7 @@ const MealBuilderScreen = () => {
         </View>
         {/* קלט שם הארוחה */}
         <View className="mb-8">
-          <Text className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2 text-right px-1">
+          <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest mb-2 text-right px-1">
             איך נקרא לארוחה?
           </Text>
           <TextInput
@@ -462,7 +462,7 @@ const MealBuilderScreen = () => {
             onChangeText={setNameMeal}
             placeholder="למשל: שייק חלבון בוקר..."
             placeholderTextColor="#525252"
-            className="bg-background-800 border border-white/5 rounded-2xl px-5 py-4 text-right text-white text-lg font-bold shadow-sm"
+            className="typo-input bg-background-800 border border-white/5 rounded-2xl px-5 py-4 text-right text-white shadow-sm"
           />
         </View>
 
@@ -470,10 +470,10 @@ const MealBuilderScreen = () => {
         <View className="flex-row-reverse items-center justify-between mb-4 px-1">
           <View className="flex-row-reverse items-center">
             <Ionicons name="list" size={18} color="#84cc16" />
-            <Text className="text-white text-lg font-black mr-2">מרכיבי הארוחה</Text>
+            <Text className="typo-h4 text-white mr-2">מרכיבי הארוחה</Text>
           </View>
           <View className="bg-lime-500/10 px-3 py-1 rounded-full">
-            <Text className="text-lime-500 text-xs font-bold">{totalCal} קק״ל</Text>
+            <Text className="typo-caption-bold text-lime-500">{totalCal} קק״ל</Text>
           </View>
         </View>
 
@@ -486,7 +486,7 @@ const MealBuilderScreen = () => {
           ListEmptyComponent={
             <View className="py-12 items-center bg-background-800/50 rounded-3xl border border-dashed border-white/10">
               <Ionicons name="restaurant-outline" size={40} color="#404040" />
-              <Text className="text-gray-500 mt-3 text-center font-medium">
+              <Text className="typo-body-primary text-gray-500 mt-3 text-center">
                 הארוחה עדיין ריקה.{'\n'}לחץ על &quot;הוסף מאכל&quot; כדי להתחיל.
               </Text>
             </View>
@@ -505,7 +505,7 @@ const MealBuilderScreen = () => {
             accessibilityLabel="הוסף מאכל לארוחה"
           >
             <Ionicons name="add-circle" size={22} color="#84cc16" />
-            <Text className="text-lime-500 font-bold text-base mr-2">הוסף מאכל לארוחה</Text>
+            <Text className="typo-btn-cta text-lime-500 mr-2">הוסף מאכל לארוחה</Text>
           </Pressable>
 
           <View className="gap-3">
@@ -522,7 +522,7 @@ const MealBuilderScreen = () => {
                 <ActivityIndicator color="#fff" size="small" />
               ) : (
                 <>
-                  <Text className="text-white font-black text-base mr-2">הוסף לרשימה בלבד</Text>
+                  <Text className="typo-btn-cta text-white mr-2">הוסף לרשימה בלבד</Text>
                   <Ionicons name="list" size={22} color="#fff" />
                 </>
               )}
@@ -541,7 +541,7 @@ const MealBuilderScreen = () => {
               ) : (
                 <>
                   <Ionicons name="checkmark-circle" size={24} color="#000" />
-                  <Text className="text-black font-black text-lg mr-2">הוסף לרשימה וליומן</Text>
+                  <Text className="typo-h4 text-black mr-2">הוסף לרשימה וליומן</Text>
                 </>
               )}
             </Pressable>
@@ -576,13 +576,13 @@ const MealBuilderScreen = () => {
                       <Ionicons name="nutrition" size={20} color="#fb923c" />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-white font-black text-xl text-right" numberOfLines={1}>
+                      <Text className="typo-h3 text-white text-right" numberOfLines={1}>
                         {editDraft?.name ?? ''}
                       </Text>
                       {editDraft?.isPendingCreate && (
                         <View className="flex-row-reverse items-center mt-1">
                           <Ionicons name="flash" size={12} color="#84cc16" />
-                          <Text className="text-lime-400 text-xs font-bold mr-1">
+                          <Text className="typo-caption-bold text-lime-400 mr-1">
                             זוהה ע״י AI — בדוק ערכים
                           </Text>
                         </View>
@@ -601,16 +601,16 @@ const MealBuilderScreen = () => {
                       : Math.round(editDraft.protein_per_100 * (editDraft.amount_g / 100) * 10) / 10;
                     return (
                       <View className="bg-background-800 border border-lime-500/15 rounded-3xl p-5 mb-7 items-center">
-                        <Text className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
+                        <Text className="typo-caption-bold text-gray-500 uppercase tracking-widest mb-1">
                           קלוריות בצלחת
                         </Text>
                         <Text className="text-white font-black" style={{ fontSize: 52, lineHeight: 60 }}>
                           {heroCalories}
                         </Text>
-                        <Text className="text-gray-500 text-sm mb-5">קק״ל</Text>
+                        <Text className="typo-label text-gray-500 mb-5">קק״ל</Text>
                         <View className="items-center">
-                          <Text className="text-blue-400 font-black text-xl">{heroProtein}g</Text>
-                          <Text className="text-gray-500 text-xs mt-0.5">חלבון</Text>
+                          <Text className="typo-h3 text-blue-400">{heroProtein}g</Text>
+                          <Text className="typo-caption text-gray-500 mt-0.5">חלבון</Text>
                         </View>
                       </View>
                     );
@@ -629,7 +629,7 @@ const MealBuilderScreen = () => {
                       accessibilityLabel="מדידה בגרמים"
                       accessibilityState={{ selected: editDraft?.measurement_type === 'grams' }}
                     >
-                      <Text className={editDraft?.measurement_type === 'grams' ? 'text-lime-400 font-bold text-sm' : 'text-background-400 text-sm'}>
+                      <Text className={editDraft?.measurement_type === 'grams' ? 'typo-label text-lime-400' : 'typo-label text-background-400'}>
                         בגרמים
                       </Text>
                     </Pressable>
@@ -644,7 +644,7 @@ const MealBuilderScreen = () => {
                       accessibilityLabel="מדידה ביחידות"
                       accessibilityState={{ selected: editDraft?.measurement_type === 'units' }}
                     >
-                      <Text className={editDraft?.measurement_type === 'units' ? 'text-lime-400 font-bold text-sm' : 'text-background-400 text-sm'}>
+                      <Text className={editDraft?.measurement_type === 'units' ? 'typo-label text-lime-400' : 'typo-label text-background-400'}>
                         ביחידות
                       </Text>
                     </Pressable>
@@ -656,9 +656,9 @@ const MealBuilderScreen = () => {
                     return (
                       <View className="mb-7">
                         <View className="flex-row-reverse items-center justify-between mb-2">
-                          <Text className="text-white font-bold">כמות</Text>
+                          <Text className="typo-body-primary text-white">כמות</Text>
                           <View className="bg-lime-500/10 border border-lime-500/20 px-4 py-1.5 rounded-full">
-                            <Text className="text-lime-400 font-black text-base">
+                            <Text className="typo-btn-cta text-lime-400">
                               {editDraft.amount_g}{isUnitsEdit ? ' יחידות' : 'g'}
                             </Text>
                           </View>
@@ -675,8 +675,8 @@ const MealBuilderScreen = () => {
                           thumbTintColor={colors.lime[400]}
                         />
                         <View className="flex-row-reverse justify-between" style={{ marginTop: -4 }}>
-                          <Text className="text-gray-700 text-xs">0</Text>
-                          <Text className="text-gray-700 text-xs">{isUnitsEdit ? '20 יחידות' : '1000g'}</Text>
+                          <Text className="typo-caption text-gray-700">0</Text>
+                          <Text className="typo-caption text-gray-700">{isUnitsEdit ? '20 יחידות' : '1000g'}</Text>
                         </View>
                       </View>
                     );
@@ -685,7 +685,7 @@ const MealBuilderScreen = () => {
                   {/* Divider */}
                   <View className="flex-row items-center mb-5">
                     <View className="flex-1 h-px bg-white/5" />
-                    <Text className="text-gray-600 text-xs font-bold uppercase tracking-widest px-3">
+                    <Text className="typo-caption-bold text-gray-600 uppercase tracking-widest px-3">
                       ערכים ל{editDraft?.measurement_type === 'units' ? 'יחידה' : '-100 גרם'}
                     </Text>
                     <View className="flex-1 h-px bg-white/5" />
@@ -698,10 +698,10 @@ const MealBuilderScreen = () => {
                     return (
                       <View className="bg-background-800 rounded-2xl p-4 mb-3 border border-lime-500/20">
                         <View className="flex-row-reverse items-center justify-between mb-2">
-                          <Text className="text-lime-400 text-sm font-bold">
+                          <Text className="typo-label text-lime-400">
                             קלוריות ל{isUnitsEdit ? 'יחידה' : '-100 גרם'}
                           </Text>
-                          <Text className="text-background-400 text-sm">קק״ל</Text>
+                          <Text className="typo-label text-background-400">קק״ל</Text>
                         </View>
                         <TextInput
                           value={String(calVal)}
@@ -735,10 +735,10 @@ const MealBuilderScreen = () => {
                     return (
                       <View className="bg-background-800 rounded-2xl p-4 mb-5 border border-blue-500/20">
                         <View className="flex-row-reverse items-center justify-between mb-1">
-                          <Text className="text-blue-400 text-sm font-bold">
+                          <Text className="typo-label text-blue-400">
                             חלבון ל{isUnitsEdit ? 'יחידה' : '-100 גרם'}
                           </Text>
-                          <Text className="text-blue-400 text-xl font-black">{protVal}g</Text>
+                          <Text className="typo-h3 text-blue-400">{protVal}g</Text>
                         </View>
                         <Slider
                           style={{ width: '100%', height: 44 }}
@@ -766,7 +766,7 @@ const MealBuilderScreen = () => {
                     accessibilityRole="button"
                     accessibilityLabel="שמור שינויים"
                   >
-                    <Text className="text-black font-black text-base">שמור</Text>
+                    <Text className="typo-btn-cta text-black">שמור</Text>
                   </Pressable>
                 </View>
               </ScrollView>

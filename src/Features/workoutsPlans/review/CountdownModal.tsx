@@ -75,7 +75,7 @@ const CountdownModal = ({ visible, onCancel, onStart }: CountdownModalProps) => 
         className="w-full items-center"
       >
         {/* כותרת */}
-        <Text className="text-zinc-400 text-lg font-semibold mb-2 tracking-widest uppercase">
+        <Text className="typo-h4 text-zinc-400 mb-2 tracking-widest uppercase">
           מתכוננים
         </Text>
 
@@ -89,7 +89,7 @@ const CountdownModal = ({ visible, onCancel, onStart }: CountdownModalProps) => 
         </Animated.Text>
 
         {/* כיתוב תחתון */}
-        <Text className="text-zinc-500 text-base mt-2 mb-10">
+        <Text className="typo-body text-zinc-500 mt-2 mb-10">
           האימון מתחיל עוד רגע...
         </Text>
 
@@ -99,14 +99,14 @@ const CountdownModal = ({ visible, onCancel, onStart }: CountdownModalProps) => 
             onPress={handleCancel}
             className="flex-1 py-4 rounded-2xl border border-zinc-600 items-center"
           >
-            <Text className="text-zinc-300 font-bold text-base">ביטול</Text>
+            <Text className="typo-btn-secondary text-zinc-300">ביטול</Text>
           </Pressable>
 
           <Pressable
             onPress={handleStart}
             className="flex-1 py-4 rounded-2xl bg-lime-500 items-center"
           >
-            <Text className="text-black font-black text-base">התחל עכשיו</Text>
+            <Text className="typo-btn-cta text-black">התחל עכשיו</Text>
           </Pressable>
         </View>
       </Animated.View>

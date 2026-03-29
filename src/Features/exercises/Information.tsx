@@ -36,8 +36,8 @@ const Information = ({ exercise, gender }: InformationProps) => {
                     />
                 )}
                 <View className="flex-1 mr-4">
-                    <Text className="text-zinc-500 text-xs font-bold text-right mb-1 uppercase tracking-tighter">שריר עיקרי</Text>
-                    <Text className="text-white text-lg font-bold text-right">
+                    <Text className="typo-caption-bold text-zinc-500 text-right mb-1 uppercase tracking-tighter">שריר עיקרי</Text>
+                    <Text className="typo-h4 text-white text-right">
                         {exercise?.targetMuscles_he}
                     </Text>
                 </View>
@@ -51,8 +51,8 @@ const Information = ({ exercise, gender }: InformationProps) => {
                     <View className="bg-zinc-800 p-2 rounded-xl mb-3">
                         <IconsFitnessTools size={20} color="#D7FF00" />
                     </View>
-                    <Text className="text-zinc-500 text-xs font-bold uppercase mb-1">ציוד</Text>
-                    <Text className="text-white text-sm font-bold text-right" numberOfLines={1}>
+                    <Text className="typo-caption-bold text-zinc-500 uppercase mb-1">ציוד</Text>
+                    <Text className="typo-label text-white text-right" numberOfLines={1}>
                         {exercise?.equipments_he}
                     </Text>
                 </View>
@@ -62,8 +62,8 @@ const Information = ({ exercise, gender }: InformationProps) => {
                     <View className="bg-zinc-800 p-2 rounded-xl mb-3">
                         <IconSecondaryMuscle size={20} color="#D7FF00" />
                     </View>
-                    <Text className="text-zinc-500 text-xs font-bold uppercase mb-1">מסייעים</Text>
-                    <Text className="text-white text-sm font-bold text-right" numberOfLines={1}>
+                    <Text className="typo-caption-bold text-zinc-500 uppercase mb-1">מסייעים</Text>
+                    <Text className="typo-label text-white text-right" numberOfLines={1}>
                         {exercise?.secondaryMuscles_he.join(', ')}
                     </Text>
                 </View>

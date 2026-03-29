@@ -58,10 +58,10 @@ const ActivityLevelStep = ({
     <Animated.View entering={FadeInLeft.duration(400)} className="flex-1 px-6">
       {/* Header */}
       <View className="mb-6">
-        <Text className="text-white text-3xl font-black text-right mb-2">
+        <Text className="typo-h1 text-white text-right mb-2">
           רמת הפעילות שלך
         </Text>
-        <Text className="text-background-400 text-lg text-right">
+        <Text className="typo-h4 text-background-400 text-right">
           בחר/י את רמת הפעילות הגופנית הממוצעת שלך
         </Text>
       </View>
@@ -108,13 +108,13 @@ const ActivityLevelStep = ({
                         </View>
                         <View className="flex-1 items-end">
                           <Text
-                            className={`text-base font-bold ${
+                            className={`typo-body-primary ${
                               isSelected ? 'text-lime-500' : 'text-background-200'
                             }`}
                           >
                             {option.label}
                           </Text>
-                          <Text className="text-background-400 text-xs mt-1">
+                          <Text className="typo-caption text-background-400 mt-1">
                             {option.description}
                           </Text>
                         </View>
@@ -123,7 +123,7 @@ const ActivityLevelStep = ({
                   })}
                 </View>
                 {error && (
-                  <Text className="text-red-400 text-xs text-right mt-2">
+                  <Text className="typo-caption text-red-400 text-right mt-2">
                     {error.message}
                   </Text>
                 )}
@@ -134,10 +134,10 @@ const ActivityLevelStep = ({
 
         {/* Protein per kg */}
         <View className="mb-4">
-          <Text className="text-background-200 text-sm font-semibold text-right mb-1">
+          <Text className="typo-label text-background-200 text-right mb-1">
             חלבון לכל ק״ג משקל (גרם)
           </Text>
-          <Text className="text-background-500 text-xs text-right mb-3">
+          <Text className="typo-caption text-background-500 text-right mb-3">
             ערך ברירת מחדל {DEFAULT_PROTEIN_PER_KG} – משמש לחישוב יעד החלבון היומי
           </Text>
           <Controller
@@ -148,8 +148,8 @@ const ActivityLevelStep = ({
               <View>
                 <View className="bg-background-800 border border-background-600 rounded-2xl p-5">
                   <View className="items-center mb-2">
-                    <Text className="text-white text-2xl font-black">{value.toFixed(1)}</Text>
-                    <Text className="text-background-400 text-xs">גרם/ק״ג</Text>
+                    <Text className="typo-h2 text-white">{value.toFixed(1)}</Text>
+                    <Text className="typo-caption text-background-400">גרם/ק״ג</Text>
                   </View>
                   <Slider
                     value={value}
@@ -172,12 +172,12 @@ const ActivityLevelStep = ({
                     }}
                   />
                   <View className="flex-row justify-between mt-1">
-                    <Text className="text-background-500 text-xs">0.8</Text>
-                    <Text className="text-background-500 text-xs">3</Text>
+                    <Text className="typo-caption text-background-500">0.8</Text>
+                    <Text className="typo-caption text-background-500">3</Text>
                   </View>
                 </View>
                 {error && (
-                  <Text className="text-red-400 text-xs text-right mt-1">
+                  <Text className="typo-caption text-red-400 text-right mt-1">
                     {error.message}
                   </Text>
                 )}
@@ -198,7 +198,7 @@ const ActivityLevelStep = ({
             accessibilityLabel="חזרה"
           >
             <Ionicons name="arrow-forward" size={16} color={colors.background[400]} />
-            <Text className="text-background-400 font-medium text-sm">חזרה</Text>
+            <Text className="typo-label text-background-400">חזרה</Text>
           </Pressable>
 
           <Pressable
@@ -209,7 +209,7 @@ const ActivityLevelStep = ({
             accessibilityLabel="הבא"
           >
             <Ionicons name="arrow-back" size={20} color={colors.background[900]} />
-            <Text className="text-black font-extrabold text-base">הבא</Text>
+            <Text className="typo-btn-cta text-black">הבא</Text>
           </Pressable>
         </View>
 
@@ -226,7 +226,7 @@ const ActivityLevelStep = ({
             ) : (
               <>
                 <Ionicons name="checkmark-circle" size={20} color={colors.lime[500]} />
-                <Text className="text-lime-500 font-bold text-base">סיום ושמירה</Text>
+                <Text className="typo-btn-cta text-lime-500">סיום ושמירה</Text>
               </>
             )}
           </Pressable>

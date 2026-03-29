@@ -116,10 +116,10 @@ const FoodEntryRow = React.memo(function FoodEntryRow({ entry, onDelete, isDelet
           <Ionicons name="nutrition-outline" size={22} color={colors.orange[400]} />
         </View>
         <View className="flex-1 mr-3">
-          <Text className="text-white text-base font-bold text-right" numberOfLines={2}>
+          <Text className="typo-body-primary text-white text-right" numberOfLines={2}>
             {formatEntryPortionLine(entry)}
           </Text>
-          <Text className="text-background-400 text-xs text-right mt-0.5">
+          <Text className="typo-caption text-background-400 text-right mt-0.5">
             {entry.calories} קק״ל
           </Text>
         </View>
@@ -144,14 +144,14 @@ const MacroBar = React.memo(function MacroBar({ entry }: { entry: NutritionEntry
       <View className="flex-row-reverse items-center flex-1 justify-around">
         <View className="flex-row-reverse items-center">
           <View className="w-2 h-2 rounded-full bg-lime-500 ml-1.5" />
-          <Text className="text-background-300 text-xs">
-            חלבון <Text className="text-lime-500 font-bold">{entry.protein}g</Text>
+          <Text className="typo-caption text-background-300">
+            חלבון <Text className="typo-caption text-lime-500">{entry.protein}g</Text>
           </Text>
         </View>
         <View className="flex-row-reverse items-center">
           <View className="w-2 h-2 rounded-full bg-gray-400 ml-1.5"/>
-          <Text className="text-background-300 text-xs">
-            קלוריות <Text className="text-gray-400 font-bold">{entry.calories}</Text>
+          <Text className="typo-caption text-background-300">
+            קלוריות <Text className="typo-caption text-gray-400">{entry.calories}</Text>
           </Text>
         </View>
       </View>
@@ -202,8 +202,8 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
           <Ionicons name="restaurant" size={22} color="#84cc16" />
         </View>
         <View className="flex-1">
-          <Text className="text-white text-base font-bold text-right">{groupName}</Text>
-          <Text className="text-gray-400 text-xs text-right mt-0.5">
+          <Text className="typo-body-primary text-white text-right">{groupName}</Text>
+          <Text className="typo-caption text-gray-400 text-right mt-0.5">
             {entries.length} פריטים •{' '}
             <Text className="text-lime-400 font-medium">{totalCal} קק״ל</Text>
           </Text>
@@ -217,7 +217,7 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
             accessibilityLabel={`מחק ארוחה ${groupName}`}
           >
             <Ionicons name="trash-outline" size={18} color={colors.red[500]} />
-            <Text className="text-red-400 text-xs font-bold mt-0.5">מחק ארוחה</Text>
+            <Text className="typo-caption-bold text-red-400 mt-0.5">מחק ארוחה</Text>
           </Pressable>
         )}
       </View>
@@ -230,16 +230,16 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
 
       <View className="bg-background-900/50 px-4 py-4 border-t border-white/5">
         <View className="flex-row-reverse justify-between items-center mb-3 px-1">
-          <Text className="text-background-400 text-xs font-bold tracking-widest uppercase">
+          <Text className="typo-caption-bold text-background-400 tracking-widest uppercase">
             סיכום ערכים לארוחה
           </Text>
           <View className="h-[1px] flex-1 bg-white/5 mx-3" />
         </View>
         <View className="flex-row-reverse items-center justify-center">
           <View className="items-center">
-            <Text className="text-gray-400 text-xs mb-1">חלבון</Text>
+            <Text className="typo-caption text-gray-400 mb-1">חלבון</Text>
             <View className="bg-lime-500/10 px-2 py-1 rounded-lg">
-              <Text className="text-lime-500 font-bold text-sm">
+              <Text className="typo-label text-lime-500">
                 {Math.round(entries.reduce((s, e) => s + (e.protein || 0), 0))}g
               </Text>
             </View>
@@ -277,9 +277,9 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
     <View className="mb-6">
       <View className="flex-row-reverse items-center mb-3">
         <View className="bg-background-700/80 rounded-xl px-3 py-1.5">
-          <Text className="text-lime-400 font-bold text-sm">{slotLabel}</Text>
+          <Text className="typo-label text-lime-400">{slotLabel}</Text>
           {slotInfo != null && (
-            <Text className="text-background-400 text-xs text-right">
+            <Text className="typo-caption text-background-400 text-right">
               {slotInfo.start === 21 ? '21:00–06:00' : `${slotInfo.start}:00–${slotInfo.end}:00`}
             </Text>
           )}
@@ -340,9 +340,9 @@ const NutritionEntriesList = ({
     <View>
       <View className="flex-row-reverse items-center mb-3">
         <Ionicons name="today-outline" size={18} color={colors.lime[500]} />
-        <Text className="text-white text-lg font-bold mr-2">מאכלים שנוספו היום</Text>
+        <Text className="typo-h4 text-white mr-2">מאכלים שנוספו היום</Text>
         <View className="bg-lime-500/20 rounded-full px-2 py-0.5 mr-2">
-          <Text className="text-lime-400 text-xs font-bold">{entries.length}</Text>
+          <Text className="typo-caption-bold text-lime-400">{entries.length}</Text>
         </View>
       </View>
 

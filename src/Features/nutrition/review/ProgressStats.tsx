@@ -21,17 +21,17 @@ const ProgressStats = ({ label, consumed, goal, unit, color, iconName }: Props) 
       <View className="flex-row-reverse items-center justify-between mb-3">
         <View className="flex-row-reverse items-center">
           <Ionicons name={iconName} size={20} color={color} />
-          <Text className="text-white text-base font-bold mr-2">{label}</Text>
+          <Text className="typo-body-primary text-white mr-2">{label}</Text>
         </View>
         <View className="flex-row-reverse items-center space-x-1 space-x-reverse">
-          <Text className="text-background-400 text-sm font-bold">
+          <Text className="typo-label text-background-400">
             {consumed}
           </Text>
-          <Text className="text-background-400 text-xs mx-1">מתוך</Text>
-          <Text className="text-background-400 text-sm">
+          <Text className="typo-caption text-background-400 mx-1">מתוך</Text>
+          <Text className="typo-label text-background-400">
             {goal}
           </Text>
-          <Text className="text-background-400 text-xs mr-1">{unit}</Text>
+          <Text className="typo-caption text-background-400 mr-1">{unit}</Text>
         </View>
       </View>
 
@@ -43,10 +43,10 @@ const ProgressStats = ({ label, consumed, goal, unit, color, iconName }: Props) 
       </View>
 
       <View className="flex-row-reverse items-center justify-between">
-        <Text className="text-background-400 text-xs">
+        <Text className="typo-caption text-background-400">
           נותר: {remaining} {unit}
         </Text>
-        <Text className="text-background-400 text-xs font-bold">{progress}%</Text>
+        <Text className="typo-caption-bold text-background-400">{progress}%</Text>
       </View>
     </View>
   );

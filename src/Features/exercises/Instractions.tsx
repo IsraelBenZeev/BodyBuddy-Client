@@ -10,7 +10,7 @@ const Instractions = ({ instructions }: InstractionsProps) => {
             {/* כותרת הטאב */}
             <View className="flex-row-reverse items-center mb-6">
                 <View className="h-6 w-1 bg-lime-500 rounded-full ml-3" />
-                <Text className="text-white text-xl font-black text-right">שלבי ביצוע</Text>
+                <Text className="typo-h3 text-white text-right">שלבי ביצוע</Text>
             </View>
 
             {/* רשימת ההוראות */}
@@ -20,7 +20,7 @@ const Instractions = ({ instructions }: InstractionsProps) => {
                     {/* ציר זמן ומספר */}
                     <View className="items-center ml-4">
                         <View className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 items-center justify-center z-10">
-                            <Text className="text-lime-500 font-black text-lg">{index + 1}</Text>
+                            <Text className="typo-h4 text-lime-500">{index + 1}</Text>
                         </View>
                         {/* קו מחבר בין העיגולים (לא מופיע בפריט האחרון) */}
                         {index !== instructions.length - 1 && (
@@ -30,7 +30,7 @@ const Instractions = ({ instructions }: InstractionsProps) => {
 
                     {/* תוכן ההוראה */}
                     <View className="flex-1 bg-zinc-900/40 border border-zinc-800/50 p-4 rounded-2xl shadow-sm self-start">
-                        <Text className="text-gray-200 text-right text-base leading-6 font-medium">
+                        <Text className="typo-body-primary text-gray-200 text-right leading-6">
                             {step}
                         </Text>
                     </View>
@@ -39,7 +39,7 @@ const Instractions = ({ instructions }: InstractionsProps) => {
 
             {/* טיפ בטיחות בתחתית */}
             <View className="mt-4 bg-lime-500/10 border border-lime-500/20 p-4 rounded-2xl flex-row-reverse items-center">
-                <Text className="text-lime-500 text-right text-sm font-bold flex-1">
+                <Text className="typo-label text-lime-500 text-right flex-1">
                     שימו לב לשמור על טכניקה נכונה לאורך כל הסט. במידה ואתם מרגישים כאב חד - הפסיקו מיד.
                 </Text>
             </View>

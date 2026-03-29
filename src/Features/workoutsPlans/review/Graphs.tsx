@@ -10,15 +10,15 @@ const Graphs = ({workoutPlanId}: Props) => {
     return (
         <View className="pb-24 gap-4">
             <View className=" justify-between">
-                <Text className="text-zinc-400 text-right mb-2 font-bold mr-2">חזרות</Text>
+                <Text className="typo-label text-zinc-400 text-right mb-2 mr-2">חזרות</Text>
            <GraphData/>
             </View>
             <View className=" justify-between">
-                <Text className="text-zinc-400 text-right mb-2 font-bold mr-2">משקל</Text>
+                <Text className="typo-label text-zinc-400 text-right mb-2 mr-2">משקל</Text>
            <GraphData/>
             </View>
             <View className=" justify-between">
-                <Text className="text-zinc-400 text-right mb-2 font-bold mr-2">סטים</Text>
+                <Text className="typo-label text-zinc-400 text-right mb-2 mr-2">סטים</Text>
            <GraphData/>
             </View>
         </View>

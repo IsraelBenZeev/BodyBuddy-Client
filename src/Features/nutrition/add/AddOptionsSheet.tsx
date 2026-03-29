@@ -72,7 +72,7 @@ const AddOptionsSheet = ({
               <View className="w-12 h-1.5 bg-white/10 rounded-full" />
             </View>
 
-            <Text className="text-white text-xl font-black text-right mb-5">
+            <Text className="typo-h3 text-white text-right mb-5">
               מה תרצה להוסיף?
             </Text>
 
@@ -96,8 +96,8 @@ const AddOptionsSheet = ({
                     <Ionicons name={opt.icon} size={24} color={opt.color} />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-white font-black text-base text-right">{opt.label}</Text>
-                    <Text className="text-gray-400 text-xs text-right mt-0.5">{opt.description}</Text>
+                    <Text className="typo-btn-cta text-white text-right">{opt.label}</Text>
+                    <Text className="typo-caption text-gray-400 text-right mt-0.5">{opt.description}</Text>
                   </View>
                   <Ionicons name="chevron-back" size={16} color="#6b7280" />
                 </Pressable>
@@ -105,7 +105,7 @@ const AddOptionsSheet = ({
             </View>
 
             <Pressable onPress={onClose} className="mt-4 h-12 items-center justify-center" accessibilityRole="button" accessibilityLabel="ביטול">
-              <Text className="text-gray-400 font-bold">ביטול</Text>
+              <Text className="typo-body-primary text-gray-400">ביטול</Text>
             </Pressable>
           </View>
         </Pressable>

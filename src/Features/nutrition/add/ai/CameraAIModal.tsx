@@ -132,8 +132,8 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                   <View className="bg-lime-500/10 w-20 h-20 rounded-full items-center justify-center mb-4">
                     <Ionicons name="camera" size={38} color="#84cc16" />
                   </View>
-                  <Text className="text-white text-xl font-black text-center">נתח ארוחה עם AI</Text>
-                  <Text className="text-gray-400 text-sm text-center mt-2 px-4">
+                  <Text className="typo-h3 text-white text-center">נתח ארוחה עם AI</Text>
+                  <Text className="typo-label text-gray-400 text-center mt-2 px-4">
                     צלם או בחר תמונה ו-AI יזהה את המרכיבים ואת הערכים התזונתיים
                   </Text>
                 </View>
@@ -144,7 +144,7 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                   accessibilityLabel="צלם ארוחה"
                 >
                   <Ionicons name="camera" size={20} color="#000" />
-                  <Text className="text-black font-black text-base">צלם ארוחה</Text>
+                  <Text className="typo-btn-cta text-black">צלם ארוחה</Text>
                 </Pressable>
                 <Pressable
                   onPress={handlePickFromGallery}
@@ -153,10 +153,10 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                   accessibilityLabel="בחר מהגלריה"
                 >
                   <Ionicons name="images-outline" size={20} color="#fff" />
-                  <Text className="text-white font-bold text-base">בחר מהגלריה</Text>
+                  <Text className="typo-btn-cta text-white">בחר מהגלריה</Text>
                 </Pressable>
                 <Pressable onPress={handleClose} className="mt-3 h-12 items-center justify-center" accessibilityRole="button" accessibilityLabel="ביטול">
-                  <Text className="text-gray-400 font-bold">ביטול</Text>
+                  <Text className="typo-body-primary text-gray-400">ביטול</Text>
                 </Pressable>
               </>
             )}
@@ -170,7 +170,7 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                   accessibilityRole="button"
                   accessibilityLabel="בטל ניתוח"
                 >
-                  <Text className="text-gray-400 font-bold">ביטול</Text>
+                  <Text className="typo-body-primary text-gray-400">ביטול</Text>
                 </Pressable>
               </View>
             )}
@@ -181,8 +181,8 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                   <View className="bg-red-500/10 w-20 h-20 rounded-full items-center justify-center mb-4">
                     <Ionicons name="alert-circle" size={38} color="#f87171" />
                   </View>
-                  <Text className="text-white text-xl font-black text-center">שגיאה</Text>
-                  <Text className="text-gray-400 text-sm text-center mt-2 px-4">{errorMsg}</Text>
+                  <Text className="typo-h3 text-white text-center">שגיאה</Text>
+                  <Text className="typo-label text-gray-400 text-center mt-2 px-4">{errorMsg}</Text>
                 </View>
                 <Pressable
                   onPress={handleRetry}
@@ -190,10 +190,10 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                   accessibilityRole="button"
                   accessibilityLabel="נסה שוב"
                 >
-                  <Text className="text-black font-black text-base">נסה שוב</Text>
+                  <Text className="typo-btn-cta text-black">נסה שוב</Text>
                 </Pressable>
                 <Pressable onPress={handleClose} className="mt-3 h-12 items-center justify-center" accessibilityRole="button" accessibilityLabel="ביטול">
-                  <Text className="text-gray-400 font-bold">ביטול</Text>
+                  <Text className="typo-body-primary text-gray-400">ביטול</Text>
                 </Pressable>
               </>
             )}

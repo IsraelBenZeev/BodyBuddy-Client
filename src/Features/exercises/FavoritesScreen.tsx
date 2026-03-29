@@ -40,8 +40,8 @@ const FavoritesScreen = () => {
           <Entypo name="chevron-right" size={22} color="white" />
         </Pressable>
         <View className="flex-1">
-          <Text className="text-white font-black text-3xl text-right">מועדפים</Text>
-          <Text className="text-zinc-500 text-sm text-right mt-0.5">
+          <Text className="typo-h1 text-white text-right">מועדפים</Text>
+          <Text className="typo-label text-zinc-500 text-right mt-0.5">
             {favoriteIds.length} תרגילים שמורים
           </Text>
         </View>
@@ -52,8 +52,8 @@ const FavoritesScreen = () => {
       ) : isEmpty ? (
         <View className="flex-1 items-center justify-center gap-4 px-8">
           <Entypo name="star-outlined" size={48} color="#52525b" />
-          <Text className="text-zinc-500 text-base font-medium">עדיין לא נוספו תרגילים מועדפים</Text>
-          <Text className="text-zinc-600 text-sm text-center">
+          <Text className="typo-body text-zinc-500">עדיין לא נוספו תרגילים מועדפים</Text>
+          <Text className="typo-label text-zinc-600 text-center">
             גלה תרגילים לפי אזור גוף והוסף אותם למועדפים
           </Text>
           <Pressable
@@ -62,7 +62,7 @@ const FavoritesScreen = () => {
             accessibilityRole="button"
             accessibilityLabel="בחר אזור גוף"
           >
-            <Text className="text-background-900 font-bold text-base">בחר אזור גוף</Text>
+            <Text className="typo-btn-cta text-background-900">בחר אזור גוף</Text>
           </Pressable>
         </View>
       ) : (

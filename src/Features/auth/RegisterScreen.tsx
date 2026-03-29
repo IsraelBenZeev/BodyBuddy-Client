@@ -77,7 +77,7 @@ export default function RegisterScreen() {
             {/* Logo/Title */}
             <View className="mb-12 items-center">
               <BodyBuddyLogo width={220} height={120} />
-              <Text className="text-background-400 text-base text-center mt-4">התחבר למערכת</Text>
+              <Text className="typo-body text-background-400 text-center mt-4">התחבר למערכת</Text>
             </View>
             {/* Email Input */}
             <FormInput
@@ -222,7 +222,7 @@ export default function RegisterScreen() {
             >
               <View className="flex-row-reverse items-center justify-center gap-3">
                 <Ionicons name="logo-google" size={24} color={colors.lime[500]} />
-                <Text className="text-white text-base font-semibold">הירשם באמצעות Google</Text>
+                <Text className="typo-body-primary text-white">הירשם באמצעות Google</Text>
               </View>
             </AppButton>
 
@@ -233,7 +233,7 @@ export default function RegisterScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="התחבר כאן"
               >
-                <Text className="text-background-400 text-center text-base">
+                <Text className="typo-body text-background-400 text-center">
                   כבר יש לך חשבון? <Text className="text-lime-400 font-semibold">התחבר כאן</Text>
                 </Text>
               </Pressable>

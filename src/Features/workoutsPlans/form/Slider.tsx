@@ -24,8 +24,8 @@ const IntensitySlider = ({ control, name, isPendingCreate }: Props) => {
             render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <View className="mb-6">
                     <View className="flex-row-reverse justify-between items-center mb-3">
-                        <Text className="text-background-400 font-bold text-sm">רמת קושי</Text>
-                        <Text className="text-lime-500 font-black text-lg">
+                        <Text className="typo-label text-background-400">רמת קושי</Text>
+                        <Text className="typo-h4 text-lime-500">
                             {Math.round(value)}/10
                         </Text>
                     </View>
@@ -62,9 +62,9 @@ const IntensitySlider = ({ control, name, isPendingCreate }: Props) => {
                         />
 
                         <View className="flex-row justify-between mt-2 px-1">
-                            <Text className="text-background-500 text-xs font-bold">קל מאוד</Text>
-                            <Text className="text-lime-500/50 text-xs font-bold">בינוני</Text>
-                            <Text className="text-red-400/70 text-xs font-bold">אינטנסיבי</Text>
+                            <Text className="typo-caption-bold text-background-500">קל מאוד</Text>
+                            <Text className="typo-caption-bold text-lime-500/50">בינוני</Text>
+                            <Text className="typo-caption-bold text-red-400/70">אינטנסיבי</Text>
                         </View>
                     </View>
                     {error && <Text className="text-red-500 text-right mt-1">{error.message}</Text>}

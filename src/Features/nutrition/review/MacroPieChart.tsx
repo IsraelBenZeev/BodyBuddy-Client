@@ -36,7 +36,7 @@ const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
 
   return (
     <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600 items-center">
-      <Text className="text-white text-lg font-bold mb-4 text-right w-full">יעד חלבון יומי</Text>
+      <Text className="typo-h4 text-white mb-4 text-right w-full">יעד חלבון יומי</Text>
 
       <View className="items-center justify-center mb-5" style={{ width: CHART_SIZE, height: CHART_SIZE }}>
         <PieChart
@@ -54,14 +54,14 @@ const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
           tooltipBorderRadius={10}
           centerLabelComponent={() => (
             <View className="items-center justify-center gap-0.5">
-              <Text className="text-white text-2xl font-black leading-tight">
+              <Text className="typo-h2 text-white leading-tight">
                 {proteinConsumed}ג׳
               </Text>
-              <Text className="text-background-400 text-xs leading-tight">
+              <Text className="typo-caption text-background-400 leading-tight">
                 מתוך {proteinGoal}ג׳
               </Text>
               <Text
-                className="text-xs font-bold leading-tight"
+                className="typo-caption-bold leading-tight"
                 style={{ color: pct >= 100 ? colors.lime[400] : colors.lime[500] }}
               >
                 {pct}%
@@ -74,17 +74,17 @@ const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
       <View className="flex-row-reverse items-center justify-between w-full">
         <View className="flex-row-reverse items-center gap-2">
           <View className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.lime[500] }} />
-          <Text className="text-white text-sm">נצרך</Text>
+          <Text className="typo-label text-white">נצרך</Text>
         </View>
-        <Text className="text-background-400 text-sm font-medium">{proteinConsumed}ג׳</Text>
+        <Text className="typo-label text-background-400">{proteinConsumed}ג׳</Text>
       </View>
 
       <View className="flex-row-reverse items-center justify-between w-full mt-2">
         <View className="flex-row-reverse items-center gap-2">
           <View className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.background[600] }} />
-          <Text className="text-white text-sm">נותר</Text>
+          <Text className="typo-label text-white">נותר</Text>
         </View>
-        <Text className="text-background-400 text-sm font-medium">
+        <Text className="typo-label text-background-400">
           {remaining > 0 ? `${remaining}ג׳` : '✓ השגת יעד'}
         </Text>
       </View>

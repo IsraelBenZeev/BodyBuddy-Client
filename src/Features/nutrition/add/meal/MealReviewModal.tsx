@@ -166,7 +166,7 @@ export default function MealReviewModal({
           <Pressable onPress={onClose} className="p-3" accessibilityRole="button" accessibilityLabel="סגור">
             <Ionicons name="close" size={24} color={colors.white} />
           </Pressable>
-          <Text className="text-white text-lg font-bold" numberOfLines={1}>
+          <Text className="typo-h4 text-white" numberOfLines={1}>
             {meal.name_meal || 'ארוחה'}
           </Text>
           <View className="w-10" />
@@ -177,7 +177,7 @@ export default function MealReviewModal({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 120 }}
         >
-          <Text className="text-background-400 text-sm mb-4 text-right">
+          <Text className="typo-label text-background-400 mb-4 text-right">
             התאם כמות לכל מאכל ואז אשר להוספה ליומן
           </Text>
 
@@ -192,8 +192,8 @@ export default function MealReviewModal({
           ))}
 
           <View className="mt-4 py-3 border-t border-background-700 flex-row-reverse items-center justify-between">
-            <Text className="text-lime-400 font-bold">סה״כ קלוריות</Text>
-            <Text className="text-white text-lg font-black">{totalCal} קק״ל</Text>
+            <Text className="typo-body-primary text-lime-400">סה״כ קלוריות</Text>
+            <Text className="typo-h4 text-white">{totalCal} קק״ל</Text>
           </View>
         </ScrollView>
 
@@ -212,7 +212,7 @@ export default function MealReviewModal({
             ) : (
               <>
                 <Ionicons name="checkmark-circle" size={24} color={colors.background[900]} />
-                <Text className="text-background-900 font-black text-base mr-2">הוסף ליומן</Text>
+                <Text className="typo-btn-cta text-background-900 mr-2">הוסף ליומן</Text>
               </>
             )}
           </Pressable>
@@ -260,13 +260,13 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
       {/* שורה עליונה: שם וקלוריות */}
       <View className="flex-row-reverse items-center justify-between mb-3">
         <View className="flex-1 ml-3">
-          <Text className="text-white font-bold text-lg text-right" numberOfLines={2}>
+          <Text className="typo-h4 text-white text-right" numberOfLines={2}>
             {info.name}
           </Text>
         </View>
         <View className="items-end">
-          <Text className="text-lime-500 font-bold text-lg">{calories}</Text>
-          <Text className="text-gray-500 text-xs font-medium">קק״ל</Text>
+          <Text className="typo-h4 text-lime-500">{calories}</Text>
+          <Text className="typo-caption text-gray-500">קק״ל</Text>
         </View>
       </View>
 
@@ -283,8 +283,8 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
           </Pressable>
 
           <View className="px-4 items-center">
-            <Text className="text-white font-black text-lg">{state.quantity}</Text>
-            <Text className="text-gray-500 text-xs uppercase font-bold">{unitLabel}</Text>
+            <Text className="typo-h4 text-white">{state.quantity}</Text>
+            <Text className="typo-caption-bold text-gray-500 uppercase">{unitLabel}</Text>
           </View>
 
           <Pressable
@@ -299,13 +299,13 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
 
         {/* תצוגת חישוב */}
         <View className="flex-1 items-center mr-4">
-          <Text className="text-gray-400 text-xs text-center mb-1">
+          <Text className="typo-caption text-gray-400 text-center mb-1">
             {isUnits ? `${amount} ${unitLabel}` : `${amount} גרם`}
           </Text>
           <View className="flex-row-reverse gap-2">
-            <Text className="text-lime-400 text-xs">P {nutrients.protein}g</Text>
-            <Text className="text-orange-400 text-xs">C {nutrients.carbs}g</Text>
-            <Text className="text-red-400 text-xs">F {nutrients.fat}g</Text>
+            <Text className="typo-caption text-lime-400">P {nutrients.protein}g</Text>
+            <Text className="typo-caption text-orange-400">C {nutrients.carbs}g</Text>
+            <Text className="typo-caption text-red-400">F {nutrients.fat}g</Text>
           </View>
         </View>
       </View>

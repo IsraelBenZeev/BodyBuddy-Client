@@ -116,7 +116,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
         />
         {isMajor && (
           <Text
-            className="text-xs font-semibold"
+            className="typo-caption"
             style={{ color: colors.background[300], marginTop: 3 }}
           >
             {item}
@@ -124,7 +124,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
         )}
         {!isMajor && isMedium && (
           <Text
-            className="text-xs"
+            className="typo-caption"
             style={{ color: colors.background[500], marginTop: 2 }}
           >
             {item}
@@ -140,8 +140,8 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
     <View className="items-center">
       {/* ערך נבחר */}
       <View className="flex-row items-baseline justify-center mb-3">
-        <Text className="text-background-400 text-lg font-semibold mr-2">{unit}</Text>
-        <Text className="text-white text-xl font-bold">{displayValue}</Text>
+        <Text className="typo-h4 text-background-400 mr-2">{unit}</Text>
+        <Text className="typo-h3 text-white">{displayValue}</Text>
       </View>
 
       {/* סרגל */}

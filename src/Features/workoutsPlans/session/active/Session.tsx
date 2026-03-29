@@ -30,7 +30,7 @@ const TimerDisplay = memo(() => {
         const interval = setInterval(() => setTotalTime((p) => p + 1), 1000);
         return () => clearInterval(interval);
     }, []);
-    return <Text className="text-lime-500 font-mono text-2xl">{formatTime(totalTime)}</Text>;
+    return <Text className="typo-h2 text-lime-500 font-mono">{formatTime(totalTime)}</Text>;
 });
 
 interface Props {
@@ -115,7 +115,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
     if (isLoading)
         return (
             <View className="flex-1 bg-background-900 justify-center items-center">
-                <Text className="text-white">טוען...</Text>
+                <Text className="typo-body text-white">טוען...</Text>
             </View>
         );
 
@@ -125,14 +125,14 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             exiting={FadeOut.duration(400)}
         >
             <View className="px-6 flex-row justify-between items-center py-4">
-                <Text className="text-white text-2xl font-black">{workoutPlan.title}</Text>
+                <Text className="typo-h2 text-white">{workoutPlan.title}</Text>
                 <View className="bg-background-800 px-4 py-2 rounded-2xl border border-white/5">
                     <TimerDisplay />
                 </View>
             </View>
 
             <View className="px-6">
-                <Text className="text-white text-2xl font-black">
+                <Text className="typo-h2 text-white">
                     תרגיל {activeIndex + 1} מתוך {exercises?.length}
                 </Text>
             </View>
@@ -164,7 +164,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                         <Loading size="small" color={colors.background[900]}/>
                     ) : (
                         <>
-                            <Text className="text-black font-black text-xl mr-2">סיים אימון</Text>
+                            <Text className="typo-btn-cta text-black mr-2">סיים אימון</Text>
                             <MaterialCommunityIcons name="flag-checkered" size={24} color="black" />
                         </>
                     )}

@@ -8,9 +8,9 @@ interface ScreenHeaderProps {
 const ScreenHeader = ({ title, subtitle }: ScreenHeaderProps) => {
   return (
     <View className="mb-6">
-      <Text className="text-white text-3xl font-black text-right mb-1">{title}</Text>
+      <Text className="typo-h1 text-white text-right mb-1">{title}</Text>
       {subtitle && (
-        <Text className="text-gray-400 text-sm text-right font-medium">{subtitle}</Text>
+        <Text className="typo-label text-gray-400 text-right">{subtitle}</Text>
       )}
     </View>
   );

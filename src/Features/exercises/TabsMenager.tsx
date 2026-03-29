@@ -194,7 +194,7 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
                             accessibilityLabel={tab.title}
                             accessibilityState={{ selected: activeTab === index }}
                         >
-                            <Text className={`font-bold ${activeTab === index ? 'text-background-950' : 'text-gray-500'}`}>
+                            <Text className={`typo-body-primary ${activeTab === index ? 'text-background-950' : 'text-gray-500'}`}>
                                 {tab.title}
                             </Text>
                         </AppButton>

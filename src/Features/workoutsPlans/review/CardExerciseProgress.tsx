@@ -17,7 +17,7 @@ const Title = React.memo(({ exerciseDetails }: TitleProps) => {
     <View className="flex-row justify-between items-center w-full">
       <View className="flex-1 mr-4">
         <Text
-          className="text-white font-bold text-lg text-right"
+          className="typo-h4 text-white text-right"
           numberOfLines={1} //</View></View>/ מגביל לשורה אחת
           ellipsizeMode="tail" // מוסיף את ה-3 נקודות בסוף (...)
         >
@@ -62,7 +62,7 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
       <View className="flex-row justify-between items-center mb-4">
         <View className="flex-1 mr-4">
           <Text
-            className="text-white font-bold text-lg text-right"
+            className="typo-h4 text-white text-right"
             numberOfLines={1}
             ellipsizeMode="tail"
           >
@@ -86,7 +86,7 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
         )}
       </View>
       <View className="bg-zinc-700/30 border border-zinc-600/40 rounded-xl px-4 py-4 flex-row items-center justify-center">
-        <Text className="text-zinc-400 text-sm text-center">
+        <Text className="typo-label text-zinc-400 text-center">
           על תרגיל זה טרם בוצעו חזרות — אין נתונים להצגה
         </Text>
       </View>
@@ -95,8 +95,8 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
 });
 const StatItem = React.memo(({ label, value }: { label: string; value: string }) => (
   <View className="w-[48%] mb-4 items-end">
-    <Text className="text-zinc-500 text-xs mb-1">{label}</Text>
-    <Text className="text-white font-bold text-base">{value}</Text>
+    <Text className="typo-caption text-zinc-500 mb-1">{label}</Text>
+    <Text className="typo-body-primary text-white">{value}</Text>
   </View>
 ));
 export { CardEmptyExercise, CardExerciseProgress, StatItem, Title };

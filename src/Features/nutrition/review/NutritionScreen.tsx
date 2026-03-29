@@ -103,8 +103,8 @@ const NutritionScreen = () => {
       <BackGround>
         <View className="flex-1 items-center justify-center px-5 gap-4">
           <Ionicons name="nutrition-outline" size={60} color={colors.background[400]} />
-          <Text className="text-white text-xl font-bold text-center">אין מספיק נתונים</Text>
-          <Text className="text-background-400 text-center">
+          <Text className="typo-h3 text-white text-center">אין מספיק נתונים</Text>
+          <Text className="typo-body text-background-400 text-center">
             עדכן את פרטי הפרופיל שלך כדי לראות יעדי תזונה
           </Text>
           <Pressable
@@ -113,7 +113,7 @@ const NutritionScreen = () => {
             accessibilityRole="button"
             accessibilityLabel="עדכון פרופיל"
           >
-            <Text className="text-black font-black text-base">עדכון פרופיל</Text>
+            <Text className="typo-btn-cta text-black">עדכון פרופיל</Text>
           </Pressable>
         </View>
       </BackGround>
@@ -124,13 +124,13 @@ const NutritionScreen = () => {
     <BackGround>
       <View className="flex-1">
         <ScrollView className="flex-1 px-5 py-8" contentContainerStyle={{ paddingBottom: 180 }}>
-          <Text className="text-white text-3xl font-black mb-2 text-right">תזונה</Text>
+          <Text className="typo-h1 text-white mb-2 text-right">תזונה</Text>
           <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, alignSelf: 'flex-end', marginBottom: 16 }} />
 
           {motivationData && (
             <View className="flex-row-reverse items-center justify-center gap-2 bg-lime-500/10 border border-lime-500/30 rounded-2xl p-4 mb-6">
               <Ionicons name={motivationData.icon} size={24} color={colors.lime[500]} />
-              <Text className="text-lime-400 font-bold flex-1 text-right">
+              <Text className="typo-body-primary text-lime-400 flex-1 text-right">
                 {motivationData.message}
               </Text>
             </View>
@@ -152,10 +152,10 @@ const NutritionScreen = () => {
 
           <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600">
             <View className="flex-row-reverse items-center justify-between mb-3">
-              <Text className="text-white text-base font-bold">איך אנחנו מחשבים את היעדים?</Text>
+              <Text className="typo-body-primary text-white">איך אנחנו מחשבים את היעדים?</Text>
               <Ionicons name="information-circle-outline" size={20} color={colors.lime[500]} />
             </View>
-            <Text className="text-background-400 text-sm text-right leading-6">
+            <Text className="typo-label text-background-400 text-right leading-6">
               • חלבון: מחושב על פי {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג × משקל ({profile?.weight} ק״ג){'\n'}• קלוריות: מחושבות לפי BMR × פעילות גופנית ± יעד
             </Text>
           </View>
@@ -185,7 +185,7 @@ const NutritionScreen = () => {
           }}
         >
           <Ionicons name="add-circle" size={26} color={colors.background[900]} />
-          <Text className="text-background-900 font-bold text-base">הוספת מאכל או ארוחה</Text>
+          <Text className="typo-btn-cta text-background-900">הוספת מאכל או ארוחה</Text>
         </Pressable>
       </View>
 

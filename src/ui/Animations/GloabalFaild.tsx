@@ -37,7 +37,7 @@ export default function GlobalFaild() {
                     ]}
                 />
                 {message ? (
-                    <Text className="text-red-500 text-lg font-bold mt-2 italic uppercase">
+                    <Text className="typo-h4 text-red-500 mt-2 italic uppercase">
                         {message}
                     </Text>
                 ) : null}

@@ -71,7 +71,7 @@ const Success = ({
                 <View className="flex-row items-center justify-center gap-2">
                     {icon && icon}
                     {label && (
-                        <Text className="font-bold text-background-950 text-xl tracking-wide">
+                        <Text className="typo-h3 text-background-950 tracking-wide">
                             {label}
                         </Text>
                     )}
@@ -102,7 +102,7 @@ const Success = ({
                 <View className="flex-row items-center justify-center gap-2">
                     {icon && icon}
                     {label && (
-                        <Text className="font-bold text-background-950 text-xl tracking-wide">
+                        <Text className="typo-h3 text-background-950 tracking-wide">
                             {label}
                         </Text>
                     )}

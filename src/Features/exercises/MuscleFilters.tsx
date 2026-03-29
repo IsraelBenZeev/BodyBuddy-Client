@@ -30,7 +30,7 @@ const MuscleFilters = ({ uniqueMuscles, selectedMuscle, setSelectedMuscle }: Mus
           accessibilityLabel="הצג הכל"
           accessibilityState={{ selected: selectedMuscle === 'all' }}
         >
-          <Text className={`text-sm ${selectedMuscle === 'all' ? 'text-lime-400 font-bold' : 'text-zinc-400'}`}>
+          <Text className={`typo-label ${selectedMuscle === 'all' ? 'text-lime-400' : 'text-zinc-400'}`}>
             הכל
           </Text>
         </AppButton>
@@ -49,7 +49,7 @@ const MuscleFilters = ({ uniqueMuscles, selectedMuscle, setSelectedMuscle }: Mus
             accessibilityLabel={targetMusclesHebrew[muscle] ?? muscle}
             accessibilityState={{ selected: selectedMuscle === muscle }}
           >
-            <Text className={`text-sm ${selectedMuscle === muscle ? 'text-lime-400 font-bold' : 'text-zinc-400'}`}>
+            <Text className={`typo-label ${selectedMuscle === muscle ? 'text-lime-400' : 'text-zinc-400'}`}>
               {targetMusclesHebrew[muscle] ?? muscle}
             </Text>
           </AppButton>

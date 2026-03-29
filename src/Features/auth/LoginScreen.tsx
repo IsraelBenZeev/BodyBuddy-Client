@@ -73,7 +73,7 @@ export default function LoginScreen() {
             {/* Logo/Title */}
             <View className="mb-12 items-center">
               <BodyBuddyLogo width={220} height={120} />
-              <Text className="text-background-400 text-base text-center mt-4">התחבר למערכת</Text>
+              <Text className="typo-body text-background-400 text-center mt-4">התחבר למערכת</Text>
             </View>
 
             {/* Email Input */}
@@ -171,7 +171,7 @@ export default function LoginScreen() {
               haptic="light"
               accessibilityLabel="התחבר"
             >
-              <Text className="text-black font-extrabold text-base">
+              <Text className="typo-btn-cta text-black">
                 {loading ? 'מתחבר...' : 'התחבר'}
               </Text>
             </AppButton>
@@ -186,7 +186,7 @@ export default function LoginScreen() {
             >
               <View className="flex-row-reverse items-center justify-center gap-3">
                 <Ionicons name="logo-google" size={24} color={colors.lime[500]} />
-                <Text className="text-white text-base font-semibold">התחבר באמצעות Google</Text>
+                <Text className="typo-body-primary text-white">התחבר באמצעות Google</Text>
               </View>
             </AppButton>
 
@@ -197,7 +197,7 @@ export default function LoginScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="הירשם כאן"
               >
-                <Text className="text-background-400 text-center text-base">
+                <Text className="typo-body text-background-400 text-center">
                   אין לך חשבון? <Text className="text-lime-400 font-semibold">הירשם כאן</Text>
                 </Text>
               </Pressable>

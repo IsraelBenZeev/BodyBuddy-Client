@@ -24,7 +24,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
     return (
       <BackGround>
         <View className="flex-1 items-center justify-center">
-          <Text className="text-white text-lg">טוען נתונים...</Text>
+          <Text className="typo-h4 text-white">טוען נתונים...</Text>
         </View>
       </BackGround>
     );
@@ -41,7 +41,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
         showsVerticalScrollIndicator={false}
       >
         <View className="px-6 mb-8 w-full mt-5">
-          <Text className="text-white text-4xl font-black text-right leading-tight">
+          <Text className="typo-h1 text-white text-right leading-tight">
             {exerciseData?.name_he}
           </Text>
           <View className="h-1 w-20 bg-lime-500 rounded-full self-end mt-2" />
@@ -50,7 +50,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           {exerciseData?.gif_available === false || imgError ? (
             <>
               <DumbbellAnimation size={200} />
-              <Text className="text-zinc-400 text-sm font-medium mt-1">תרגיל זה אינו זמין כרגע</Text>
+              <Text className="typo-label text-zinc-400 mt-1">תרגיל זה אינו זמין כרגע</Text>
             </>
           ) : (
             <Image

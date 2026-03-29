@@ -44,13 +44,13 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
                 {/* תאריך ושעה */}
                 <View className="flex-row items-center mb-1">
                     <Calendar size={14} color={colors.lime[500]} />
-                    <Text className="text-gray-400 text-xs ml-2 font-medium">
+                    <Text className="typo-caption text-gray-400 ml-2">
                         {dateDisplay}
                     </Text>
                 </View>
 
                 {/* שם האימון (אפשר למשוך את שם התוכנית אם יש) */}
-                <Text className="text-white text-lg font-bold mb-2 text-right">
+                <Text className="typo-h4 text-white mb-2 text-right">
                     {sessionTitle}
                 </Text>
 
@@ -58,7 +58,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
                 <View className="flex-row items-center gap-4">
                     <View className="flex-row items-center">
                         <Clock size={14} color={colors.background[400]} />
-                        <Text className="text-gray-400 text-xs ml-1">
+                        <Text className="typo-caption text-gray-400 ml-1">
                             {session.total_time} דקות
                         </Text>
                     </View>
@@ -66,7 +66,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
                     {session.notes ? (
                         <View className="flex-row items-center">
                             <NotepadText size={14} color={colors.background[400]} />
-                            <Text className="text-gray-400 text-xs ml-1" numberOfLines={1}>
+                            <Text className="typo-caption text-gray-400 ml-1" numberOfLines={1}>
                                 יש הערות
                             </Text>
                         </View>

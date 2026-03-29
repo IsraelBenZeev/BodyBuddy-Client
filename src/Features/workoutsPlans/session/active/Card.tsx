@@ -69,10 +69,10 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
   return (
     <View className="bg-background-900 p-2">
       <View className="justify-center items-end w-full">
-        <Text className="text-lime-500 font-bold text-xs uppercase tracking-widest mb-2">
+        <Text className="typo-caption-bold text-lime-500 uppercase tracking-widest mb-2">
           {item.bodyParts_he || ''}
         </Text>
-        <Text className="text-white text-3xl font-black mb-6 italic text-right">
+        <Text className="typo-h1 text-white mb-6 italic text-right">
           {item.name_he || ''}
         </Text>
       </View>

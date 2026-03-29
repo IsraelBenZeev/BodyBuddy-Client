@@ -46,10 +46,10 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
     <View className="flex-1 px-6 py-6 bg-background-900 ">
       {/* כותרת ושם המאכל */}
       <View className="mb-8">
-        <Text className="text-white text-3xl font-black text-right mb-1">
+        <Text className="typo-h1 text-white text-right mb-1">
           {isUnits ? `כמה ${unitLabel}?` : 'כמה גרם?'}
         </Text>
-        <Text className="text-lime-400 text-lg text-right font-medium opacity-90">
+        <Text className="typo-h4 text-lime-400 text-right opacity-90">
           {foodItem.name}
         </Text>
       </View>
@@ -57,12 +57,12 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
       {/* כרטיס בחירת כמות */}
       <View className="bg-background-800 rounded-3xl p-5 border border-white/5 mb-6 shadow-xl">
         <View className="flex-row-reverse justify-between items-center mb-4">
-          <Text className="text-gray-400 text-sm font-bold uppercase tracking-wider">
+          <Text className="typo-label text-gray-400 uppercase tracking-wider">
             {isUnits ? `כמות ${unitLabel}` : 'כמות (×100 גרם)'}
           </Text>
           <View className="bg-lime-500/10 px-3 py-1 rounded-full flex-row-reverse items-center">
             <Ionicons name="scale-outline" size={14} color="#84cc16" />
-            <Text className="text-lime-500 text-xs font-bold mr-1">
+            <Text className="typo-caption-bold text-lime-500 mr-1">
               {isUnits ? `${quantity} ${unitLabel}` : `${portionAmount} גרם`}
             </Text>
           </View>
@@ -80,8 +80,8 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
           </Pressable>
 
           <View className="items-center">
-            <Text className="text-white font-black text-4xl">{quantity}</Text>
-            <Text className="text-gray-500 text-xs font-bold uppercase">
+            <Text className="typo-h1 text-white">{quantity}</Text>
+            <Text className="typo-caption-bold text-gray-500 uppercase">
               {isUnits ? unitLabel : 'מנות'}
             </Text>
           </View>
@@ -105,7 +105,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
               accessibilityRole="button"
               accessibilityLabel={`חצי ${unitLabel}`}
             >
-              <Text className="text-gray-400 text-xs font-bold">½ {unitLabel}</Text>
+              <Text className="typo-caption-bold text-gray-400">½ {unitLabel}</Text>
             </Pressable>
             <Pressable
               onPress={() => setQuantity(1)}
@@ -113,7 +113,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
               accessibilityRole="button"
               accessibilityLabel="איפוס כמות"
             >
-              <Text className="text-gray-400 text-xs font-bold">איפוס</Text>
+              <Text className="typo-caption-bold text-gray-400">איפוס</Text>
             </Pressable>
           </View>
         )}
@@ -121,7 +121,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
 
       {/* כרטיס ערכים תזוניים */}
       <View className="bg-background-800 rounded-3xl p-6 border border-white/5 mb-8">
-        <Text className="text-gray-400 text-xs font-bold uppercase tracking-widest text-center mb-5">
+        <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest text-center mb-5">
           {isUnits
             ? `ערכים תזוניים ל-${quantity} ${unitLabel}`
             : `ערכים תזוניים ל-${portionAmount} גרם`}
@@ -129,25 +129,25 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
 
         <View className="flex-row-reverse justify-around items-end mb-6">
           <View className="items-center">
-            <Text className="text-lime-500 text-2xl font-black">{calculatedMacros.protein}g</Text>
-            <Text className="text-gray-500 text-xs mt-1">חלבון</Text>
+            <Text className="typo-h2 text-lime-500">{calculatedMacros.protein}g</Text>
+            <Text className="typo-caption text-gray-500 mt-1">חלבון</Text>
           </View>
           <View className="w-[1px] h-8 bg-white/5" />
           <View className="items-center">
-            <Text className="text-orange-500 text-2xl font-black">{calculatedMacros.carbs}g</Text>
-            <Text className="text-gray-500 text-xs mt-1">פחמימות</Text>
+            <Text className="typo-h2 text-orange-500">{calculatedMacros.carbs}g</Text>
+            <Text className="typo-caption text-gray-500 mt-1">פחמימות</Text>
           </View>
           <View className="w-[1px] h-8 bg-white/5" />
           <View className="items-center">
-            <Text className="text-red-500 text-2xl font-black">{calculatedMacros.fat}g</Text>
-            <Text className="text-gray-500 text-xs mt-1">שומן</Text>
+            <Text className="typo-h2 text-red-500">{calculatedMacros.fat}g</Text>
+            <Text className="typo-caption text-gray-500 mt-1">שומן</Text>
           </View>
         </View>
 
         <View className="pt-5 border-t border-white/5 items-center">
           <View className="flex-row-reverse items-baseline">
-            <Text className="text-white text-4xl font-black">{calculatedMacros.calories}</Text>
-            <Text className="text-lime-400 text-sm font-bold mr-2">קק״ל</Text>
+            <Text className="typo-h1 text-white">{calculatedMacros.calories}</Text>
+            <Text className="typo-label text-lime-400 mr-2">קק״ל</Text>
           </View>
         </View>
       </View>
@@ -161,7 +161,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
             accessibilityRole="button"
             accessibilityLabel="חזור"
           >
-            <Text className="text-gray-400 font-bold">חזור</Text>
+            <Text className="typo-btn-secondary text-gray-400">חזור</Text>
           </Pressable>
         </View>
         <View className="flex-[2]">
@@ -173,7 +173,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
             accessibilityRole="button"
             accessibilityLabel={submitLabel}
           >
-            <Text className="text-black text-lg font-black">
+            <Text className="typo-btn-cta text-black">
               {isPending ? 'מעדכן...' : submitLabel}
             </Text>
           </Pressable>

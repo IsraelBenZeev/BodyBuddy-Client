@@ -29,15 +29,15 @@ export default function DeleteConfirmModal({
             <View className="bg-red-500/15 rounded-full p-3 mb-3">
               <Ionicons name="trash-outline" size={28} color="#ef4444" />
             </View>
-            <Text className="text-white text-xl font-black text-center">{title}</Text>
-            <Text className="text-gray-400 text-sm text-center mt-2 leading-5">{message}</Text>
+            <Text className="typo-h3 text-white text-center">{title}</Text>
+            <Text className="typo-label text-gray-400 text-center mt-2 leading-5">{message}</Text>
           </View>
 
           {/* INFO note */}
           {infoNote != null && (
             <View className="mx-4 mb-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl p-3 flex-row-reverse items-start">
               <Ionicons name="information-circle-outline" size={18} color="#60a5fa" />
-              <Text className="text-blue-300 text-xs leading-5 flex-1 mr-2 text-right">
+              <Text className="typo-caption text-blue-300 leading-5 flex-1 mr-2 text-right">
                 {infoNote}
               </Text>
             </View>
@@ -52,7 +52,7 @@ export default function DeleteConfirmModal({
               accessibilityRole="button"
               accessibilityLabel="ביטול"
             >
-              <Text className="text-white font-bold text-base">ביטול</Text>
+              <Text className="typo-btn-cta text-white">ביטול</Text>
             </Pressable>
             <Pressable
               onPress={onConfirm}
@@ -64,7 +64,7 @@ export default function DeleteConfirmModal({
               {isDeleting ? (
                 <ActivityIndicator size="small" color="#ef4444" />
               ) : (
-                <Text className="text-red-400 font-black text-base">מחק</Text>
+                <Text className="typo-btn-cta text-red-400">מחק</Text>
               )}
             </Pressable>
           </View>

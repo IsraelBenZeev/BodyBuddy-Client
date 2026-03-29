@@ -75,5 +75,81 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwindcss/plugin')(function ({ addUtilities }) {
+      addUtilities({
+        // ─── כותרות ──────────────────────────────────────────
+        '.typo-h1': {
+          fontSize: '30px',
+          fontWeight: '900',
+          lineHeight: '36px',
+          letterSpacing: '-0.3px',
+        },
+        '.typo-h2': {
+          fontSize: '24px',
+          fontWeight: '900',
+          lineHeight: '30px',
+          letterSpacing: '-0.2px',
+        },
+        '.typo-h3': {
+          fontSize: '20px',
+          fontWeight: '700',
+          lineHeight: '26px',
+        },
+        '.typo-h4': {
+          fontSize: '18px',
+          fontWeight: '700',
+          lineHeight: '24px',
+        },
+        // ─── טקסט רץ ─────────────────────────────────────────
+        '.typo-body': {
+          fontSize: '16px',
+          fontWeight: '400',
+          lineHeight: '22px',
+        },
+        '.typo-body-primary': {
+          fontSize: '16px',
+          fontWeight: '600',
+          lineHeight: '22px',
+        },
+        // ─── כפתורים ─────────────────────────────────────────
+        '.typo-btn-cta': {
+          fontSize: '16px',
+          fontWeight: '800',
+          lineHeight: '20px',
+          letterSpacing: '0.2px',
+        },
+        '.typo-btn-secondary': {
+          fontSize: '16px',
+          fontWeight: '600',
+          lineHeight: '20px',
+        },
+        // ─── לייבל ───────────────────────────────────────────
+        '.typo-label': {
+          fontSize: '14px',
+          fontWeight: '500',
+          lineHeight: '18px',
+          letterSpacing: '0.1px',
+        },
+        // ─── אינפוט ──────────────────────────────────────────
+        '.typo-input': {
+          fontSize: '16px',
+          fontWeight: '400',
+          lineHeight: '20px',
+        },
+        // ─── קאפשן ───────────────────────────────────────────
+        '.typo-caption': {
+          fontSize: '12px',
+          fontWeight: '400',
+          lineHeight: '16px',
+        },
+        '.typo-caption-bold': {
+          fontSize: '12px',
+          fontWeight: '700',
+          lineHeight: '16px',
+          letterSpacing: '0.4px',
+        },
+      });
+    }),
+  ],
 };

@@ -148,7 +148,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
           >
             <View className="bg-zinc-800 border border-zinc-600 px-4 py-2 rounded-full flex-row items-center gap-2">
               <MaterialCommunityIcons name="gesture-tap-hold" size={16} color="#a3e635" />
-              <Text className="text-zinc-300 text-xs font-medium">המשך להחזיק להתחלת האימון</Text>
+              <Text className="typo-caption text-zinc-300">המשך להחזיק להתחלת האימון</Text>
             </View>
             <View
               style={{ borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 7,

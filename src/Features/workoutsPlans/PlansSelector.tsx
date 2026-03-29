@@ -79,10 +79,10 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
 
                 {!!plansData?.length && (
                     <View className="items-end">
-                        <Text className="text-zinc-500 text-xs font-bold tracking-[2px] uppercase">
+                        <Text className="typo-caption-bold text-zinc-500 tracking-[2px] uppercase">
                             Add to plan
                         </Text>
-                        <Text className="text-white text-xl font-black">
+                        <Text className="typo-h3 text-white">
                             בחר תוכנית
                         </Text>
                     </View>
@@ -120,10 +120,10 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                         <View className="bg-background-800 p-7 rounded-full mb-5 opacity-80">
                             <IconsFitnessTools size={36} color={colors.lime[500]} />
                         </View>
-                        <Text className="text-white text-lg font-semibold text-center mb-2">
+                        <Text className="typo-h4 text-white text-center mb-2">
                             {plansData?.length ? 'התרגיל כבר קיים בכל התוכניות' : 'עדיין אין לך תוכניות אימון'}
                         </Text>
-                        <Text className="text-zinc-500 text-center mb-8 text-sm leading-5">
+                        <Text className="typo-label text-zinc-500 text-center mb-8 leading-5">
                             {plansData?.length
                                 ? 'התרגיל הזה כבר נמצא בכל תוכניות האימון שלך'
                                 : `זה הזמן ליצור את האימון הראשון שלך\nולהתחיל להתקדם למטרה!`}
@@ -136,7 +136,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                                 className="bg-lime-500 flex-row items-center px-7 py-3.5 rounded-2xl"
                                 accessibilityLabel="עבור ליצירת תוכנית אימון"
                             >
-                                <Text className="text-background-900 font-bold text-base mr-2">
+                                <Text className="typo-btn-cta text-background-900 mr-2">
                                     עבור ליצירת תוכנית
                                 </Text>
                                 <IconAddToList color={colors.background[900]} size={20} />
@@ -155,7 +155,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                     <View className="flex-row items-center gap-3">
                         {selectedIds.length > 0 && (
                             <View className="bg-background-800/90 px-4 py-2.5 rounded-2xl border border-zinc-800">
-                                <Text className="text-zinc-400 text-xs font-bold">
+                                <Text className="typo-caption-bold text-zinc-400">
                                     נבחרו: <Text className="text-lime-500">{selectedIds.length}</Text>
                                 </Text>
                             </View>

@@ -140,9 +140,9 @@ const Foods = ({ userId, date, onClose }: Props) => {
             accessibilityLabel="הוסף מזון חדש למזווה"
           >
             <Ionicons name="add-circle" size={24} color="#000" />
-            <Text className="text-black font-black text-base mr-2">הוסף מזון חדש למזווה</Text>
+            <Text className="typo-btn-cta text-black mr-2">הוסף מזון חדש למזווה</Text>
           </Pressable>
-          <Text className="text-gray-500 text-xs text-center mt-3">
+          <Text className="typo-caption text-gray-500 text-center mt-3">
             * המזונות שתגדיר כאן יהיו זמינים להוספה מהירה ליומן
           </Text>
         </View>
@@ -198,14 +198,14 @@ const FoodCard = React.memo(function FoodCard({
         </View>
 
         <View className="flex-1">
-          <Text className="text-white text-lg font-bold text-right" numberOfLines={1}>
+          <Text className="typo-h4 text-white text-right" numberOfLines={1}>
             {item.name}
           </Text>
           <View className="flex-row-reverse items-center mt-1">
-            <Text className="text-lime-400 text-xs font-bold">
+            <Text className="typo-caption-bold text-lime-400">
               {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100}{' '}קק״ל
             </Text>
-            <Text className="text-gray-500 text-xs mr-1">
+            <Text className="typo-caption text-gray-500 mr-1">
               {item.measurement_type === 'units' ? `/ ליחידה` : '/ ל-100 גרם'}
             </Text>
           </View>
@@ -231,24 +231,24 @@ const FoodCard = React.memo(function FoodCard({
 
       <View className="flex-row-reverse bg-white/5 px-4 py-3 justify-between items-center">
         <View className="items-center flex-1">
-          <Text className="text-lime-500 font-black text-xs">
+          <Text className="typo-caption-bold text-lime-500">
             {item.measurement_type === 'units' ? item.protein_per_unit : item.protein_per_100}g
           </Text>
-          <Text className="text-gray-500 text-xs uppercase font-bold mt-0.5">חלבון</Text>
+          <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">חלבון</Text>
         </View>
         <View className="w-[1px] h-4 bg-white/10" />
         <View className="items-center flex-1">
-          <Text className="text-orange-500 font-black text-xs">
+          <Text className="typo-caption-bold text-orange-500">
             {item.measurement_type === 'units' ? item.carbs_per_unit : item.carbs_per_100}g
           </Text>
-          <Text className="text-gray-500 text-xs uppercase font-bold mt-0.5">פחמימה</Text>
+          <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">פחמימה</Text>
         </View>
         <View className="w-[1px] h-4 bg-white/10" />
         <View className="items-center flex-1">
-          <Text className="text-red-500 font-black text-xs">
+          <Text className="typo-caption-bold text-red-500">
             {item.measurement_type === 'units' ? item.fat_per_unit : item.fat_per_100}g
           </Text>
-          <Text className="text-gray-500 text-xs uppercase font-bold mt-0.5">שומן</Text>
+          <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">שומן</Text>
         </View>
       </View>
     </Pressable>

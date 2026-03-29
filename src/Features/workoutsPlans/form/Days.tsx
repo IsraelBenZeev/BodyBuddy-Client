@@ -34,7 +34,7 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
                 };
                 return (
                     <View className="mb-6">
-                        <Text className="text-background-400 text-right mb-3 text-sm font-bold">ימי אימון</Text>
+                        <Text className="typo-label text-background-400 text-right mb-3">ימי אימון</Text>
                         <View className="flex-row-reverse justify-between items-center bg-background-900/50 p-2 rounded-2xl border border-background-800">
                             {days.map((day, index) => {
                                 const isSelected = value.includes(day);
@@ -64,7 +64,7 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
                                             elevation: 4
                                         } : {}}
                                     >
-                                        <Text className={`text-base font-bold ${isSelected ? "text-zinc-950" : "text-zinc-400"}`}>
+                                        <Text className={`typo-body-primary ${isSelected ? "text-zinc-950" : "text-zinc-400"}`}>
                                             {day}
                                         </Text>
                                     </AppButton>

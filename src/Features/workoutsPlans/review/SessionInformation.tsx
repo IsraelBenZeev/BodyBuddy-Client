@@ -192,7 +192,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
     <View className="mt-4 pb-10 px-2">
       <View className="flex-row justify-between items-center mb-6">
         <View className="flex-row gap-2">
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={previewPDF}
             disabled={isExporting}
             className="flex-row items-center gap-1.5 bg-background-800 px-3 py-2 rounded-xl border border-gray-700"
@@ -200,8 +200,8 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             accessibilityLabel="תצוגה מקדימה של PDF"
           >
             <Eye size={15} color={colors.background[400]} />
-            <Text className="text-gray-400 font-bold text-sm">תצוגה מקדימה</Text>
-          </TouchableOpacity>
+            <Text className="typo-label text-gray-400">תצוגה מקדימה</Text>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
             onPress={exportPDF}
@@ -213,10 +213,10 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             {isExporting
               ? <ActivityIndicator size="small" color={colors.lime[500]} />
               : <FileDown size={15} color={colors.lime[500]} />}
-            <Text className="text-lime-500 font-bold text-sm">שמור PDF</Text>
+            <Text className="typo-label text-lime-500">שמור PDF</Text>
           </TouchableOpacity>
         </View>
-        <Text className="text-white text-xl font-bold text-right">סיכום אימון</Text>
+        <Text className="typo-h3 text-white text-right">סיכום אימון</Text>
       </View>
 
       {groupedExercises.map((group) => {
@@ -246,8 +246,8 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
                   )}
                 </View>
                 <View className="flex-1 pr-3">
-                  <Text className="text-gray-400 text-xs text-right font-bold uppercase tracking-widest">תרגיל</Text>
-                  <Text className="text-lime-500 font-bold text-right text-lg leading-6">
+                  <Text className="typo-caption-bold text-gray-400 text-right uppercase tracking-widest">תרגיל</Text>
+                  <Text className="typo-h4 text-lime-500 text-right leading-6">
                     {isLoadingExercises ? "טוען..." : exerciseInfo?.name_he}
                   </Text>
                 </View>
@@ -256,9 +256,9 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             {hasValidSets ? (
               <>
                 <View className="flex-row justify-between px-4 py-2 bg-background-900/50">
-                  <Text className="text-gray-500 w-1/3 text-center text-xs font-bold">חזרות</Text>
-                  <Text className="text-gray-500 w-1/3 text-center text-xs font-bold">משקל</Text>
-                  <Text className="text-gray-500 w-1/3 text-center text-xs font-bold">סט</Text>
+                  <Text className="typo-caption-bold text-gray-500 w-1/3 text-center">חזרות</Text>
+                  <Text className="typo-caption-bold text-gray-500 w-1/3 text-center">משקל</Text>
+                  <Text className="typo-caption-bold text-gray-500 w-1/3 text-center">סט</Text>
                 </View>
                 <View className="px-2 pb-2">
                   {group.sets.map((set, index) => (
@@ -266,16 +266,16 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
                       key={set.id}
                       className={`flex-row justify-between py-3 ${index !== group.sets.length - 1 ? 'border-b border-gray-800/50' : ''}`}
                     >
-                      <Text className="text-white w-1/3 text-center font-black text-base">{set.reps}</Text>
-                      <Text className="text-white w-1/3 text-center font-black text-base">{set.weight}kg</Text>
-                      <Text className="text-gray-400 w-1/3 text-center text-sm">{set.set_number}</Text>
+                      <Text className="typo-body-primary text-white w-1/3 text-center">{set.reps}</Text>
+                      <Text className="typo-body-primary text-white w-1/3 text-center">{set.weight}kg</Text>
+                      <Text className="typo-label text-gray-400 w-1/3 text-center">{set.set_number}</Text>
                     </View>
                   ))}
                 </View>
               </>
             ) : (
               <View className="py-6 items-center justify-center">
-                <Text className="text-gray-500 text-sm italic">לא בוצעו חזרות לתרגיל זה</Text>
+                <Text className="typo-label text-gray-500 italic">לא בוצעו חזרות לתרגיל זה</Text>
               </View>
             )}
           </View>

@@ -329,8 +329,8 @@ const WorkoutStatItem = ({ icon, value, label }: any) => (
     <View className="bg-white/5 p-3 rounded-2xl mb-2 border border-white/5 shadow-inner">
       <Ionicons name={icon} size={20} color={colors.lime[500]} />
     </View>
-    <Text className="text-white text-xl font-black italic tracking-tighter">{value}</Text>
-    <Text className="text-white/30 text-xs font-bold uppercase tracking-widest text-center mt-1">{label}</Text>
+    <Text className="typo-h3 text-white italic tracking-tighter">{value}</Text>
+    <Text className="typo-caption-bold text-white/30 uppercase tracking-widest text-center mt-1">{label}</Text>
   </View>
 );
 
@@ -380,13 +380,13 @@ export default function ProfileScreen() {
               <View>
                 <Animated.Text
                   entering={FadeInDown.delay(80).duration(300).damping(20)}
-                  className="text-white/40 text-sm font-bold text-right italic"
+                  className="typo-label text-white/40 text-right italic"
                 >
                   MY PROFILE
                 </Animated.Text>
                 <Animated.Text
                   entering={FadeInDown.delay(160).duration(300).damping(20)}
-                  className="text-white text-3xl font-black text-right tracking-tight"
+                  className="typo-h1 text-white text-right tracking-tight"
                 >
                   {profile?.full_name ?? user.user_metadata.full_name}
                 </Animated.Text>
@@ -439,8 +439,8 @@ export default function ProfileScreen() {
                      <View className="bg-lime-500/10 self-end p-2 rounded-xl mb-3">
                         <Ionicons name={item.icon as any} size={16} color={colors.lime[500]} />
                      </View>
-                     <Text className="text-white/30 text-xs font-black uppercase tracking-tighter text-right">{item.label}</Text>
-                     <Text className="text-white text-xl font-black text-right mt-1">{item.value}</Text>
+                     <Text className="typo-caption-bold text-white/30 uppercase tracking-tighter text-right">{item.label}</Text>
+                     <Text className="typo-h3 text-white text-right mt-1">{item.value}</Text>
                   </AnimatedCard>
                 ))}
             </View>
@@ -451,8 +451,8 @@ export default function ProfileScreen() {
                   <Ionicons name="fitness" size={24} color="black" />
                </View>
                <View className="flex-1">
-                  <Text className="text-white/30 text-xs font-bold uppercase tracking-widest text-right">Activity Level</Text>
-                  <Text className="text-white text-lg font-black text-right leading-tight">{getActivityLabel(profile?.activity_level ?? null)}</Text>
+                  <Text className="typo-caption-bold text-white/30 uppercase tracking-widest text-right">Activity Level</Text>
+                  <Text className="typo-h4 text-white text-right leading-tight">{getActivityLabel(profile?.activity_level ?? null)}</Text>
                </View>
             </AnimatedCard>
 
@@ -463,7 +463,7 @@ export default function ProfileScreen() {
                 className="h-16 rounded-[24px] flex-row-reverse items-center justify-center border border-red-500/20 bg-red-500/5 mt-4"
               >
                 <Ionicons name="log-out-outline" size={20} color="#ef4444" />
-                <Text className="text-red-500 font-black text-base mr-2">
+                <Text className="typo-btn-cta text-red-500 mr-2">
                   {loading ? 'מתנתק...' : 'התנתקות מהחשבון'}
                 </Text>
               </Pressable>

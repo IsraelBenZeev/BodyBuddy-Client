@@ -46,7 +46,7 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                             }`}
                     >
                         <View className="justify-center mr-2 self-end">
-                            <Text className="text-white font-bold text-xs">סט {index + 1}</Text>
+                            <Text className="typo-caption-bold text-white">סט {index + 1}</Text>
                         </View>
                         <Animated.View
                             className={"gap-3"}
@@ -85,7 +85,7 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                                     animationType="both"
                                     accessibilityLabel={`מחק סט ${index + 1}`}
                                 >
-                                    <Text className="text-red-500 font-bold ml-2">מחק</Text>
+                                    <Text className="typo-body-primary text-red-500 ml-2">מחק</Text>
                                     {/* <Trash2 size={24} color="red" /> */}
                                 </AppButton>
                             </View>
@@ -101,7 +101,7 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                 accessibilityLabel="הוסף סט"
             >
                 {/* <MaterialCommunityIcons name="plus" size={20} color="#bef264" /> */}
-                <Text className="text-lime-500 font-bold ml-2">הוסף סט</Text>
+                <Text className="typo-body-primary text-lime-500 ml-2">הוסף סט</Text>
             </AppButton>
             {/* <View className="w-full flex-row justify-end">
                 <PremiumCheck checked={isCompleted} onPress={() => setIsCompleted(!isCompleted)} />

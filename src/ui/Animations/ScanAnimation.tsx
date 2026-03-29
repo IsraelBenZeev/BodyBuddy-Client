@@ -25,8 +25,8 @@ export default function ScanAnimation() {
                     },
                 ]}
             />
-            <Text className="text-white font-black text-lg -mt-2">מנתח את הארוחה...</Text>
-            <Text className="text-gray-500 text-sm mt-1">ה-AI עובד על זה, רגע</Text>
+            <Text className="typo-h4 text-white -mt-2">מנתח את הארוחה...</Text>
+            <Text className="typo-label text-gray-500 mt-1">ה-AI עובד על זה, רגע</Text>
         </View>
     );
 }

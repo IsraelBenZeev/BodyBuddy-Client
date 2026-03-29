@@ -65,7 +65,7 @@ const AgeItem: React.FC<{
           opacity,
         }}
       >
-        <Text className="text-3xl font-extrabold text-white">
+        <Text className="typo-h1 text-white">
           {item}
         </Text>
       </Animated.View>
@@ -163,7 +163,7 @@ const AgeScrollPicker = ({
   return (
     <View className="items-center">
       {/* Label */}
-      <Text className="text-background-400 text-sm font-semibold mb-1">שנים</Text>
+      <Text className="typo-label text-background-400 mb-1">שנים</Text>
 
       {/* Scroll picker */}
       <View style={{ height: 70 }} className="w-full" onLayout={handleLayout}>

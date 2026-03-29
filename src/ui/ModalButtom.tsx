@@ -35,7 +35,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
       <View className="items-center py-3 bg-background-900 rounded-t-[20px]">
         <View className="w-10 h-1 bg-lime-400 rounded-sm" />
         {title && (
-          <Text className="text-lime-400 text-lg font-bold mt-2.5 text-center">{title}</Text>
+          <Text className="typo-h4 text-lime-400 mt-2.5 text-center">{title}</Text>
         )}
       </View>
     ),

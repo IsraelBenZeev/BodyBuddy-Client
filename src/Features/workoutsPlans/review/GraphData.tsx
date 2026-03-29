@@ -130,7 +130,7 @@ const GraphData = ({ logs }: Props) => {
                             }`}
                     >
                         <Text
-                            className={`text-center font-bold text-sm ${activeTab === type ? "text-lime-500" : "text-zinc-400"
+                            className={`typo-label text-center ${activeTab === type ? "text-lime-500" : "text-zinc-400"
                                 }`}
                         >
                             {getTabLabel(type)}

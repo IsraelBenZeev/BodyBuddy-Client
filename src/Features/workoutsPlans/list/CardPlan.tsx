@@ -98,18 +98,18 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
       <View className="p-5 flex-1 justify-between">
         {/* <View className="bd"> */}
 
-        <Text className="text-lime-500 font-bold text-xs text-right mb-1 uppercase tracking-widest">
+        <Text className="typo-caption-bold text-lime-500 text-right mb-1 uppercase tracking-widest">
           Workout Plan
         </Text>
-        <Text numberOfLines={2} className="text-white text-2xl font-bold text-right leading-7">
+        <Text numberOfLines={2} className="typo-h2 text-white text-right leading-7">
           {plan.title}
         </Text>
 
-        <Text numberOfLines={3} className="text-zinc-400 text-sm text-right mt-3 leading-5">
+        <Text numberOfLines={3} className="typo-label text-zinc-400 text-right mt-3 leading-5">
           {plan?.description}
         </Text>
         <View className="flex-row items-center gap-2 self-end">
-          <Text className="text-zinc-300 text-xs">{plan?.exercise_ids.length} תרגילים</Text>
+          <Text className="typo-caption text-zinc-300">{plan?.exercise_ids.length} תרגילים</Text>
           <Dumbbell size={18} color={colors.lime[500]} strokeWidth={1.25} />
         </View>
 
@@ -120,7 +120,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
               key={day}
               className="bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700"
             >
-              <Text className="text-zinc-300 text-xs">{daysInHebrew[day]}</Text>
+              <Text className="typo-caption text-zinc-300">{daysInHebrew[day]}</Text>
             </View>
           ))}
         </View>
@@ -130,11 +130,11 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           <View className="flex-row-reverse justify-between items-center mb-4 px-1">
             <View className="flex-row-reverse items-center">
               <MaterialCommunityIcons name="clock-fast" size={16} color={colors.lime[500]} />
-              <Text className="text-white text-xs mr-1 font-bold">{plan.time} דק׳</Text>
+              <Text className="typo-caption-bold text-white mr-1">{plan.time} דק׳</Text>
             </View>
             <View className="flex-row-reverse items-center">
               <MaterialCommunityIcons name="trending-up" size={16} color={colors.lime[500]} />
-              <Text className="text-white text-xs mr-1 font-bold">{plan.difficulty}</Text>
+              <Text className="typo-caption-bold text-white mr-1">{plan.difficulty}</Text>
             </View>
           </View>
           <View className="flex-row-reverse items-center justify-center gap-4">
@@ -144,7 +144,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
                 animationType="opacity"
                 className='bg-lime-500 px-3 py-2 rounded-2xl items-center'
                 accessibilityLabel={`הצג אימון: ${plan.title}`}
-                onPress={handleViewWorkout}><Text className='text-background-850 text-lg font-bold'>הצג אימון</Text>
+                onPress={handleViewWorkout}><Text className='typo-btn-cta text-background-850'>הצג אימון</Text>
               </AppButton>
             </View>
             <View className='flex-col items-center gap-1'>

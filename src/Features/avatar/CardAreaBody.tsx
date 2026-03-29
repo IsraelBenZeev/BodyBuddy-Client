@@ -35,7 +35,7 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
             {/* <Text className="text-zinc-500 text-xs font-bold text-right uppercase tracking-tighter">
               האזור הנבחר
             </Text> */}
-            <Text className="text-white text-2xl font-black text-right">
+            <Text className="typo-h2 text-white text-right">
               {selectedPart.map((part, index) => (
                 <Text key={part}>
                   {partsBodyHebrew[part]}
@@ -55,7 +55,7 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
         onPress={handleNavigate}
       >
         <AntDesign name="arrow-left" size={20} color="black" />
-        <Text className="text-black text-lg font-black">למעבר לתרגילים</Text>
+        <Text className="typo-btn-cta text-black">למעבר לתרגילים</Text>
       </AppButton>
     </View>
   );

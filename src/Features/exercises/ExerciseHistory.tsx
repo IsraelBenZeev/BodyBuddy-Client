@@ -17,9 +17,9 @@ interface PRCardProps {
 
 const PRCard = ({ label, value, unit }: PRCardProps) => (
   <View className="flex-1 bg-zinc-800/60 border border-zinc-700/50 rounded-2xl p-4 items-center">
-    <Text className="text-zinc-400 text-xs mb-1">{label}</Text>
-    <Text className="text-lime-500 text-2xl font-black">{value}</Text>
-    <Text className="text-zinc-500 text-xs">{unit}</Text>
+    <Text className="typo-caption text-zinc-400 mb-1">{label}</Text>
+    <Text className="typo-h2 text-lime-500">{value}</Text>
+    <Text className="typo-caption text-zinc-500">{unit}</Text>
   </View>
 );
 
@@ -49,7 +49,7 @@ const ExerciseHistory = ({ exerciseId }: Props) => {
   if (!logs || logs.length === 0) {
     return (
       <View className="p-6 items-center justify-center" style={{ minHeight: 200 }}>
-        <Text className="text-zinc-500 text-base text-center">
+        <Text className="typo-body text-zinc-500 text-center">
           לא בוצע תרגיל זה עדיין.{'\n'}התחל לאמן ותראה את ההתקדמות כאן!
         </Text>
       </View>
@@ -59,7 +59,7 @@ const ExerciseHistory = ({ exerciseId }: Props) => {
   return (
     <View className="px-4 pt-4 pb-8">
       {/* כרטיסי PR */}
-      <Text className="text-white text-base font-bold text-right mb-3">שיאים אישיים</Text>
+      <Text className="typo-body-primary text-white text-right mb-3">שיאים אישיים</Text>
       <View className="flex-row gap-3 mb-6">
         <PRCard label="משקל מקס'" value={pr!.maxWeight} unit="ק״ג" />
         <PRCard label="חזרות מקס'" value={pr!.maxReps} unit="חזרות" />
@@ -67,7 +67,7 @@ const ExerciseHistory = ({ exerciseId }: Props) => {
       </View>
 
       {/* גרף התקדמות */}
-      <Text className="text-white text-base font-bold text-right mb-3">התקדמות לאורך זמן</Text>
+      <Text className="typo-body-primary text-white text-right mb-3">התקדמות לאורך זמן</Text>
       <GraphData logs={logs} />
     </View>
   );

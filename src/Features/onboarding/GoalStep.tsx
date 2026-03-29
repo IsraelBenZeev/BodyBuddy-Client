@@ -120,10 +120,10 @@ const GoalStep = ({
     >
       {/* Header */}
       <View className="mb-6">
-        <Text className="text-white text-3xl font-black text-right mb-2">
+        <Text className="typo-h1 text-white text-right mb-2">
           מה המטרה שלך?
         </Text>
-        <Text className="text-background-400 text-base text-right">
+        <Text className="typo-body text-background-400 text-right">
           בחר/י את המטרה העיקרית שלך ונתאים לך תוכנית תזונה
         </Text>
       </View>
@@ -174,7 +174,7 @@ const GoalStep = ({
                       </View>
                       <View className="flex-1 items-end">
                         <Text
-                          className={`text-lg font-bold ${
+                          className={`typo-h4 ${
                             isSelected
                               ? 'text-lime-500'
                               : 'text-background-200'
@@ -182,7 +182,7 @@ const GoalStep = ({
                         >
                           {option.label}
                         </Text>
-                        <Text className="text-background-400 text-sm mt-1 text-right">
+                        <Text className="typo-label text-background-400 mt-1 text-right">
                           {option.description}
                         </Text>
                       </View>
@@ -191,7 +191,7 @@ const GoalStep = ({
                 })}
               </View>
               {error && (
-                <Text className="text-red-400 text-xs text-right mt-3">
+                <Text className="typo-caption text-red-400 text-right mt-3">
                   {error.message}
                 </Text>
               )}
@@ -202,7 +202,7 @@ const GoalStep = ({
         {/* בוחר הפרש קלוריות – מופיע רק ב-cut או bulk */}
         {showOffsetPicker && (
           <Animated.View entering={FadeIn.duration(400)} className="mt-6">
-            <Text className="text-background-200 text-sm font-semibold text-right mb-1">
+            <Text className="typo-label text-background-200 text-right mb-1">
               {OFFSET_LABEL[formValues.goal as Goal]}
             </Text>
 
@@ -222,12 +222,12 @@ const GoalStep = ({
                   {/* מספר גדול מרכזי */}
                   <View className="items-center mb-2">
                     <Text
-                      className="text-3xl font-black"
+                      className="typo-h1"
                       style={{ color: offsetIntensity?.color ?? colors.lime[500] }}
                     >
                       {value}
                     </Text>
-                    <Text className="text-background-400 text-xs">קק״ל</Text>
+                    <Text className="typo-caption text-background-400">קק״ל</Text>
                   </View>
 
                   {/* Slider */}
@@ -254,14 +254,14 @@ const GoalStep = ({
 
                   {/* טווח מינימום-מקסימום */}
                   <View className="flex-row justify-between mt-1 mb-3">
-                    <Text className="text-background-500 text-xs">100</Text>
-                    <Text className="text-background-500 text-xs">1000</Text>
+                    <Text className="typo-caption text-background-500">100</Text>
+                    <Text className="typo-caption text-background-500">1000</Text>
                   </View>
 
                   {/* משוב ויזואלי */}
                   {offsetIntensity && (
                     <Text
-                      className="text-sm font-bold text-center"
+                      className="typo-label text-center"
                       style={{ color: offsetIntensity.color }}
                     >
                       {offsetIntensity.label}
@@ -269,7 +269,7 @@ const GoalStep = ({
                   )}
 
                   {error && (
-                    <Text className="text-red-400 text-xs text-right mt-2">
+                    <Text className="typo-caption text-red-400 text-right mt-2">
                       {error.message}
                     </Text>
                   )}
@@ -291,24 +291,24 @@ const GoalStep = ({
                 size={22}
                 color={colors.lime[500]}
               />
-              <Text className="text-lime-500 text-sm font-bold mr-2">
+              <Text className="typo-label text-lime-500 mr-2">
                 התוכנית שלך מוכנה!
               </Text>
             </View>
 
-            <Text className="text-background-300 text-sm text-right mb-3">
+            <Text className="typo-label text-background-300 text-right mb-3">
               על בסיס הנתונים שהזנת, אלו הקלוריות היומיות המומלצות עבורך:
             </Text>
 
             <View className="bg-background-700 rounded-xl p-5 border border-background-600 items-center">
-              <Text className="text-background-400 text-xs mb-2">
+              <Text className="typo-caption text-background-400 mb-2">
                 קלוריות יומיות מומלצות
               </Text>
               <View className="flex-row items-baseline">
-                <Text className="text-background-400 text-sm ml-1">
+                <Text className="typo-label text-background-400 ml-1">
                   קק״ל
                 </Text>
-                <Text className="text-lime-400 text-4xl font-black">
+                <Text className="typo-h1 text-lime-400">
                   {dailyCalories.toLocaleString()}
                 </Text>
               </View>
@@ -316,7 +316,7 @@ const GoalStep = ({
 
             {/* הצגת כמות ההפרש עם תיוג עוצמה */}
             {showOffsetPicker && offsetIntensity && (
-              <Text className="text-background-400 text-xs text-center mt-3">
+              <Text className="typo-caption text-background-400 text-center mt-3">
                 {formValues.goal === 'cut' ? 'גרעון' : 'עודף'} של{' '}
                 <Text className="font-bold" style={{ color: offsetIntensity.color }}>
                   {formValues.calorie_offset}
@@ -345,7 +345,7 @@ const GoalStep = ({
             size={16}
             color={colors.background[400]}
           />
-          <Text className="text-background-400 font-medium text-sm">חזרה</Text>
+          <Text className="typo-label text-background-400">חזרה</Text>
         </Pressable>
 
         <Pressable
@@ -366,7 +366,7 @@ const GoalStep = ({
                 size={20}
                 color={colors.background[900]}
               />
-              <Text className="text-black font-extrabold text-base">
+              <Text className="typo-btn-cta text-black">
                 סיום ושמירה
               </Text>
             </>

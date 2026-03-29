@@ -100,7 +100,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
         <View>
           <Text
             numberOfLines={1}
-            className={`text-right text-lg font-bold ${isSelected ? "text-lime-400" : "text-white"}`}
+            className={`typo-h4 text-right ${isSelected ? "text-lime-400" : "text-white"}`}
           >
             {item.name_he}
           </Text>
@@ -110,7 +110,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
               size={14}
               color={isSelected ? colors.lime[400] : colors.background[400]}
             />
-            <Text className="text-zinc-400 text-sm mr-1 text-right" numberOfLines={1}>
+            <Text className="typo-label text-zinc-400 mr-1 text-right" numberOfLines={1}>
               {item.targetMuscles_he.join(', ')}
             </Text>
           </View>
@@ -123,7 +123,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
               key={i}
               className={`px-2 py-1 rounded-md border ${isSelected ? "bg-lime-600 border-lime-500" : "bg-zinc-800 border-zinc-700"}`}
             >
-              <Text className={`text-xs font-semibold ${isSelected ? "text-white" : "text-zinc-400"}`}>
+              <Text className={`typo-caption ${isSelected ? "text-white" : "text-zinc-400"}`}>
                 {eq}
               </Text>
             </View>

@@ -31,7 +31,7 @@ const Header = ({ workoutPlan, isStart = false }: Props) => {
         <View className="flex-row items-center px-4 py-4 bg-background border-b border-secondary border-b-background-1200">
             <View className="flex-1" />
             <View className="flex-[4] items-center justify-center">
-                <Text className="text-2xl font-bold text-center text-lime-500" numberOfLines={1}>
+                <Text className="typo-h2 text-center text-lime-500" numberOfLines={1}>
                     {workoutPlan?.title}
                 </Text>
             </View>

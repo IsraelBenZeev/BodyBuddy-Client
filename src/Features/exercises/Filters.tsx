@@ -30,7 +30,7 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: F
           accessibilityLabel="הצג הכל"
           accessibilityState={{ selected: selectedFilter === 'all' }}
           >
-          <Text className={selectedFilter === 'all' ? 'text-black font-bold' : 'text-white'}>
+          <Text className={selectedFilter === 'all' ? 'typo-btn-cta text-black' : 'typo-body text-white'}>
             הכל
           </Text>
         </AppButton>
@@ -48,7 +48,7 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: F
           accessibilityLabel={partsBodyHebrew[part] || part}
           accessibilityState={{ selected: selectedFilter === part }}
           >
-            <Text className="text-white font-medium">{partsBodyHebrew[part] || part}</Text>
+            <Text className="typo-body-primary text-white">{partsBodyHebrew[part] || part}</Text>
           </AppButton>
         ))}
         {mode === 'view' && (
@@ -59,7 +59,7 @@ const Filters = ({ uniqueBodyParts, selectedFilter, setSelectedFilter, mode }: F
             onPress={handleBack}
             accessibilityLabel="הוסף אזורי גוף"
           >
-            <Text className="text-white text-lg">+</Text>
+            <Text className="typo-h4 text-white">+</Text>
           </AppButton>
         )}
       </ScrollView>

@@ -44,11 +44,11 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
       >
         {/* שורת כותרת + נקה */}
         <View className="flex-row-reverse items-center justify-between">
-          <Text className="text-xs font-bold text-zinc-500 tracking-wide">
+          <Text className="typo-caption-bold text-zinc-500 tracking-wide">
             {selectedParts.length} אזורים נבחרו
           </Text>
           <AppButton animationType="scale" haptic="light" onPress={onClearAll} accessibilityLabel="נקה את כל הבחירות">
-            <Text className="text-xs font-bold text-red-400">נקה הכל</Text>
+            <Text className="typo-caption-bold text-red-400">נקה הכל</Text>
           </AppButton>
         </View>
 
@@ -73,7 +73,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
                 gap: 5,
               }}
             >
-              <Text className="text-xs font-bold text-lime-200">
+              <Text className="typo-caption-bold text-lime-200">
                 {partsBodyHebrew[part]}
               </Text>
               <AppButton animationType="scale" haptic="light" onPress={() => onDeselectPart(part)} accessibilityLabel={`הסר ${partsBodyHebrew[part]}`}>
@@ -101,7 +101,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
               shadowRadius: 14,
             }}
           >
-            <Text className="text-base font-black text-zinc-950">
+            <Text className="typo-btn-cta text-zinc-950">
               צפה בתרגילים
             </Text>
           </LinearGradient>

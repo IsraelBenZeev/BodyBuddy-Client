@@ -12,14 +12,14 @@ interface Props {
 const MyInput = ({ control, name, label, type = "text", placeholder }: Props) => {
     return (
         <View className="mb-4">
-            <Text className="text-white mb-2 font-medium">{label}</Text>
+            <Text className="typo-body-primary text-white mb-2">{label}</Text>
 
             <Controller
                 control={control}
                 name={name}
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                        className="bg-zinc-800 text-white p-4 rounded-xl border border-zinc-700 focus:border-lime-500"
+                        className="typo-input bg-zinc-800 text-white p-4 rounded-xl border border-zinc-700 focus:border-lime-500"
                         onBlur={onBlur}
                         // לוגיקה לשינוי ה-Value וה-OnChange לפי הטיפוס
                         onChangeText={(text) => {

@@ -19,11 +19,11 @@ const EmptyState = ({ icon, title, description, action }: EmptyStateProps) => {
       <View className="bg-background-800 p-8 rounded-full mb-6 opacity-80">
         {icon}
       </View>
-      <Text className="text-white text-xl font-semibold text-center mb-2">
+      <Text className="typo-h3 text-white text-center mb-2">
         {title}
       </Text>
       {description && (
-        <Text className="text-gray-400 text-center mb-8">
+        <Text className="typo-body text-gray-400 text-center mb-8">
           {description}
         </Text>
       )}
@@ -35,7 +35,7 @@ const EmptyState = ({ icon, title, description, action }: EmptyStateProps) => {
           className="bg-lime-500 flex-row items-center px-8 py-4 rounded-2xl"
           accessibilityLabel={action.label}
         >
-          <Text className="text-background-900 font-bold text-lg">
+          <Text className="typo-h4 text-background-900">
             {action.label}
           </Text>
           {action.icon && <View className="ml-2">{action.icon}</View>}

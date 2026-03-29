@@ -119,10 +119,10 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
               />
             )}
             <View className="flex-1">
-              <Text className="text-lime-50 text-right text-sm font-bold uppercase tracking-widest">
+              <Text className="typo-label text-lime-50 text-right uppercase tracking-widest">
                 מתאמן על
               </Text>
-              <Text className="text-white font-black text-3xl text-right" numberOfLines={2}>
+              <Text className="typo-h1 text-white text-right" numberOfLines={2}>
                 {selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', ')}
               </Text>
             </View>
@@ -158,7 +158,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 onChangeText={setSearchQuery}
                 placeholder="חפש תרגיל..."
                 placeholderTextColor="#525252"
-                className="flex-1 text-white text-right py-3 px-2 text-base"
+                className="flex-1 typo-input text-white text-right py-3 px-2"
               />
               {searchQuery.length > 0 && (
                 <AppButton
@@ -175,11 +175,11 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
               <View className="flex-row-reverse items-center justify-between bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 mx-2 mb-3">
                 <View className="flex-row-reverse items-center">
                   <View className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.size > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}>
-                    <Text className={`${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'} font-black text-base`}>
+                    <Text className={`typo-btn-cta ${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'}`}>
                       {exerciseSelectedIds.size}
                     </Text>
                   </View>
-                  <Text className="text-zinc-300 font-bold text-base">
+                  <Text className="typo-body-primary text-zinc-300">
                     תרגילים נבחרו
                   </Text>
                 </View>
@@ -192,7 +192,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                     className="bg-red-500/10 px-4 py-2 rounded-xl border border-red-500/20"
                     accessibilityLabel="נקה כל הבחירות"
                   >
-                    <Text className="text-red-400 font-bold text-sm">נקה הכל</Text>
+                    <Text className="typo-label text-red-400">נקה הכל</Text>
                   </AppButton>
                 )}
               </View>
@@ -214,7 +214,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
               ListFooterComponent={
                 isFetchingNextPage ? (
                   <View className="py-6 items-center">
-                    <Text className="text-lime-400 font-medium">טוען תרגילים נוספים...</Text>
+                    <Text className="typo-body text-lime-400">טוען תרגילים נוספים...</Text>
                   </View>
                 ) : (
                   <View className="h-20" />
@@ -231,7 +231,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 className="bg-lime-500 w-full h-16 rounded-2xl items-center justify-center shadow-lime-500 shadow-offset-[0/10] shadow-opacity-30 shadow-radius-[20px] elevation-10"
                 accessibilityLabel="שמור וסיים"
               >
-                <Text className="text-zinc-950 font-bold text-lg">שמור וסיים</Text>
+                <Text className="typo-h4 text-zinc-950">שמור וסיים</Text>
               </AppButton>
             </View>
           )}

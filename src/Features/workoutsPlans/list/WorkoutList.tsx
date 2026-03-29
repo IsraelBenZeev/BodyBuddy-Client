@@ -46,7 +46,7 @@ const WorkoutList = () => {
       <View className="flex-1 items-center justify-between py-10">
         <View className="w-full px-6 mt-5 flex-row-reverse items-start justify-between">
           <View className="items-end">
-            <Text className="text-white text-3xl font-black tracking-tight text-right">האימונים שלי</Text>
+            <Text className="typo-h1 text-white tracking-tight text-right">האימונים שלי</Text>
             <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, marginTop: 8 }} />
           </View>
           <AppButton
@@ -56,7 +56,7 @@ const WorkoutList = () => {
             className="bg-zinc-800 px-4 py-3 rounded-2xl border border-zinc-700 flex-row items-center gap-2"
             accessibilityLabel="תרגילים מועדפים"
           >
-            <Text className="text-lime-500 font-semibold text-sm">תרגילים מועדפים</Text>
+            <Text className="typo-label text-lime-500">תרגילים מועדפים</Text>
             <Ionicons name="star-outline" size={22} color={colors.lime[500]} />
           </AppButton>
         </View>

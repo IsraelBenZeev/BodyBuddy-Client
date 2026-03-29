@@ -63,7 +63,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
 
   return (
     <View className="pb-20 px-4">
-      <Text className="text-white text-xl font-bold mb-6 text-right">
+      <Text className="typo-h3 text-white mb-6 text-right">
         {exercisesLog?.length ? `תרגילים באימון` : 'לא בוצעו תרגילים עדיין'}
       </Text>
 

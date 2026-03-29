@@ -71,7 +71,7 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
   return (
     <View className="flex-1  items-center justify-center gap-2 ">
       <View className="flex-1">
-        <Text className="text-zinc-400 text-xs font-bold uppercase">{label}</Text>
+        <Text className="typo-caption-bold text-zinc-400 uppercase">{label}</Text>
       </View>
       <View className="flex-1">
         <Controller

@@ -9,7 +9,7 @@ interface ButtonPrimaryProps {
 const ButtonPrimary = ({ title, onPress, classNameButton, classNameText, disabled }: ButtonPrimaryProps) => {
     return (
         <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel={title} className={`bg-lime-500 w-full py-4 rounded-2xl items-center shadow-lg ${disabled ? 'opacity-50' : ''} ${classNameButton}`}>
-            <Text className={`text-center text-black font-extrabold text-base ${classNameText}`}>{title}</Text>
+            <Text className={`typo-btn-cta text-center text-black ${classNameText}`}>{title}</Text>
         </Pressable>
     );
 };

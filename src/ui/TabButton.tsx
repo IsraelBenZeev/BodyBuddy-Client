@@ -48,7 +48,7 @@ const TabButton = ({ routeName, children, onPress, label }: TabButtonProps) => {
           {children}
         </Animatable.View>
 
-        <Text className="text-xs font-semibold -mt-2.5" style={{ color: focused ? colors.lime[400] : colors.background[100] }}>{label}</Text>
+        <Text className="typo-caption-bold -mt-2.5" style={{ color: focused ? colors.lime[400] : colors.background[100] }}>{label}</Text>
       </View>
     </Pressable>
   );

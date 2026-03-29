@@ -9,7 +9,7 @@ const ButtonLabelTime = ({ totalMinutes, setVisible, isPendingCreate }: ButtonLa
 
     return (
         <View className="mb-6">
-            <Text className="text-gray-400 text-right mb-2 text-sm font-medium mr-1">
+            <Text className="typo-label text-gray-400 text-right mb-2 mr-1">
                 משך התרגיל
             </Text>
             <Pressable
@@ -24,7 +24,7 @@ const ButtonLabelTime = ({ totalMinutes, setVisible, isPendingCreate }: ButtonLa
                 accessibilityRole="button"
                 accessibilityLabel="בחר משך אימון"
             >
-                <Text className="text-white text-lg font-light">
+                <Text className="typo-h4 text-white">
                     {totalMinutes > 0
                         ? `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`
                         : "00:00"}
