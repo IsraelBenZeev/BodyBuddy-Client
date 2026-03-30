@@ -18,6 +18,7 @@ export type ExerciseLogDBType = {
     workout_plan_id: string;
     reps: number;
     weight: number;
+    rest_seconds?: number | null;
 }
 export type SessionFormData = {
     started_at: string;

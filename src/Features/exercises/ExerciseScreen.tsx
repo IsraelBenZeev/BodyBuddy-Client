@@ -63,7 +63,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             />
           )}
         </View>
-        <View className="w-full mt-6" style={{ minHeight: 600 }}>
+        <View className="w-full mt-3" style={{ minHeight: 600 }}>
           <Buttons
             exerciseId={exerciseData.exerciseId}
             exerciseName={exerciseData.name}

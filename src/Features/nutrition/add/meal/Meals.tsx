@@ -1,4 +1,5 @@
 import { colors } from '@/colors';
+import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
 import { useDeleteMeal, useMealsWithItems } from '@/src/hooks/useNutrition';
 import type { MealWithItems } from '@/src/types/meal';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
@@ -148,17 +149,37 @@ const MealCard = React.memo(function MealCard({
   onPress: () => void;
   onDelete: () => void;
 }) {
-  // חישוב קלוריות ומשקל כולל
+  // חישוב קלוריות וחלבון כולל
   const stats = (meal.meal_items ?? []).reduce(
     (acc, mi) => {
       if (mi.food_item) {
-        const cal = ((mi.food_item.calories_per_100 ?? 0) * Number(mi.amount_g)) / 100;
-        acc.calories += cal;
-        acc.weight += Number(mi.amount_g);
+        const n = calculateNutrients(
+          {
+            id: '',
+            user_id: '',
+            name: mi.food_item.name,
+            measurement_type: mi.food_item.measurement_type,
+            unit_weight_g: mi.food_item.unit_weight_g ?? null,
+            calories_per_100: mi.food_item.calories_per_100,
+            protein_per_100: mi.food_item.protein_per_100,
+            carbs_per_100: mi.food_item.carbs_per_100,
+            fat_per_100: mi.food_item.fat_per_100,
+            calories_per_unit: mi.food_item.calories_per_unit ?? null,
+            protein_per_unit: mi.food_item.protein_per_unit ?? null,
+            carbs_per_unit: mi.food_item.carbs_per_unit ?? null,
+            fat_per_unit: mi.food_item.fat_per_unit ?? null,
+            is_active: true,
+            created_at: '',
+            updated_at: '',
+          },
+          Number(mi.amount_g)
+        );
+        acc.calories += n.calories;
+        acc.protein += n.protein;
       }
       return acc;
     },
-    { calories: 0, weight: 0 }
+    { calories: 0, protein: 0 }
   );
 
   return (
@@ -186,12 +207,12 @@ const MealCard = React.memo(function MealCard({
               {Math.round(stats.calories)} קק״ל
             </Text>
             <View className="w-1 h-1 rounded-full bg-gray-600 mx-2" />
-            <Text className="typo-caption text-gray-400">
-              {(meal.meal_items ?? []).length} מרכיבים
+            <Text className="typo-caption-bold text-lime-400">
+              {Math.round(stats.protein)}ג׳ חלבון
             </Text>
             <View className="w-1 h-1 rounded-full bg-gray-600 mx-2" />
-            <Text className="typo-caption text-gray-500">
-              {Math.round(stats.weight)}ג׳ סה״כ
+            <Text className="typo-caption text-gray-400">
+              {(meal.meal_items ?? []).length} מרכיבים
             </Text>
           </View>
         </View>
@@ -216,11 +237,22 @@ const MealCard = React.memo(function MealCard({
         </View>
       </View>
 
-      {/* תצוגה ויזואלית קטנה של המרכיבים (אופציונלי - מוסיף המון) */}
-      <View className="bg-white/5 px-4 py-2 border-t border-white/5">
-        <Text className="typo-caption text-gray-500 text-right" numberOfLines={1}>
-          כולל: {(meal.meal_items ?? []).map((i: any) => i.food_item?.name).join(', ')}
-        </Text>
+      {/* מרכיבים — תצוגת chips */}
+      <View className="bg-white/5 px-4 py-3 border-t border-white/5 flex-row-reverse flex-wrap gap-2">
+        {(meal.meal_items ?? []).slice(0, 4).map((mi: any, index: number) => (
+          <View key={index} className="bg-background-700 rounded-full px-3 py-1 border border-white/5">
+            <Text className="typo-caption text-gray-400" numberOfLines={1}>
+              {mi.food_item?.name}
+            </Text>
+          </View>
+        ))}
+        {(meal.meal_items ?? []).length > 4 && (
+          <View className="bg-background-700 rounded-full px-3 py-1 border border-white/5">
+            <Text className="typo-caption text-gray-500">
+              +{(meal.meal_items ?? []).length - 4}
+            </Text>
+          </View>
+        )}
       </View>
     </Pressable>
   );

@@ -229,26 +229,19 @@ const FoodCard = React.memo(function FoodCard({
         </View>
       </View>
 
-      <View className="flex-row-reverse bg-white/5 px-4 py-3 justify-between items-center">
+      <View className="flex-row-reverse bg-white/5 px-4 py-3 justify-around items-center">
+        <View className="items-center flex-1">
+          <Text className="typo-caption-bold text-lime-400">
+            {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100} קק״ל
+          </Text>
+          <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">קלוריות</Text>
+        </View>
+        <View className="w-[1px] h-4 bg-white/10" />
         <View className="items-center flex-1">
           <Text className="typo-caption-bold text-lime-500">
             {item.measurement_type === 'units' ? item.protein_per_unit : item.protein_per_100}g
           </Text>
           <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">חלבון</Text>
-        </View>
-        <View className="w-[1px] h-4 bg-white/10" />
-        <View className="items-center flex-1">
-          <Text className="typo-caption-bold text-orange-500">
-            {item.measurement_type === 'units' ? item.carbs_per_unit : item.carbs_per_100}g
-          </Text>
-          <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">פחמימה</Text>
-        </View>
-        <View className="w-[1px] h-4 bg-white/10" />
-        <View className="items-center flex-1">
-          <Text className="typo-caption-bold text-red-500">
-            {item.measurement_type === 'units' ? item.fat_per_unit : item.fat_per_100}g
-          </Text>
-          <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">שומן</Text>
         </View>
       </View>
     </Pressable>

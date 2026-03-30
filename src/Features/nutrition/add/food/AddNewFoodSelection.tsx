@@ -31,11 +31,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
   );
 
   const handleQuantityChange = useCallback((delta: number) => {
-    setQuantity((q) => Math.max(1, q + delta));
-  }, []);
-
-  const handleHalfUnit = useCallback(() => {
-    setQuantity((q) => Math.max(0.5, q - 0.5));
+    setQuantity((q) => Math.max(0.5, q + delta));
   }, []);
 
   const handleSubmit = useCallback(() => {
@@ -71,7 +67,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
         {/* Stepper מרכזי */}
         <View className="flex-row-reverse items-center justify-between bg-background-900/50 rounded-2xl p-2 border border-white/5">
           <Pressable
-            onPress={() => handleQuantityChange(1)}
+            onPress={() => handleQuantityChange(0.5)}
             className="w-14 h-14 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
             accessibilityRole="button"
             accessibilityLabel={`הגדל כמות`}
@@ -87,7 +83,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
           </View>
 
           <Pressable
-            onPress={() => handleQuantityChange(-1)}
+            onPress={() => handleQuantityChange(-0.5)}
             className="w-14 h-14 items-center justify-center bg-background-700 rounded-xl active:scale-95"
             accessibilityRole="button"
             accessibilityLabel="הפחת כמות"
@@ -96,17 +92,9 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
           </Pressable>
         </View>
 
-        {/* חצי יחידה — רק עבור units */}
+        {/* איפוס — רק עבור units */}
         {isUnits && (
           <View className="mt-3 flex-row-reverse gap-2">
-            <Pressable
-              onPress={handleHalfUnit}
-              className="flex-1 bg-background-700 rounded-xl py-2 items-center border border-white/5"
-              accessibilityRole="button"
-              accessibilityLabel={`חצי ${unitLabel}`}
-            >
-              <Text className="typo-caption-bold text-gray-400">½ {unitLabel}</Text>
-            </Pressable>
             <Pressable
               onPress={() => setQuantity(1)}
               className="flex-1 bg-background-700 rounded-xl py-2 items-center border border-white/5"
@@ -127,27 +115,25 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
             : `ערכים תזוניים ל-${portionAmount} גרם`}
         </Text>
 
-        <View className="flex-row-reverse justify-around items-end mb-6">
-          <View className="items-center">
-            <Text className="typo-h2 text-lime-500">{calculatedMacros.protein}g</Text>
-            <Text className="typo-caption text-gray-500 mt-1">חלבון</Text>
+        <View className="flex-row-reverse items-center justify-around">
+          {/* קלוריות */}
+          <View className="items-center flex-1">
+            <Text className="typo-caption-bold text-gray-500 uppercase mb-2">קלוריות</Text>
+            <Text style={{ fontSize: 42, lineHeight: 46 }} className="font-black text-white">
+              {calculatedMacros.calories}
+            </Text>
+            <Text className="typo-caption text-lime-400 mt-1">קק״ל</Text>
           </View>
-          <View className="w-[1px] h-8 bg-white/5" />
-          <View className="items-center">
-            <Text className="typo-h2 text-orange-500">{calculatedMacros.carbs}g</Text>
-            <Text className="typo-caption text-gray-500 mt-1">פחמימות</Text>
-          </View>
-          <View className="w-[1px] h-8 bg-white/5" />
-          <View className="items-center">
-            <Text className="typo-h2 text-red-500">{calculatedMacros.fat}g</Text>
-            <Text className="typo-caption text-gray-500 mt-1">שומן</Text>
-          </View>
-        </View>
 
-        <View className="pt-5 border-t border-white/5 items-center">
-          <View className="flex-row-reverse items-baseline">
-            <Text className="typo-h1 text-white">{calculatedMacros.calories}</Text>
-            <Text className="typo-label text-lime-400 mr-2">קק״ל</Text>
+          <View className="w-[1px] h-16 bg-white/10" />
+
+          {/* חלבון */}
+          <View className="items-center flex-1">
+            <Text className="typo-caption-bold text-gray-500 uppercase mb-2">חלבון</Text>
+            <Text style={{ fontSize: 42, lineHeight: 46 }} className="font-black text-lime-500">
+              {calculatedMacros.protein}
+            </Text>
+            <Text className="typo-caption text-gray-500 mt-1">גרם</Text>
           </View>
         </View>
       </View>

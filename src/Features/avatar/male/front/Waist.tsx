@@ -9,7 +9,7 @@ interface WaistProps {
 export const Waist = ({ isSelected, handleTogglePart }: WaistProps) => {
   const bodyPart: BodyPart = 'waist';
   return (
-    <G id="waist" accessible={true} accessibilityLabel={`בטן ומותניים - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected(bodyPart) }}>
+    <G id="waist" accessible={true} accessibilityLabel={`בטן - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`} accessibilityState={{ selected: isSelected(bodyPart) }}>
       <Path
         d="M285.5 473.2C285.4 474 285.4 474.8 285.5 475.6C288.9 488.2 300.9 509.4 305.7 511.8C308.6 513.3 322.2 498.6 324 497.5C325.8 496.4 329.9 490.9 329.9 490.9C329.9 490.9 300.8 480.4 295.3 475.4C293.3 473.6 287 463.8 287 463.8L285.4 473.2H285.5Z"
         fill={isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F'}

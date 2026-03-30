@@ -53,10 +53,9 @@ const WorkoutList = () => {
             animationType="opacity"
             haptic="light"
             onPress={handleNavigateToFavorites}
-            className="bg-zinc-800 px-4 py-3 rounded-2xl border border-zinc-700 flex-row items-center gap-2"
+            className="bg-zinc-800 w-12 h-12 rounded-2xl border border-zinc-700 items-center justify-center"
             accessibilityLabel="תרגילים מועדפים"
           >
-            <Text className="typo-label text-lime-500">תרגילים מועדפים</Text>
             <Ionicons name="star-outline" size={22} color={colors.lime[500]} />
           </AppButton>
         </View>

@@ -43,7 +43,7 @@ const Buttons = ({ exerciseId, exerciseName, exerciseName_he }: ButtonsProps) =>
 
     return (
         <View>
-            <View className="flex-row justify-between px-6 my-8 w-full">
+            <View className="flex-row justify-between px-6 mt-2 mb-5 w-full">
                 {[
                     {
                         icon: <Entypo name={isFav ? 'star' : 'star-outlined'} size={20} color={isFav ? colors.lime[400] : colors.lime[500]} />,

@@ -22,6 +22,7 @@ Services → Hooks (React Query, `staleTime: Infinity`) → Components. Componen
 - TypeScript: no `any`, interfaces for all props/state, types in `src/types/`
 - Code changes: fix only what's asked, don't refactor unrelated code, preserve structure
 - Renders: useCallback/useMemo for stability, update state before navigation
+- Reusable components: if a new component is likely to be used in more than one place, place it in `src/ui/` and make it as generic as possible (accept props instead of hardcoding data, no feature-specific logic)
 
 ## Typography System
 Every screen and component **must** follow this hierarchy — no exceptions:

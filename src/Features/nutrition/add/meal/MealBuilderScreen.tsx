@@ -1,6 +1,7 @@
 import { colors } from '@/colors';
 import type { AddStep } from '@/src/Features/nutrition/add/meal/ListFoodForMealBuilder';
 import ListFoodForMealBuilder from '@/src/Features/nutrition/add/meal/ListFoodForMealBuilder';
+import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
 import {
   useCreateFoodItem,
   useCreateMealWithItems,
@@ -9,12 +10,11 @@ import {
 } from '@/src/hooks/useNutrition';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import type { MealItemForm } from '@/src/types/meal';
-import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
 import type { AIMealResultItem, CreateFoodFormData, FoodItem, MeasurementType } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
-import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
+import Slider from '@react-native-community/slider';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
@@ -563,8 +563,9 @@ const MealBuilderScreen = () => {
                 nestedScrollEnabled
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ paddingBottom: 8 }}
               >
-                <View className="px-6 pt-5 pb-10">
+                <View className="px-6 pt-5">
                   {/* Handle */}
                   <View className="items-center mb-5">
                     <View className="w-12 h-1.5 bg-white/10 rounded-full" />
@@ -759,17 +760,20 @@ const MealBuilderScreen = () => {
                     );
                   })()}
 
-                  {/* כפתור שמור */}
-                  <Pressable
-                    onPress={confirmEditItem}
-                    className="bg-lime-500 rounded-2xl h-14 items-center justify-center"
-                    accessibilityRole="button"
-                    accessibilityLabel="שמור שינויים"
-                  >
-                    <Text className="typo-btn-cta text-black">שמור</Text>
-                  </Pressable>
                 </View>
               </ScrollView>
+
+              {/* כפתור שמור — תמיד בתחתית */}
+              <View className="px-6 pt-3 pb-10 border-t border-white/5">
+                <Pressable
+                  onPress={confirmEditItem}
+                  className="bg-lime-500 rounded-2xl h-14 items-center justify-center"
+                  accessibilityRole="button"
+                  accessibilityLabel="שמור שינויים"
+                >
+                  <Text className="typo-btn-cta text-black">שמור</Text>
+                </Pressable>
+              </View>
             </View>
           </Pressable>
         </Pressable>

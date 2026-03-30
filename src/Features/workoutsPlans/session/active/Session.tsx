@@ -15,6 +15,7 @@ import { colors } from '@/colors';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
+import { useWorkoutStore } from '@/src/store/workoutsStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -75,9 +76,17 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
     }
 
     const saveExerciseLog = async (data: SessionFormData, idSession: string) => {
+        const exerciseCompletedTimes = useWorkoutStore.getState().completedTimes;
         const allSets: ExerciseLogDBType[] = [];
         Object.entries(data.exercises).forEach(([exerciseId, exerciseDetails]: [string, any]) => {
+            const times = exerciseCompletedTimes[exerciseId] ?? [];
             exerciseDetails.sets.forEach((set: any, index: number) => {
+                const prevTime = times[index - 1] ?? null;
+                const currTime = times[index] ?? null;
+                const rest_seconds =
+                    index > 0 && prevTime != null && currTime != null
+                        ? Math.round((currTime - prevTime) / 1000)
+                        : null;
                 allSets.push({
                     user_id: user_id,
                     session_id: idSession,
@@ -86,6 +95,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                     reps: Number(set.reps),
                     weight: Number(set.weight),
                     workout_plan_id: workoutPlan.id as string,
+                    rest_seconds,
                 });
             });
         });
@@ -99,6 +109,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             const idSession = Crypto.randomUUID();
             await saveSession(data, idSession);
             await saveExerciseLog(data, idSession);
+            useWorkoutStore.getState().clearCompletedTimes();
             setIsStart(false);
             triggerSuccess('האימון נשמר!', 'success');
         } catch (error) {
@@ -124,15 +135,15 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             entering={FadeIn.duration(600)}
             exiting={FadeOut.duration(400)}
         >
-            <View className="px-6 flex-row justify-between items-center py-4">
-                <Text className="typo-h2 text-white">{workoutPlan.title}</Text>
-                <View className="bg-background-800 px-4 py-2 rounded-2xl border border-white/5">
+            <View className="px-6 flex-row justify-between items-center py-4 gap-3">
+                <Text className="typo-h2 text-white flex-1" numberOfLines={1}>{workoutPlan.title}</Text>
+                <View className="bg-background-800 px-4 py-2 rounded-2xl border border-white/5 shrink-0">
                     <TimerDisplay />
                 </View>
             </View>
 
             <View className="px-6">
-                <Text className="typo-h2 text-white">
+                <Text className="typo-body-small text-zinc-400">
                     תרגיל {activeIndex + 1} מתוך {exercises?.length}
                 </Text>
             </View>

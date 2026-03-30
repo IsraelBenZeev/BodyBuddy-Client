@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated, {
     interpolateColor,
     useAnimatedStyle,
@@ -9,7 +9,7 @@ import Animated, {
     withSequence,
     withSpring,
     withTiming,
-    ZoomIn
+    ZoomIn,
 } from 'react-native-reanimated';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -20,62 +20,90 @@ interface Props {
 }
 
 const PremiumCheck = ({ checked, onPress }: Props) => {
-    // 0 = לא מסומן, 1 = מסומן
     const progress = useSharedValue(checked ? 1 : 0);
+    const ringScale = useSharedValue(1);
+    const ringOpacity = useSharedValue(0);
+    const pressScale = useSharedValue(1);
 
     useEffect(() => {
         progress.value = withSpring(checked ? 1 : 0, { damping: 15 });
     }, [checked]);
 
     const animatedStyle = useAnimatedStyle(() => {
-        // אנימציה של הצבע
         const backgroundColor = interpolateColor(
             progress.value,
             [0, 1],
-            ['transparent', '#bef264'] // מטרנספרנט לליים
+            ['transparent', '#bef264']
         );
-
         const borderColor = interpolateColor(
             progress.value,
             [0, 1],
-            ['#3f3f46', '#bef264'] // מאפור כהה לליים
+            ['#3f3f46', '#bef264']
         );
-
-        return {
-            backgroundColor,
-            borderColor,
-            transform: [{ scale: progress.value === 1 ? withSequence(withTiming(1.2), withSpring(1)) : 1 }]
-        };
+        return { backgroundColor, borderColor };
     });
 
+    const pressScaleStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: pressScale.value }],
+    }));
+
+    const ringStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: ringScale.value }],
+        opacity: ringOpacity.value,
+    }));
+
     const handlePress = useCallback(() => {
-        if (!checked) {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        } else {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }
+        if (checked) return;
+        pressScale.value = withSequence(
+            withTiming(0.82, { duration: 80 }),
+            withSpring(1, { damping: 8, stiffness: 200 })
+        );
+        ringOpacity.value = withSequence(
+            withTiming(0.7, { duration: 40 }),
+            withTiming(0, { duration: 480 })
+        );
+        ringScale.value = withSequence(
+            withTiming(1, { duration: 0 }),
+            withTiming(2.4, { duration: 520 })
+        );
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         onPress();
     }, [checked, onPress]);
 
     return (
-        <AnimatedPressable
-            onPress={handlePress}
-            style={[animatedStyle]}
-            className="w-9 h-9 rounded-xl border-2 items-center justify-center"
-            accessibilityRole="checkbox"
-            accessibilityLabel={checked ? 'סט הושלם' : 'סמן סט כהושלם'}
-            accessibilityState={{ checked }}
-        >
-            {checked && (
-                <Animated.View
-                    // השתמש ב-ZoomIn או FadeIn מובנה
-                    entering={ZoomIn.duration(200)}
-                    // exiting={withTiming({ duration: 150 })} // אופציונלי אם רוצים אנימציית יציאה
+        <View className="items-center justify-center">
+            {/* Ring burst */}
+            <Animated.View
+                style={[
+                    ringStyle,
+                    {
+                        position: 'absolute',
+                        width: 36,
+                        height: 36,
+                        borderRadius: 12,
+                        borderWidth: 2,
+                        borderColor: '#bef264',
+                    },
+                ]}
+            />
+            {/* כפתור */}
+            <Animated.View style={pressScaleStyle}>
+                <AnimatedPressable
+                    onPress={handlePress}
+                    style={[animatedStyle]}
+                    className="w-9 h-9 rounded-xl border-2 items-center justify-center"
+                    accessibilityRole="checkbox"
+                    accessibilityLabel={checked ? 'סט הושלם' : 'סמן סט כהושלם'}
+                    accessibilityState={{ checked }}
                 >
-                    <MaterialCommunityIcons name="check-bold" size={20} color="black" />
-                </Animated.View>
-            )}
-        </AnimatedPressable>
+                    {checked && (
+                        <Animated.View entering={ZoomIn.duration(200)}>
+                            <MaterialCommunityIcons name="check-bold" size={20} color="black" />
+                        </Animated.View>
+                    )}
+                </AnimatedPressable>
+            </Animated.View>
+        </View>
     );
 };
 

@@ -68,7 +68,7 @@ export const partsBodyHebrew = {
   shoulders: 'כתפיים',
   'upper arms': 'יד עליונה',
   'lower arms': 'יד תחתונה',
-  waist: 'בטן ומותניים',
+  waist: 'בטן',
   'upper legs': 'רגל עליונה',
   'lower legs': 'רגל תחתונה',
   back: 'גב',

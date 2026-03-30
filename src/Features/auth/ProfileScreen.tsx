@@ -286,6 +286,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import { activityLevelOptions, genderOptions } from '@/src/types/profile';
 import { differenceInYears, isValid, parseISO } from 'date-fns';
+import HoldButton from '@/src/ui/HoldButton';
 import BackGround from '@/src/ui/BackGround';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 import { Ionicons } from '@expo/vector-icons';
@@ -458,15 +459,22 @@ export default function ProfileScreen() {
 
             {/* Logout Button */}
             <AnimatedCard delay={800}>
-              <Pressable
+              <HoldButton
                 onPress={handleLogout}
-                className="h-16 rounded-[24px] flex-row-reverse items-center justify-center border border-red-500/20 bg-red-500/5 mt-4"
+                holdDurationMs={1500}
+                fillVariant="fill-both-sides"
+                fillColor="rgba(255,255,255,0.15)"
+                hapticOnComplete="error"
+                className="h-16 rounded-[24px] flex-row-reverse items-center justify-center border border-red-500/30 bg-red-500/10 mt-4"
+                accessibilityLabel="החזק להתנתקות"
               >
-                <Ionicons name="log-out-outline" size={20} color="#ef4444" />
-                <Text className="typo-btn-cta text-red-500 mr-2">
-                  {loading ? 'מתנתק...' : 'התנתקות מהחשבון'}
-                </Text>
-              </Pressable>
+                <View className="flex-row-reverse items-center justify-center gap-2">
+                  <Ionicons name="log-out-outline" size={20} color="#ef4444" />
+                  <Text className="typo-btn-cta text-red-500">
+                    {loading ? 'מתנתק...' : 'החזק להתנתקות'}
+                  </Text>
+                </View>
+              </HoldButton>
             </AnimatedCard>
 
           </View>

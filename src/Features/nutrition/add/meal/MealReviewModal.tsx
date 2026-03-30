@@ -125,30 +125,36 @@ export default function MealReviewModal({
     });
   }, [meal, items, getAmount, userId, date, addToJournal, onSuccess, onClose]);
 
-  const totalCal = useMemo(
+  const totals = useMemo(
     () =>
-      items.reduce((sum, mi) => {
-        const amount = getAmount(mi);
-        const info = mi.food_item!;
-        const foodForCalc = {
-          id: mi.food_item_id,
-          name: info.name,
-          measurement_type: info.measurement_type,
-          unit_weight_g: info.unit_weight_g ?? null,
-          calories_per_100: info.calories_per_100,
-          protein_per_100: info.protein_per_100,
-          carbs_per_100: info.carbs_per_100,
-          fat_per_100: info.fat_per_100,
-          calories_per_unit: info.calories_per_unit ?? null,
-          protein_per_unit: info.protein_per_unit ?? null,
-          carbs_per_unit: info.carbs_per_unit ?? null,
-          fat_per_unit: info.fat_per_unit ?? null,
-          is_active: true,
-          created_at: '',
-          updated_at: '',
-        };
-        return sum + Math.round(calculateNutrients(foodForCalc, amount).calories);
-      }, 0),
+      items.reduce(
+        (acc, mi) => {
+          const amount = getAmount(mi);
+          const info = mi.food_item!;
+          const foodForCalc = {
+            id: mi.food_item_id,
+            name: info.name,
+            measurement_type: info.measurement_type,
+            unit_weight_g: info.unit_weight_g ?? null,
+            calories_per_100: info.calories_per_100,
+            protein_per_100: info.protein_per_100,
+            carbs_per_100: info.carbs_per_100,
+            fat_per_100: info.fat_per_100,
+            calories_per_unit: info.calories_per_unit ?? null,
+            protein_per_unit: info.protein_per_unit ?? null,
+            carbs_per_unit: info.carbs_per_unit ?? null,
+            fat_per_unit: info.fat_per_unit ?? null,
+            is_active: true,
+            created_at: '',
+            updated_at: '',
+          };
+          const n = calculateNutrients(foodForCalc, amount);
+          acc.calories += Math.round(n.calories);
+          acc.protein += Math.round(n.protein);
+          return acc;
+        },
+        { calories: 0, protein: 0 }
+      ),
     [items, getAmount]
   );
 
@@ -175,7 +181,7 @@ export default function MealReviewModal({
         <ScrollView
           className="flex-1 px-4 py-4"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 16 }}
         >
           <Text className="typo-label text-background-400 mb-4 text-right">
             התאם כמות לכל מאכל ואז אשר להוספה ליומן
@@ -191,13 +197,19 @@ export default function MealReviewModal({
             />
           ))}
 
-          <View className="mt-4 py-3 border-t border-background-700 flex-row-reverse items-center justify-between">
-            <Text className="typo-body-primary text-lime-400">סה״כ קלוריות</Text>
-            <Text className="typo-h4 text-white">{totalCal} קק״ל</Text>
+          <View className="mt-4 py-3 border-t border-background-700">
+            <View className="flex-row-reverse items-center justify-between mb-1">
+              <Text className="typo-body-primary text-lime-400">סה״כ קלוריות</Text>
+              <Text className="typo-h4 text-white">{totals.calories} קק״ל</Text>
+            </View>
+            <View className="flex-row-reverse items-center justify-between">
+              <Text className="typo-body-primary text-lime-500">סה״כ חלבון</Text>
+              <Text className="typo-h4 text-white">{totals.protein} גרם</Text>
+            </View>
           </View>
         </ScrollView>
 
-        <View className="absolute bottom-0 left-0 right-0 p-4 bg-background-900 border-t border-background-700">
+        <View className="p-4 bg-background-900 border-t border-background-700">
           <Pressable
             onPress={handleConfirm}
             disabled={isPending || items.length === 0}
@@ -274,7 +286,7 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
       <View className="flex-row-reverse items-center justify-between bg-background-900/40 p-3 rounded-2xl border border-white/5">
         <View className="flex-row-reverse items-center bg-background-700 rounded-xl p-1 shadow-inner">
           <Pressable
-            onPress={() => onQuantityChange(1)}
+            onPress={() => onQuantityChange(0.5)}
             className="w-11 h-11 items-center justify-center bg-lime-500/10 rounded-lg active:bg-lime-500/20"
             accessibilityRole="button"
             accessibilityLabel={`הגדל כמות ${info.name}`}
@@ -288,7 +300,7 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
           </View>
 
           <Pressable
-            onPress={() => onQuantityChange(-1)}
+            onPress={() => onQuantityChange(-0.5)}
             className="w-11 h-11 items-center justify-center bg-white/5 rounded-lg active:bg-white/10"
             accessibilityRole="button"
             accessibilityLabel={`הפחת כמות ${info.name}`}
@@ -304,8 +316,6 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
           </Text>
           <View className="flex-row-reverse gap-2">
             <Text className="typo-caption text-lime-400">P {nutrients.protein}g</Text>
-            <Text className="typo-caption text-orange-400">C {nutrients.carbs}g</Text>
-            <Text className="typo-caption text-red-400">F {nutrients.fat}g</Text>
           </View>
         </View>
       </View>
