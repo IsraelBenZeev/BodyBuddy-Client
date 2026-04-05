@@ -2,12 +2,12 @@ import { colors } from '@/colors';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  FlatList,
+  LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  ScrollView,
   Text,
   View,
-  useWindowDimensions,
 } from 'react-native';
 
 interface HorizontalRulerProps {
@@ -21,11 +21,10 @@ interface HorizontalRulerProps {
 const TICK_SPACING = 14;
 
 const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalRulerProps) => {
-  const { width: screenWidth } = useWindowDimensions();
-  const flatListRef = useRef<FlatList<number>>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
   const [displayValue, setDisplayValue] = useState(value);
   const lastHapticValue = useRef(value);
-  /** עוקב אחרי הערך האחרון שגללנו אליו – מונע גלילה מיותרת אחרי scroll פנימי */
   const lastScrolledValue = useRef<number | null>(null);
 
   const data = useMemo(() => {
@@ -36,23 +35,30 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
     return items;
   }, [min, max]);
 
-  const sidePadding = (screenWidth - TICK_SPACING) / 2;
+  // מערך מפורש של נקודות snap — [0, 14, 28, ...]
+  const snapOffsets = useMemo(
+    () => data.map((_, i) => i * TICK_SPACING),
+    [data],
+  );
+
+  const handleContainerLayout = useCallback((e: LayoutChangeEvent) => {
+    setContainerWidth(e.nativeEvent.layout.width);
+  }, []);
+
+  const sidePadding = (containerWidth - TICK_SPACING) / 2;
 
   // גלילה לערך – גם בטעינה ראשונית וגם כש-value משתנה מבחוץ (reset)
   useEffect(() => {
-    if (flatListRef.current && lastScrolledValue.current !== value) {
-      const index = value - min;
+    if (scrollViewRef.current && lastScrolledValue.current !== value) {
+      const offset = (value - min) * TICK_SPACING;
       const isInitial = lastScrolledValue.current === null;
       const timer = setTimeout(
         () => {
-          flatListRef.current?.scrollToOffset({
-            offset: index * TICK_SPACING,
-            animated: !isInitial,
-          });
+          scrollViewRef.current?.scrollTo({ x: offset, animated: !isInitial });
           lastScrolledValue.current = value;
           setDisplayValue(value);
         },
-        isInitial ? 100 : 0
+        isInitial ? 100 : 0,
       );
       return () => clearTimeout(timer);
     }
@@ -69,7 +75,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
       }
       setDisplayValue(newValue);
     },
-    [min, max]
+    [min, max],
   );
 
   const handleMomentumEnd = useCallback(
@@ -81,60 +87,8 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
       lastScrolledValue.current = newValue;
       onChange(newValue);
     },
-    [min, max, onChange]
+    [min, max, onChange],
   );
-
-  const getItemLayout = useCallback(
-    (_: unknown, index: number) => ({
-      length: TICK_SPACING,
-      offset: TICK_SPACING * index,
-      index,
-    }),
-    []
-  );
-
-  const renderTick = useCallback(({ item }: { item: number }) => {
-    const isMajor = item % 10 === 0;
-    const isMedium = item % 5 === 0;
-
-    return (
-      <View
-        style={{ width: TICK_SPACING, alignItems: 'center', justifyContent: 'flex-end' }}
-        className="h-20"
-      >
-        <View
-          style={{
-            width: isMajor ? 2.5 : isMedium ? 1.5 : 1,
-            height: isMajor ? 44 : isMedium ? 30 : 18,
-            backgroundColor: isMajor
-              ? colors.background[100]
-              : isMedium
-                ? colors.background[300]
-                : colors.background[600],
-            borderRadius: 1,
-          }}
-        />
-        {isMajor && (
-          <Text
-            className="typo-caption"
-            style={{ color: colors.background[300], marginTop: 3 }}
-          >
-            {item}
-          </Text>
-        )}
-        {!isMajor && isMedium && (
-          <Text
-            className="typo-caption"
-            style={{ color: colors.background[500], marginTop: 2 }}
-          >
-            {item}
-          </Text>
-        )}
-      </View>
-    );
-  }, []);
-
-  const keyExtractor = useCallback((item: number) => item.toString(), []);
 
   return (
     <View className="items-center">
@@ -145,12 +99,16 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
       </View>
 
       {/* סרגל */}
-      <View className="w-full overflow-hidden" style={{ height: 90 }}>
+      <View
+        className="w-full overflow-hidden"
+        style={{ height: 90 }}
+        onLayout={handleContainerLayout}
+      >
         {/* נקודה עליונה */}
         <View
           className="absolute z-10"
           style={{
-            left: screenWidth / 2 - 5,
+            left: containerWidth / 2 - 5,
             top: 0,
             width: 10,
             height: 10,
@@ -162,7 +120,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
         <View
           className="absolute z-10"
           style={{
-            left: screenWidth / 2 - 1,
+            left: containerWidth / 2 - 1,
             top: 10,
             width: 2,
             height: 48,
@@ -171,29 +129,63 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
           }}
         />
 
-        <FlatList
-          ref={flatListRef}
+        <ScrollView
+          ref={scrollViewRef}
           horizontal
-          data={data}
-          keyExtractor={keyExtractor}
-          renderItem={renderTick}
-          snapToInterval={TICK_SPACING}
+          snapToOffsets={snapOffsets}
+          snapToAlignment="start"
           decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
           scrollEventThrottle={16}
           onScroll={handleScroll}
           onMomentumScrollEnd={handleMomentumEnd}
-          getItemLayout={getItemLayout}
           contentContainerStyle={{
             paddingHorizontal: sidePadding,
             alignItems: 'flex-end',
           }}
-          initialScrollIndex={Math.max(0, value - min)}
-          onScrollToIndexFailed={() => {
-            // fallback – גלול לתחילה ואז לנקודה הנכונה
-            flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
-          }}
-        />
+        >
+          {data.map((item) => {
+            const isMajor = item % 10 === 0;
+            const isMedium = item % 5 === 0;
+            return (
+              <View
+                key={item}
+                style={{ width: TICK_SPACING, alignItems: 'center', justifyContent: 'flex-end', height: 80 }}
+              >
+                <View
+                  style={{
+                    width: isMajor ? 2.5 : isMedium ? 1.5 : 1,
+                    height: isMajor ? 44 : isMedium ? 30 : 18,
+                    backgroundColor: isMajor
+                      ? colors.background[100]
+                      : isMedium
+                        ? colors.background[300]
+                        : colors.background[600],
+                    borderRadius: 1,
+                  }}
+                />
+                {isMajor && (
+                  <Text
+                    numberOfLines={1}
+                    className="typo-caption"
+                    style={{ color: colors.background[300], marginTop: 3, width: 30, textAlign: 'center' }}
+                  >
+                    {item}
+                  </Text>
+                )}
+                {!isMajor && isMedium && (
+                  <Text
+                    numberOfLines={1}
+                    className="typo-caption"
+                    style={{ color: colors.background[500], marginTop: 2, width: 30, textAlign: 'center' }}
+                  >
+                    {item}
+                  </Text>
+                )}
+              </View>
+            );
+          })}
+        </ScrollView>
       </View>
     </View>
   );

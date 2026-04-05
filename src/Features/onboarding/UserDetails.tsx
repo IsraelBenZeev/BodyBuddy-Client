@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import {
   ActivityLevel,
@@ -26,6 +27,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 const UserDetails = () => {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
+  const insets = useSafeAreaInsets();
 
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -133,9 +135,9 @@ const UserDetails = () => {
   return (
     <BackGround>
       <KeyboardAvoidingView
-        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+        style={{ flex: 1, paddingBottom: insets.bottom }}
       >
         {/* Close Button – מוצג רק כשיש פרופיל קיים (מצב עריכה) */}
         {existingProfile && (

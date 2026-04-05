@@ -38,8 +38,9 @@ const PersonalInfoStep = ({
 
   return (
     <Animated.View entering={FadeInRight.duration(400)} className="flex-1 px-6">
+      <View>
       {/* Header */}
-      <View className="mb-8">
+      <View className="mb-4">
         <Text className="typo-h1 text-white text-right mb-2">
           ספר/י לנו על עצמך
         </Text>
@@ -49,8 +50,8 @@ const PersonalInfoStep = ({
       </View>
 
       {/* Full Name */}
-      <View className="mb-6">
-        <Text className="typo-label text-background-200 text-right mb-2">
+      <View className="mb-4">
+        <Text className="typo-label text-background-200 text-right mb-1">
           שם מלא
         </Text>
         <Controller
@@ -82,8 +83,8 @@ const PersonalInfoStep = ({
       </View>
 
       {/* Gender */}
-      <View className="mb-6">
-        <Text className="typo-label text-background-200 text-right mb-2">
+      <View className="mb-4">
+        <Text className="typo-label text-background-200 text-right mb-1">
           מין
         </Text>
         <Controller
@@ -136,7 +137,7 @@ const PersonalInfoStep = ({
 
       {/* תאריך לידה */}
       <View className="mb-4">
-        <Text className="typo-label text-background-200 text-right mb-2">
+        <Text className="typo-label text-background-200 text-right mb-1">
           תאריך לידה
         </Text>
         <Controller
@@ -152,10 +153,10 @@ const PersonalInfoStep = ({
 
             return (
               <View>
-                <View className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden py-3 px-2">
+                <View className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden py-2 px-2">
                   <BirthDatePicker value={value} onChange={onChange} />
                 </View>
-                <Text className="typo-body-primary text-background-400 text-right mt-2">
+                <Text className="typo-body-primary text-background-400 text-right mt-1">
                   גיל: {age}
                 </Text>
                 <Text className="typo-caption text-background-500 text-right mt-1">
@@ -172,8 +173,10 @@ const PersonalInfoStep = ({
         />
       </View>
 
+      </View>
+
       {/* כפתורי פעולה */}
-      <View className="mt-auto gap-2">
+      <View className="pt-1 pb-3 gap-2">
         <Pressable
           onPress={handleNext}
           disabled={isPending}

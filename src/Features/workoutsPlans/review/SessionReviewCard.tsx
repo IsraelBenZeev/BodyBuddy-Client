@@ -15,6 +15,12 @@ interface SessionCardProps {
     sheetRef: any;
 }
 
+const formatDuration = (totalSeconds: number): string => {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `${m} דקות ${s} שניות`;
+};
+
 const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: SessionCardProps) => {
     // פורמט תאריך: "יום שישי, 23 בינואר"
     const dateDisplay = format(new Date(session.started_at), "EEEE, d MMMM", { locale: he });
@@ -59,7 +65,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
                     <View className="flex-row items-center">
                         <Clock size={14} color={colors.background[400]} />
                         <Text className="typo-caption text-gray-400 ml-1">
-                            {session.total_time} דקות
+                            {formatDuration(session.total_time)}
                         </Text>
                     </View>
 

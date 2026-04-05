@@ -15,30 +15,38 @@ interface EmptyStateProps {
 
 const EmptyState = ({ icon, title, description, action }: EmptyStateProps) => {
   return (
-    <View className="flex-1 items-center justify-center px-10">
-      <View className="bg-background-800 p-8 rounded-full mb-6 opacity-80">
-        {icon}
+    <View className="flex-1 items-center justify-center px-8">
+      {/* Icon with layered glow rings */}
+      <View className="items-center justify-center mb-8" style={{ width: 160, height: 160 }}>
+        <View className="absolute w-40 h-40 bg-lime-500/5 rounded-full" />
+        <View className="absolute w-32 h-32 bg-lime-500/8 rounded-full" />
+        <View className="bg-background-800 border border-white/8 p-8 rounded-full">
+          {icon}
+        </View>
       </View>
-      <Text className="typo-h3 text-white text-center mb-2">
+
+      <Text className="typo-h2 text-white text-center mb-3">
         {title}
       </Text>
+
       {description && (
-        <Text className="typo-body text-gray-400 text-center mb-8">
+        <Text className="typo-body-small text-gray-400 text-center mb-10 leading-5">
           {description}
         </Text>
       )}
+
       {action && (
         <AppButton
           haptic="medium"
           animationType="opacity"
           onPress={action.onPress}
-          className="bg-lime-500 flex-row items-center px-8 py-4 rounded-2xl"
+          className="bg-lime-500 flex-col items-center px-10 py-4 rounded-2xl"
           accessibilityLabel={action.label}
         >
-          <Text className="typo-h4 text-background-900">
+          {action.icon && <View className="mb-2">{action.icon}</View>}
+          <Text className="typo-btn-cta text-background-900 text-center">
             {action.label}
           </Text>
-          {action.icon && <View className="ml-2">{action.icon}</View>}
         </AppButton>
       )}
     </View>

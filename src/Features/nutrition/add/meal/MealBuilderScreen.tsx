@@ -403,7 +403,7 @@ const MealBuilderScreen = () => {
         user_id: userId,
         date: today,
         food_name: it.name,
-        portion_size: Math.round(it.amount_g),
+        portion_size: it.amount_g,
         protein: nutrients.protein,
         carbs: nutrients.carbs,
         fat: nutrients.fat,

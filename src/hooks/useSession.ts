@@ -123,7 +123,7 @@ export const useUserWorkoutStats = (userId: string | undefined) => {
       const thisWeek = sessions.filter((s) => new Date(s.started_at) >= weekStart);
       return {
         weeklyCount: thisWeek.length,
-        weeklyMinutes: thisWeek.reduce((sum, s) => sum + (s.total_time ?? 0), 0),
+        weeklyMinutes: Math.floor(thisWeek.reduce((sum, s) => sum + (s.total_time ?? 0), 0) / 60),
         totalCount: sessions.length,
         streak: calcStreak(sessions),
       };

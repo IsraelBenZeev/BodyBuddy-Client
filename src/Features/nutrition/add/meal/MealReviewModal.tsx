@@ -43,7 +43,7 @@ export default function MealReviewModal({
     const initial: Record<string, ItemRowState> = {};
     for (const mi of meal.meal_items) {
       if (!mi.food_item) continue;
-      initial[mi.id] = { quantity: Math.max(1, mi.amount_g) };
+      initial[mi.id] = { quantity: Math.max(0.5, mi.amount_g) };
     }
     setRowState(initial);
   }, [visible, meal]);
@@ -106,7 +106,7 @@ export default function MealReviewModal({
         user_id: userId,
         date,
         food_name: info.name,
-        portion_size: Math.round(amount),
+        portion_size: amount,
         protein: nutrients.protein,
         carbs: nutrients.carbs,
         fat: nutrients.fat,
@@ -168,7 +168,7 @@ export default function MealReviewModal({
       onRequestClose={onClose}
     >
       <View style={{ flex: 1, backgroundColor: colors.background[900] }}>
-        <View className="flex-row items-center justify-between border-b border-background-700 px-4 py-3">
+        <View className="flex-row items-center justify-between border-b border-background-700 px-5 py-3">
           <Pressable onPress={onClose} className="p-3" accessibilityRole="button" accessibilityLabel="סגור">
             <Ionicons name="close" size={24} color={colors.white} />
           </Pressable>
@@ -179,9 +179,9 @@ export default function MealReviewModal({
         </View>
 
         <ScrollView
-          className="flex-1 px-4 py-4"
+          className="flex-1"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 16 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16 }}
         >
           <Text className="typo-label text-background-400 mb-4 text-right">
             התאם כמות לכל מאכל ואז אשר להוספה ליומן
@@ -209,7 +209,7 @@ export default function MealReviewModal({
           </View>
         </ScrollView>
 
-        <View className="p-4 bg-background-900 border-t border-background-700">
+        <View className="px-5 py-4 bg-background-900 border-t border-background-700">
           <Pressable
             onPress={handleConfirm}
             disabled={isPending || items.length === 0}

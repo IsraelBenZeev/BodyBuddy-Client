@@ -134,13 +134,13 @@ const Foods = ({ userId, date, onClose }: Props) => {
         <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
           <Pressable
             onPress={handleAddNewFood}
-            className="bg-lime-500 rounded-2xl h-16 flex-row-reverse items-center justify-center"
+            className="bg-lime-500 rounded-2xl py-4 flex-col items-center justify-center"
             style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
             accessibilityRole="button"
-            accessibilityLabel="הוסף מזון חדש למזווה"
+            accessibilityLabel="הוסף מאכל חדש לרשימה"
           >
-            <Ionicons name="add-circle" size={24} color="#000" />
-            <Text className="typo-btn-cta text-black mr-2">הוסף מזון חדש למזווה</Text>
+            <Ionicons name="add-circle" size={28} color="#000" />
+            <Text className="typo-btn-cta text-black mt-2">הוסף מאכל חדש לרשימה</Text>
           </Pressable>
           <Text className="typo-caption text-gray-500 text-center mt-3">
             * המזונות שתגדיר כאן יהיו זמינים להוספה מהירה ליומן

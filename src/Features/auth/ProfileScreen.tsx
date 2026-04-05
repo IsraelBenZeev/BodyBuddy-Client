@@ -338,19 +338,16 @@ const WorkoutStatItem = ({ icon, value, label }: any) => (
 export default function ProfileScreen() {
   const user = useAuthStore((state) => state.user);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
-  const [loading, setLoading] = useState(false);
   const [animKey, setAnimKey] = useState(0);
   const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
 
   useFocusEffect(useCallback(() => { setAnimKey(k => k + 1); }, []));
 
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
-  const { data: workoutStats, isLoading: isStatsLoading } = useUserWorkoutStats(user?.id);
+  const { data: workoutStats } = useUserWorkoutStats(user?.id);
 
   const handleLogout = useCallback(async () => {
-    setLoading(true);
     const { error } = await signOut();
-    setLoading(false);
     error ? triggerSuccess('שגיאה', 'failed') : triggerSuccess('התנתקת בהצלחה', 'success');
   }, [triggerSuccess]);
 
@@ -366,36 +363,64 @@ export default function ProfileScreen() {
       >
         {/* Header Section */}
         <View className="px-7" style={{ paddingTop: topInset + 20 }}>
-          <View className="flex-row-reverse items-center justify-between">
-            <View className="flex-row-reverse items-center gap-4">
-              <Animated.View
-                entering={FadeInDown.duration(300)}
-                className="p-1 border-2 border-lime-500/30 rounded-full"
+          <View className="flex-row-reverse items-center gap-4">
+            <Animated.View
+              entering={FadeInDown.duration(300)}
+              className="p-1 border-2 border-lime-500/30 rounded-full"
+            >
+              <Image
+                source={profile?.avatar_url ?? user.user_metadata.avatar_url}
+                style={{ width: 64, height: 64, borderRadius: 32 }}
+                contentFit="cover"
+              />
+            </Animated.View>
+            <View className="flex-1">
+              <Animated.Text
+                entering={FadeInDown.delay(80).duration(300).damping(20)}
+                className="typo-label text-white/40 text-right italic"
               >
-                <Image
-                  source={profile?.avatar_url ?? user.user_metadata.avatar_url}
-                  style={{ width: 64, height: 64, borderRadius: 32 }}
-                  contentFit="cover"
-                />
+                MY PROFILE
+              </Animated.Text>
+              <Animated.Text
+                entering={FadeInDown.delay(160).duration(300).damping(20)}
+                className="typo-h1 text-white text-right tracking-tight"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
+                {profile?.full_name ?? user.user_metadata.full_name}
+              </Animated.Text>
+              <Animated.View
+                entering={FadeInDown.delay(240).duration(300).damping(20)}
+                className="flex-row-reverse mt-3"
+              >
+                <View className="flex-row-reverse items-center bg-white/5 rounded-full border border-white/10 overflow-hidden">
+                  <HoldButton
+                    onPress={handleLogout}
+                    holdDurationMs={1000}
+                    fillVariant="darken"
+                    fillColor="rgba(239,68,68,0.4)"
+                    hapticOnComplete="error"
+                    className="items-center justify-center px-5 h-[44px]"
+                    accessibilityLabel="החזק להתנתקות"
+                  >
+                    <View className="flex-row-reverse items-center gap-2">
+                      <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+                      <Text className="typo-label text-red-400">התנתקות</Text>
+                    </View>
+                  </HoldButton>
+                  <View className="w-[1px] h-5 bg-white/15" />
+                  <Pressable
+                    className="flex-row-reverse items-center justify-center gap-2 px-5 h-[44px]"
+                    onPress={() => router.navigate('/UserSetup')}
+                    accessibilityRole="button"
+                    accessibilityLabel="הגדרות פרופיל"
+                  >
+                    <Ionicons name="settings-sharp" size={18} color="rgba(255,255,255,0.6)" />
+                    <Text className="typo-label text-white/50">הגדרות</Text>
+                  </Pressable>
+                </View>
               </Animated.View>
-              <View>
-                <Animated.Text
-                  entering={FadeInDown.delay(80).duration(300).damping(20)}
-                  className="typo-label text-white/40 text-right italic"
-                >
-                  MY PROFILE
-                </Animated.Text>
-                <Animated.Text
-                  entering={FadeInDown.delay(160).duration(300).damping(20)}
-                  className="typo-h1 text-white text-right tracking-tight"
-                >
-                  {profile?.full_name ?? user.user_metadata.full_name}
-                </Animated.Text>
-              </View>
             </View>
-            <Pressable className="bg-white/5 p-3 rounded-full border border-white/10" onPress={() => router.navigate('/UserSetup')}>
-              <Ionicons name="settings-sharp" size={20} color="white" />
-            </Pressable>
           </View>
         </View>
 
@@ -457,25 +482,6 @@ export default function ProfileScreen() {
                </View>
             </AnimatedCard>
 
-            {/* Logout Button */}
-            <AnimatedCard delay={800}>
-              <HoldButton
-                onPress={handleLogout}
-                holdDurationMs={1500}
-                fillVariant="fill-both-sides"
-                fillColor="rgba(255,255,255,0.15)"
-                hapticOnComplete="error"
-                className="h-16 rounded-[24px] flex-row-reverse items-center justify-center border border-red-500/30 bg-red-500/10 mt-4"
-                accessibilityLabel="החזק להתנתקות"
-              >
-                <View className="flex-row-reverse items-center justify-center gap-2">
-                  <Ionicons name="log-out-outline" size={20} color="#ef4444" />
-                  <Text className="typo-btn-cta text-red-500">
-                    {loading ? 'מתנתק...' : 'החזק להתנתקות'}
-                  </Text>
-                </View>
-              </HoldButton>
-            </AnimatedCard>
 
           </View>
         )}

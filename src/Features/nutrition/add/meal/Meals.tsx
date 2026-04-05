@@ -116,12 +116,12 @@ return (
       <Pressable
         onPress={handleCreateFirstMeal}
         style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-        className="bg-background-800 border border-lime-500/30 rounded-2xl h-16 flex-row-reverse items-center justify-center"
+        className="bg-background-800 border border-lime-500/30 rounded-2xl py-4 flex-col items-center justify-center"
         accessibilityRole="button"
         accessibilityLabel="צור ארוחה חדשה לשמירה"
       >
-        <Ionicons name="add-circle" size={24} color="#84cc16" />
-        <Text className="typo-btn-cta text-lime-500 mr-2">
+        <Ionicons name="add-circle" size={28} color="#84cc16" />
+        <Text className="typo-btn-cta text-lime-500 mt-2">
           צור ארוחה חדשה לשמירה
         </Text>
       </Pressable>

@@ -65,7 +65,7 @@ const WorkoutList = () => {
               data={plansData}
               variant='center'
               renderItem={(item: any, isActive: boolean, isSwiped: boolean, activeId: string, translateY: SharedValue<number>) => (
-                <CardPlan plan={item} isActive={isActive} isSwiped={isSwiped} translateY={translateY} />
+                <CardPlan plan={item} isActive={isActive} isSwiped={isSwiped} />
               )}
               widthCard={280}
             />

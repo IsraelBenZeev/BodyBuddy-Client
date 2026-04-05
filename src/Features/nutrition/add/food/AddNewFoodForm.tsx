@@ -346,12 +346,46 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
             : 'את הערכים האלה תמצא על גב האריזה, או בחיפוש מהיר'}
         </Text>
 
-        {/* קלוריות — ידני בלבד */}
+        {/* קלוריות — quick chips + stepper + ידני */}
         <View className="bg-background-800 rounded-2xl p-4 mb-4 border border-background-600">
-          <Text className="typo-label text-background-400 text-right mb-3">
-            קלוריות ל{isUnits ? unitLabel : '-100 גרם'}
-          </Text>
+          <View className="flex-row-reverse items-center justify-between mb-3">
+            <Text className="typo-label text-background-400">
+              קלוריות ל{isUnits ? unitLabel : '-100 גרם'}
+            </Text>
+            <View className="flex-row-reverse items-center" style={{ gap: 4 }}>
+              <Text className="typo-h3 text-white">{calories || '0'}</Text>
+              <Text className="typo-label text-background-400">קק״ל</Text>
+            </View>
+          </View>
+
+          {/* Quick chips */}
+          <View className="flex-row flex-wrap mb-3" style={{ gap: 8 }}>
+            {[50, 100, 150, 200, 250, 300].map((val) => {
+              const isActive = parseInt(calories) === val;
+              return (
+                <Pressable
+                  key={val}
+                  onPress={() => { setCalories(String(val)); Haptics.selectionAsync(); }}
+                  className={`rounded-xl px-3 py-2 border ${isActive ? 'bg-lime-500/20 border-lime-500' : 'bg-background-700 border-background-600'}`}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${val} קלוריות`}
+                >
+                  <Text className={`typo-caption-bold ${isActive ? 'text-lime-400' : 'text-background-300'}`}>{val}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          {/* Stepper + TextInput */}
           <View className="flex-row-reverse items-center" style={{ gap: 8 }}>
+            <Pressable
+              onPress={() => { setCalories(String(Math.max(0, (parseInt(calories) || 0) + 50))); Haptics.selectionAsync(); }}
+              className="w-11 h-11 items-center justify-center bg-lime-500 rounded-xl"
+              accessibilityRole="button"
+              accessibilityLabel="הוסף 50 קלוריות"
+            >
+              <Ionicons name="add" size={22} color="#000" />
+            </Pressable>
             <TextInput
               value={calories}
               onChangeText={setCalories}
@@ -364,7 +398,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 borderRadius: 10,
                 padding: 12,
                 color: colors.white,
-                textAlign: 'right',
+                textAlign: 'center',
                 fontSize: 20,
                 fontWeight: 'bold',
                 borderWidth: 1,
@@ -374,7 +408,14 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                     : colors.background[600],
               }}
             />
-            <Text className="typo-label text-background-400">קק״ל</Text>
+            <Pressable
+              onPress={() => { setCalories(String(Math.max(0, (parseInt(calories) || 0) - 50))); Haptics.selectionAsync(); }}
+              className="w-11 h-11 items-center justify-center bg-background-700 rounded-xl border border-background-600"
+              accessibilityRole="button"
+              accessibilityLabel="הפחת 50 קלוריות"
+            >
+              <Ionicons name="remove" size={22} color="#fff" />
+            </Pressable>
           </View>
         </View>
 
@@ -410,39 +451,41 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           </View>
         </View>
 
-        {/* כמה אכלת — אופציונלי */}
+        {/* כמה אכלת — Slider */}
         <View className="bg-background-800 rounded-2xl p-4 mt-4 border border-background-600">
-          <Text className="typo-label text-background-400 text-right mb-3">
-            כמה אכלת?{' '}
-            <Text className="text-background-600">(אופציונלי)</Text>
-          </Text>
-          <View className="flex-row-reverse items-center" style={{ gap: 8 }}>
-            <TextInput
-              value={consumedAmount}
-              onChangeText={setConsumedAmount}
-              keyboardType="decimal-pad"
-              placeholder={isUnits ? '1' : '100'}
-              placeholderTextColor={colors.background[500]}
-              style={{
-                flex: 1,
-                backgroundColor: colors.background[700],
-                borderRadius: 10,
-                padding: 12,
-                color: colors.white,
-                textAlign: 'right',
-                fontSize: 18,
-                fontWeight: 'bold',
-                borderWidth: 1,
-                borderColor:
-                  (parseFloat(consumedAmount) || 0) > 0
-                    ? colors.lime[500] + '80'
-                    : colors.background[600],
-              }}
-            />
-            <Text className="typo-label text-background-400">{isUnits ? 'יחידות' : 'גרם'}</Text>
+          <View className="flex-row-reverse items-center justify-between mb-2">
+            <Text className="typo-label text-background-400">
+              כמה אכלת? <Text className="text-background-600">(אופציונלי)</Text>
+            </Text>
+            <View className="flex-row-reverse items-center" style={{ gap: 4 }}>
+              <Text className="typo-h3 text-white">
+                {consumedAmount || '—'}
+              </Text>
+              <Text className="typo-label text-background-400">{isUnits ? 'יח׳' : 'גרם'}</Text>
+            </View>
           </View>
-          <Text className="typo-caption text-background-600 text-right mt-1.5">
-            מלא רק אם תרצה להוסיף מזון זה ליומן כעת
+          <Slider
+            style={{ width: '100%', height: 40 }}
+            minimumValue={isUnits ? 0.5 : 10}
+            maximumValue={isUnits ? 10 : 500}
+            step={isUnits ? 0.5 : 10}
+            value={parseFloat(consumedAmount) || (isUnits ? 1 : 100)}
+            onValueChange={(v) => {
+              const val = isUnits ? Math.round(v * 2) / 2 : Math.round(v / 10) * 10;
+              setConsumedAmount(String(val));
+              Haptics.selectionAsync();
+            }}
+            minimumTrackTintColor={colors.lime[500]}
+            maximumTrackTintColor={colors.background[600]}
+            thumbTintColor={colors.lime[500]}
+          />
+          <View className="flex-row justify-between px-1 mt-1">
+            <Text className="typo-caption text-background-500">{isUnits ? '0.5' : '10'}</Text>
+            <Text className="typo-caption text-background-500">{isUnits ? '5' : '250'}</Text>
+            <Text className="typo-caption text-background-500">{isUnits ? '10 יח׳' : '500 גרם'}</Text>
+          </View>
+          <Text className="typo-caption text-background-600 text-right mt-2">
+            גרור רק אם תרצה להוסיף מזון זה ליומן כעת
           </Text>
         </View>
       </View>
@@ -718,7 +761,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               {/* ערך גדול */}
               <View className="bg-background-800 rounded-2xl p-5 mb-6 border border-background-600 items-center">
                 <Text className="text-white font-black" style={{ fontSize: 52, lineHeight: 60 }}>
-                  {Math.round(portionAmount)}
+                  {portionAmount}
                 </Text>
                 <Text className="typo-body text-background-400 mt-1">
                   {isUnits ? 'יחידות' : 'גרם'}

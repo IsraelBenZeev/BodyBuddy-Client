@@ -16,7 +16,7 @@ const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
   const [selectedParts, setSelectedParts] = useState<BodyPart[]>([]);
   const { user } = useAuthStore();
-  const { data: profile } = useProfile(user?.id);
+  const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
   const router = useRouter();
 
   const handleTogglePart = useCallback((partName: BodyPart) => {
@@ -64,18 +64,20 @@ const AvatarSelectorScreen = () => {
 
           {/* גובה דינמי, חייב style */}
           <View className="justify-center items-center z-[5]" style={{ height: height * 0.5 }}>
-            {profile?.gender === 'female' ? (
-              <AvatarFemale
-                avatarSide={sideAvatar}
-                isSelected={isSelected}
-                handleTogglePart={handleTogglePart}
-              />
-            ) : (
-              <AvatarMale
-                avatarSide={sideAvatar}
-                isSelected={isSelected}
-                handleTogglePart={handleTogglePart}
-              />
+            {!isProfileLoading && (
+              profile?.gender === 'female' ? (
+                <AvatarFemale
+                  avatarSide={sideAvatar}
+                  isSelected={isSelected}
+                  handleTogglePart={handleTogglePart}
+                />
+              ) : (
+                <AvatarMale
+                  avatarSide={sideAvatar}
+                  isSelected={isSelected}
+                  handleTogglePart={handleTogglePart}
+                />
+              )
             )}
           </View>
         </View>

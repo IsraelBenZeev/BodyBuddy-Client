@@ -59,13 +59,13 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
         const completedAt = new Date().toISOString();
         const startTime = new Date(data.started_at).getTime();
         const endTime = new Date(completedAt).getTime();
-        const durationInMinutes = Math.floor((endTime - startTime) / 60000);
+        const durationInSeconds = Math.floor((endTime - startTime) / 1000);
         const finalData = {
             user_id: user_id,
             workout_plan_id: workoutPlan.id as string,
             started_at: data.started_at,
             completed_at: completedAt,
-            total_time: durationInMinutes,
+            total_time: durationInSeconds,
             notes: data.notes || "",
             id: idSession
         };
