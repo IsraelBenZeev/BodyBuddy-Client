@@ -92,23 +92,6 @@ export const getCurrentSession = async (): Promise<{
   }
 };
 
-/** מפרסר טוקנים מ-URL של redirect (hash או query) */
-function parseTokensFromRedirectUrl(
-  url: string
-): { access_token: string; refresh_token: string } | null {
-  try {
-    const hasHash = url.includes('#');
-    const fragmentOrQuery = hasHash ? (url.split('#')[1] ?? '') : (url.split('?')[1] ?? '');
-    const params = new URLSearchParams(fragmentOrQuery);
-    const access_token = params.get('access_token');
-    const refresh_token = params.get('refresh_token');
-    if (access_token && refresh_token) return { access_token, refresh_token };
-  } catch {
-    // ignore
-  }
-  return null;
-}
-
 /**
  * מאזין ל-deep link URL שמגיע דרך Linking — fallback לאנדרואיד
  * כש-openAuthSessionAsync מחזיר dismiss במקום success (באג ידוע של Expo)
@@ -123,7 +106,7 @@ function waitForRedirectUrl(timeoutMs: number): {
 
   const promise = new Promise<string | null>((resolve) => {
     subscription = Linking.addEventListener('url', ({ url }) => {
-      if (!resolved && url && url.includes('access_token')) {
+      if (!resolved && url && (url.includes('access_token') || url.includes('code='))) {
         resolved = true;
         if (timeoutId) clearTimeout(timeoutId);
         resolve(url);
@@ -186,15 +169,10 @@ export const signInWithGoogle = async () => {
 
       if (!authUrl) return; // המשתמש ביטל או timeout
 
-      const tokens = parseTokensFromRedirectUrl(authUrl);
-      if (!tokens) return;
-
-      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
-      });
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.exchangeCodeForSession(authUrl);
       if (sessionError) {
-        if (__DEV__) console.error('setSession error:', sessionError.message);
+        if (__DEV__) console.error('exchangeCodeForSession error:', sessionError.message);
         return;
       }
 

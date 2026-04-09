@@ -16,12 +16,13 @@ export default function AuthCallback() {
   // timeout fallback — אם authService לא ניווט תוך 10 שניות, חזור ל-login
   useEffect(() => {
     const fallbackTimer = setTimeout(() => {
+      // 60 שניות — מספיק ל-SMS verification + Android 15 latency
       if (!navigated.current) {
         navigated.current = true;
         useAuthStore.getState().setPendingAuthUrl(null);
         router.replace('/auth/login/[params]' as never);
       }
-    }, 10_000);
+    }, 60_000);
 
     return () => clearTimeout(fallbackTimer);
   }, [router]);
