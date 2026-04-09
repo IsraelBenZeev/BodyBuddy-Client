@@ -86,9 +86,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
     <Animated.View style={[animatedStyle, { height: 470, width: 280, backgroundColor: '#18181b', borderWidth: 1, borderRadius: 40, marginTop: 30 }]}>
       <View className="h-40 w-full relative rounded-t-[40px]">
         <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=400',
-          }}
+          source={require('../../../../assets/images/bg-9.jpg')}
           className="w-full h-full opacity-60 rounded-t-[40px]"
         />
         <View className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-zinc-900" />
