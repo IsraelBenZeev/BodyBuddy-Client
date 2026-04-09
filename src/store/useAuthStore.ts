@@ -46,9 +46,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     // טעינת session קיים מAsyncStorage
     const {
       data: { session },
+      error,
     } = await supabase.auth.getSession();
 
-    if (session) {
+    if (error) {
+      // טוקן לא תקין (למשל, יוזר נמחק מה-DB) — ניקוי SecureStore
+      await supabase.auth.signOut();
+    } else if (session) {
       set({
         user: session.user,
         session,
@@ -56,7 +60,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
 
     // Listener לשינויי auth state (login/logout/refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'TOKEN_REFRESHED' && !session) {
+        supabase.auth.signOut();
+        return;
+      }
       set({
         user: session?.user ?? null,
         session: session ?? null,
