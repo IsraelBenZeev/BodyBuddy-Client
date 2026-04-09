@@ -16,7 +16,15 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#E6F4FE"
       },
-      "package": "com.ibz1330.bodybuddy"
+      "package": "com.ibz1330.bodybuddy",
+      "versionCode": 2,
+      "privacyPolicy": "https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.VIBRATE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "output": "static",
