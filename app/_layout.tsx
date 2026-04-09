@@ -8,7 +8,7 @@ import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { StatusBar, StyleSheet } from 'react-native';
+import { I18nManager, StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { QueryClientManager } from 'reactotron-react-query';
@@ -16,6 +16,15 @@ import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tai
 import Reactotron from '../ReactotronConfig';
 
 SplashScreen.preventAutoHideAsync();
+
+// כופה RTL לאפליקציה עברית ללא קשר ל-locale של המכשיר.
+// allowRTL חייב לבוא לפני forceRTL. הערך נשמר natively ושורד restarts.
+// בהפעלה הראשונה לאחר התקנה נקייה, ה-layout עשוי להיות LTR;
+// מההפעלה השנייה ואילך – RTL קבוע.
+if (!I18nManager.isRTL) {
+  I18nManager.allowRTL(true);
+  I18nManager.forceRTL(true);
+}
 
 // בתוך RootLayout
 const queryClient = new QueryClient({
