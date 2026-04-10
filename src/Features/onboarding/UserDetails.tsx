@@ -106,15 +106,7 @@ const UserDetails = () => {
 
       mutate(payload, {
         onSuccess: () => {
-          if (existingProfile) {
-            if (router.canGoBack()) {
-              router.back();
-            } else {
-              router.replace('/(tabs)');
-            }
-          } else {
-            router.replace('/(tabs)');
-          }
+          router.replace('/(tabs)');
         },
       });
     },
@@ -145,7 +137,7 @@ const UserDetails = () => {
       >
         {/* Close Button – מוצג רק כשיש פרופיל קיים (מצב עריכה) */}
         {existingProfile && (
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} className="self-end px-6 pt-4 pb-2" accessibilityRole="button" accessibilityLabel="סגירה">
+          <Pressable onPress={() => router.replace('/(tabs)')} className="self-end px-6 pt-4 pb-2" accessibilityRole="button" accessibilityLabel="סגירה">
             <Ionicons name="close" size={26} color="white" />
           </Pressable>
         )}
