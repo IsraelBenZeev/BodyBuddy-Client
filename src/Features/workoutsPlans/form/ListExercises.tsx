@@ -62,7 +62,7 @@
 //               exiting={FadeOutLeft.duration(300)}
 //               layout={LinearTransition.springify()}
 //               key={exercise.exerciseId}
-//               className="flex-row-reverse items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
+//               className="flex-row items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
 //             >
 //               {mode === 'edit' && (
 //                 <TouchableOpacity
@@ -215,7 +215,7 @@ const ExerciseItem = React.memo(function ExerciseItem({
       exiting={FadeOutLeft.duration(400)}
       layout={LinearTransition.springify()}
       onPress={handlePress}
-      className="flex-row-reverse items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
+      className="flex-row items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
       accessibilityLabel={`${exercise.name_he || exercise.name} - הצג פרטי תרגיל`}
     >
       {mode === 'edit' && (

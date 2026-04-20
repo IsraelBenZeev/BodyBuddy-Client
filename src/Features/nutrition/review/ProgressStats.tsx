@@ -18,12 +18,12 @@ const ProgressStats = ({ label, consumed, goal, unit, color, iconName }: Props) 
 
   return (
     <View className="bg-background-800 rounded-2xl p-4 mb-3 border border-background-600">
-      <View className="flex-row-reverse items-center justify-between mb-3">
-        <View className="flex-row-reverse items-center">
+      <View className="flex-row items-center justify-between mb-3">
+        <View className="flex-row items-center">
           <Ionicons name={iconName} size={20} color={color} />
           <Text className="typo-body-primary text-white mr-2">{label}</Text>
         </View>
-        <View className="flex-row-reverse items-center space-x-1 space-x-reverse">
+        <View className="flex-row items-center space-x-1 space-x-reverse">
           <Text className="typo-label text-background-400">
             {consumed}
           </Text>
@@ -42,7 +42,7 @@ const ProgressStats = ({ label, consumed, goal, unit, color, iconName }: Props) 
         />
       </View>
 
-      <View className="flex-row-reverse items-center justify-between">
+      <View className="flex-row items-center justify-between">
         <Text className="typo-caption text-background-400">
           נותר: {remaining} {unit}
         </Text>

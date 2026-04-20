@@ -35,7 +35,7 @@ const FavoritesScreen = () => {
   return (
     <BackGround>
       {/* Header */}
-      <View className="px-6 pt-12 pb-4 flex-row-reverse items-center gap-3">
+      <View className="px-6 pt-12 pb-4 flex-row items-center gap-3">
         <Pressable onPress={handleBack} className="bg-zinc-800 p-3 rounded-xl" accessibilityRole="button" accessibilityLabel="חזרה">
           <Entypo name="chevron-right" size={22} color="white" />
         </Pressable>

@@ -48,7 +48,7 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
 
   return (
     <View className="bg-background-800 border border-white/5 rounded-2xl p-4">
-      <View className="flex-row-reverse items-center mb-2">
+      <View className="flex-row items-center mb-2">
         <View className="bg-background-700 w-10 h-10 rounded-xl items-center justify-center ml-3">
           <Ionicons name="nutrition" size={18} color="#fb923c" />
         </View>
@@ -64,12 +64,12 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
           </Pressable>
         </View>
       </View>
-      <View className="flex-row-reverse items-center gap-2 mb-1">
+      <View className="flex-row items-center gap-2 mb-1">
         <Text className="typo-caption text-gray-400">{amountLabel}</Text>
         <View className="w-1 h-1 rounded-full bg-gray-600" />
         <Text className="typo-caption-bold text-lime-400">{cal} קק״ל</Text>
       </View>
-      <View className="flex-row-reverse gap-3">
+      <View className="flex-row gap-3">
         <Text className="typo-caption text-blue-400">P {nutrients.protein}g</Text>
         <Text className="typo-caption text-orange-400">C {nutrients.carbs}g</Text>
         <Text className="typo-caption text-red-400">F {nutrients.fat}g</Text>
@@ -440,7 +440,7 @@ const MealBuilderScreen = () => {
         <View className="items-center pt-3 pb-2">
           <Handle />
         </View>
-        <View className="flex-row-reverse items-center justify-between mb-6">
+        <View className="flex-row items-center justify-between mb-6">
           <Text className="typo-h1 text-white text-right">בניית ארוחה</Text>
           <Pressable
             onPress={() => router.back()}
@@ -467,8 +467,8 @@ const MealBuilderScreen = () => {
         </View>
 
         {/* כותרת רשימת הפריטים */}
-        <View className="flex-row-reverse items-center justify-between mb-4 px-1">
-          <View className="flex-row-reverse items-center">
+        <View className="flex-row items-center justify-between mb-4 px-1">
+          <View className="flex-row items-center">
             <Ionicons name="list" size={18} color="#84cc16" />
             <Text className="typo-h4 text-white mr-2">מרכיבי הארוחה</Text>
           </View>
@@ -500,7 +500,7 @@ const MealBuilderScreen = () => {
         <View className="mt-6 gap-4">
           <Pressable
             onPress={openAddModal}
-            className="bg-background-800 border border-dashed border-white/20 rounded-2xl py-4 flex-row-reverse items-center justify-center"
+            className="bg-background-800 border border-dashed border-white/20 rounded-2xl py-4 flex-row items-center justify-center"
             accessibilityRole="button"
             accessibilityLabel="הוסף מאכל לארוחה"
           >
@@ -512,7 +512,7 @@ const MealBuilderScreen = () => {
             <Pressable
               onPress={handleSaveListOnly}
               disabled={!canSave}
-              className={`rounded-2xl h-14 flex-row-reverse items-center justify-center border border-white/10 ${
+              className={`rounded-2xl h-14 flex-row items-center justify-center border border-white/10 ${
                 canSave ? 'bg-background-800' : 'bg-background-700 opacity-50'
               }`}
               accessibilityRole="button"
@@ -530,7 +530,7 @@ const MealBuilderScreen = () => {
             <Pressable
               onPress={handleSaveListAndJournal}
               disabled={!canSave}
-              className={`rounded-2xl h-16 flex-row-reverse items-center justify-center shadow-lg ${
+              className={`rounded-2xl h-16 flex-row items-center justify-center shadow-lg ${
                 canSave ? 'bg-lime-500 shadow-lime-500/20' : 'bg-background-700 opacity-50'
               }`}
               accessibilityRole="button"
@@ -572,7 +572,7 @@ const MealBuilderScreen = () => {
                   </View>
 
                   {/* שם המאכל + AI badge */}
-                  <View className="flex-row-reverse items-center mb-6">
+                  <View className="flex-row items-center mb-6">
                     <View className="bg-orange-500/10 w-11 h-11 rounded-2xl items-center justify-center ml-3">
                       <Ionicons name="nutrition" size={20} color="#fb923c" />
                     </View>
@@ -581,7 +581,7 @@ const MealBuilderScreen = () => {
                         {editDraft?.name ?? ''}
                       </Text>
                       {editDraft?.isPendingCreate && (
-                        <View className="flex-row-reverse items-center mt-1">
+                        <View className="flex-row items-center mt-1">
                           <Ionicons name="flash" size={12} color="#84cc16" />
                           <Text className="typo-caption-bold text-lime-400 mr-1">
                             זוהה ע״י AI — בדוק ערכים
@@ -618,7 +618,7 @@ const MealBuilderScreen = () => {
                   })()}
 
                   {/* Toggle: סוג מדידה */}
-                  <View className="flex-row-reverse gap-2 mb-5">
+                  <View className="flex-row gap-2 mb-5">
                     <Pressable
                       onPress={() => setEditDraft((d) => d && { ...d, measurement_type: 'grams' })}
                       className={`flex-1 py-3 rounded-xl items-center border ${
@@ -656,7 +656,7 @@ const MealBuilderScreen = () => {
                     const isUnitsEdit = editDraft.measurement_type === 'units';
                     return (
                       <View className="mb-7">
-                        <View className="flex-row-reverse items-center justify-between mb-2">
+                        <View className="flex-row items-center justify-between mb-2">
                           <Text className="typo-body-primary text-white">כמות</Text>
                           <View className="bg-lime-500/10 border border-lime-500/20 px-4 py-1.5 rounded-full">
                             <Text className="typo-btn-cta text-lime-400">
@@ -675,7 +675,7 @@ const MealBuilderScreen = () => {
                           maximumTrackTintColor={colors.background[600]}
                           thumbTintColor={colors.lime[400]}
                         />
-                        <View className="flex-row-reverse justify-between" style={{ marginTop: -4 }}>
+                        <View className="flex-row justify-between" style={{ marginTop: -4 }}>
                           <Text className="typo-caption text-gray-700">0</Text>
                           <Text className="typo-caption text-gray-700">{isUnitsEdit ? '20 יחידות' : '1000g'}</Text>
                         </View>
@@ -698,7 +698,7 @@ const MealBuilderScreen = () => {
                     const calVal = isUnitsEdit ? (editDraft.calories_per_unit ?? 0) : editDraft.calories_per_100;
                     return (
                       <View className="bg-background-800 rounded-2xl p-4 mb-3 border border-lime-500/20">
-                        <View className="flex-row-reverse items-center justify-between mb-2">
+                        <View className="flex-row items-center justify-between mb-2">
                           <Text className="typo-label text-lime-400">
                             קלוריות ל{isUnitsEdit ? 'יחידה' : '-100 גרם'}
                           </Text>
@@ -735,7 +735,7 @@ const MealBuilderScreen = () => {
                     const protVal = isUnitsEdit ? (editDraft.protein_per_unit ?? 0) : editDraft.protein_per_100;
                     return (
                       <View className="bg-background-800 rounded-2xl p-4 mb-5 border border-blue-500/20">
-                        <View className="flex-row-reverse items-center justify-between mb-1">
+                        <View className="flex-row items-center justify-between mb-1">
                           <Text className="typo-label text-blue-400">
                             חלבון ל{isUnitsEdit ? 'יחידה' : '-100 גרם'}
                           </Text>

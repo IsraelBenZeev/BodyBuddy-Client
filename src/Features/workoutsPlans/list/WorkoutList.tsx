@@ -44,7 +44,7 @@ const WorkoutList = () => {
   return (
     <BackGround>
       <View className="flex-1 items-center justify-between py-10">
-        <View className="w-full px-6 mt-5 flex-row-reverse items-start justify-between">
+        <View className="w-full px-6 mt-5 flex-row items-start justify-between">
           <View className="items-end">
             <Text className="typo-h1 text-white tracking-tight text-right">האימונים שלי</Text>
             <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, marginTop: 8 }} />

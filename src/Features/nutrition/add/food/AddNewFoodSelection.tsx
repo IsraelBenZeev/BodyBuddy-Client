@@ -52,11 +52,11 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
 
       {/* כרטיס בחירת כמות */}
       <View className="bg-background-800 rounded-3xl p-5 border border-white/5 mb-6 shadow-xl">
-        <View className="flex-row-reverse justify-between items-center mb-4">
+        <View className="flex-row justify-between items-center mb-4">
           <Text className="typo-label text-gray-400 uppercase tracking-wider">
             {isUnits ? `כמות ${unitLabel}` : 'כמות (×100 גרם)'}
           </Text>
-          <View className="bg-lime-500/10 px-3 py-1 rounded-full flex-row-reverse items-center">
+          <View className="bg-lime-500/10 px-3 py-1 rounded-full flex-row items-center">
             <Ionicons name="scale-outline" size={14} color="#84cc16" />
             <Text className="typo-caption-bold text-lime-500 mr-1">
               {isUnits ? `${quantity} ${unitLabel}` : `${portionAmount} גרם`}
@@ -65,7 +65,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
         </View>
 
         {/* Stepper מרכזי */}
-        <View className="flex-row-reverse items-center justify-between bg-background-900/50 rounded-2xl p-2 border border-white/5">
+        <View className="flex-row items-center justify-between bg-background-900/50 rounded-2xl p-2 border border-white/5">
           <Pressable
             onPress={() => handleQuantityChange(0.5)}
             className="w-14 h-14 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
@@ -94,7 +94,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
 
         {/* איפוס — רק עבור units */}
         {isUnits && (
-          <View className="mt-3 flex-row-reverse gap-2">
+          <View className="mt-3 flex-row gap-2">
             <Pressable
               onPress={() => setQuantity(1)}
               className="flex-1 bg-background-700 rounded-xl py-2 items-center border border-white/5"
@@ -115,7 +115,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
             : `ערכים תזוניים ל-${portionAmount} גרם`}
         </Text>
 
-        <View className="flex-row-reverse items-center justify-around">
+        <View className="flex-row items-center justify-around">
           {/* קלוריות */}
           <View className="items-center flex-1">
             <Text className="typo-caption-bold text-gray-500 uppercase mb-2">קלוריות</Text>
@@ -139,7 +139,7 @@ const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabe
       </View>
 
       {/* כפתורי פעולה */}
-      <View className="flex-row-reverse gap-4 mt-auto pb-4">
+      <View className="flex-row gap-4 mt-auto pb-4">
         <View className="flex-1">
           <Pressable
             onPress={onBack}

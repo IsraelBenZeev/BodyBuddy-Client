@@ -9,7 +9,7 @@ interface Props {
 const CardWorkouPlan = ({workoutPlan}: Props) => {
     return(
           <View animation="fadeInUp" delay={200} className="px-5 mt-6">
-                    <View className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 flex-row-reverse justify-around">
+                    <View className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 flex-row justify-around">
                         
                         {/* זמן */}
                         <View className="items-center">

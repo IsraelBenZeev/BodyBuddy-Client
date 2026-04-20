@@ -27,7 +27,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
     return (
         <View className="px-5 w-full space-y-3 mt-4 gap-3">
             {/* כרטיס שריר עיקרי */}
-            <View className="flex-row-reverse items-center bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl">
+            <View className="flex-row items-center bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl">
                 {gender && targetParts.length > 0 && (
                     <MiniAvatar
                         selectedParts={targetParts}
@@ -44,7 +44,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
             </View>
 
             {/* שורה כפולה לציוד ושרירים מסייעים */}
-            <View className="flex-row-reverse space-x-3 gap-3">
+            <View className="flex-row space-x-3 gap-3">
 
                 {/* ציוד - כרטיס חצי רוחב */}
                 <View className="flex-1 bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl items-end">

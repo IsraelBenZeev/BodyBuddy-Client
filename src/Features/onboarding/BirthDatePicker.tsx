@@ -311,7 +311,7 @@ const BirthDatePicker: React.FC<BirthDatePickerProps> = ({ value, onChange }) =>
   );
 
   return (
-    <View style={{ flexDirection: 'row-reverse', gap: 8, paddingHorizontal: 4 }}>
+    <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 4 }}>
       <PickerColumn
         data={days}
         selectedIndex={dayIndex}

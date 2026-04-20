@@ -110,7 +110,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
           title="רשימת המאכלים שלך ריקה"
           description="נראה שעדיין לא הוספת מוצרים. הוסף את המזונות שאתה אוכל בדרך כלל כדי שיופיעו כאן."
           action={{
-            label: "הוסף מזון ראשון",
+            label: "הוסף מאכל ראשון",
             onPress: handleAddNewFood,
             icon: <Ionicons name="add-circle" size={24} color="#000" />,
           }}
@@ -188,7 +188,7 @@ const FoodCard = React.memo(function FoodCard({
       accessibilityRole="button"
       accessibilityLabel={`${item.name} - בחר מאכל`}
     >
-      <View className="flex-row-reverse items-center p-4">
+      <View className="flex-row items-center p-4">
         <View className="bg-orange-500/10 rounded-2xl w-14 h-14 items-center justify-center ml-4 border border-orange-500/10">
           <MaterialCommunityIcons
             name={getCategoryIconName(item.category)}
@@ -201,7 +201,7 @@ const FoodCard = React.memo(function FoodCard({
           <Text className="typo-h4 text-white text-right" numberOfLines={1}>
             {item.name}
           </Text>
-          <View className="flex-row-reverse items-center mt-1">
+          <View className="flex-row items-center mt-1">
             <Text className="typo-caption-bold text-lime-400">
               {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100}{' '}קק״ל
             </Text>
@@ -229,7 +229,7 @@ const FoodCard = React.memo(function FoodCard({
         </View>
       </View>
 
-      <View className="flex-row-reverse bg-white/5 px-4 py-3 justify-around items-center">
+      <View className="flex-row bg-white/5 px-4 py-3 justify-around items-center">
         <View className="items-center flex-1">
           <Text className="typo-caption-bold text-lime-400">
             {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100} קק״ל

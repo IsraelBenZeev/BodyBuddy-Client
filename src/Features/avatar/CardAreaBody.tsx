@@ -26,8 +26,8 @@ const CardAreaBody = ({ selectedPart }: CardAreaBodyProps) => {
 
   return (
     <View className="">
-      <View className="flex-row-reverse items-center justify-between mb-8 ">
-        <View className="flex-row-reverse items-center gap-4 ">
+      <View className="flex-row items-center justify-between mb-8 ">
+        <View className="flex-row items-center gap-4 ">
           <View style={styles.iconCircleMain}>
             <Ionicons name="body" size={24} color="black" />
           </View>

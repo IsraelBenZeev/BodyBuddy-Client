@@ -23,7 +23,7 @@ const IntensitySlider = ({ control, name, isPendingCreate }: Props) => {
             }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <View className="mb-6">
-                    <View className="flex-row-reverse justify-between items-center mb-3">
+                    <View className="flex-row justify-between items-center mb-3">
                         <Text className="typo-label text-background-400">רמת קושי</Text>
                         <Text className="typo-h4 text-lime-500">
                             {Math.round(value)}/10

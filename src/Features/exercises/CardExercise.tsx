@@ -52,7 +52,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
       accessibilityState={mode === 'picker' ? { selected: isSelected } : undefined}
       // הסרנו צלליות מורכבות מה-className כדי למנוע קריסת Navigation
       className={`
-        flex-row-reverse items-center mb-4 p-3 rounded-[24px] border-[1.5px]
+        flex-row items-center mb-4 p-3 rounded-[24px] border-[1.5px]
         ${isSelected ? "bg-zinc-800 border-lime-500" : "bg-zinc-900 border-zinc-800"}
       `}
       // העברנו את הצללית ל-style בטוח
@@ -104,7 +104,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
           >
             {item.name_he}
           </Text>
-          <View className="flex-row-reverse items-center mt-1">
+          <View className="flex-row items-center mt-1">
             <MaterialCommunityIcons
               name="target"
               size={14}
@@ -117,7 +117,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
         </View>
 
         {/* תגיות ציוד */}
-        <View className="flex-row-reverse flex-wrap gap-1 mt-3">
+        <View className="flex-row flex-wrap gap-1 mt-3">
           {item.equipments_he.slice(0, 2).map((eq, i) => (
             <View
               key={i}
@@ -148,7 +148,7 @@ export default React.memo(CardExercise);
 
 const styles = StyleSheet.create({
   exerciseCard: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
     backgroundColor: colors.background[800],
     borderRadius: 24,
     marginBottom: 16,

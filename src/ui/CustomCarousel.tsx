@@ -69,7 +69,7 @@ const AnimatedCarouselItem = ({
     );
 
     return {
-      transform: [{ scale }, { scaleX: -1 }],
+      transform: [{ scale }],
       opacity,
       zIndex: isActive ? 10 : 1,
     };
@@ -123,7 +123,7 @@ const CustomCarousel = ({
     <View style={styles.container}>
       <Animated.ScrollView
         horizontal
-        style={{ transform: [{ scaleX: -1 }], flex: 1 }}
+        style={{ flex: 1 }}
         onScroll={onScroll}
         scrollEventThrottle={16}
         showsHorizontalScrollIndicator={false}

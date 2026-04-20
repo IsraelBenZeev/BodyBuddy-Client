@@ -99,7 +99,7 @@ interface TabsManagerProps {
     //                             </View>
     //                         ) : (
         //                             <View className="p-6">
-        //                                 <View className="flex-row-reverse items-center gap-4 mb-4">
+        //                                 <View className="flex-row items-center gap-4 mb-4">
         //                                     <Hammer size={24} color={colors.lime[500]} />
         //                                     <Text className="text-lime-500 text-xl font-bold text-right">בהקמה</Text>
         //                                 </View>

@@ -53,10 +53,10 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
               accessibilityLabel="צלם עם AI"
               className="rounded-3xl overflow-hidden mb-4 border border-lime-500/30 bg-lime-500/10"
             >
-              <View className="p-5 flex-row-reverse items-center justify-between">
+              <View className="p-5 flex-row items-center justify-between">
                 {/* טקסט */}
                 <View className="flex-1 ml-4">
-                  <View className="flex-row-reverse items-center gap-2 mb-2">
+                  <View className="flex-row items-center gap-2 mb-2">
                     <View className="bg-lime-500 rounded-md px-2 py-0.5">
                       <Text className="typo-caption-bold text-black">AI</Text>
                     </View>
@@ -66,7 +66,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                   <Text className="typo-label text-lime-500/80 text-right mt-1">
                     צלם ארוחה ו-AI יזהה אוטומטית את המרכיבים והערכים התזונתיים
                   </Text>
-                  <View className="flex-row-reverse items-center mt-3 gap-1">
+                  <View className="flex-row items-center mt-3 gap-1">
                     <Text className="typo-caption-bold text-lime-400">התחל עכשיו</Text>
                     <Ionicons name="chevron-back" size={12} color="rgb(163,230,53)" />
                   </View>
@@ -94,7 +94,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   accessibilityRole="button"
                   accessibilityLabel={opt.label}
-                  className="flex-row-reverse items-center p-4 rounded-2xl border border-white/5 bg-background-800"
+                  className="flex-row items-center p-4 rounded-2xl border border-white/5 bg-background-800"
                 >
                   <View className={`w-10 h-10 rounded-xl items-center justify-center ml-3 ${opt.iconBg}`}>
                     <Ionicons name={opt.icon} size={20} color={opt.color} />

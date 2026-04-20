@@ -227,7 +227,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
       </View>
 
       <Text className="typo-caption text-background-500 text-center mb-3">הצעות מהירות</Text>
-      <View style={{ flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
         {QUICK_SUGGESTIONS.map((s) => (
           <Pressable
             key={s}
@@ -256,7 +256,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
       <View className="gap-3 mb-6">
         <Pressable
           onPress={() => setMeasurementType('grams')}
-          className={`rounded-2xl p-5 border-2 flex-row-reverse items-center ${
+          className={`rounded-2xl p-5 border-2 flex-row items-center ${
             measurementType === 'grams'
               ? 'border-lime-500 bg-lime-500/10'
               : 'border-background-600 bg-background-800'
@@ -292,7 +292,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
 
         <Pressable
           onPress={() => setMeasurementType('units')}
-          className={`rounded-2xl p-5 border-2 flex-row-reverse items-center ${
+          className={`rounded-2xl p-5 border-2 flex-row items-center ${
             measurementType === 'units'
               ? 'border-lime-500 bg-lime-500/10'
               : 'border-background-600 bg-background-800'
@@ -348,11 +348,11 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
 
         {/* קלוריות — quick chips + stepper + ידני */}
         <View className="bg-background-800 rounded-2xl p-4 mb-4 border border-background-600">
-          <View className="flex-row-reverse items-center justify-between mb-3">
+          <View className="flex-row items-center justify-between mb-3">
             <Text className="typo-label text-background-400">
               קלוריות ל{isUnits ? unitLabel : '-100 גרם'}
             </Text>
-            <View className="flex-row-reverse items-center" style={{ gap: 4 }}>
+            <View className="flex-row items-center" style={{ gap: 4 }}>
               <Text className="typo-h3 text-white">{calories || '0'}</Text>
               <Text className="typo-label text-background-400">קק״ל</Text>
             </View>
@@ -377,7 +377,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           </View>
 
           {/* Stepper + TextInput */}
-          <View className="flex-row-reverse items-center" style={{ gap: 8 }}>
+          <View className="flex-row items-center" style={{ gap: 8 }}>
             <Pressable
               onPress={() => { setCalories(String(Math.max(0, (parseInt(calories) || 0) + 50))); Haptics.selectionAsync(); }}
               className="w-11 h-11 items-center justify-center bg-lime-500 rounded-xl"
@@ -421,11 +421,11 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
 
         {/* חלבון — Slider */}
         <View className="bg-background-800 rounded-2xl p-4 border border-background-600">
-          <View className="flex-row-reverse items-center justify-between mb-4">
+          <View className="flex-row items-center justify-between mb-4">
             <Text className="typo-label text-background-400">
               חלבון ל{isUnits ? unitLabel : '-100 גרם'}
             </Text>
-            <View className="flex-row-reverse items-center" style={{ gap: 4 }}>
+            <View className="flex-row items-center" style={{ gap: 4 }}>
               <Text className="typo-h2 text-white">{Math.round(proteinValue)}</Text>
               <Text className="typo-label text-background-400">גרם</Text>
             </View>
@@ -444,7 +444,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
             maximumTrackTintColor={colors.background[600]}
             thumbTintColor={colors.lime[500]}
           />
-          <View className="flex-row-reverse justify-between px-1 mt-1">
+          <View className="flex-row justify-between px-1 mt-1">
             <Text className="typo-caption text-background-500">0</Text>
             <Text className="typo-caption text-background-500">{Math.round(maxProtein / 2)}</Text>
             <Text className="typo-caption text-background-500">{maxProtein}g</Text>
@@ -453,11 +453,11 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
 
         {/* כמה אכלת — Slider */}
         <View className="bg-background-800 rounded-2xl p-4 mt-4 border border-background-600">
-          <View className="flex-row-reverse items-center justify-between mb-2">
+          <View className="flex-row items-center justify-between mb-2">
             <Text className="typo-label text-background-400">
               כמה אכלת? <Text className="text-background-600">(אופציונלי)</Text>
             </Text>
-            <View className="flex-row-reverse items-center" style={{ gap: 4 }}>
+            <View className="flex-row items-center" style={{ gap: 4 }}>
               <Text className="typo-h3 text-white">
                 {consumedAmount || '—'}
               </Text>
@@ -503,14 +503,14 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
       </Text>
 
       {/* Grid מורחב */}
-      <View style={{ flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 8 }} className="mb-6">
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }} className="mb-6">
         {FOOD_CATEGORIES.map((cat) => {
           const isSelected = selectedCategoryId === cat.id;
           return (
             <Pressable
               key={cat.id}
               onPress={() => toggleCategory(cat.id)}
-              className={`flex-row-reverse items-center rounded-xl border px-3 py-2 ${
+              className={`flex-row items-center rounded-xl border px-3 py-2 ${
                 isSelected
                   ? 'border-lime-500 bg-lime-500/15'
                   : 'border-background-600 bg-background-800'
@@ -563,23 +563,23 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
         </Text>
 
         <View className="bg-background-800 rounded-2xl p-5 border border-background-600 gap-3">
-          <View className="flex-row-reverse items-center justify-between">
+          <View className="flex-row items-center justify-between">
             <Text className="typo-label text-background-400">שם</Text>
             <Text className="typo-body-primary text-white text-right flex-1 mr-4">{foodName}</Text>
           </View>
           <View className="h-[1px] bg-background-700" />
-          <View className="flex-row-reverse items-center justify-between">
+          <View className="flex-row items-center justify-between">
             <Text className="typo-label text-background-400">מדידה</Text>
             <Text className="typo-body-primary text-white">
               {isUnits ? `ביחידות (${unitLabel})` : 'בגרמים'}
             </Text>
           </View>
           <View className="h-[1px] bg-background-700" />
-          <View className="flex-row-reverse items-center justify-between">
+          <View className="flex-row items-center justify-between">
             <Text className="typo-label text-background-400">קלוריות ל{unitLabel}</Text>
             <Text className="typo-body-primary text-lime-400">{cal} קק״ל</Text>
           </View>
-          <View className="flex-row-reverse items-center justify-between">
+          <View className="flex-row items-center justify-between">
             <Text className="typo-label text-background-400">חלבון ל{unitLabel}</Text>
             <Text className="typo-body-primary text-lime-400">{proteinValue}g</Text>
           </View>
@@ -587,7 +587,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           {selectedCategoryId != null && (
             <>
               <View className="h-[1px] bg-background-700" />
-              <View className="flex-row-reverse items-center justify-between">
+              <View className="flex-row items-center justify-between">
                 <Text className="typo-label text-background-400">קטגוריה</Text>
                 <Text className="typo-body-primary text-white">
                   {getCategoryById(selectedCategoryId)?.label}
@@ -642,7 +642,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               <Pressable
                 onPress={handleNext}
                 disabled={!canProceed}
-                className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl h-14 ${
+                className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
                   canProceed ? 'bg-lime-500' : 'bg-background-700'
                 }`}
                 accessibilityRole="button"
@@ -670,7 +670,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               <Pressable
                 onPress={() => handleSubmit(false)}
                 disabled={isPending}
-                className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl h-14 ${
+                className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
                   isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'
                 }`}
                 accessibilityRole="button"
@@ -699,7 +699,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               <Pressable
                 onPress={() => handleSubmit(false)}
                 disabled={isPending}
-                className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl border border-white/10 h-14 ${
+                className={`flex-1 flex-row items-center justify-center rounded-2xl border border-white/10 h-14 ${
                   isPending ? 'bg-background-700 opacity-50' : 'bg-background-800'
                 }`}
                 accessibilityRole="button"
@@ -713,7 +713,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
               <Pressable
                 onPress={handleAddToJournal}
                 disabled={isPending}
-                className={`flex-1 flex-row-reverse items-center justify-center rounded-2xl h-14 ${
+                className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
                   isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'
                 }`}
                 accessibilityRole="button"
@@ -783,7 +783,7 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                 maximumTrackTintColor={colors.background[600]}
                 thumbTintColor={colors.lime[500]}
               />
-              <View className="flex-row-reverse justify-between px-1 mt-1 mb-6">
+              <View className="flex-row justify-between px-1 mt-1 mb-6">
                 <Text className="typo-caption text-background-500">
                   {isUnits ? '0.5' : '10'}
                 </Text>

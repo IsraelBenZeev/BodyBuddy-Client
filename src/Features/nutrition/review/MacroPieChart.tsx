@@ -71,16 +71,16 @@ const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
         />
       </View>
 
-      <View className="flex-row-reverse items-center justify-between w-full">
-        <View className="flex-row-reverse items-center gap-2">
+      <View className="flex-row items-center justify-between w-full">
+        <View className="flex-row items-center gap-2">
           <View className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.lime[500] }} />
           <Text className="typo-label text-white">נצרך</Text>
         </View>
         <Text className="typo-label text-background-400">{proteinConsumed}ג׳</Text>
       </View>
 
-      <View className="flex-row-reverse items-center justify-between w-full mt-2">
-        <View className="flex-row-reverse items-center gap-2">
+      <View className="flex-row items-center justify-between w-full mt-2">
+        <View className="flex-row items-center gap-2">
           <View className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.background[600] }} />
           <Text className="typo-label text-white">נותר</Text>
         </View>

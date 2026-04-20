@@ -190,7 +190,7 @@ const MealCard = React.memo(function MealCard({
       accessibilityRole="button"
       accessibilityLabel={`${meal.name_meal || 'ארוחה'} - בחר ארוחה`}
     >
-      <View className="flex-row-reverse items-center p-4">
+      <View className="flex-row items-center p-4">
         {/* אייקון ארוחה מעוצב */}
         <View className="bg-lime-500/10 rounded-2xl w-14 h-14 items-center justify-center ml-4">
           <Ionicons name="restaurant" size={26} color="#84cc16" />
@@ -202,7 +202,7 @@ const MealCard = React.memo(function MealCard({
             {meal.name_meal || 'ארוחה ללא שם'}
           </Text>
 
-          <View className="flex-row-reverse items-center mt-1">
+          <View className="flex-row items-center mt-1">
             <Text className="typo-caption-bold text-orange-400">
               {Math.round(stats.calories)} קק״ל
             </Text>
@@ -238,7 +238,7 @@ const MealCard = React.memo(function MealCard({
       </View>
 
       {/* מרכיבים — תצוגת chips */}
-      <View className="bg-white/5 px-4 py-3 border-t border-white/5 flex-row-reverse flex-wrap gap-2">
+      <View className="bg-white/5 px-4 py-3 border-t border-white/5 flex-row flex-wrap gap-2">
         {(meal.meal_items ?? []).slice(0, 4).map((mi: any, index: number) => (
           <View key={index} className="bg-background-700 rounded-full px-3 py-1 border border-white/5">
             <Text className="typo-caption text-gray-400" numberOfLines={1}>

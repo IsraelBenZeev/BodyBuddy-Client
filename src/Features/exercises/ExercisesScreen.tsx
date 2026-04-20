@@ -111,7 +111,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     <BackGround>
       {mode === 'view' && (
         <View className="pt-4">
-          <View className="px-6 mb-6 flex-row-reverse items-center gap-4">
+          <View className="px-6 mb-6 flex-row items-center gap-4">
             {profile?.gender && (
               <MiniAvatar
                 selectedParts={selectedPartsArray}
@@ -151,7 +151,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 setSelectedMuscle={setSelectedMuscle}
               />
             )}
-            <View className="flex-row-reverse items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-4 mx-2 mb-3 mt-2">
+            <View className="flex-row items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-4 mx-2 mb-3 mt-2">
               <Ionicons name="search" size={18} color="#a3a3a3" />
               <TextInput
                 value={searchQuery}
@@ -172,8 +172,8 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
               )}
             </View>
             {mode === 'picker' && (
-              <View className="flex-row-reverse items-center justify-between bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 mx-2 mb-3">
-                <View className="flex-row-reverse items-center">
+              <View className="flex-row items-center justify-between bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 mx-2 mb-3">
+                <View className="flex-row items-center">
                   <View className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.size > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}>
                     <Text className={`typo-btn-cta ${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'}`}>
                       {exerciseSelectedIds.size}

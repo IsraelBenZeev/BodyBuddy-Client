@@ -14,7 +14,7 @@ const ACTIVE_WIDTH = 28;
 
 const StepDots = ({ totalSteps, currentStep }: StepDotsProps) => {
   return (
-    <View className="flex-row-reverse justify-center items-center gap-2 py-4">
+    <View className="flex-row justify-center items-center gap-2 py-4">
       {Array.from({ length: totalSteps }).map((_, index) => (
         <Dot key={index} isActive={index === currentStep} />
       ))}

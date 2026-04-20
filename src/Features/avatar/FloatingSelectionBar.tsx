@@ -43,7 +43,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
         }}
       >
         {/* שורת כותרת + נקה */}
-        <View className="flex-row-reverse items-center justify-between">
+        <View className="flex-row items-center justify-between">
           <Text className="typo-caption-bold text-zinc-500 tracking-wide">
             {selectedParts.length} אזורים נבחרו
           </Text>
@@ -56,7 +56,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 6, flexDirection: 'row-reverse' }}
+          contentContainerStyle={{ gap: 6, flexDirection: 'row' }}
         >
           {selectedParts.map((part) => (
             <View

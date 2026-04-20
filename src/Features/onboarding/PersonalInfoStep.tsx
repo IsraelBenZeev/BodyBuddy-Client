@@ -93,7 +93,7 @@ const PersonalInfoStep = ({
           rules={{ validate: (v) => v !== '' || 'יש לבחור מין' }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View>
-              <View className="flex-row-reverse gap-3">
+              <View className="flex-row gap-3">
                 {genderOptions.map((option) => {
                   const isSelected = value === option.value;
                   return (
@@ -180,7 +180,7 @@ const PersonalInfoStep = ({
         <Pressable
           onPress={handleNext}
           disabled={isPending}
-          className="flex-row-reverse items-center justify-center gap-2 bg-lime-500 w-full py-3 rounded-2xl shadow-lg disabled:opacity-70 active:opacity-90"
+          className="flex-row items-center justify-center gap-2 bg-lime-500 w-full py-3 rounded-2xl shadow-lg disabled:opacity-70 active:opacity-90"
           accessibilityRole="button"
           accessibilityLabel="הבא"
         >
@@ -192,7 +192,7 @@ const PersonalInfoStep = ({
           <Pressable
             onPress={handleFinishAndSave}
             disabled={isPending}
-            className="flex-row-reverse items-center justify-center gap-2 py-2.5 rounded-xl border border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
+            className="flex-row items-center justify-center gap-2 py-2.5 rounded-xl border border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
             accessibilityRole="button"
             accessibilityLabel="סיום ושמירה"
           >

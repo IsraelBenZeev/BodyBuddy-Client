@@ -35,7 +35,7 @@ export default function DeleteConfirmModal({
 
           {/* INFO note */}
           {infoNote != null && (
-            <View className="mx-4 mb-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl p-3 flex-row-reverse items-start">
+            <View className="mx-4 mb-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl p-3 flex-row items-start">
               <Ionicons name="information-circle-outline" size={18} color="#60a5fa" />
               <Text className="typo-caption text-blue-300 leading-5 flex-1 mr-2 text-right">
                 {infoNote}

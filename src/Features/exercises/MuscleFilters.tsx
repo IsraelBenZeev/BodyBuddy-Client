@@ -9,8 +9,6 @@ interface MuscleFiltersProps {
   setSelectedMuscle: (muscle: string | 'all') => void;
 }
 
-const rtl = { transform: [{ scaleX: -1 }] } as const;
-
 const MuscleFilters = ({ uniqueMuscles, selectedMuscle, setSelectedMuscle }: MuscleFiltersProps) => {
   const handleSelectAll = useCallback(() => setSelectedMuscle('all'), [setSelectedMuscle]);
   const handleSelect = useCallback((muscle: string) => setSelectedMuscle(muscle), [setSelectedMuscle]);
@@ -20,45 +18,41 @@ const MuscleFilters = ({ uniqueMuscles, selectedMuscle, setSelectedMuscle }: Mus
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={rtl}
         contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
       >
-        <View style={rtl}>
-          <AppButton
-            animationType="opacity"
-            haptic="medium"
-            onPress={handleSelectAll}
-            className={`px-4 py-1.5 rounded-full border ${
-              selectedMuscle === 'all' ? 'bg-lime-500/20 border-lime-500' : 'bg-transparent border-zinc-700'
-            }`}
-            accessibilityLabel="הצג הכל"
-            accessibilityState={{ selected: selectedMuscle === 'all' }}
-          >
-            <Text className={`typo-label ${selectedMuscle === 'all' ? 'text-lime-400' : 'text-zinc-400'}`}>
-              הכל
-            </Text>
-          </AppButton>
-        </View>
+        <AppButton
+          animationType="opacity"
+          haptic="medium"
+          onPress={handleSelectAll}
+          className={`px-4 py-1.5 rounded-full border ${
+            selectedMuscle === 'all' ? 'bg-lime-500/20 border-lime-500' : 'bg-transparent border-zinc-700'
+          }`}
+          accessibilityLabel="הצג הכל"
+          accessibilityState={{ selected: selectedMuscle === 'all' }}
+        >
+          <Text className={`typo-label ${selectedMuscle === 'all' ? 'text-lime-400' : 'text-zinc-400'}`}>
+            הכל
+          </Text>
+        </AppButton>
 
         {uniqueMuscles.map((muscle) => (
-          <View key={muscle} style={rtl}>
-            <AppButton
-              animationType="opacity"
-              haptic="medium"
-              onPress={() => handleSelect(muscle)}
-              className={`px-4 py-1.5 rounded-full border ${
-                selectedMuscle === muscle
-                  ? 'bg-lime-500/20 border-lime-500'
-                  : 'bg-transparent border-zinc-700'
-              }`}
-              accessibilityLabel={targetMusclesHebrew[muscle] ?? muscle}
-              accessibilityState={{ selected: selectedMuscle === muscle }}
-            >
-              <Text className={`typo-label ${selectedMuscle === muscle ? 'text-lime-400' : 'text-zinc-400'}`}>
-                {targetMusclesHebrew[muscle] ?? muscle}
-              </Text>
-            </AppButton>
-          </View>
+          <AppButton
+            key={muscle}
+            animationType="opacity"
+            haptic="medium"
+            onPress={() => handleSelect(muscle)}
+            className={`px-4 py-1.5 rounded-full border ${
+              selectedMuscle === muscle
+                ? 'bg-lime-500/20 border-lime-500'
+                : 'bg-transparent border-zinc-700'
+            }`}
+            accessibilityLabel={targetMusclesHebrew[muscle] ?? muscle}
+            accessibilityState={{ selected: selectedMuscle === muscle }}
+          >
+            <Text className={`typo-label ${selectedMuscle === muscle ? 'text-lime-400' : 'text-zinc-400'}`}>
+              {targetMusclesHebrew[muscle] ?? muscle}
+            </Text>
+          </AppButton>
         ))}
       </ScrollView>
     </View>

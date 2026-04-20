@@ -19,7 +19,7 @@ const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
         <View className="items-center pt-2 pb-1">
           <View className="w-10 h-1.5 bg-lime-500 rounded-full" />
         </View>
-        <View className="flex-row-reverse justify-between items-center px-5 pb-4">
+        <View className="flex-row justify-between items-center px-5 pb-4">
           <Text className="typo-h3 text-lime-400">{mode === "edit" ? "עריכה" : "תוכנית חדשה"}</Text>
           <AppButton
             animationType='opacity'

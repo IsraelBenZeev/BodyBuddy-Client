@@ -60,7 +60,7 @@ export const ToastConfig = {
           className="items-end justify-end  bg-background-600 rounded-2xl shadow-2xl overflow-hidden border border-lime-500 p-5 "
           style={{ elevation: 15, width: width * 0.9, backgroundColor: colors.background[1000], justifyContent: 'flex-end', alignItems: 'center' }}
         >
-          <View className="flex-row-reverse items-center w-full">
+          <View className="flex-row items-center w-full">
             {icon}
             <Text className="text-white font-bold text-base " style={{ marginHorizontal: 10 }}>{text1}</Text>
           </View>

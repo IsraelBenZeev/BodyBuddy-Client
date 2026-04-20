@@ -146,7 +146,7 @@ const GoalStep = ({
                     <Pressable
                       key={option.value}
                       onPress={() => onChange(option.value)}
-                      className={`flex-row-reverse items-center rounded-2xl p-5 border-2 ${
+                      className={`flex-row items-center rounded-2xl p-5 border-2 ${
                         isSelected
                           ? 'border-lime-500 bg-background-700'
                           : 'border-background-600 bg-background-800'
@@ -285,7 +285,7 @@ const GoalStep = ({
             entering={FadeIn.duration(500)}
             className="mt-6 bg-background-800 rounded-2xl p-5 border border-lime-500/30"
           >
-            <View className="flex-row-reverse items-center mb-3">
+            <View className="flex-row items-center mb-3">
               <Ionicons
                 name="nutrition-outline"
                 size={22}
@@ -332,11 +332,11 @@ const GoalStep = ({
       </ScrollView>
 
       {/* כפתורי פעולה – חזרה, סיום ושמירה */}
-      <View className="flex-row-reverse gap-3 pt-1 pb-3">
+      <View className="flex-row gap-3 pt-1 pb-3">
         <Pressable
           onPress={onBack}
           disabled={isPending}
-          className="flex-row-reverse items-center justify-center gap-1.5 flex-1 rounded-xl py-2 disabled:opacity-70 active:opacity-70"
+          className="flex-row items-center justify-center gap-1.5 flex-1 rounded-xl py-2 disabled:opacity-70 active:opacity-70"
           accessibilityRole="button"
           accessibilityLabel="חזרה"
         >
@@ -351,7 +351,7 @@ const GoalStep = ({
         <Pressable
           onPress={handleSubmit}
           disabled={isPending}
-          className={`flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-3 shadow-lg ${
+          className={`flex-row items-center justify-center gap-2 flex-1 rounded-2xl py-3 shadow-lg ${
             isPending ? 'bg-lime-700' : 'bg-lime-500'
           } disabled:opacity-70 active:opacity-90`}
           accessibilityRole="button"

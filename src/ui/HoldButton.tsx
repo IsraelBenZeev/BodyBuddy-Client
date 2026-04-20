@@ -170,7 +170,7 @@ const HoldButton = ({
             <Animated.View style={fillBarStyle} />
             <View style={{ flex: 1 }} />
           </View>
-          <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+          <View style={{ flex: 1, flexDirection: 'row' }}>
             <Animated.View style={fillBarStyle} />
             <View style={{ flex: 1 }} />
           </View>

@@ -86,7 +86,7 @@ const ActivityLevelStep = ({
                       <Pressable
                         key={option.value}
                         onPress={() => onChange(option.value)}
-                        className={`flex-row-reverse items-center rounded-2xl p-4 border-2 ${
+                        className={`flex-row items-center rounded-2xl p-4 border-2 ${
                           isSelected
                             ? 'border-lime-500 bg-background-700'
                             : 'border-background-600 bg-background-800'
@@ -189,11 +189,11 @@ const ActivityLevelStep = ({
 
       {/* כפתורי פעולה */}
       <View className="pt-1 pb-3 gap-2">
-        <View className="flex-row-reverse gap-3">
+        <View className="flex-row gap-3">
           <Pressable
             onPress={onBack}
             disabled={isPending}
-            className="flex-row-reverse items-center justify-center gap-1.5 flex-1 rounded-xl py-2 disabled:opacity-70 active:opacity-70"
+            className="flex-row items-center justify-center gap-1.5 flex-1 rounded-xl py-2 disabled:opacity-70 active:opacity-70"
             accessibilityRole="button"
             accessibilityLabel="חזרה"
           >
@@ -204,7 +204,7 @@ const ActivityLevelStep = ({
           <Pressable
             onPress={handleNext}
             disabled={isPending}
-            className="flex-row-reverse items-center justify-center gap-2 flex-1 rounded-2xl py-3 shadow-lg bg-lime-500 disabled:opacity-70 active:opacity-90"
+            className="flex-row items-center justify-center gap-2 flex-1 rounded-2xl py-3 shadow-lg bg-lime-500 disabled:opacity-70 active:opacity-90"
             accessibilityRole="button"
             accessibilityLabel="הבא"
           >
@@ -217,7 +217,7 @@ const ActivityLevelStep = ({
           <Pressable
             onPress={handleFinishAndSave}
             disabled={isPending}
-            className="flex-row-reverse items-center justify-center gap-2 py-2.5 rounded-xl border border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
+            className="flex-row items-center justify-center gap-2 py-2.5 rounded-xl border border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
             accessibilityRole="button"
             accessibilityLabel="סיום ושמירה"
           >

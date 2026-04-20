@@ -40,13 +40,13 @@ const ListFoodForMealBuilder = ({
       </View>
 
       {/* Header - משופר עם היררכיה ברורה */}
-      <View className="flex-row-reverse items-center justify-between px-6 py-4 border-b border-white/5">
+      <View className="flex-row items-center justify-between px-6 py-4 border-b border-white/5">
         <View className="flex-1">
           <Text className="typo-h2 text-white text-right tracking-tight">
             {addStep === 'list' ? 'בחירת מאכל' : addStep === 'amount' ? 'כמות והגשה' : 'מאכל חדש'}
           </Text>
           {addStep === 'amount' && selectedFood && (
-            <View className="flex-row-reverse items-center mt-1">
+            <View className="flex-row items-center mt-1">
               <Ionicons name="cart-outline" size={12} color="#84cc16" />
               <Text className="typo-caption-bold text-lime-500 text-right mr-1 uppercase tracking-tighter">
                 מוסיף ל: {nameMeal || 'ארוחה חדשה'}
@@ -79,7 +79,7 @@ const ListFoodForMealBuilder = ({
           <Pressable
             onPress={() => setAddStep('create')}
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="mx-6 mt-4 mb-2 flex-row-reverse items-center justify-center bg-lime-500/10 border border-lime-500/30 border-dashed rounded-2xl py-3.5"
+            className="mx-6 mt-4 mb-2 flex-row items-center justify-center bg-lime-500/10 border border-lime-500/30 border-dashed rounded-2xl py-3.5"
             accessibilityRole="button"
             accessibilityLabel="הוסף מאכל חדש לרשימה"
           >
@@ -111,7 +111,7 @@ const ListFoodForMealBuilder = ({
               <Pressable
                 onPress={() => onSelectFood(item)}
                 style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}
-                className="bg-background-800 border-b-4 border-black/20 rounded-3xl p-4 flex-row-reverse items-center"
+                className="bg-background-800 border-b-4 border-black/20 rounded-3xl p-4 flex-row items-center"
                 accessibilityRole="button"
                 accessibilityLabel={`${item.name} - בחר מאכל`}
               >
@@ -128,7 +128,7 @@ const ListFoodForMealBuilder = ({
                   <Text className="typo-h4 text-white text-right tracking-tight">
                     {item.name}
                   </Text>
-                  <View className="flex-row-reverse items-center mt-1.5">
+                  <View className="flex-row items-center mt-1.5">
                     <View className="bg-background-900 px-2 py-0.5 rounded-md border border-white/5">
                       <Text className="typo-caption-bold text-orange-400">
                         {item.measurement_type === 'units'

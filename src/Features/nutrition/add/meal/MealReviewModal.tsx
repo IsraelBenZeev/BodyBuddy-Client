@@ -198,11 +198,11 @@ export default function MealReviewModal({
           ))}
 
           <View className="mt-4 py-3 border-t border-background-700">
-            <View className="flex-row-reverse items-center justify-between mb-1">
+            <View className="flex-row items-center justify-between mb-1">
               <Text className="typo-body-primary text-lime-400">סה״כ קלוריות</Text>
               <Text className="typo-h4 text-white">{totals.calories} קק״ל</Text>
             </View>
-            <View className="flex-row-reverse items-center justify-between">
+            <View className="flex-row items-center justify-between">
               <Text className="typo-body-primary text-lime-500">סה״כ חלבון</Text>
               <Text className="typo-h4 text-white">{totals.protein} גרם</Text>
             </View>
@@ -213,7 +213,7 @@ export default function MealReviewModal({
           <Pressable
             onPress={handleConfirm}
             disabled={isPending || items.length === 0}
-            className={`rounded-2xl py-4 flex-row-reverse items-center justify-center ${
+            className={`rounded-2xl py-4 flex-row items-center justify-center ${
               isPending || items.length === 0 ? 'bg-background-700 opacity-60' : 'bg-lime-500'
             }`}
             accessibilityRole="button"
@@ -270,7 +270,7 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
   return (
     <View className="bg-background-800 border border-white/5 rounded-3xl p-4 mb-4 shadow-sm">
       {/* שורה עליונה: שם וקלוריות */}
-      <View className="flex-row-reverse items-center justify-between mb-3">
+      <View className="flex-row items-center justify-between mb-3">
         <View className="flex-1 ml-3">
           <Text className="typo-h4 text-white text-right" numberOfLines={2}>
             {info.name}
@@ -283,8 +283,8 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
       </View>
 
       {/* אזור השליטה בכמות */}
-      <View className="flex-row-reverse items-center justify-between bg-background-900/40 p-3 rounded-2xl border border-white/5">
-        <View className="flex-row-reverse items-center bg-background-700 rounded-xl p-1 shadow-inner">
+      <View className="flex-row items-center justify-between bg-background-900/40 p-3 rounded-2xl border border-white/5">
+        <View className="flex-row items-center bg-background-700 rounded-xl p-1 shadow-inner">
           <Pressable
             onPress={() => onQuantityChange(0.5)}
             className="w-11 h-11 items-center justify-center bg-lime-500/10 rounded-lg active:bg-lime-500/20"
@@ -314,7 +314,7 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
           <Text className="typo-caption text-gray-400 text-center mb-1">
             {isUnits ? `${amount} ${unitLabel}` : `${amount} גרם`}
           </Text>
-          <View className="flex-row-reverse gap-2">
+          <View className="flex-row gap-2">
             <Text className="typo-caption text-lime-400">P {nutrients.protein}g</Text>
           </View>
         </View>

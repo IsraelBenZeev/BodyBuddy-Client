@@ -111,7 +111,7 @@ const FoodEntryRow = React.memo(function FoodEntryRow({ entry, onDelete, isDelet
   const handleDelete = useCallback(() => onDelete(entry.id), [onDelete, entry.id]);
   return (
     <View className="bg-background-800 rounded-2xl border border-background-600 overflow-hidden">
-      <View className="flex-row-reverse items-center p-3.5">
+      <View className="flex-row items-center p-3.5">
         <View className="bg-background-700 rounded-xl w-12 h-12 items-center justify-center mr-1">
           <Ionicons name="nutrition-outline" size={22} color={colors.orange[400]} />
         </View>
@@ -140,15 +140,15 @@ const FoodEntryRow = React.memo(function FoodEntryRow({ entry, onDelete, isDelet
 
 const MacroBar = React.memo(function MacroBar({ entry }: { entry: NutritionEntry }) {
   return (
-    <View className="flex-row-reverse border-t border-background-700 px-3.5 py-2.5">
-      <View className="flex-row-reverse items-center flex-1 justify-around">
-        <View className="flex-row-reverse items-center">
+    <View className="flex-row border-t border-background-700 px-3.5 py-2.5">
+      <View className="flex-row items-center flex-1 justify-around">
+        <View className="flex-row items-center">
           <View className="w-2 h-2 rounded-full bg-lime-500 ml-1.5" />
           <Text className="typo-caption text-background-300">
             חלבון <Text className="typo-caption text-lime-500">{entry.protein}g</Text>
           </Text>
         </View>
-        <View className="flex-row-reverse items-center">
+        <View className="flex-row items-center">
           <View className="w-2 h-2 rounded-full bg-gray-400 ml-1.5"/>
           <Text className="typo-caption text-background-300">
             קלוריות <Text className="typo-caption text-gray-400">{entry.calories}</Text>
@@ -197,7 +197,7 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
 
   return (
     <View className="bg-background-800 rounded-3xl border border-white/5 overflow-hidden shadow-lg mb-4">
-      <View className="flex-row-reverse items-center px-4 py-4 bg-background-700/30 border-b border-white/5">
+      <View className="flex-row items-center px-4 py-4 bg-background-700/30 border-b border-white/5">
         <View className="bg-lime-500/10 rounded-xl w-12 h-12 items-center justify-center ml-3">
           <Ionicons name="restaurant" size={22} color="#84cc16" />
         </View>
@@ -212,7 +212,7 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
           <Pressable
             onPress={handleDeleteGroup}
             disabled={isDeletingGroup}
-            className="bg-red-500/20 rounded-xl p-2.5 mr-2 flex-row-reverse items-center"
+            className="bg-red-500/20 rounded-xl p-2.5 mr-2 flex-row items-center"
             accessibilityRole="button"
             accessibilityLabel={`מחק ארוחה ${groupName}`}
           >
@@ -229,13 +229,13 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
       ))}
 
       <View className="bg-background-900/50 px-4 py-4 border-t border-white/5">
-        <View className="flex-row-reverse justify-between items-center mb-3 px-1">
+        <View className="flex-row justify-between items-center mb-3 px-1">
           <Text className="typo-caption-bold text-background-400 tracking-widest uppercase">
             סיכום ערכים לארוחה
           </Text>
           <View className="h-[1px] flex-1 bg-white/5 mx-3" />
         </View>
-        <View className="flex-row-reverse items-center justify-center">
+        <View className="flex-row items-center justify-center">
           <View className="items-center">
             <Text className="typo-caption text-gray-400 mb-1">חלבון</Text>
             <View className="bg-lime-500/10 px-2 py-1 rounded-lg">
@@ -275,7 +275,7 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
 
   return (
     <View className="mb-6">
-      <View className="flex-row-reverse items-center mb-3">
+      <View className="flex-row items-center mb-3">
         <View className="bg-background-700/80 rounded-xl px-3 py-1.5">
           <Text className="typo-label text-lime-400">{slotLabel}</Text>
           {slotInfo != null && (
@@ -338,7 +338,7 @@ const NutritionEntriesList = ({
 
   return (
     <View>
-      <View className="flex-row-reverse items-center mb-3">
+      <View className="flex-row items-center mb-3">
         <Ionicons name="today-outline" size={18} color={colors.lime[500]} />
         <Text className="typo-h4 text-white mr-2">מאכלים שנוספו היום</Text>
         <View className="bg-lime-500/20 rounded-full px-2 py-0.5 mr-2">

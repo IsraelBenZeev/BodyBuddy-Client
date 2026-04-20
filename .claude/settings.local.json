@@ -21,9 +21,12 @@
       "Bash(unzip -l Circle.lottie)",
       "Bash(node -e \"const f = require\\(''c:/Users/i0548/Documents/Full stack lessons/BodyBuddy/BodyBuddy-client/assets/animations/dumbell animation.json''\\); const layers = f.layers?.map\\(l => l.nm\\); console.log\\(JSON.stringify\\(layers, null, 2\\)\\);\")",
       "Bash(node -e \":*)",
-      "mcp__claude_ai_Supabase__list_tables"
+      "mcp__claude_ai_Supabase__list_tables",
+      "WebFetch(domain:docs.expo.dev)"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["supabase"]
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }

@@ -143,7 +143,7 @@
 
 //         {/* Header Section */}
 //         <View className="px-6 pt-12 pb-8">
-//           <View className="flex-row-reverse items-center justify-start gap-4">
+//           <View className="flex-row items-center justify-start gap-4">
 //             <View className="overflow-hidden rounded-full">
 //               <Image
 //                 source={profile?.avatar_url ?? user.user_metadata.avatar_url}
@@ -169,12 +169,12 @@
 //           <>
 //             {/* Compact Calorie Row */}
 //             {dailyCalories && (
-//               <View className="mx-6 mb-6 bg-background-800 border border-white/5 rounded-2xl px-5 py-3 flex-row-reverse justify-between items-center">
-//                 <View className="flex-row-reverse items-center gap-1.5">
+//               <View className="mx-6 mb-6 bg-background-800 border border-white/5 rounded-2xl px-5 py-3 flex-row justify-between items-center">
+//                 <View className="flex-row items-center gap-1.5">
 //                   <Ionicons name="flash" size={14} color={colors.lime[500]} />
 //                   <Text className="text-white/50 text-xs font-bold">יעד קלורי יומי</Text>
 //                 </View>
-//                 <View className="flex-row-reverse items-center gap-2">
+//                 <View className="flex-row items-center gap-2">
 //                   <Text className="text-lime-400 font-black text-base">
 //                     {dailyCalories.toLocaleString()} קק״ל
 //                   </Text>
@@ -188,7 +188,7 @@
 //             {/* Workout Stats Card */}
 //             <View className="px-6 mb-6">
 //               <View className="bg-background-800 border border-white/5 rounded-[30px] p-6">
-//                 <View className="flex-row-reverse justify-between">
+//                 <View className="flex-row justify-between">
 //                   <WorkoutStatItem
 //                     icon="barbell-outline"
 //                     value={isStatsLoading ? '...' : String(workoutStats?.weeklyCount ?? 0)}
@@ -214,7 +214,7 @@
 //             </View>
 
 //             {/* Stats Grid */}
-//             <View className="px-6 flex-row-reverse flex-wrap justify-between">
+//             <View className="px-6 flex-row flex-wrap justify-between">
 //               <View className="w-[48%] mb-4">
 //                 <StatBox
 //                   fullWidth
@@ -236,7 +236,7 @@
 
 //             {/* Activity Row */}
 //             <View className="px-6 mb-8">
-//               <View className="bg-background-800 border border-white/5 rounded-[30px] p-6 flex-row-reverse items-center">
+//               <View className="bg-background-800 border border-white/5 rounded-[30px] p-6 flex-row items-center">
 //                 <View className="bg-background-700 w-12 h-12 rounded-2xl items-center justify-center ml-4 border border-white/5">
 //                   <Ionicons name="fitness-outline" size={24} color={colors.lime[500]} />
 //                 </View>
@@ -252,7 +252,7 @@
 //               <Pressable
 //                 onPress={() => router.navigate('/UserSetup')}
 //                 style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
-//                 className="bg-lime-500 h-16 rounded-[24px] flex-row-reverse items-center justify-center shadow-md"
+//                 className="bg-lime-500 h-16 rounded-[24px] flex-row items-center justify-center shadow-md"
 //                 accessibilityRole="button"
 //                 accessibilityLabel="עריכת פרטים"
 //               >
@@ -263,7 +263,7 @@
 //               <Pressable
 //                 onPress={handleLogout}
 //                 style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
-//                 className="h-16 rounded-[24px] flex-row-reverse items-center justify-center border border-white/10 mt-2"
+//                 className="h-16 rounded-[24px] flex-row items-center justify-center border border-white/10 mt-2"
 //                 accessibilityRole="button"
 //                 accessibilityLabel="התנתקות מהחשבון"
 //               >
@@ -363,7 +363,7 @@ export default function ProfileScreen() {
       >
         {/* Header Section */}
         <View className="px-7" style={{ paddingTop: topInset + 20 }}>
-          <View className="flex-row-reverse items-center gap-4">
+          <View className="flex-row items-center gap-4">
             <Animated.View
               entering={FadeInDown.duration(300)}
               className="p-1 border-2 border-lime-500/30 rounded-full"
@@ -391,9 +391,9 @@ export default function ProfileScreen() {
               </Animated.Text>
               <Animated.View
                 entering={FadeInDown.delay(240).duration(300).damping(20)}
-                className="flex-row-reverse mt-3"
+                className="flex-row mt-3"
               >
-                <View className="flex-row-reverse items-center bg-white/5 rounded-full border border-white/10 overflow-hidden">
+                <View className="flex-row items-center bg-white/5 rounded-full border border-white/10 overflow-hidden">
                   <HoldButton
                     onPress={handleLogout}
                     holdDurationMs={1000}
@@ -403,14 +403,14 @@ export default function ProfileScreen() {
                     className="items-center justify-center px-5 h-[44px]"
                     accessibilityLabel="החזק להתנתקות"
                   >
-                    <View className="flex-row-reverse items-center gap-2">
+                    <View className="flex-row items-center gap-2">
                       <Ionicons name="log-out-outline" size={18} color="#ef4444" />
                       <Text className="typo-label text-red-400">התנתקות</Text>
                     </View>
                   </HoldButton>
                   <View className="w-[1px] h-5 bg-white/15" />
                   <Pressable
-                    className="flex-row-reverse items-center justify-center gap-2 px-5 h-[44px]"
+                    className="flex-row items-center justify-center gap-2 px-5 h-[44px]"
                     onPress={() => router.navigate('/UserSetup')}
                     accessibilityRole="button"
                     accessibilityLabel="הגדרות פרופיל"
@@ -432,7 +432,7 @@ export default function ProfileScreen() {
             {/* Workout Performance Grid */}
             <AnimatedCard delay={200} className="bg-background-800 border border-white/5 rounded-[35px] p-6 mb-6 overflow-hidden">
                <View className="absolute -top-10 -left-10 w-32 h-32 bg-lime-500/5 rounded-full blur-3xl" />
-               <View className="flex-row-reverse justify-between items-center">
+               <View className="flex-row justify-between items-center">
                   <WorkoutStatItem icon="flash" value={String(workoutStats?.weeklyCount ?? 0)} label="WEEKLY" />
                   <View className="w-[1px] h-12 bg-white/5" />
                   <WorkoutStatItem icon="time" value={formatMinutes(workoutStats?.weeklyMinutes ?? 0)} label="ACTIVE" />
@@ -444,7 +444,7 @@ export default function ProfileScreen() {
             </AnimatedCard>
 
             {/* Quick Stats Grid */}
-            <View className="flex-row-reverse flex-wrap justify-between">
+            <View className="flex-row flex-wrap justify-between">
                 {[
                   { label: 'משקל', value: `${profile?.weight ?? '--'} ק״ג`, icon: 'speedometer' },
                   { label: 'גובה', value: `${profile?.height ?? '--'} ס״מ`, icon: 'resize' },
@@ -472,7 +472,7 @@ export default function ProfileScreen() {
             </View>
 
             {/* Activity Level Card */}
-            <AnimatedCard delay={700} className="bg-background-800 border border-white/5 rounded-[30px] p-6 mb-8 flex-row-reverse items-center">
+            <AnimatedCard delay={700} className="bg-background-800 border border-white/5 rounded-[30px] p-6 mb-8 flex-row items-center">
                <View className="bg-lime-500 p-3 rounded-2xl ml-4 shadow-lg shadow-lime-500/20">
                   <Ionicons name="fitness" size={24} color="black" />
                </View>

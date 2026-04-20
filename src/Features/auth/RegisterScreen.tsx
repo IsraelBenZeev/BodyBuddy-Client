@@ -220,7 +220,7 @@ export default function RegisterScreen() {
               haptic="light"
               accessibilityLabel="הירשם באמצעות Google"
             >
-              <View className="flex-row-reverse items-center justify-center gap-3">
+              <View className="flex-row items-center justify-center gap-3">
                 <Ionicons name="logo-google" size={24} color={colors.lime[500]} />
                 <Text className="typo-body-primary text-white">הירשם באמצעות Google</Text>
               </View>

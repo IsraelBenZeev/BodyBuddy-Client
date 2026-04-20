@@ -128,7 +128,7 @@ const NutritionScreen = () => {
           <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, alignSelf: 'flex-end', marginBottom: 16 }} />
 
           {motivationData && (
-            <View className="flex-row-reverse items-center justify-center gap-2 bg-lime-500/10 border border-lime-500/30 rounded-2xl p-4 mb-6">
+            <View className="flex-row items-center justify-center gap-2 bg-lime-500/10 border border-lime-500/30 rounded-2xl p-4 mb-6">
               <Ionicons name={motivationData.icon} size={24} color={colors.lime[500]} />
               <Text className="typo-body-primary text-lime-400 flex-1 text-right">
                 {motivationData.message}
@@ -151,7 +151,7 @@ const NutritionScreen = () => {
           />
 
           <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600">
-            <View className="flex-row-reverse items-center justify-between mb-3">
+            <View className="flex-row items-center justify-between mb-3">
               <Text className="typo-body-primary text-white">איך אנחנו מחשבים את היעדים?</Text>
               <Ionicons name="information-circle-outline" size={20} color={colors.lime[500]} />
             </View>

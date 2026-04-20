@@ -111,7 +111,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           <Dumbbell size={18} color={colors.lime[500]} strokeWidth={1.25} />
         </View>
 
-        <View className="flex-row-reverse flex-wrap gap-2 mt-4">
+        <View className="flex-row flex-wrap gap-2 mt-4">
           <CalendarClock size={18} color={colors.lime[500]} strokeWidth={1.25} />
           {plan?.days_per_week.map((day) => (
             <View
@@ -125,17 +125,17 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
 
         {/* 4. חלק תחתון - כפתור ונתונים */}
         <View className="mt-6">
-          <View className="flex-row-reverse justify-between items-center mb-4 px-1">
-            <View className="flex-row-reverse items-center">
+          <View className="flex-row justify-between items-center mb-4 px-1">
+            <View className="flex-row items-center">
               <MaterialCommunityIcons name="clock-fast" size={16} color={colors.lime[500]} />
               <Text className="typo-caption-bold text-white mr-1">{plan.time} דק׳</Text>
             </View>
-            <View className="flex-row-reverse items-center">
+            <View className="flex-row items-center">
               <MaterialCommunityIcons name="trending-up" size={16} color={colors.lime[500]} />
               <Text className="typo-caption-bold text-white mr-1">{plan.difficulty}</Text>
             </View>
           </View>
-          <View className="flex-row-reverse items-center justify-center gap-4">
+          <View className="flex-row items-center justify-center gap-4">
             <View className='flex-1'>
               <AppButton
                 haptic="medium"
