@@ -17,7 +17,7 @@
         "backgroundColor": "#E6F4FE"
       },
       "package": "com.ibz1330.bodybuddy",
-      "versionCode": 4,
+      "versionCode": 5,
       "privacyPolicy": "https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy",
       "permissions": [
         "android.permission.INTERNET",
