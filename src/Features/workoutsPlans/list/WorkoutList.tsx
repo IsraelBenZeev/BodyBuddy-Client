@@ -14,12 +14,13 @@ import CustomCarousel from '../../../ui/CustomCarousel';
 import CardPlan from './CardPlan';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 
 
 const WorkoutList = () => {
   const user = useAuthStore((state) => state.user);
   const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(user?.id as string);
-  
+
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const router = useRouter();
 
@@ -32,6 +33,14 @@ const WorkoutList = () => {
       params: { mode: 'create' },
     });
   }, [clearAllExercises, router]);
+
+  if (!user) {
+    return (
+      <BackGround>
+        <NotSignedInMessage />
+      </BackGround>
+    );
+  }
 
   if (isLoadingPlans) {
     return (

@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
 interface LoginFormData {
   email: string;
@@ -175,6 +175,20 @@ export default function LoginScreen() {
                 {loading ? 'מתחבר...' : 'התחבר'}
               </Text>
             </AppButton>
+
+            {/* Privacy Policy */}
+            <View className="mb-4 px-2">
+              <Text className="typo-label text-background-400 text-center">
+                {'בהתחברות הינך מסכים ל'}
+                <Text
+                  onPress={() => Linking.openURL('https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/')}
+                  accessibilityRole="link"
+                  accessibilityLabel="פתח מדיניות פרטיות"
+                  className="typo-label text-lime-400 font-semibold"
+                >{'מדיניות הפרטיות'}</Text>
+                {' שלנו'}
+              </Text>
+            </View>
 
             {/* Google Button */}
             <AppButton
