@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import * as Updates from 'expo-updates';
 import { useEffect } from 'react';
 import { I18nManager, Platform, StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -15,8 +14,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { QueryClientManager } from 'reactotron-react-query';
 import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
 import Reactotron from '../ReactotronConfig';
-
-const needsRTLRestart = Platform.OS === 'android' && !I18nManager.isRTL;
 
 if (Platform.OS !== 'web') {
   I18nManager.allowRTL(true);
@@ -49,9 +46,6 @@ export default function RootLayout() {
   // רישום listener ל-Supabase auth + טעינת session קיים – בלי זה ה-store לא מתעדכן אחרי התחברות
   useEffect(() => {
     useAuthStore.getState().initialize();
-    if (needsRTLRestart) {
-      Updates.reloadAsync();
-    }
   }, []);
 
   // לכוד את ה-URL של OAuth לפני שהקומפוננט auth-callback עולה (הוא מחמיץ את האירוע בגלל טיימינג)
