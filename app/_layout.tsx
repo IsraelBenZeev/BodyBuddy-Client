@@ -50,7 +50,7 @@ export default function RootLayout() {
   useEffect(() => {
     useAuthStore.getState().initialize();
     if (needsRTLRestart) {
-      Updates.reloadAsync();
+      Updates.reloadAsync().catch(() => {});
     }
   }, []);
 

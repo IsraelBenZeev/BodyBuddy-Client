@@ -31,6 +31,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/withAndroidRTL",
       ["expo-localization", { "supportsRTL": true, "forcesRTL": true }],
       "expo-router",
       [
