@@ -109,7 +109,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
           className="px-4 mt-4"
           style={{ maxHeight: height * 0.45 }}
         >
-          <Text className="text-zinc-400 text-right mb-2 font-bold mr-2">תרגילים באימון</Text>
+          <Text className="text-zinc-400 mb-2 font-bold mr-2">תרגילים באימון</Text>
           <ListExercise
             key={workoutPlan?.exercise_ids?.join(',')}
             mode="preview"

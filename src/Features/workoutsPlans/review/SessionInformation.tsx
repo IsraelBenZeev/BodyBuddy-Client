@@ -245,8 +245,9 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
   if (isLoadingExerciseLogs) return <Loading />;
 
   return (
-    <View className="mt-4 pb-10 px-2">
+    <View className="mt-4 pb-10 px-2 ">
       <View className="flex-row justify-between items-center mb-6">
+          <Text className="text-white text-xl font-bold text-right">סיכום אימון</Text>
         <View className="flex-row gap-2">
           {/* <TouchableOpacity
             onPress={previewPDF}
@@ -262,7 +263,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
           <TouchableOpacity
             onPress={exportPDF}
             disabled={isExporting}
-            className="flex-row items-center gap-1.5 bg-lime-500/10 px-3 py-2 rounded-xl border border-lime-500/30"
+            className="flex-row items-center gap-1.5 bg-lime-500/10 px-3 py-2 rounded-xl border border-lime-500/30 "
             accessibilityRole="button"
             accessibilityLabel="שמור PDF"
           >
@@ -274,7 +275,6 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             <Text className="typo-label text-lime-500">שמור PDF</Text>
           </TouchableOpacity>
         </View>
-        <Text className="text-white text-xl font-bold text-right">סיכום אימון</Text>
       </View>
 
       {groupedExercises.map((group) => {
@@ -294,7 +294,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
               haptic="medium"
               accessibilityLabel={`הצג תרגיל: ${isLoadingExercises ? '' : (exerciseInfo?.name_he ?? '')}`}
             >
-              <View className="flex-row items-center justify-between bg-background-800 px-4 py-3 border-b border-gray-800">
+              <View className="flex-row items-center justify-between bg-background-800 px-4 py-3 border-b border-gray-800 gap-2">
                 <View className="bg-white/10 rounded-lg overflow-hidden border border-gray-700">
                   {isLoadingExercises ? (
                     <Loading size="small" />
@@ -311,10 +311,10 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
                   )}
                 </View>
                 <View className="flex-1 pr-3">
-                  <Text className="text-gray-400 text-xs text-right font-bold uppercase tracking-widest">
+                  <Text className="text-gray-400 text-xs font-bold uppercase tracking-widest">
                     תרגיל
                   </Text>
-                  <Text className="text-lime-500 font-bold text-right text-lg leading-6">
+                  <Text className="text-lime-500 font-bold text-lg leading-6">
                     {isLoadingExercises ? 'טוען...' : exerciseInfo?.name_he}
                   </Text>
                 </View>

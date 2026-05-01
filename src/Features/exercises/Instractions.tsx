@@ -30,7 +30,7 @@ const Instractions = ({ instructions }: InstractionsProps) => {
 
                     {/* תוכן ההוראה */}
                     <View className="flex-1 bg-zinc-900/40 border border-zinc-800/50 p-4 rounded-2xl shadow-sm self-start">
-                        <Text className="typo-body-primary text-gray-200 text-right leading-6">
+                        <Text className="typo-body-primary text-gray-200 leading-6">
                             {step}
                         </Text>
                     </View>
@@ -39,7 +39,7 @@ const Instractions = ({ instructions }: InstractionsProps) => {
 
             {/* טיפ בטיחות בתחתית */}
             <View className="mt-4 bg-lime-500/10 border border-lime-500/20 p-4 rounded-2xl flex-row items-center">
-                <Text className="typo-label text-lime-500 text-right flex-1">
+                <Text className="typo-label text-lime-500 flex-1">
                     שימו לב לשמור על טכניקה נכונה לאורך כל הסט. במידה ואתם מרגישים כאב חד - הפסיקו מיד.
                 </Text>
             </View>

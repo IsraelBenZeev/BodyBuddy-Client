@@ -120,10 +120,10 @@ const GoalStep = ({
     >
       {/* Header */}
       <View className="mb-6">
-        <Text className="typo-h1 text-white text-right mb-2">
+        <Text className="typo-h1 text-white  mb-2">
           מה המטרה שלך?
         </Text>
-        <Text className="typo-body text-background-400 text-right">
+        <Text className="typo-body text-background-400 ">
           בחר/י את המטרה העיקרית שלך ונתאים לך תוכנית תזונה
         </Text>
       </View>
@@ -146,7 +146,7 @@ const GoalStep = ({
                     <Pressable
                       key={option.value}
                       onPress={() => onChange(option.value)}
-                      className={`flex-row items-center rounded-2xl p-5 border-2 ${
+                      className={` flex-row items-center rounded-2xl p-5 border-2 gap-3 ${
                         isSelected
                           ? 'border-lime-500 bg-background-700'
                           : 'border-background-600 bg-background-800'
@@ -172,7 +172,7 @@ const GoalStep = ({
                           }
                         />
                       </View>
-                      <View className="flex-1 items-end">
+                      <View className="flex-1 items-start">
                         <Text
                           className={`typo-h4 ${
                             isSelected
@@ -182,7 +182,7 @@ const GoalStep = ({
                         >
                           {option.label}
                         </Text>
-                        <Text className="typo-label text-background-400 mt-1 text-right">
+                        <Text className="typo-label text-background-400 mt-1 ">
                           {option.description}
                         </Text>
                       </View>
@@ -191,7 +191,7 @@ const GoalStep = ({
                 })}
               </View>
               {error && (
-                <Text className="typo-caption text-red-400 text-right mt-3">
+                <Text className="typo-caption text-red-400  mt-3">
                   {error.message}
                 </Text>
               )}
@@ -202,7 +202,7 @@ const GoalStep = ({
         {/* בוחר הפרש קלוריות – מופיע רק ב-cut או bulk */}
         {showOffsetPicker && (
           <Animated.View entering={FadeIn.duration(400)} className="mt-6">
-            <Text className="typo-label text-background-200 text-right mb-1">
+            <Text className="typo-label text-background-200  mb-1">
               {OFFSET_LABEL[formValues.goal as Goal]}
             </Text>
 
@@ -269,7 +269,7 @@ const GoalStep = ({
                   )}
 
                   {error && (
-                    <Text className="typo-caption text-red-400 text-right mt-2">
+                    <Text className="typo-caption text-red-400  mt-2">
                       {error.message}
                     </Text>
                   )}
@@ -296,7 +296,7 @@ const GoalStep = ({
               </Text>
             </View>
 
-            <Text className="typo-label text-background-300 text-right mb-3">
+            <Text className="typo-label text-background-300  mb-3">
               על בסיס הנתונים שהזנת, אלו הקלוריות היומיות המומלצות עבורך:
             </Text>
 

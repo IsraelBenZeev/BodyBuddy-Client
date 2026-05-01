@@ -109,7 +109,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
   return (
     <BackGround>
-      {mode === 'view' && (
+      {mode === 'view' && selectedPartsArray.length === 1 && (
         <View className="pt-4">
           <View className="px-6 mb-6 flex-row items-center gap-4">
             {profile?.gender && (
@@ -118,12 +118,12 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 gender={profile.gender as 'male' | 'female'}
               />
             )}
-            <View className="flex-1">
+            <View className="flex-1 items-start">
               <Text className="typo-label text-lime-50 text-right uppercase tracking-widest">
                 מתאמן על
               </Text>
-              <Text className="typo-h1 text-white text-right" numberOfLines={2}>
-                {selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', ')}
+              <Text className="typo-h1 text-white text-right">
+                {partsBodyHebrew[selectedPartsArray[0]]}
               </Text>
             </View>
           </View>
@@ -208,7 +208,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 />
               )}
               keyExtractor={(item) => item.exerciseId}
-              estimatedItemSize={110}
+              // estimatedItemSize={110}
               onEndReached={handleEndReached}
               onEndReachedThreshold={0.5}
               ListFooterComponent={

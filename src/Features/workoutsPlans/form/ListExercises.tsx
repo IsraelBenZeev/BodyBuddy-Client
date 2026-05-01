@@ -215,7 +215,7 @@ const ExerciseItem = React.memo(function ExerciseItem({
       exiting={FadeOutLeft.duration(400)}
       layout={LinearTransition.springify()}
       onPress={handlePress}
-      className="flex-row items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800"
+      className="flex-row items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800 gap-3"
       accessibilityLabel={`${exercise.name_he || exercise.name} - הצג פרטי תרגיל`}
     >
       {mode === 'edit' && (
@@ -236,8 +236,8 @@ const ExerciseItem = React.memo(function ExerciseItem({
           <Image source={{ uri: exercise.gifUrl }} style={{ width: 56, height: 56 }} contentFit="cover" cachePolicy="disk" />
         )}
       </View>
-      <View className="flex-1 mr-4 items-end">
-        <Text className="typo-body-primary text-white text-right" numberOfLines={1}>
+      <View className="flex-1 mr-4">
+        <Text className="typo-body-primary text-white" numberOfLines={1}>
           {exercise.name_he || exercise.name}
         </Text>
         <View className="flex-row items-center mt-1">

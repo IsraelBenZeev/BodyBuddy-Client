@@ -36,15 +36,14 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
         <Handle />
       </View>
       <ScrollView
-      className=''
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 0 }} // שימוש ב-flexGrow חשוב כאן
         showsVerticalScrollIndicator={false}
       >
         <View className="px-6 mb-8 w-full mt-5">
-          <Text className="typo-h1 text-white text-right leading-tight">
+          <Text className="typo-h1 text-white  leading-tight">
             {exerciseData?.name_he}
           </Text>
-          <View className="h-1 w-20 bg-lime-500 rounded-full self-end mt-2" />
+          <View className="h-1 w-20 bg-lime-500 rounded-full mt-2" />
         </View>
         <View style={styles.imageWrapper} className="self-center">
           {exerciseData?.gif_available === false || imgError ? (
@@ -74,12 +73,12 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           <TabsManager
             tabs={[
               {
-                title: 'הוראות',
-                Component: <Instractions instructions={exerciseData?.instructions_he} />,
-              },
-              {
                 title: 'היסטוריה',
                 Component: <ExerciseHistory exerciseId={exerciseData.exerciseId} />,
+              },
+              {
+                title: 'הוראות',
+                Component: <Instractions instructions={exerciseData?.instructions_he} />,
               },
             ]}
           />

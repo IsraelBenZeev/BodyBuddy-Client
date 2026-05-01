@@ -1,56 +1,55 @@
-import AppButton from '@/src/ui/PressableOpacity';
-import { useCallback, useRef, useState } from 'react';
-import { Animated, Dimensions, Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { Animated, Dimensions, I18nManager, Pressable, Text, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 // 1. הגדרת מבנה של טאב בודד
 interface TabItem {
-    title: string;
-    Component: React.ReactNode;
+  title: string;
+  Component: React.ReactNode;
 }
 
 // 2. עדכון ה-Props - הסרנו את instructions והוספנו את tabs
 interface TabsManagerProps {
-    tabs: TabItem[];      // מערך של טאבים
-    initialTab?: number;  // אופציונלי, ברירת מחדל 0
+  tabs: TabItem[]; // מערך של טאבים
+  initialTab?: number; // אופציונלי, ברירת מחדל 0
 }
 // const TabsManager = ({ instructions }: TabsManagerProps) => {
-    //     const [activeTab, setActiveTab] = useState(0);
-    //     const tabTranslateX = useRef(new Animated.Value(0)).current;
-    
-    //     // פונקציית אנימציה יציבה
-    //     const animateTo = (index: number) => {
-        //         setActiveTab(index);
-        //         Animated.spring(tabTranslateX, {
-            //             toValue: index,
-            //             useNativeDriver: true,
-            //             bounciness: 4,
-            //             speed: 12,
-            //         }).start();
-            //     };
-            
-            //     // טיפול במחוות החלקה (Swipe)
-            //     const onGestureEvent = (event: any) => {
-                //         const { translationX, state } = event.nativeEvent;
-                
-                //         if (state === State.END) {
-                    //             if (translationX < -50 && activeTab === 0) {
-                        //                 // החלקה שמאלה -> מעבר להיסטוריה
-                        //                 animateTo(1);
-                        //             } else if (translationX > 50 && activeTab === 1) {
-                            //                 // החלקה ימינה -> חזרה להוראות
-                            //                 animateTo(0);
-                            //             }
-                            //         }
-                            //     };
-                            
-                            //     const containerWidth = SCREEN_WIDTH - 48;
-                            //     const capsuleWidth = (containerWidth - 8) / 2;
-                            
-                            //     return (
-                                //         <View className="w-full">
-                                //             {/* נעטוף רק את אזור התוכן במזהה המחוות כדי לא להפריע ללחיצות ב-TabBar */}
-                                //             <PanGestureHandler
+//     const [activeTab, setActiveTab] = useState(0);
+//     const tabTranslateX = useRef(new Animated.Value(0)).current;
+
+//     // פונקציית אנימציה יציבה
+//     const animateTo = (index: number) => {
+//         setActiveTab(index);
+//         Animated.spring(tabTranslateX, {
+//             toValue: index,
+//             useNativeDriver: true,
+//             bounciness: 4,
+//             speed: 12,
+//         }).start();
+//     };
+
+//     // טיפול במחוות החלקה (Swipe)
+//     const onGestureEvent = (event: any) => {
+//         const { translationX, state } = event.nativeEvent;
+
+//         if (state === State.END) {
+//             if (translationX < -50 && activeTab === 0) {
+//                 // החלקה שמאלה -> מעבר להיסטוריה
+//                 animateTo(1);
+//             } else if (translationX > 50 && activeTab === 1) {
+//                 // החלקה ימינה -> חזרה להוראות
+//                 animateTo(0);
+//             }
+//         }
+//     };
+
+//     const containerWidth = SCREEN_WIDTH - 48;
+//     const capsuleWidth = (containerWidth - 8) / 2;
+
+//     return (
+//         <View className="w-full">
+//             {/* נעטוף רק את אזור התוכן במזהה המחוות כדי לא להפריע ללחיצות ב-TabBar */}
+//             <PanGestureHandler
 //                 onHandlerStateChange={onGestureEvent}
 //                 activeOffsetX={[-20, 20]} // מונע מהחלקה קטנה למעלה/למטה להפעיל את זה
 //             >
@@ -59,16 +58,16 @@ interface TabsManagerProps {
 //                     <View className="mx-6 mt-4 mb-2 bg-background-850 rounded-full p-1 relative flex-row items-center h-12 border border-gray-800">
 //                         <Animated.View
 //                             style={{
-    //                                 width: capsuleWidth,
-    //                                 transform: [
-        //                                     {
-            //                                         translateX: tabTranslateX.interpolate({
-                //                                             inputRange: [0, 1],
-                //                                             outputRange: [0, capsuleWidth + 4],
-                //                                         }),
-                //                                     },
-                //                                 ],
-                //                             }}
+//                                 width: capsuleWidth,
+//                                 transform: [
+//                                     {
+//                                         translateX: tabTranslateX.interpolate({
+//                                             inputRange: [0, 1],
+//                                             outputRange: [0, capsuleWidth + 4],
+//                                         }),
+//                                     },
+//                                 ],
+//                             }}
 //                             className="absolute h-10 bg-lime-500 rounded-full left-1"
 //                         />
 
@@ -94,121 +93,123 @@ interface TabsManagerProps {
 //                     {/* תוכן - משתנה דינמית */}
 //                     <View className="min-h-[200px]">
 //                         {activeTab === 0 ? (
-    //                             <View className="p-6">
-    //                                 <Instractions instructions={instructions} />
-    //                             </View>
-    //                         ) : (
-        //                             <View className="p-6">
-        //                                 <View className="flex-row items-center gap-4 mb-4">
-        //                                     <Hammer size={24} color={colors.lime[500]} />
-        //                                     <Text className="text-lime-500 text-xl font-bold text-right">בהקמה</Text>
-        //                                 </View>
-        //                                 <Text className="text-white text-right text-lg leading-7">ההיסטוריה יופיע כאן...</Text>
-        //                             </View>
-        //                         )}
-        //                     </View>
-        //                 </View>
+//                             <View className="p-6">
+//                                 <Instractions instructions={instructions} />
+//                             </View>
+//                         ) : (
+//                             <View className="p-6">
+//                                 <View className="flex-row items-center gap-4 mb-4">
+//                                     <Hammer size={24} color={colors.lime[500]} />
+//                                     <Text className="text-lime-500 text-xl font-bold text-right">בהקמה</Text>
+//                                 </View>
+//                                 <Text className="text-white text-right text-lg leading-7">ההיסטוריה יופיע כאן...</Text>
+//                             </View>
+//                         )}
+//                     </View>
+//                 </View>
 //             </PanGestureHandler>
 //         </View>
 //     );
 // };
 // 3. עדכון שורת הפונקציה
 const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
-    const [activeTab, setActiveTab] = useState(initialTab);
-    const tabTranslateX = useRef(new Animated.Value(initialTab)).current;
-    
-    const { width: SCREEN_WIDTH } = Dimensions.get('window');
-    const animateTo = useCallback((index: number) => {
-        setActiveTab(index);
-        Animated.spring(tabTranslateX, {
-            toValue: index,
-            useNativeDriver: true,
-            bounciness: 4,
-            speed: 12,
-        }).start();
-    }, [tabTranslateX]);
+  const [activeTab, setActiveTab] = useState(initialTab);
 
-    // const onGestureEvent = (event: any) => {
-    //     const { translationX, state } = event.nativeEvent;
-    //     if (state === State.END) {
-    //         // מעבר לטאב הבא (שמאלה)
-    //         if (translationX < -50 && activeTab < tabs.length - 1) {
-    //             animateTo(activeTab + 1);
-    //         }
-    //         // חזרה לטאב הקודם (ימינה)
-    //         else if (translationX > 50 && activeTab > 0) {
-    //             animateTo(activeTab - 0);
-    //         }
-    //     }
-    // };
-    const onGestureEvent = (event: any) => {
-        const { translationX, state } = event.nativeEvent;
+  const { width: SCREEN_WIDTH } = Dimensions.get('window');
+  const containerWidth = SCREEN_WIDTH - 48;
+  const capsuleWidth = (containerWidth - 8) / tabs.length;
+  const tabOffset = (index: number) => {
+    return I18nManager.isRTL ? (tabs.length - 1 - index) * capsuleWidth : index * capsuleWidth;
+  };
 
-        if (state === State.END) {
-            // רגישות ההחלקה - 50 פיקסלים
-            const threshold = 50;
+  const renderTabs = useMemo(() => tabs, [tabs]);
 
-            // מקרה 1: החלקה שמאלה (מזיזים את האצבע ימינה לשמאלה) -> עוברים לטאב הבא
-            if (translationX < -threshold) {
-                if (activeTab < tabs.length - 1) {
-                    animateTo(activeTab + 1);
-                }
-            }
-            // מקרה 2: החלקה ימינה (מזיזים את האצבע משמאל לימינה) -> חוזרים לטאב הקודם
-            else if (translationX > threshold) {
-                if (activeTab > 0) {
-                    animateTo(activeTab - 1);
-                }
-            }
+  const animateTo = useCallback((index: number) => {
+    setActiveTab(index);
+  }, []);
+
+  // const onGestureEvent = (event: any) => {
+  //     const { translationX, state } = event.nativeEvent;
+  //     if (state === State.END) {
+  //         // מעבר לטאב הבא (שמאלה)
+  //         if (translationX < -50 && activeTab < tabs.length - 1) {
+  //             animateTo(activeTab + 1);
+  //         }
+  //         // חזרה לטאב הקודם (ימינה)
+  //         else if (translationX > 50 && activeTab > 0) {
+  //             animateTo(activeTab - 0);
+  //         }
+  //     }
+  // };
+  const onGestureEvent = (event: any) => {
+    const { translationX, state } = event.nativeEvent;
+
+    if (state === State.END) {
+      // רגישות ההחלקה - 50 פיקסלים
+      const threshold = 50;
+      const step = I18nManager.isRTL ? -1 : 1;
+
+      // מקרה 1: החלקה שמאלה (מזיזים את האצבע ימינה לשמאלה) -> עוברים לטאב הבא
+      if (translationX < -threshold) {
+        const nextIndex = activeTab + step;
+        if (nextIndex >= 0 && nextIndex < tabs.length) {
+          animateTo(nextIndex);
         }
-    };
+      }
+      // מקרה 2: החלקה ימינה (מזיזים את האצבע משמאל לימינה) -> חוזרים לטאב הקודם
+      else if (translationX > threshold) {
+        const prevIndex = activeTab - step;
+        if (prevIndex >= 0 && prevIndex < tabs.length) {
+          animateTo(prevIndex);
+        }
+      }
+    }
+  };
 
-    const containerWidth = SCREEN_WIDTH - 48;
-    const capsuleWidth = (containerWidth - 8) / tabs.length; // חישוב רוחב דינמי לפי מספר הטאבים
+  return (
+    <View className="w-full flex-1">
+      <View className="flex-1">
+        {/* Tab Bar */}
+        <View className="mx-6 mt-4 mb-2 bg-background-850 rounded-full p-1 relative flex-row items-center h-12 border border-gray-800 overflow-hidden">
+          <Animated.View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              left: 4 + tabOffset(activeTab),
+              width: capsuleWidth,
+              height: 40,
+            }}
+            className="bg-lime-500 rounded-full"
+          />
 
-    return (
-        <View className="w-full flex-1">
-            <View className="flex-1">
-                {/* Tab Bar */}
-                <View className="mx-6 mt-4 mb-2 bg-background-850 rounded-full p-1 relative flex-row items-center h-12 border border-gray-800">
-                    <Animated.View
-                        style={{
-                            width: capsuleWidth,
-                            transform: [{
-                                translateX: tabTranslateX.interpolate({
-                                    inputRange: tabs.map((_, i) => i),
-                                    outputRange: tabs.map((_, i) => i * (capsuleWidth + 4)),
-                                }),
-                            }],
-                        }}
-                        className="absolute h-10 bg-lime-500 rounded-full left-1"
-                    />
-
-                    {tabs.map((tab, index) => (
-                        <AppButton
-                            key={tab.title}
-                            animationType='opacity'
-                            haptic='medium'
-                            onPress={() => animateTo(index)}
-                            className="flex-1 items-center justify-center z-10"
-                            accessibilityLabel={tab.title}
-                            accessibilityState={{ selected: activeTab === index }}
-                        >
-                            <Text className={`typo-body-primary ${activeTab === index ? 'text-background-950' : 'text-gray-500'}`}>
-                                {tab.title}
-                            </Text>
-                        </AppButton>
-                    ))}
-                </View>
-
-                {/* תוכן עם זיהוי מחוות – תופס את שאר הגובה */}
-                <PanGestureHandler onHandlerStateChange={onGestureEvent} activeOffsetX={[-20, 20]} style={{ flex: 1 }}>
-                    <View className="flex-1 p-6">
-                        {tabs[activeTab].Component}
-                    </View>
-                </PanGestureHandler>
-            </View>
+          {renderTabs.map((tab, index) => (
+            <Pressable
+              key={tab.title}
+              onPress={() => animateTo(index)}
+              accessibilityRole="button"
+              accessibilityLabel={tab.title}
+              accessibilityState={{ selected: activeTab === index }}
+              className="absolute top-1 bottom-1 items-center justify-center z-10"
+              style={{
+                width: capsuleWidth,
+                left: 4 + tabOffset(index),
+              }}
+            >
+              <Text
+                className={`typo-body-primary ${activeTab === index ? 'text-background-950' : 'text-gray-500'}`}
+              >
+                {tab.title}
+              </Text>
+            </Pressable>
+          ))}
         </View>
-    );
+
+        {/* תוכן עם זיהוי מחוות – תופס את שאר הגובה */}
+        <PanGestureHandler onHandlerStateChange={onGestureEvent} activeOffsetX={[-20, 20]}>
+          <View className="flex-1 p-6">{tabs[activeTab].Component}</View>
+        </PanGestureHandler>
+      </View>
+    </View>
+  );
 };
 export default TabsManager;

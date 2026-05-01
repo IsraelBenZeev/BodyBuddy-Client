@@ -17,7 +17,7 @@ const Title = React.memo(({ exerciseDetails }: TitleProps) => {
     <View className="flex-row justify-between items-center w-full">
       <View className="flex-1 mr-4">
         <Text
-          className="typo-h4 text-white text-right"
+          className="typo-h4 text-white "
           numberOfLines={1} //</View></View>/ מגביל לשורה אחת
           ellipsizeMode="tail" // מוסיף את ה-3 נקודות בסוף (...)
         >
@@ -42,7 +42,7 @@ const Title = React.memo(({ exerciseDetails }: TitleProps) => {
 });
 const CardExerciseProgress = React.memo(({ exercise }: CardExerciseProgressProps) => {
   return (
-    <View className="py-2">
+    <View className="py-2 ">
       <GraphData logs={exercise.allLogs} />
       <View className="bg-zinc-800/50 rounded-2xl p-4 flex-row flex-wrap justify-between mt-4">
         <StatItem label="משקל שיא" value={`${exercise.maxWeight} ק"ג`} />
@@ -59,16 +59,7 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
       key={exerciseDetails?.id}
       className="mb-4 bg-zinc-800/50 border border-zinc-700/50 rounded-2xl p-4 shadow-lg"
     >
-      <View className="flex-row justify-between items-center mb-4">
-        <View className="flex-1 mr-4">
-          <Text
-            className="typo-h4 text-white text-right"
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {exerciseDetails?.name_he}
-          </Text>
-        </View>
+      <View className="flex-row justify-between items-center mb-4 gap-3">
         {(exerciseDetails?.gifUrl || exerciseDetails?.gif_available === false) && (
           <View className="shrink-0 h-12 w-12 rounded-lg bg-zinc-800 border border-zinc-700 overflow-hidden">
             {exerciseDetails?.gif_available === false ? (
@@ -84,9 +75,15 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
             )}
           </View>
         )}
+        <View className="flex-1 mr-4">
+          <Text className="typo-h4 text-white" numberOfLines={1} ellipsizeMode="tail">
+            {exerciseDetails?.name_he}
+          </Text>
+        </View>
       </View>
+
       <View className="bg-zinc-700/30 border border-zinc-600/40 rounded-xl px-4 py-4 flex-row items-center justify-center">
-        <Text className="typo-label text-zinc-400 text-center">
+        <Text className="typo-label text-zinc-400 text-center ">
           על תרגיל זה טרם בוצעו חזרות — אין נתונים להצגה
         </Text>
       </View>
@@ -94,7 +91,7 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
   );
 });
 const StatItem = React.memo(({ label, value }: { label: string; value: string }) => (
-  <View className="w-[48%] mb-4 items-end">
+  <View className="w-[48%] mb-4">
     <Text className="typo-caption text-zinc-500 mb-1">{label}</Text>
     <Text className="typo-body-primary text-white">{value}</Text>
   </View>
