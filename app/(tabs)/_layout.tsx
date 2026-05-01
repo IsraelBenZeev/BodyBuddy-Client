@@ -80,21 +80,12 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="nutrition"
+        name="profile"
         options={{
-          title: 'תזונה',
+          title: 'פרופיל',
           tabBarLabelStyle: { color: colors.background[900] },
-          tabBarIcon: nutritionIcon,
-          tabBarButton: nutritionButton,
-        }}
-      />
-      <Tabs.Screen
-        name="workouts"
-        options={{
-          title: 'אימונים',
-          tabBarLabelStyle: { color: colors.background[900] },
-          tabBarIcon: workoutsIcon,
-          tabBarButton: workoutsButton,
+          tabBarIcon: profileIcon,
+          tabBarButton: profileButton,
         }}
       />
       <Tabs.Screen
@@ -107,12 +98,21 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="workouts"
         options={{
-          title: 'פרופיל',
+          title: 'אימונים',
           tabBarLabelStyle: { color: colors.background[900] },
-          tabBarIcon: profileIcon,
-          tabBarButton: profileButton,
+          tabBarIcon: workoutsIcon,
+          tabBarButton: workoutsButton,
+        }}
+      />
+      <Tabs.Screen
+        name="nutrition"
+        options={{
+          title: 'תזונה',
+          tabBarLabelStyle: { color: colors.background[900] },
+          tabBarIcon: nutritionIcon,
+          tabBarButton: nutritionButton,
         }}
       />
     </Tabs>
