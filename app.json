@@ -32,6 +32,7 @@
     },
     "plugins": [
       "./plugins/withAndroidRTL",
+      "./plugins/withIosRTL",
       ["expo-localization", { "supportsRTL": true, "forcesRTL": true }],
       "expo-router",
       [
