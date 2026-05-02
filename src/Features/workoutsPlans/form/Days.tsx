@@ -34,7 +34,7 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
                 };
                 return (
                     <View className="mb-6">
-                        <Text className="typo-label text-background-400 text-right mb-3">ימי אימון</Text>
+                        <Text className="typo-label text-background-400 mb-3">ימי אימון</Text>
                         <View className="flex-row justify-between items-center bg-background-900/50 p-2 rounded-2xl border border-background-800">
                             {days.map((day, index) => {
                                 const isSelected = value.includes(day);

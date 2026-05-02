@@ -151,26 +151,28 @@ const ActivityLevelStep = ({
                     <Text className="typo-h2 text-white">{value.toFixed(1)}</Text>
                     <Text className="typo-caption text-background-400">גרם/ק״ג</Text>
                   </View>
-                  <Slider
-                    value={value}
-                    onValueChange={(val) => onChange((val as number[])[0])}
-                    minimumValue={0.8}
-                    maximumValue={3}
-                    step={0.1}
-                    minimumTrackTintColor={colors.lime[500]}
-                    maximumTrackTintColor={colors.background[600]}
-                    thumbTintColor={colors.lime[500]}
-                    trackStyle={{ height: 6, borderRadius: 3 }}
-                    thumbStyle={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 3,
-                    }}
-                  />
+                  <View style={{ direction: 'ltr' }}>
+                    <Slider
+                      value={value}
+                      onValueChange={(val) => onChange((val as number[])[0])}
+                      minimumValue={0.8}
+                      maximumValue={3}
+                      step={0.1}
+                      minimumTrackTintColor={colors.lime[500]}
+                      maximumTrackTintColor={colors.background[600]}
+                      thumbTintColor={colors.lime[500]}
+                      trackStyle={{ height: 6, borderRadius: 3 }}
+                      thumbStyle={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 12,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 3,
+                      }}
+                    />
+                  </View>
                   <View className="flex-row justify-between mt-1">
                     <Text className="typo-caption text-background-500">0.8</Text>
                     <Text className="typo-caption text-background-500">3</Text>

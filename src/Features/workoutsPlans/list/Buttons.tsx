@@ -135,14 +135,11 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
             className="flex-row"
         >
             <Button
-                text="מחק"
-                onPress={() => onDelete(plan?.id as string)}
-                icon={<MaterialCommunityIcons name="trash-can-outline" size={26} color={colors.lime[500]} />}
-            />
-            <Button
-                text="ערוך"
-                onPress={handleEdit}
-                icon={<MaterialCommunityIcons name="pencil-outline" size={26} color={colors.lime[500]} />}
+                text="שכפל"
+                onPress={handleDuplicate}
+                icon={duplicatePending
+                    ? <Loading size="small" />
+                    : <Ionicons name="duplicate-outline" size={26} color={colors.lime[500]} />}
             />
             <Button
                 text="שתף"
@@ -150,11 +147,14 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
                 icon={<Feather name="share" size={26} color={colors.lime[500]} />}
             />
             <Button
-                text="שכפל"
-                onPress={handleDuplicate}
-                icon={duplicatePending
-                    ? <Loading size="small" />
-                    : <Ionicons name="duplicate-outline" size={26} color={colors.lime[500]} />}
+                text="ערוך"
+                onPress={handleEdit}
+                icon={<MaterialCommunityIcons name="pencil-outline" size={26} color={colors.lime[500]} />}
+            />
+            <Button
+                text="מחק"
+                onPress={() => onDelete(plan?.id as string)}
+                icon={<MaterialCommunityIcons name="trash-can-outline" size={26} color={colors.lime[500]} />}
             />
 
         </View>

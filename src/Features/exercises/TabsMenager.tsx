@@ -147,7 +147,7 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
     if (state === State.END) {
       // רגישות ההחלקה - 50 פיקסלים
       const threshold = 50;
-      const step = I18nManager.isRTL ? -1 : 1;
+      const step = I18nManager.isRTL ? 1 : -1;
 
       // מקרה 1: החלקה שמאלה (מזיזים את האצבע ימינה לשמאלה) -> עוברים לטאב הבא
       if (translationX < -threshold) {

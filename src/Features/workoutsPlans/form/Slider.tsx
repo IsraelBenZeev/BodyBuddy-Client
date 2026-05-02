@@ -1,4 +1,4 @@
-import { colors } from "@/colors";
+import { colors } from '@/colors';
 import { Slider as CustomSlider } from '@miblanchard/react-native-slider';
 import * as Haptics from 'expo-haptics';
 import { Control, Controller } from 'react-hook-form';
@@ -6,72 +6,73 @@ import { Text, View } from 'react-native';
 
 // הגדרת הטיפוסים ל-Props
 interface Props {
-    control: Control<any>;
-    name: string;
-    isPendingCreate: boolean;
+  control: Control<any>;
+  name: string;
+  isPendingCreate: boolean;
 }
 
 const IntensitySlider = ({ control, name, isPendingCreate }: Props) => {
-    return (
-        <Controller
-            control={control}
-            name={name}
-            disabled={isPendingCreate}
-            defaultValue={5}
-            rules={{
-                required: 'חובה להזין רמת קושי',
-            }}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <View className="mb-6">
-                    <View className="flex-row justify-between items-center mb-3">
-                        <Text className="typo-label text-background-400">רמת קושי</Text>
-                        <Text className="typo-h4 text-lime-500">
-                            {Math.round(value)}/10
-                        </Text>
-                    </View>
+  return (
+    <Controller
+      control={control}
+      name={name}
+      disabled={isPendingCreate}
+      defaultValue={5}
+      rules={{
+        required: 'חובה להזין רמת קושי',
+      }}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
+        <View className="mb-6">
+          <View className="flex-row justify-between items-center mb-3">
+            <Text className="typo-label text-background-400">רמת קושי</Text>
+            <Text className="typo-h4 text-lime-500">{Math.round(value)}/10</Text>
+          </View>
 
-                    <View className="p-4 bg-background-800 rounded-2xl border border-background-700/50">
-                        <CustomSlider
-                            disabled={isPendingCreate}
-                            value={value}
-                            onValueChange={(val) => {
-                                if (isPendingCreate) return;
-                                const newValue = Array.isArray(val) ? val[0] : val;
-                                onChange(newValue);
-                                Haptics.selectionAsync(); // רטט בכל שינוי
-                            }}
-                            minimumValue={1}
-                            maximumValue={10}
-                            step={1}
-                            minimumTrackTintColor={colors.lime[500]}
-                            maximumTrackTintColor={colors.background[600]}
-                            thumbTintColor={colors.lime[500]}
-                            trackStyle={{ height: 6, borderRadius: 3, backgroundColor: colors.background[600] }}
-                            thumbStyle={{
-                                width: 24,
-                                height: 24,
-                                borderRadius: 12,
-                                backgroundColor: colors.lime[500],
-                                borderWidth: 3,
-                                borderColor: colors.background[800],
-                                shadowColor: colors.lime[500],
-                                shadowOffset: { width: 0, height: 0 },
-                                shadowOpacity: 0.5,
-                                shadowRadius: 5
-                            }}
-                        />
+          <View
+            className="p-4 bg-background-800 rounded-2xl border border-background-700/50"
+            style={{ direction: 'ltr' }}
+          >
+            <CustomSlider
+              disabled={isPendingCreate}
+              value={value}
+              onValueChange={(val) => {
+                if (isPendingCreate) return;
+                const newValue = Array.isArray(val) ? val[0] : val;
+                onChange(newValue);
+                Haptics.selectionAsync(); // רטט בכל שינוי
+              }}
+              minimumValue={1}
+              maximumValue={10}
+              step={1}
+              minimumTrackTintColor={colors.lime[500]}
+              maximumTrackTintColor={colors.background[600]}
+              thumbTintColor={colors.lime[500]}
+              trackStyle={{ height: 6, borderRadius: 3, backgroundColor: colors.background[600] }}
+              thumbStyle={{
+                width: 24,
+                height: 24,
+                borderRadius: 12,
+                backgroundColor: colors.lime[500],
+                borderWidth: 3,
+                borderColor: colors.background[800],
+                shadowColor: colors.lime[500],
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5,
+                shadowRadius: 5,
+              }}
+            />
 
-                        <View className="flex-row justify-between mt-2 px-1">
-                            <Text className="typo-caption-bold text-background-500">קל מאוד</Text>
-                            <Text className="typo-caption-bold text-lime-500/50">בינוני</Text>
-                            <Text className="typo-caption-bold text-red-400/70">אינטנסיבי</Text>
-                        </View>
-                    </View>
-                    {error && <Text className="text-red-500 text-right mt-1">{error.message}</Text>}
-                </View>
-            )}
-        />
-    );
+            <View className="flex-row justify-between mt-2 px-1">
+              <Text className="typo-caption-bold text-background-500">קל מאוד</Text>
+              <Text className="typo-caption-bold text-lime-500/50">בינוני</Text>
+              <Text className="typo-caption-bold text-red-400/70">אינטנסיבי</Text>
+            </View>
+          </View>
+          {error && <Text className="text-red-500 text-right mt-1">{error.message}</Text>}
+        </View>
+      )}
+    />
+  );
 };
 
 export default IntensitySlider;

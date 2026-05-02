@@ -9,12 +9,13 @@ import BackGround from '@/src/ui/BackGround';
 import HoldButton from '@/src/ui/HoldButton';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 import { Ionicons } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { differenceInYears, isValid, parseISO } from 'date-fns';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { ReactNode, useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /** --- פונקציות עזר --- **/
@@ -60,6 +61,7 @@ export default function ProfileScreen() {
   const user = useAuthStore((state) => state.user);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
   const [animKey, setAnimKey] = useState(0);
+  const [isPressingLogout, setIsPressingLogout] = useState(false);
   const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
 
   useFocusEffect(
@@ -127,11 +129,32 @@ export default function ProfileScreen() {
               </Animated.Text>
               <Animated.View
                 entering={FadeInDown.delay(240).duration(300).damping(20)}
-                className="flex-row mt-3"
+                className="mt-3 relative"
               >
+                {/* Tooltip — מופיע רק בזמן לחיצה */}
+                {isPressingLogout && (
+                  <Animated.View
+                    entering={FadeIn.duration(150)}
+                    exiting={FadeOut.duration(150)}
+                    className="absolute bottom-full mb-2 w-full flex justify-center items-center"
+                  >
+                    <View className="bg-zinc-800 border border-zinc-600 px-4 py-2 rounded-full flex-row items-center gap-2">
+                      <MaterialCommunityIcons name="gesture-tap-hold" size={16} color="#ef4444" />
+                      <Text className="typo-caption text-zinc-300">המשך להחזיק להתנתקות</Text>
+                    </View>
+                    <MaterialCommunityIcons
+                      name="triangle"
+                      size={12}
+                      color="#3f3f46"
+                      style={{ transform: [{ rotate: '180deg' }] }}
+                    />
+                  </Animated.View>
+                )}
                 <View className="flex-row items-center bg-white/5 rounded-full border border-white/10 overflow-hidden">
                   <HoldButton
                     onPress={handleLogout}
+                    onPressIn={() => setIsPressingLogout(true)}
+                    onPressOut={() => setIsPressingLogout(false)}
                     holdDurationMs={1000}
                     fillVariant="darken"
                     fillColor="rgba(239,68,68,0.4)"

@@ -230,27 +230,29 @@ const GoalStep = ({
                     <Text className="typo-caption text-background-400">קק״ל</Text>
                   </View>
 
-                  {/* Slider */}
-                  <Slider
-                    value={value}
-                    onValueChange={(val) => onChange(Math.round((val as number[])[0]))}
-                    minimumValue={100}
-                    maximumValue={1000}
-                    step={50}
-                    minimumTrackTintColor={offsetIntensity?.color ?? colors.lime[500]}
-                    maximumTrackTintColor={colors.background[600]}
-                    thumbTintColor={offsetIntensity?.color ?? colors.lime[500]}
-                    trackStyle={{ height: 6, borderRadius: 3 }}
-                    thumbStyle={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 3,
-                    }}
-                  />
+                  {/* Slider – direction ltr כי הספרייה לא תומכת RTL */}
+                  <View style={{ direction: 'ltr' }}>
+                    <Slider
+                      value={value}
+                      onValueChange={(val) => onChange(Math.round((val as number[])[0]))}
+                      minimumValue={100}
+                      maximumValue={1000}
+                      step={50}
+                      minimumTrackTintColor={offsetIntensity?.color ?? colors.lime[500]}
+                      maximumTrackTintColor={colors.background[600]}
+                      thumbTintColor={offsetIntensity?.color ?? colors.lime[500]}
+                      trackStyle={{ height: 6, borderRadius: 3 }}
+                      thumbStyle={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 12,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 3,
+                      }}
+                    />
+                  </View>
 
                   {/* טווח מינימום-מקסימום */}
                   <View className="flex-row justify-between mt-1 mb-3">

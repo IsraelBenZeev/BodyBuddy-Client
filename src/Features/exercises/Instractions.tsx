@@ -8,7 +8,7 @@ const Instractions = ({ instructions }: InstractionsProps) => {
     return (
         <View className="px-5 py-4">
             {/* כותרת הטאב */}
-            <View className="flex-row items-center mb-6">
+            <View className="flex-row items-center mb-6 gap-4">
                 <View className="h-6 w-1 bg-lime-500 rounded-full ml-3" />
                 <Text className="typo-h3 text-white text-right">שלבי ביצוע</Text>
             </View>
