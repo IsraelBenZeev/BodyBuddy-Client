@@ -1,7 +1,8 @@
 import { colors } from '@/colors';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { X } from 'lucide-react-native';
 import { forwardRef, ReactNode, useCallback, useMemo } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 
 interface ModalBottomProps {
   children?: ReactNode;
@@ -12,6 +13,7 @@ interface ModalBottomProps {
   enablePanDownToClose?: boolean;
   useScrollView?: boolean;
   onClose?: () => void;
+  onClosePress?: () => void;
   onChange?: (isOpen: boolean) => void;
 }
 
@@ -26,20 +28,41 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     useScrollView = true,
     onChange,
     onClose,
+    onClosePress,
   } = props;
 
   const snapPoints = useMemo(() => [minHeight, maxHeight], [minHeight, maxHeight]);
 
   const renderHandle = useCallback(
     () => (
-      <View className="items-center py-3 bg-background-900 rounded-t-[20px]">
-        <View className="w-10 h-1 bg-lime-400 rounded-sm" />
-        {title && (
-          <Text className="typo-h4 text-lime-400 mt-2.5 text-center">{title}</Text>
+      <View className="py-3 bg-background-900 rounded-t-[20px]">
+        <View className="items-center">
+          <View className="w-10 h-1 bg-lime-400 rounded-sm" />
+        </View>
+        {(title || onClosePress) && (
+          <View className="flex-row items-center justify-between px-4 mt-2.5">
+            <View className="w-7">
+              {onClosePress && (
+                <Pressable
+                  onPress={onClosePress}
+                  hitSlop={8}
+                  accessibilityLabel="סגור"
+                  accessibilityRole="button"
+                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+                >
+                  <X size={20} color={colors.lime[400]} strokeWidth={2} />
+                </Pressable>
+              )}
+            </View>
+            {title && (
+              <Text className="typo-h4 text-lime-400 text-center flex-1">{title}</Text>
+            )}
+            <View className="w-7" />
+          </View>
         )}
       </View>
     ),
-    [title]
+    [title, onClosePress]
   );
 
   const handleSheetChange = useCallback(

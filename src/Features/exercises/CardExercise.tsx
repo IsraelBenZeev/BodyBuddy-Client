@@ -45,7 +45,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
 
   return (
     <AppButton
-      animationType="scale"
+      animationType="opacity"
       haptic="medium"
       onPress={handleMainPress}
       accessibilityLabel={mode === 'picker' ? `${item.name_he}${isSelected ? ', נבחר' : ''}` : item.name_he}

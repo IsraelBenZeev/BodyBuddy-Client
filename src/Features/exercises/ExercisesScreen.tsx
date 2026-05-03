@@ -6,6 +6,8 @@ import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
+import ModalBottom from '@/src/ui/ModalButtom';
+import ListExercise from '@/src/Features/workoutsPlans/form/ListExercises';
 import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
@@ -14,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
-import { useDeferredValue, useCallback, useMemo, useState } from 'react';
+import { useDeferredValue, useCallback, useMemo, useRef, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
@@ -31,6 +33,8 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const selectedPartsArray = JSON.parse(bodyParts as string) as BodyPart[];
   const exerciseSelectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
+  const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
+  const sheetRef = useRef<any>(null);
 
   const { data: profile } = useProfile(user?.id);
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useExercises(
@@ -38,6 +42,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     selectedPartsArray
   );
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
   const [selectedMuscle, setSelectedMuscle] = useState<string | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -205,7 +210,15 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             </View>
             {mode === 'picker' && (
               <View className="flex-row items-center justify-between bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 mx-2 mb-3">
-                <View className="flex-row items-center gap-2">
+                <AppButton
+                  onPress={() => isSheetOpen ? sheetRef.current?.close() : sheetRef.current?.snapToIndex(0)}
+                  animationType="opacity"
+                  haptic="light"
+                  className="flex-row items-center gap-2"
+                  accessibilityLabel="הצג תרגילים נבחרים"
+                  accessibilityRole="button"
+                  disabled={exerciseSelectedIds.size === 0}
+                >
                   <View className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.size > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}>
                     <Text className={`typo-btn-secondary ${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'}`}>
                       {exerciseSelectedIds.size}
@@ -214,7 +227,10 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                   <Text className="typo-btn-secondary text-zinc-300">
                     תרגילים נבחרו
                   </Text>
-                </View>
+                  {exerciseSelectedIds.size > 0 && (
+                    <Ionicons name={isSheetOpen ? 'chevron-down' : 'chevron-up'} size={14} color="#a3e635" />
+                  )}
+                </AppButton>
 
                 {exerciseSelectedIds.size > 0 && (
                   <AppButton
@@ -282,7 +298,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
           accessibilityRole="button"
         >
           <View className="bg-zinc-900 rounded-2xl border border-lime-500 px-2 py-3">
-            <View className="flex items-end pr-1">
+            <View className="flex pr-1 ">
               <Pressable
                 onPress={() => setShowTooltip(false)}
                 style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
@@ -297,6 +313,24 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
           </View>
         </Pressable>
       </Modal>
+      {mode === 'picker' && (
+        <ModalBottom
+          ref={sheetRef}
+          initialIndex={-1}
+          enablePanDownToClose={true}
+          minHeight="50%"
+          maxHeight="50%"
+          title="תרגילים נבחרים"
+          onChange={setIsSheetOpen}
+          onClosePress={() => sheetRef.current?.close()}
+        >
+          <ListExercise
+            mode="edit"
+            toggleExercise={toggleExercise}
+            selectExercisesIds={[...exerciseSelectedIds]}
+          />
+        </ModalBottom>
+      )}
     </BackGround>
   );
 };

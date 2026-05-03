@@ -6,6 +6,7 @@ import General from './General';
 import Glutes from './Glutes';
 import LowerArm from './LowerArm';
 import LowerLeg from './LowerLeg';
+import Neck from './Neck';
 import Shoulders from './Shoulders';
 import UpperArm from './UpperArm';
 import UpperLeg from './UpperLeg';
@@ -31,6 +32,7 @@ const AvatarMaleBack = ({ isSelected, handleTogglePart, svgWidthOverride }: Avat
         pointerEvents="auto"
       >
         <General />
+        <Neck isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <Back isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <Shoulders isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <UpperArm isSelected={isSelected} handleTogglePart={handleTogglePart} />

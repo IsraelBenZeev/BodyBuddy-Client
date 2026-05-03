@@ -6,6 +6,7 @@ import { General } from './General';
 import { Glutes } from './Glutes';
 import { LowerArms } from './LowerArm';
 import { LowerLeg } from './LowerLeg';
+import { Neck } from './Neck';
 import { Shoulders } from './Shoulders';
 import { UpperArms } from './UpperArm';
 import { UpperLeg } from './UpperLeg';
@@ -31,6 +32,7 @@ const AvatarFemaleBack = ({ isSelected, handleTogglePart, svgWidthOverride }: Av
         preserveAspectRatio="xMidYMax meet"
       >
         <General />
+        <Neck isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <Glutes isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <UpperLeg isSelected={isSelected} handleTogglePart={handleTogglePart} />
         <Shoulders isSelected={isSelected} handleTogglePart={handleTogglePart} />

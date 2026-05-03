@@ -83,8 +83,8 @@ const AvatarSelectorScreen = () => {
         </View>
         {/* כפתור סיבוב + חיווי צד */}
         <View
-          className="absolute left-[30px] z-20"
-          style={{ top: '63%', right: -200, transform: [{ translateY: -30 }] }}
+          className="absolute right-[30px] z-20"
+          style={{ top: '63%', transform: [{ translateY: -30 }] }}
         >
           <Pressable
             className="items-center active:opacity-70 active:scale-95"
