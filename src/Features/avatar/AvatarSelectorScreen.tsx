@@ -44,9 +44,9 @@ const AvatarSelectorScreen = () => {
 
   return (
     <BackGround>
-      <View className="flex-1 relative">
+      <View className="flex-1 relative ">
         {/* --- Header --- */}
-        <View className="px-[30px] items-end h-[120px] z-10">
+        <View className="px-[30px] items-start h-[120px] z-10  ">
           <Text className="typo-caption-bold text-zinc-500 uppercase tracking-[2px]">
             Target Area
           </Text>
@@ -84,7 +84,7 @@ const AvatarSelectorScreen = () => {
         {/* כפתור סיבוב + חיווי צד */}
         <View
           className="absolute left-[30px] z-20"
-          style={{ top: '63%', left: 30, transform: [{ translateY: -30 }] }}
+          style={{ top: '63%', right: -200, transform: [{ translateY: -30 }] }}
         >
           <Pressable
             className="items-center active:opacity-70 active:scale-95"
@@ -111,7 +111,7 @@ const AvatarSelectorScreen = () => {
         {/* חיווי צד נוכחי */}
         <View
           className="absolute z-20 bg-white/[0.06] px-3 py-1.5 rounded-xl border border-white/10"
-          style={{ top: '67%', right: 30, transform: [{ translateY: -30 }] }}
+          style={{ top: '67%', left: 30, transform: [{ translateY: -30 }] }}
         >
           <Text className="typo-caption-bold text-zinc-400">
             {sideAvatar === 'front' ? 'מבט קדמי' : 'מבט אחורי'}

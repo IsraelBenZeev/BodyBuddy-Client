@@ -3,7 +3,7 @@ import { SessionDBType } from '@/src/types/session';
 import AppButton from '@/src/ui/PressableOpacity';
 import { format } from 'date-fns'; // ספרייה מומלצת לטיפול בתאריכים
 import { he } from 'date-fns/locale';
-import { Calendar, ChevronRight, Clock, NotepadText } from 'lucide-react-native';
+import { Calendar, ChevronLeft, ChevronRight, Clock, NotepadText } from 'lucide-react-native';
 import React, { useCallback, useMemo, Dispatch, SetStateAction } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
@@ -45,7 +45,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
             // exiting={FadeOutLeft}
             // גורם לכל הרשימה לזוז בצורה חלקה כשפריט נוסף/מוסר
             layout={LinearTransition.springify()}
-            className="bg-background-850 border border-gray-800 rounded-2xl p-4 mb-3 flex-row items-center justify-between">
+            className="bg-background-850 border border-gray-800 rounded-2xl p-4 mb-3 flex-row items-center justify-between ">
             <View className="flex-1">
                 {/* תאריך ושעה */}
                 <View className="flex-row items-center mb-1">
@@ -56,7 +56,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
                 </View>
 
                 {/* שם האימון (אפשר למשוך את שם התוכנית אם יש) */}
-                <Text className="typo-h4 text-white mb-2 text-right">
+                <Text className="typo-h4 text-white mb-2">
                     {sessionTitle}
                 </Text>
 
@@ -87,7 +87,7 @@ const SessionReviewCard = ({ session, onPress, setSelectedSession, sheetRef }: S
                 animationType="both"
                 accessibilityLabel={`הצג פרטי ${sessionTitle}`}
                 className="bg-background-800 p-3 rounded-full ml-4">
-                <ChevronRight size={20} color={colors.lime[500]} />
+                <ChevronLeft size={20} color={colors.lime[500]} />
             </AppButton>
         </Animated.View>
     );

@@ -8,118 +8,126 @@ import { TimerPicker } from 'react-native-timer-picker';
 import ButtonLabelTime from './ButtonLabelTime';
 
 type time = {
-    hours: number;
-    minutes: number;
-}
+  hours: number;
+  minutes: number;
+};
 
 interface Props {
-    control: Control<any>;
-    name: string;
-    isPendingCreate: boolean;
+  control: Control<any>;
+  name: string;
+  isPendingCreate: boolean;
 }
 
 const TimeInput = ({ control, name, isPendingCreate }: Props) => {
-    const [visible, setVisible] = useState(false);
-    const [tempTime, setTempTime] = useState<time>({ hours: 0, minutes: 0 });
-    // פונקציה לפתיחת המודאל שבודקת חסימה
-    const handleOpen = useCallback(() => {
-        if (isPendingCreate) return;
-        setVisible(true);
-    }, [isPendingCreate]);
-    return (
-        <Controller
-            control={control}
-            name={name}
-            disabled={isPendingCreate}
-            
-            rules={{
-                validate: {
-                    required: (value) => value > 0 || 'חובה להזין זמן',
-                },
-            }}
-            defaultValue={0}
-            render={({ field: { onChange, value }, fieldState: { error } }) => {
+  const [visible, setVisible] = useState(false);
+  const [tempTime, setTempTime] = useState<time>({ hours: 0, minutes: 0 });
+  // פונקציה לפתיחת המודאל שבודקת חסימה
+  const handleOpen = useCallback(() => {
+    if (isPendingCreate) return;
+    setVisible(true);
+  }, [isPendingCreate]);
+  return (
+    <Controller
+      control={control}
+      name={name}
+      disabled={isPendingCreate}
+      rules={{
+        validate: {
+          required: (value) => value > 0 || 'חובה להזין זמן',
+        },
+      }}
+      defaultValue={0}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const handleConfirm = () => {
+          const totalMins = tempTime.hours * 60 + tempTime.minutes;
+          onChange(totalMins);
+          setVisible(false);
+        };
 
-                const handleConfirm = () => {
-                    const totalMins = (tempTime.hours * 60) + tempTime.minutes;
-                    onChange(totalMins);
-                    setVisible(false);
-                };
+        const handleCancel = () => {
+          setVisible(false);
+        };
 
-                const handleCancel = () => {
-                    setVisible(false);
-                };
+        return (
+          <View className="flex-1">
+            <ButtonLabelTime
+              totalMinutes={value}
+              setVisible={handleOpen}
+              isPendingCreate={isPendingCreate}
+            />
 
-                return (
-                    <View className='flex-1'>
-                        <ButtonLabelTime
-                            totalMinutes={value}
-                            setVisible={handleOpen}
-                            isPendingCreate={isPendingCreate}
-                        />
+            <Modal visible={visible} animationType="slide" transparent={true}>
+              <View className="flex-1 justify-end bg-black/70 bd">
+                <View className="bg-background-800 p-4 rounded-t-2xl">
+                  <View className="flex-row justify-between mb-4 px-3">
+                    <Pressable
+                      onPress={handleCancel}
+                      accessibilityRole="button"
+                      accessibilityLabel="ביטול"
+                    >
+                      <Text className="typo-h4 text-red-600">ביטול</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={handleConfirm}
+                      accessibilityRole="button"
+                      accessibilityLabel="אישור בחירת זמן"
+                    >
+                      <Text className="typo-h4 text-lime-500">אישור</Text>
+                    </Pressable>
+                  </View>
 
-                        <Modal visible={visible} animationType="slide" transparent={true}>
-                            <View className='flex-1 justify-end bg-black/70'>
-                                <View className='bg-background-800 p-4 rounded-t-2xl'>
-
-                                    <View className="flex-row justify-between mb-4 px-3">
-                                        <Pressable onPress={handleCancel} accessibilityRole="button" accessibilityLabel="ביטול">
-                                            <Text className="typo-h4 text-red-600">ביטול</Text>
-                                        </Pressable>
-                                        <Pressable onPress={handleConfirm} accessibilityRole="button" accessibilityLabel="אישור בחירת זמן">
-                                            <Text className="typo-h4 text-lime-500">אישור</Text>
-                                        </Pressable>
-                                    </View>
-
-                                    <TimerPicker
-                                        hideSeconds
-                                        hourLabel="HR"
-                                        minuteLabel="MIN"
-                                        // מעדכן רק את הסטייט המקומי של המודאל בזמן הגלילה
-                                        onDurationChange={(duration) => setTempTime(duration)}
-                                        padHoursWithZero={true}
-                                        padMinutesWithZero={true}
-                                        minuteInterval={5}
-                                        LinearGradient={LinearGradient}
-                                        pickerFeedback={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-                                        initialValue={{
-                                            hours: Math.floor(value / 60),
-                                            minutes: value % 60
-                                        }}
-
-                                        styles={{
-                                            pickerContainer: {
-                                                backgroundColor: colors.background[700],
-                                                borderRadius: 20,
-                                                padding: 10,
-                                                borderWidth: 1,
-                                                borderColor: colors.lime[500],
-                                            },
-                                            pickerItem: {
-                                                fontSize: 34,
-                                                color: "#FFFFFF",
-                                                fontWeight: "300",
-                                            },
-                                            pickerLabel: {
-                                                fontSize: 16,
-                                                fontWeight: "800",
-                                                color: colors.lime[500],
-                                                marginTop: 0,
-                                            },
-                                            pickerLabelContainer: {
-                                                right: -10,
-                                            },
-                                        }}
-                                    />
-                                </View>
-                            </View>
-                        </Modal>
-                        {error && <Text className="text-red-500 text-right">{error.message}</Text>}
-                    </View>
-                );
-            }}
-        />
-    );
+                  <View style={{ transform: [{ scaleX: -1 }] }}>
+                    <TimerPicker
+                      hideSeconds
+                      hourLabel="HR"
+                      minuteLabel="MIN"
+                      // מעדכן רק את הסטייט המקומי של המודאל בזמן הגלילה
+                      onDurationChange={(duration) => setTempTime(duration)}
+                      padHoursWithZero={true}
+                      padMinutesWithZero={true}
+                      minuteInterval={5}
+                      LinearGradient={LinearGradient}
+                      pickerFeedback={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+                      initialValue={{
+                        hours: Math.floor(value / 60),
+                        minutes: value % 60,
+                      }}
+                      styles={{
+                        pickerContainer: {
+                          backgroundColor: colors.background[700],
+                          borderRadius: 20,
+                          padding: 20,
+                          borderWidth: 1,
+                          borderColor: colors.lime[500],
+                        },
+                        pickerItem: {
+                          fontSize: 34,
+                          color: '#FFFFFF',
+                          fontWeight: '300',
+                          transform: [{ scaleX: -1 }],
+                        },
+                        pickerLabel: {
+                          fontSize: 16,
+                          fontWeight: '800',
+                          color: colors.lime[500],
+                          marginTop: 0,
+                          transform: [{ scaleX: -1 }],
+                        },
+                        pickerLabelContainer: {
+                          left: -10,
+                        },
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            </Modal>
+            {error && <Text className="text-red-500 text-right">{error.message}</Text>}
+          </View>
+        );
+      }}
+    />
+  );
 };
 
 export default TimeInput;

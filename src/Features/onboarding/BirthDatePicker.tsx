@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 
+
 const ITEM_HEIGHT = 40;
 const VISIBLE_ITEMS = 3;
 const CONTAINER_HEIGHT = ITEM_HEIGHT * VISIBLE_ITEMS;
@@ -126,22 +127,22 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
 
   // גלילה לערך שהשתנה מבחוץ (למשל clamping יום כשחודש משתנה)
   useEffect(() => {
+    if (lastScrolledIndex.current === null) {
+      // initial mount מטופל ע"י initialScrollIndex
+      lastScrolledIndex.current = selectedIndex;
+      return;
+    }
     if (lastScrolledIndex.current !== selectedIndex) {
-      const offset = selectedIndex * ITEM_HEIGHT;
-      const isInitial = lastScrolledIndex.current === null;
-      const timer = setTimeout(
-        () => {
-          flatListRef.current?.scrollToOffset({ offset, animated: !isInitial });
-          lastScrolledIndex.current = selectedIndex;
-        },
-        isInitial ? 50 : 0
-      );
+      const timer = setTimeout(() => {
+        flatListRef.current?.scrollToOffset({ offset: selectedIndex * ITEM_HEIGHT, animated: true });
+        lastScrolledIndex.current = selectedIndex;
+      }, 0);
       return () => clearTimeout(timer);
     }
   }, [selectedIndex]);
 
   const handleScroll = Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-    useNativeDriver: true,
+    useNativeDriver: false,
     listener: (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       const index = Math.round(e.nativeEvent.contentOffset.y / ITEM_HEIGHT);
       const clamped = Math.max(0, Math.min(index, data.length - 1));
@@ -211,12 +212,13 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
             zIndex: 0,
           }}
         />
-        <Animated.FlatList
+        <FlatList
           ref={flatListRef}
           data={paddedData}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           extraData={selectedIndex}
+          initialScrollIndex={selectedIndex}
           snapToInterval={ITEM_HEIGHT}
           decelerationRate="fast"
           showsVerticalScrollIndicator={false}
@@ -226,7 +228,7 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
           getItemLayout={getItemLayout}
           style={{ zIndex: 1 }}
           onScrollToIndexFailed={() => {
-            flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+            flatListRef.current?.scrollToOffset({ offset: selectedIndex * ITEM_HEIGHT, animated: false });
           }}
         />
       </View>

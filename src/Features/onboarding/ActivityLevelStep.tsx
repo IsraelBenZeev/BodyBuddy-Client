@@ -58,10 +58,10 @@ const ActivityLevelStep = ({
     <Animated.View entering={FadeInLeft.duration(400)} className="flex-1 px-6">
       {/* Header */}
       <View className="mb-6">
-        <Text className="typo-h1 text-white text-right mb-2">
+        <Text className="typo-h1 text-white  mb-2">
           רמת הפעילות שלך
         </Text>
-        <Text className="typo-h4 text-background-400 text-right">
+        <Text className="typo-h4 text-background-400 ">
           בחר/י את רמת הפעילות הגופנית הממוצעת שלך
         </Text>
       </View>
@@ -123,7 +123,7 @@ const ActivityLevelStep = ({
                   })}
                 </View>
                 {error && (
-                  <Text className="typo-caption text-red-400 text-right mt-2">
+                  <Text className="typo-caption text-red-400  mt-2">
                     {error.message}
                   </Text>
                 )}
@@ -134,10 +134,10 @@ const ActivityLevelStep = ({
 
         {/* Protein per kg */}
         <View className="mb-4">
-          <Text className="typo-label text-background-200 text-right mb-1">
+          <Text className="typo-label text-background-200  mb-1">
             חלבון לכל ק״ג משקל (גרם)
           </Text>
-          <Text className="typo-caption text-background-500 text-right mb-3">
+          <Text className="typo-caption text-background-500  mb-3">
             ערך ברירת מחדל {DEFAULT_PROTEIN_PER_KG} – משמש לחישוב יעד החלבון היומי
           </Text>
           <Controller
@@ -151,33 +151,35 @@ const ActivityLevelStep = ({
                     <Text className="typo-h2 text-white">{value.toFixed(1)}</Text>
                     <Text className="typo-caption text-background-400">גרם/ק״ג</Text>
                   </View>
-                  <Slider
-                    value={value}
-                    onValueChange={(val) => onChange((val as number[])[0])}
-                    minimumValue={0.8}
-                    maximumValue={3}
-                    step={0.1}
-                    minimumTrackTintColor={colors.lime[500]}
-                    maximumTrackTintColor={colors.background[600]}
-                    thumbTintColor={colors.lime[500]}
-                    trackStyle={{ height: 6, borderRadius: 3 }}
-                    thumbStyle={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 3,
-                    }}
-                  />
+                  <View style={{ direction: 'ltr' }}>
+                    <Slider
+                      value={value}
+                      onValueChange={(val) => onChange((val as number[])[0])}
+                      minimumValue={0.8}
+                      maximumValue={3}
+                      step={0.1}
+                      minimumTrackTintColor={colors.lime[500]}
+                      maximumTrackTintColor={colors.background[600]}
+                      thumbTintColor={colors.lime[500]}
+                      trackStyle={{ height: 6, borderRadius: 3 }}
+                      thumbStyle={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 12,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 3,
+                      }}
+                    />
+                  </View>
                   <View className="flex-row justify-between mt-1">
                     <Text className="typo-caption text-background-500">0.8</Text>
                     <Text className="typo-caption text-background-500">3</Text>
                   </View>
                 </View>
                 {error && (
-                  <Text className="typo-caption text-red-400 text-right mt-1">
+                  <Text className="typo-caption text-red-400  mt-1">
                     {error.message}
                   </Text>
                 )}

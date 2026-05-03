@@ -101,7 +101,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
       {/* סרגל */}
       <View
         className="w-full overflow-hidden"
-        style={{ height: 90 }}
+        style={{ height: 90, direction: 'ltr' }}
         onLayout={handleContainerLayout}
       >
         {/* נקודה עליונה */}

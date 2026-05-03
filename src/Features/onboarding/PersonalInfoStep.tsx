@@ -37,21 +37,21 @@ const PersonalInfoStep = ({
   }, [trigger, onSubmit]);
 
   return (
-    <Animated.View entering={FadeInRight.duration(400)} className="flex-1 px-6">
+    <Animated.View entering={FadeInRight.duration(400)} className="flex-1 px-6 ">
       <View>
       {/* Header */}
-      <View className="mb-4">
-        <Text className="typo-h1 text-white text-right mb-2">
+      <View className="mb-4 items-start ">
+        <Text className="typo-h1 text-white mb-2">
           ספר/י לנו על עצמך
         </Text>
-        <Text className="typo-h3 text-background-400 text-right">
+        <Text className="typo-h3 text-background-400 ">
           כדי שנתאים לך את חוויית האימון המושלמת
         </Text>
       </View>
 
       {/* Full Name */}
       <View className="mb-4">
-        <Text className="typo-label text-background-200 text-right mb-1">
+        <Text className="typo-label text-background-200  mb-1">
           שם מלא
         </Text>
         <Controller
@@ -64,7 +64,7 @@ const PersonalInfoStep = ({
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <View>
               <TextInput
-                className="typo-input bg-background-800 border border-background-600 rounded-2xl px-4 py-4 text-white text-right"
+                className="typo-input bg-background-800 border border-background-600 rounded-2xl px-4 py-4 text-white "
                 placeholder="השם שלך"
                 placeholderTextColor={colors.background[500]}
                 value={value}
@@ -73,7 +73,7 @@ const PersonalInfoStep = ({
                 autoCapitalize="words"
               />
               {error && (
-                <Text className="typo-caption text-red-400 text-right mt-1">
+                <Text className="typo-caption text-red-400  mt-1">
                   {error.message}
                 </Text>
               )}
@@ -84,7 +84,7 @@ const PersonalInfoStep = ({
 
       {/* Gender */}
       <View className="mb-4">
-        <Text className="typo-label text-background-200 text-right mb-1">
+        <Text className="typo-label text-background-200  mb-1">
           מין
         </Text>
         <Controller
@@ -126,7 +126,7 @@ const PersonalInfoStep = ({
                 })}
               </View>
               {error && (
-                <Text className="typo-caption text-red-400 text-right mt-1">
+                <Text className="typo-caption text-red-400  mt-1">
                   {error.message}
                 </Text>
               )}
@@ -137,7 +137,7 @@ const PersonalInfoStep = ({
 
       {/* תאריך לידה */}
       <View className="mb-4">
-        <Text className="typo-label text-background-200 text-right mb-1">
+        <Text className="typo-label text-background-200  mb-1">
           תאריך לידה
         </Text>
         <Controller
@@ -156,14 +156,14 @@ const PersonalInfoStep = ({
                 <View className="bg-background-800 border border-background-600 rounded-2xl overflow-hidden py-2 px-2">
                   <BirthDatePicker value={value} onChange={onChange} />
                 </View>
-                <Text className="typo-body-primary text-background-400 text-right mt-1">
+                <Text className="typo-body-primary text-background-400  mt-1">
                   גיל: {age}
                 </Text>
-                <Text className="typo-caption text-background-500 text-right mt-1">
+                <Text className="typo-caption text-background-500  mt-1">
                   * BodyBuddy מיועד לגילאי 18 ומעלה בלבד
                 </Text>
                 {error && (
-                  <Text className="typo-caption text-red-400 text-right mt-1">
+                  <Text className="typo-caption text-red-400  mt-1">
                     {error.message}
                   </Text>
                 )}

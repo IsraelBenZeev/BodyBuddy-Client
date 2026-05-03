@@ -36,7 +36,7 @@ const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef 
                     ))}
                 </ScrollView>
             ) : (
-                <Text className="typo-h2 text-white text-right">אין אימונים עדיין</Text>
+                <Text className="typo-h2 text-white">אין אימונים עדיין</Text>
             )}
         </View>
     );

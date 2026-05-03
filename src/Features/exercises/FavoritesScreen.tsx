@@ -40,8 +40,8 @@ const FavoritesScreen = () => {
           <Entypo name="chevron-right" size={22} color="white" />
         </Pressable>
         <View className="flex-1">
-          <Text className="typo-h1 text-white text-right">מועדפים</Text>
-          <Text className="typo-label text-zinc-500 text-right mt-0.5">
+          <Text className="typo-h1 text-white">מועדפים</Text>
+          <Text className="typo-label text-zinc-500 mt-0.5">
             {favoriteIds.length} תרגילים שמורים
           </Text>
         </View>
@@ -71,7 +71,7 @@ const FavoritesScreen = () => {
             data={exercises}
             renderItem={renderItem}
             keyExtractor={(item) => item.exerciseId}
-            estimatedItemSize={110}
+            // estimatedItemSize={110}
             ListFooterComponent={<View className="h-20" />}
           />
         </View>

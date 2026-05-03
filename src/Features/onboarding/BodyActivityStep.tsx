@@ -39,10 +39,10 @@ const BodyActivityStep = ({
     <Animated.View entering={FadeInLeft.duration(400)} className="flex-1 px-6">
       {/* Header */}
       <View className="mb-6">
-        <Text className="typo-h1 text-white text-right mb-2">
+        <Text className="typo-h1 text-white  mb-2">
           המדדים שלך
         </Text>
-        <Text className="typo-h4 text-background-400 text-right">
+        <Text className="typo-h4 text-background-400 ">
           גובה ומשקל לחישוב מדויק של תוכניתך
         </Text>
       </View>
@@ -50,7 +50,7 @@ const BodyActivityStep = ({
       <View>
         {/* Height - Horizontal Ruler */}
         <View className="mb-6">
-          <Text className="typo-label text-background-200 text-right mb-3">
+          <Text className="typo-label text-background-200  mb-3">
             גובה
           </Text>
           <Controller
@@ -72,7 +72,7 @@ const BodyActivityStep = ({
                   />
                 </View>
                 {error && (
-                  <Text className="typo-caption text-red-400 text-right mt-1">
+                  <Text className="typo-caption text-red-400  mt-1">
                     {error.message}
                   </Text>
                 )}
@@ -83,7 +83,7 @@ const BodyActivityStep = ({
 
         {/* Weight - Horizontal Ruler */}
         <View className="mb-6">
-          <Text className="typo-label text-background-200 text-right mb-3">
+          <Text className="typo-label text-background-200  mb-3">
             משקל
           </Text>
           <Controller
@@ -105,7 +105,7 @@ const BodyActivityStep = ({
                   />
                 </View>
                 {error && (
-                  <Text className="typo-caption text-red-400 text-right mt-1">
+                  <Text className="typo-caption text-red-400  mt-1">
                     {error.message}
                   </Text>
                 )}

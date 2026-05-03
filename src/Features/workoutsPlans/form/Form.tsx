@@ -1,21 +1,30 @@
 import { colors } from '@/colors';
-import { useCreateWorkoutPlan, useGetWorkoutFromCache, } from '@/src/hooks/useWorkout';
+import { useCreateWorkoutPlan, useGetWorkoutFromCache } from '@/src/hooks/useWorkout';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
 // import { formFailds } from '@/src/types/workout';
+import { useAuthStore } from '@/src/store/useAuthStore';
 import { WorkoutPlan } from '@/src/types/workout';
 import FormInput from '@/src/ui/FormInput';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Days from './Days';
 import HeaderForm from './HeaderForm';
 import ListExercise from './ListExercises';
 import Slider from './Slider';
 import TimeInput from './TimeInput';
-import { useAuthStore } from '@/src/store/useAuthStore';
 const bodyParts = [
   'neck',
   'lower arms',
@@ -37,9 +46,12 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
   const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-  const { data: workoutPlanData, isLoading: isLoadingWorkoutPlan } = useGetWorkoutFromCache(workout_plan_id, user?.id as string);
+  const { data: workoutPlanData, isLoading: isLoadingWorkoutPlan } = useGetWorkoutFromCache(
+    workout_plan_id,
+    user?.id as string
+  );
   const initialValues = useMemo(() => {
-    if (mode !== "edit") return undefined;
+    if (mode !== 'edit') return undefined;
     return {
       user_id: user?.id as string,
       title: workoutPlanData?.title,
@@ -61,7 +73,12 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
 
   // במצב עריכה – טוען את התרגילים הקיימים לסטור פעם אחת
   useEffect(() => {
-    if (mode === 'edit' && !isLoadingWorkoutPlan && workoutPlanData?.exercise_ids && !editInitialized.current) {
+    if (
+      mode === 'edit' &&
+      !isLoadingWorkoutPlan &&
+      workoutPlanData?.exercise_ids &&
+      !editInitialized.current
+    ) {
       editInitialized.current = true;
       resetExercise();
       if (workoutPlanData.exercise_ids.length > 0) {
@@ -70,35 +87,42 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
     }
   }, [mode, isLoadingWorkoutPlan, workoutPlanData]);
 
-  const { mutate: createWorkoutPlan, isPending: isPendingCreate, isSuccess: isSuccessCreate } = useCreateWorkoutPlan(user?.id as string, mode)
+  const {
+    mutate: createWorkoutPlan,
+    isPending: isPendingCreate,
+    isSuccess: isSuccessCreate,
+  } = useCreateWorkoutPlan(user?.id as string, mode);
   const navigateToPicker = useCallback(() => {
     router.navigate({
       pathname: '/exercises/[parts]',
       params: { parts: JSON.stringify(bodyParts), mode: 'picker' },
     });
   }, [router]);
-  const onSubmit = useCallback((data: WorkoutPlan) => {
-    if (!data.description) {
-      data.description = '';
-    }
-    data.user_id = user?.id as string;
-    data.exercise_ids = [...selectedIds];
-    createWorkoutPlan(data)
-    resetExercise()
-  }, [user?.id, selectedIds, createWorkoutPlan, resetExercise]);
+  const onSubmit = useCallback(
+    (data: WorkoutPlan) => {
+      if (!data.description) {
+        data.description = '';
+      }
+      data.user_id = user?.id as string;
+      data.exercise_ids = [...selectedIds];
+      createWorkoutPlan(data);
+      resetExercise();
+    },
+    [user?.id, selectedIds, createWorkoutPlan, resetExercise]
+  );
 
   useEffect(() => {
     if (isSuccessCreate) {
-      router.back()
+      router.back();
     }
-  }, [isSuccessCreate])
+  }, [isSuccessCreate]);
 
   useEffect(() => {
-    if (mode === "edit") {
+    if (mode === 'edit') {
       if (isLoadingWorkoutPlan) return;
-      reset(initialValues)
+      reset(initialValues);
     }
-  }, [mode, initialValues, workoutPlanData, isLoadingWorkoutPlan])
+  }, [mode, initialValues, workoutPlanData, isLoadingWorkoutPlan]);
 
   return (
     <KeyboardAvoidingView
@@ -110,19 +134,30 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
         contentContainerStyle={{ paddingBottom: 120, paddingTop: 10 }}
         showsVerticalScrollIndicator={false}
       >
-        <HeaderForm
-          navigateToPicker={navigateToPicker}
-          selectedIds={[...selectedIds]}
-        />
+        <HeaderForm navigateToPicker={navigateToPicker} selectedIds={[...selectedIds]} />
 
         <View className="mb-8" style={{ maxHeight: SCREEN_HEIGHT * 0.25 }}>
           <ListExercise
             toggleExercise={toggleExercise}
             navigateToPicker={navigateToPicker}
             selectExercisesIds={[...selectedIds]}
-            mode={"edit"}
+            mode={'preview'}
             isPendingCreate={isPendingCreate}
           />
+        </View>
+
+        {/* כפתור הוספה תרגילים */}
+        <View className="items-center mb-8">
+          <AppButton
+            animationType="scale"
+            haptic="medium"
+            onPress={navigateToPicker}
+            className="bg-zinc-900 py-3 px-8 rounded-xl border border-zinc-800 min-w-fit"
+            disabled={isPendingCreate}
+            accessibilityLabel="הוסף תרגילים נוספים"
+          >
+            <Text className="text-lime-400 text-center font-bold">הוסף תרגילים</Text>
+          </AppButton>
         </View>
 
         <View className="gap-6">
@@ -175,13 +210,21 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
           className="bg-lime-500 p-4 rounded-2xl items-center flex-row justify-center shadow-lg shadow-lime-500/20"
           accessibilityLabel={mode === 'create' ? 'צור אימון חדש' : 'עדכן את האימון'}
         >
-          <Text className="typo-h3 text-background-950 tracking-wide">{isPendingCreate ?
-            <View className='flex-row items-center gap-2'>
-              <ActivityIndicator color={colors.background[950]} />
-              <Text className="text-background-950">{mode === "create" ? "יוצר עבורך את האימון..." : "מעדכן את האימון..."}</Text>
-            </View> : mode === "create" ? 'צור אימון חדש' : 'עדכן את האימון'}</Text>
+          <Text className="typo-h3 text-background-950 tracking-wide">
+            {isPendingCreate ? (
+              <View className="flex-row items-center gap-2">
+                <ActivityIndicator color={colors.background[950]} />
+                <Text className="text-background-950">
+                  {mode === 'create' ? 'יוצר עבורך את האימון...' : 'מעדכן את האימון...'}
+                </Text>
+              </View>
+            ) : mode === 'create' ? (
+              'צור אימון חדש'
+            ) : (
+              'עדכן את האימון'
+            )}
+          </Text>
         </AppButton>
-
       </View>
     </KeyboardAvoidingView>
   );
@@ -196,7 +239,7 @@ const styles = StyleSheet.create({
   labelStyle: {
     color: colors.background[400],
     marginBottom: 8,
-    textAlign: 'right',
+    // textAlign: 'right',
     fontWeight: '700',
     fontSize: 14,
   },
@@ -208,7 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 16,
     color: colors.lime[500],
-    textAlign: "right",
+    textAlign: 'right',
     fontSize: 16,
     fontWeight: '500',
   },

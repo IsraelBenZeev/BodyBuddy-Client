@@ -52,7 +52,7 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
       accessibilityState={mode === 'picker' ? { selected: isSelected } : undefined}
       // הסרנו צלליות מורכבות מה-className כדי למנוע קריסת Navigation
       className={`
-        flex-row items-center mb-4 p-3 rounded-[24px] border-[1.5px]
+        flex-row mb-4 p-3 rounded-[24px] border-[1.5px] gap-3
         ${isSelected ? "bg-zinc-800 border-lime-500" : "bg-zinc-900 border-zinc-800"}
       `}
       // העברנו את הצללית ל-style בטוח
@@ -96,8 +96,8 @@ const CardExercise = ({ item, favorites, toggleFavorite, mode }: CardExercisePro
       </View>
 
       {/* מידע על התרגיל */}
-      <View className="flex-1 pr-4 justify-center">
-        <View>
+      <View className="flex-1 pr-4 justify-center items-start">
+        <View className='items-start'>
           <Text
             numberOfLines={1}
             className={`typo-h4 text-right ${isSelected ? "text-lime-400" : "text-white"}`}

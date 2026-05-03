@@ -1,3 +1,4 @@
+import { colors } from '@/colors';
 import { useFavoriteIds, useToggleFavorite, useExercises } from '@/src/hooks/useEcercises';
 import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
@@ -12,8 +13,9 @@ import MiniAvatar from './MiniAvatar';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
+import { X } from 'lucide-react-native';
 import { useDeferredValue, useCallback, useMemo, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
 import MuscleFilters from './MuscleFilters';
@@ -35,6 +37,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     user?.id as string,
     selectedPartsArray
   );
+  const [showTooltip, setShowTooltip] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
   const [selectedMuscle, setSelectedMuscle] = useState<string | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,6 +46,11 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const allExercises = useMemo(() => {
     return data?.pages.flatMap((page) => page.exercises) ?? [];
   }, [data]);
+
+  const selectedPartsText = useMemo(
+    () => selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', '),
+    [selectedPartsArray]
+  );
 
   // if(mode === 'picker')
   // בונה אינדקס פעם אחת בטעינת עמוד — פילטור O(1) במקום O(n)
@@ -118,13 +126,24 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 gender={profile.gender as 'male' | 'female'}
               />
             )}
-            <View className="flex-1">
+            <View className="flex-1 items-start">
               <Text className="typo-label text-lime-50 text-right uppercase tracking-widest">
                 מתאמן על
               </Text>
-              <Text className="typo-h1 text-white text-right" numberOfLines={2}>
-                {selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', ')}
-              </Text>
+              <Pressable
+                onPress={() => setShowTooltip(true)}
+                accessibilityLabel={selectedPartsText}
+                accessibilityRole="text"
+                accessibilityHint="לחץ לצפייה בשם המלא"
+              >
+                <Text
+                  className="typo-h3 text-white text-right"
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
+                >
+                  {selectedPartsText}
+                </Text>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -135,16 +154,29 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       ) : (
         <View className="flex-1 pt-2 items-center px-1">
           {mode === 'picker' && <Handle />}
+          {mode === 'picker' && (
+            <View className="w-full px-4 mb-4">
+              <Text className="typo-h3 text-white">בחר תרגילים</Text>
+            </View>
+          )}
           <View className="w-full flex-1">
             {selectedPartsArray.length > 1 && (
-              <Filters
-                uniqueBodyParts={uniqueBodyParts}
-                selectedFilter={selectedFilter}
-                setSelectedFilter={handleSetSelectedFilter}
-                mode={mode as modeListExercises}
-              />
+              selectedFilter === 'all'
+                ? <Filters
+                    uniqueBodyParts={uniqueBodyParts}
+                    selectedFilter={selectedFilter}
+                    setSelectedFilter={handleSetSelectedFilter}
+                    mode={mode as modeListExercises}
+                  />
+                : <MuscleFilters
+                    uniqueMuscles={uniqueMuscles}
+                    selectedMuscle={selectedMuscle}
+                    setSelectedMuscle={setSelectedMuscle}
+                    onBack={() => handleSetSelectedFilter('all')}
+                    breadcrumb={partsBodyHebrew[selectedFilter as BodyPart]}
+                  />
             )}
-            {uniqueMuscles.length > 1 && (
+            {selectedPartsArray.length === 1 && uniqueMuscles.length > 0 && (
               <MuscleFilters
                 uniqueMuscles={uniqueMuscles}
                 selectedMuscle={selectedMuscle}
@@ -173,13 +205,13 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             </View>
             {mode === 'picker' && (
               <View className="flex-row items-center justify-between bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 mx-2 mb-3">
-                <View className="flex-row items-center">
+                <View className="flex-row items-center gap-2">
                   <View className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.size > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}>
-                    <Text className={`typo-btn-cta ${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'}`}>
+                    <Text className={`typo-btn-secondary ${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'}`}>
                       {exerciseSelectedIds.size}
                     </Text>
                   </View>
-                  <Text className="typo-body-primary text-zinc-300">
+                  <Text className="typo-btn-secondary text-zinc-300">
                     תרגילים נבחרו
                   </Text>
                 </View>
@@ -208,7 +240,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 />
               )}
               keyExtractor={(item) => item.exerciseId}
-              estimatedItemSize={110}
+              // estimatedItemSize={110}
               onEndReached={handleEndReached}
               onEndReachedThreshold={0.5}
               ListFooterComponent={
@@ -237,6 +269,34 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
           )}
         </View>
       )}
+      <Modal
+        visible={showTooltip}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowTooltip(false)}
+      >
+        <Pressable
+          style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 120, paddingHorizontal: 24 }}
+          onPress={() => setShowTooltip(false)}
+          accessibilityLabel="סגור"
+          accessibilityRole="button"
+        >
+          <View className="bg-zinc-900 rounded-2xl border border-lime-500 px-2 py-3">
+            <View className="flex items-end pr-1">
+              <Pressable
+                onPress={() => setShowTooltip(false)}
+                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+                hitSlop={8}
+                accessibilityLabel="סגור"
+                accessibilityRole="button"
+              >
+                <X size={18} color={colors.lime[500]} strokeWidth={2} />
+              </Pressable>
+            </View>
+            <Text className="typo-h3 text-white px-1">{selectedPartsText}</Text>
+          </View>
+        </Pressable>
+      </Modal>
     </BackGround>
   );
 };
