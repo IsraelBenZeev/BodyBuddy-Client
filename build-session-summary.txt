@@ -1,0 +1,77 @@
+סיכום שיחת בילד - BodyBuddy
+תאריך: 03/05/2026
+=====================================
+
+## מה בוצע בשיחה זו
+
+1. עדכון גרסה
+   - versionCode: 9 → 10
+   - versionName: 1.0.0 (ללא שינוי)
+   - עודכן ב: app.json + android/app/build.gradle
+   - Git commit: "chore: bump version to 1.0.0 (versionCode 10)"
+
+2. תיקון בעיית בילד - נתיב SDK שגוי
+   - בעיה: משתנה הסביבה ANDROID_HOME מוגדר עם רווח מוביל:
+     " C:\Users\user\AppData\Local\Android\Sdk" (במקום ללא רווח)
+   - פתרון: נוצר קובץ android/local.properties עם הנתיב הנכון:
+     sdk.dir=C\:\\Users\\user\\AppData\\Local\\Android\\Sdk
+
+3. הבילד הצליח
+   - קובץ AAB נוצר בנתיב:
+     android/app/build/outputs/bundle/release/app-release.aab
+
+4. בעיית חתימה בהעלאה ל-Google Play
+   - שגיאה: "קובץ ה-App Bundle חתום במפתח שגוי"
+   - הסיבה: build.gradle הוגדר לחתום עם debug keystore במקום release keystore
+   - Google Play מצפה ל-SHA1: 3A:E9:11:D3:10:F0:A0:85:F1:20:45:CE:D4:45:23:AD:72:13:D4:FD
+
+=====================================
+## מצב Keystore
+
+| מקור              | SHA1                                                        |
+|-------------------|-------------------------------------------------------------|
+| Google Play מצפה  | 3A:E9:11:D3:10:F0:A0:85:F1:20:45:CE:D4:45:23:AD:72:13:D4:FD |
+| EAS keystore      | 71:78:83:05:7D:FD:B4:4A:25:7C:AF:3F:23:64:44:E2:E3:60:32:63 |
+| Debug keystore    | 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25 |
+
+הסיבה לאי-התאמה:
+- גרסאות ראשונות נבנו דרך EAS (keystore: 71:78:...)
+- מאוחר יותר עברת לבילד מקומי מהמחשב הישן עם keystore אחר (3A:E9:...)
+- Google Play עדכן את ה-upload key המצופה ל-3A:E9:...
+- ה-.jks הנכון נמצא רק על המחשב הישן
+
+=====================================
+## מה צריך לעשות
+
+כשתגיע למחשב הישן:
+1. מצא את קובץ ה-.jks (בד"כ בתיקיית android/ של הפרויקט)
+   - חפש קובץ בשם ibz_1330__BodyBuddy.jks או כל .jks/.keystore אחר
+2. העתק אותו ל: android/ibz_1330__BodyBuddy.jks (על המחשב החדש)
+3. צור קובץ android/keystore.properties (לא ב-git!):
+
+   storeFile=ibz_1330__BodyBuddy.jks
+   storePassword=3f1f2f3ffd5e586ce67b8099f4053a96
+   keyAlias=80eaaa9fd820dfce06bc4d2fed5b1112
+   keyPassword=5b1a3ce3fc7ab23379164f1e4a97e547
+
+4. ודא ש-android/.gitignore מכיל:
+   keystore.properties
+   *.jks
+   *.keystore
+
+5. לאחר שמוסיפים את ה-keystore, Claude יעדכן את build.gradle אוטומטית
+
+=====================================
+## אם המחשב הישן לא זמין
+
+ניתן לבקש reset של upload key מ-Google Play:
+Play Console → Release → Setup → App Signing → "Request upload key reset"
+(תהליך אימות של כמה ימים)
+
+=====================================
+## קבצים שנוצרו/שונו בשיחה זו
+
+- app.json (versionCode עודכן ל-10)
+- android/app/build.gradle (versionCode עודכן ל-10)
+- android/local.properties (נוצר חדש - מתקן את נתיב ה-SDK)
+- @ibz_1330__BodyBuddy.jks (הורד מ-EAS - לא המפתח הנכון)
