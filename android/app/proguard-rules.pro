@@ -11,14 +11,4 @@
 -keep class com.swmansion.reanimated.** { *; }
 -keep class com.facebook.react.turbomodule.** { *; }
 
-# RTL / I18n - critical for Hebrew layout on release builds
--keep class com.facebook.react.modules.i18nmanager.** { *; }
--keep class expo.modules.localization.** { *; }
--keep class com.ibz1330.bodybuddy.MainActivity {
-    protected void attachBaseContext(android.content.Context);
-}
--keep class com.ibz1330.bodybuddy.MainApplication {
-    public void onConfigurationChanged(android.content.res.Configuration);
-}
-
 # Add any project specific keep options here:

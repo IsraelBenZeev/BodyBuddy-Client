@@ -1,11 +1,8 @@
 package com.ibz1330.bodybuddy
 import expo.modules.splashscreen.SplashScreenManager
 
-import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import java.util.Locale
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -15,14 +12,6 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import expo.modules.ReactActivityDelegateWrapper
 
 class MainActivity : ReactActivity() {
-  // כופה Hebrew locale כדי ש-I18nManager.isRTL יהיה true מה-launch הראשון,
-  // גם ב-New Architecture וגם כשה-locale של המכשיר אינו עברית.
-  override fun attachBaseContext(newBase: Context) {
-    val config = Configuration(newBase.resources.configuration)
-    config.setLocale(Locale("he"))
-    super.attachBaseContext(newBase.createConfigurationContext(config))
-  }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     // Set the theme to AppTheme BEFORE onCreate to support
     // coloring the background, status bar, and navigation bar.
