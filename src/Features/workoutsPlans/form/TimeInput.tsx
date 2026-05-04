@@ -57,7 +57,7 @@ const TimeInput = ({ control, name, isPendingCreate }: Props) => {
             />
 
             <Modal visible={visible} animationType="slide" transparent={true}>
-              <View className="flex-1 justify-end bg-black/70 bd">
+              <View className="flex-1 justify-end bg-black/70">
                 <View className="bg-background-800 p-4 rounded-t-2xl">
                   <View className="flex-row justify-between mb-4 px-3">
                     <Pressable

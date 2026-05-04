@@ -141,6 +141,7 @@ const GraphData = ({ logs }: Props) => {
 
             {/* גרף */}
             <View className="bg-background p-2 border-b border-background-400 rounded-2xl">
+                <View style={{ direction: 'ltr' }}>
                 <LineChart
                     areaChart
                     curved
@@ -168,6 +169,7 @@ const GraphData = ({ logs }: Props) => {
                     isAnimated={true}
                     animationDuration={1000}
                 />
+                </View>
             </View>
         </View>
     );

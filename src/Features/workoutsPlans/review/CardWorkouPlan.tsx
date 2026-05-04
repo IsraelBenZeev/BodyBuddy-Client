@@ -11,11 +11,11 @@ const CardWorkouPlan = ({workoutPlan}: Props) => {
           <View animation="fadeInUp" delay={200} className="px-5 mt-6">
                     <View className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 flex-row justify-around">
                         
-                        {/* זמן */}
+                        {/* ימים */}
                         <View className="items-center">
-                            <Clock size={24} color={colors.lime[400]} />
-                            <Text className="typo-body-primary text-white mt-1">{workoutPlan?.time} דק׳</Text>
-                            <Text className="typo-caption text-zinc-500">זמן משוער</Text>
+                            <CalendarDays size={24} color={colors.lime[400]} />
+                            <Text className="typo-body-primary text-white mt-1">{workoutPlan?.days_per_week?.length}</Text>
+                            <Text className="typo-caption text-zinc-500">ימים בשבוע</Text>
                         </View>
 
                         {/* קושי */}
@@ -25,17 +25,17 @@ const CardWorkouPlan = ({workoutPlan}: Props) => {
                             <Text className="typo-caption text-zinc-500">רמת קושי</Text>
                         </View>
 
-                        {/* ימים */}
+                        {/* זמן */}
                         <View className="items-center">
-                            <CalendarDays size={24} color={colors.lime[400]} />
-                            <Text className="typo-body-primary text-white mt-1">{workoutPlan?.days_per_week?.length}</Text>
-                            <Text className="typo-caption text-zinc-500">ימים בשבוע</Text>
+                            <Clock size={24} color={colors.lime[400]} />
+                            <Text className="typo-body-primary text-white mt-1">{workoutPlan?.time} דק׳</Text>
+                            <Text className="typo-caption text-zinc-500">זמן משוער</Text>
                         </View>
                     </View>
 
                     {/* תיאור (אם קיים) */}
                     {workoutPlan?.description && (
-                        <View className="mt-6 bg-zinc-900/40 p-4 rounded-2xl border-r-4 border-lime-500">
+                        <View className="mt-6 bg-zinc-900/40 p-4 rounded-2xl border-l-4 border-lime-500">
                             <Text className="typo-label text-zinc-300 text-right leading-6">
                                 {workoutPlan.description}
                             </Text>

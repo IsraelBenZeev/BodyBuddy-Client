@@ -41,10 +41,10 @@ export const ToastConfig = {
             <View className="flex-1 items-end pr-2">
               <Text className="text-white font-bold text-base">{text1}</Text>
             </View>
-            <TouchableOpacity onPress={onPressDelete} className="bg-lime-500/20 px-4 py-2 rounded-full  bd">
+            <TouchableOpacity onPress={onPressDelete} className="bg-lime-500/20 px-4 py-2 rounded-full">
               {iconDelete}
             </TouchableOpacity>
-            <TouchableOpacity onPress={onPressCancel} className="bg-red-500/20 px-4 py-2 rounded-full  bd">
+            <TouchableOpacity onPress={onPressCancel} className="bg-red-500/20 px-4 py-2 rounded-full">
               {iconCancel}
             </TouchableOpacity>
           </View>

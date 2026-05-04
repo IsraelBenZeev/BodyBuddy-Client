@@ -8,8 +8,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { router, useFocusEffect } from 'expo-router';
 import { CalendarClock, Dumbbell } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useEffect, useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -104,17 +105,33 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
         },
       ]}
     >
-      <View className="h-40 w-full relative rounded-t-[40px]">
-        <Image
-          source={require('../../../../assets/images/bg-9.jpg')}
-          className="w-full h-full opacity-60 rounded-t-[40px]"
+      <View style={{ height: 160, width: '100%', overflow: 'hidden', borderTopLeftRadius: 40, borderTopRightRadius: 40 }}>
+        <LinearGradient
+          colors={['#0d1a00', '#0f1f05', '#18181b']}
+          start={{ x: 0.1, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         />
-        <View className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-zinc-900" />
+        {/* Lime glow blob - top right */}
+        <View style={{
+          position: 'absolute', top: -50, right: -50,
+          width: 180, height: 180, borderRadius: 90,
+          backgroundColor: '#84cc16', opacity: 0.2,
+        }} />
+        {/* Lime glow blob - bottom left */}
+        <View style={{
+          position: 'absolute', bottom: -20, left: -20,
+          width: 90, height: 90, borderRadius: 45,
+          backgroundColor: '#a3e635', opacity: 0.1,
+        }} />
+        {/* Decorative dumbbell */}
+        <View style={{ position: 'absolute', right: 12, bottom: 2, opacity: 0.08, transform: [{ rotate: '-20deg' }] }}>
+          <Dumbbell size={110} color="#ffffff" strokeWidth={0.8} />
+        </View>
       </View>
 
       {/* 2. תוכן האימון */}
       <View className="p-5 flex-1 justify-between ">
-        {/* <View className="bd"> */}
 
         <View>
           <Text className="typo-caption-bold text-lime-500 mb-1 uppercase tracking-widest">
