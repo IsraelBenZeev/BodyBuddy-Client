@@ -130,8 +130,8 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       className="flex-1 bg-background-950"
     >
       <ScrollView
-        className="flex-1 px-5"
-        contentContainerStyle={{ paddingBottom: 120, paddingTop: 10 }}
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 120, paddingTop: 10, paddingHorizontal: 16 }}
         showsVerticalScrollIndicator={false}
       >
         <HeaderForm navigateToPicker={navigateToPicker} selectedIds={[...selectedIds]} />
