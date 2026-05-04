@@ -6,7 +6,7 @@ import {
   ProfileFormData,
 } from '@/src/types/profile';
 import { Ionicons } from '@expo/vector-icons';
-import { Slider } from '@miblanchard/react-native-slider';
+import LTRSlider from '@/src/ui/LTRSlider';
 import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
 import {
@@ -71,14 +71,14 @@ const ActivityLevelStep = ({
         contentContainerStyle={{ paddingBottom: 20 }}
       >
         {/* Activity Level */}
-        <View className="mb-6">
+        <View className="mb-6 ">
           <Controller
             control={control}
             name="activity_level"
             rules={{ validate: (v) => v !== '' || 'יש לבחור רמת פעילות' }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View>
-                <View className="gap-3">
+                <View className="gap-3 ">
                   {activityLevelOptions.map((option) => {
                     const isSelected = value === option.value;
                     const iconName = activityIcons[option.value];
@@ -86,7 +86,7 @@ const ActivityLevelStep = ({
                       <Pressable
                         key={option.value}
                         onPress={() => onChange(option.value)}
-                        className={`flex-row items-center rounded-2xl p-4 border-2 ${
+                        className={`flex-row items-center rounded-2xl p-4 border-2  ${
                           isSelected
                             ? 'border-lime-500 bg-background-700'
                             : 'border-background-600 bg-background-800'
@@ -96,7 +96,7 @@ const ActivityLevelStep = ({
                         accessibilityState={{ selected: isSelected }}
                       >
                         <View
-                          className={`w-12 h-12 rounded-xl items-center justify-center ml-4 ${
+                          className={`w-12 h-12 rounded-xl items-center justify-center ml-4  ${
                             isSelected ? 'bg-lime-500/20' : 'bg-background-700'
                           }`}
                         >
@@ -106,7 +106,7 @@ const ActivityLevelStep = ({
                             color={isSelected ? colors.lime[500] : colors.background[400]}
                           />
                         </View>
-                        <View className="flex-1 items-end">
+                        <View className="flex-1 items-start">
                           <Text
                             className={`typo-body-primary ${
                               isSelected ? 'text-lime-500' : 'text-background-200'
@@ -151,28 +151,26 @@ const ActivityLevelStep = ({
                     <Text className="typo-h2 text-white">{value.toFixed(1)}</Text>
                     <Text className="typo-caption text-background-400">גרם/ק״ג</Text>
                   </View>
-                  <View style={{ direction: 'ltr' }}>
-                    <Slider
-                      value={value}
-                      onValueChange={(val) => onChange((val as number[])[0])}
-                      minimumValue={0.8}
-                      maximumValue={3}
-                      step={0.1}
-                      minimumTrackTintColor={colors.lime[500]}
-                      maximumTrackTintColor={colors.background[600]}
-                      thumbTintColor={colors.lime[500]}
-                      trackStyle={{ height: 6, borderRadius: 3 }}
-                      thumbStyle={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: 12,
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 3,
-                      }}
-                    />
-                  </View>
+                  <LTRSlider
+                    value={value}
+                    onValueChange={(val) => onChange((val as number[])[0])}
+                    minimumValue={0.8}
+                    maximumValue={3}
+                    step={0.1}
+                    minimumTrackTintColor={colors.lime[500]}
+                    maximumTrackTintColor={colors.background[600]}
+                    thumbTintColor={colors.lime[500]}
+                    trackStyle={{ height: 6, borderRadius: 3 }}
+                    thumbStyle={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: 12,
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 3,
+                    }}
+                  />
                   <View className="flex-row justify-between mt-1">
                     <Text className="typo-caption text-background-500">0.8</Text>
                     <Text className="typo-caption text-background-500">3</Text>

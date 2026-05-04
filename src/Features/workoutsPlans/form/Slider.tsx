@@ -1,5 +1,5 @@
 import { colors } from '@/colors';
-import { Slider as CustomSlider } from '@miblanchard/react-native-slider';
+import LTRSlider from '@/src/ui/LTRSlider';
 import * as Haptics from 'expo-haptics';
 import { Control, Controller } from 'react-hook-form';
 import { Text, View } from 'react-native';
@@ -28,18 +28,15 @@ const IntensitySlider = ({ control, name, isPendingCreate }: Props) => {
             <Text className="typo-h4 text-lime-500">{Math.round(value)}/10</Text>
           </View>
 
-          <View
-            className="p-4 bg-background-800 rounded-2xl border border-background-700/50"
-            style={{ direction: 'ltr' }}
-          >
-            <CustomSlider
+          <View className="p-4 bg-background-800 rounded-2xl border border-background-700/50">
+            <LTRSlider
               disabled={isPendingCreate}
               value={value}
               onValueChange={(val) => {
                 if (isPendingCreate) return;
                 const newValue = Array.isArray(val) ? val[0] : val;
                 onChange(newValue);
-                Haptics.selectionAsync(); // רטט בכל שינוי
+                Haptics.selectionAsync();
               }}
               minimumValue={1}
               maximumValue={10}

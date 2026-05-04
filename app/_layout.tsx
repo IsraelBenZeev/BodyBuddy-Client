@@ -8,7 +8,7 @@ import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { I18nManager, Platform, StatusBar, StyleSheet } from 'react-native';
+import { DevSettings, I18nManager, Platform, StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { QueryClientManager } from 'reactotron-react-query';
@@ -18,6 +18,9 @@ import Reactotron from '../ReactotronConfig';
 if (Platform.OS !== 'web') {
   I18nManager.allowRTL(true);
   I18nManager.forceRTL(true);
+  if (!I18nManager.isRTL && __DEV__) {
+    DevSettings.reload();
+  }
 }
 
 SplashScreen.preventAutoHideAsync();
@@ -88,7 +91,7 @@ export default function RootLayout() {
   return (
     // GestureHandlerRootView חייב להיות בדרגה הכי גבוהה כדי שהגרירה תעבוד
     <GestureHandlerRootView
-      style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background[1200] }}
+      style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.background[1200], direction: 'rtl' }}
     >
       <QueryClientProvider client={queryClient}>
         <BottomSheetModalProvider>
@@ -102,6 +105,7 @@ export default function RootLayout() {
               headerShown: false,
               contentStyle: {
                 backgroundColor: colors.background[1200],
+                direction: 'rtl',
               },
             }}
           >
