@@ -1,25 +1,25 @@
 import { colors } from '@/colors';
-import { useFavoriteIds, useToggleFavorite, useExercises } from '@/src/hooks/useEcercises';
+import ListExercise from '@/src/Features/workoutsPlans/form/ListExercises';
+import { useExercises, useFavoriteIds, useToggleFavorite } from '@/src/hooks/useEcercises';
 import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
-import ModalBottom from '@/src/ui/ModalButtom';
-import ListExercise from '@/src/Features/workoutsPlans/form/ListExercises';
 import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
+import ModalBottom from '@/src/ui/ModalButtom';
 import AppButton from '@/src/ui/PressableOpacity';
-import MiniAvatar from './MiniAvatar';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
-import { useDeferredValue, useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useDeferredValue, useMemo, useRef, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
+import MiniAvatar from './MiniAvatar';
 import MuscleFilters from './MuscleFilters';
 
 interface ExercisesScreenProps {
@@ -80,9 +80,12 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     setSelectedMuscle('all');
   }, []);
 
-  const toggleFavorite = useCallback((id: string) => {
-    toggleFavMutate({ exerciseId: id, isFav: favorites.includes(id) });
-  }, [favorites, toggleFavMutate]);
+  const toggleFavorite = useCallback(
+    (id: string) => {
+      toggleFavMutate({ exerciseId: id, isFav: favorites.includes(id) });
+    },
+    [favorites, toggleFavMutate]
+  );
 
   const deferredFilter = useDeferredValue(selectedFilter);
   const deferredMuscle = useDeferredValue(selectedMuscle);
@@ -141,11 +144,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 accessibilityRole="text"
                 accessibilityHint="לחץ לצפייה בשם המלא"
               >
-                <Text
-                  className="typo-h3 text-white text-right"
-                  numberOfLines={2}
-                  ellipsizeMode="tail"
-                >
+                <Text className="typo-h3 text-white" numberOfLines={2} ellipsizeMode="tail">
                   {selectedPartsText}
                 </Text>
               </Pressable>
@@ -165,22 +164,23 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             </View>
           )}
           <View className="w-full flex-1">
-            {selectedPartsArray.length > 1 && (
-              selectedFilter === 'all'
-                ? <Filters
-                    uniqueBodyParts={uniqueBodyParts}
-                    selectedFilter={selectedFilter}
-                    setSelectedFilter={handleSetSelectedFilter}
-                    mode={mode as modeListExercises}
-                  />
-                : <MuscleFilters
-                    uniqueMuscles={uniqueMuscles}
-                    selectedMuscle={selectedMuscle}
-                    setSelectedMuscle={setSelectedMuscle}
-                    onBack={() => handleSetSelectedFilter('all')}
-                    breadcrumb={partsBodyHebrew[selectedFilter as BodyPart]}
-                  />
-            )}
+            {selectedPartsArray.length > 1 &&
+              (selectedFilter === 'all' ? (
+                <Filters
+                  uniqueBodyParts={uniqueBodyParts}
+                  selectedFilter={selectedFilter}
+                  setSelectedFilter={handleSetSelectedFilter}
+                  mode={mode as modeListExercises}
+                />
+              ) : (
+                <MuscleFilters
+                  uniqueMuscles={uniqueMuscles}
+                  selectedMuscle={selectedMuscle}
+                  setSelectedMuscle={setSelectedMuscle}
+                  onBack={() => handleSetSelectedFilter('all')}
+                  breadcrumb={partsBodyHebrew[selectedFilter as BodyPart]}
+                />
+              ))}
             {selectedPartsArray.length === 1 && uniqueMuscles.length > 0 && (
               <MuscleFilters
                 uniqueMuscles={uniqueMuscles}
@@ -211,7 +211,9 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             {mode === 'picker' && (
               <View className="flex-row items-center justify-between bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 mx-2 mb-3">
                 <AppButton
-                  onPress={() => isSheetOpen ? sheetRef.current?.close() : sheetRef.current?.snapToIndex(0)}
+                  onPress={() =>
+                    isSheetOpen ? sheetRef.current?.close() : sheetRef.current?.snapToIndex(0)
+                  }
                   animationType="opacity"
                   haptic="light"
                   className="flex-row items-center gap-2"
@@ -219,16 +221,22 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                   accessibilityRole="button"
                   disabled={exerciseSelectedIds.size === 0}
                 >
-                  <View className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.size > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}>
-                    <Text className={`typo-btn-secondary ${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'}`}>
+                  <View
+                    className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.size > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}
+                  >
+                    <Text
+                      className={`typo-btn-secondary ${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'}`}
+                    >
                       {exerciseSelectedIds.size}
                     </Text>
                   </View>
-                  <Text className="typo-btn-secondary text-zinc-300">
-                    תרגילים נבחרו
-                  </Text>
+                  <Text className="typo-btn-secondary text-zinc-300">תרגילים נבחרו</Text>
                   {exerciseSelectedIds.size > 0 && (
-                    <Ionicons name={isSheetOpen ? 'chevron-down' : 'chevron-up'} size={14} color="#a3e635" />
+                    <Ionicons
+                      name={isSheetOpen ? 'chevron-down' : 'chevron-up'}
+                      size={14}
+                      color="#a3e635"
+                    />
                   )}
                 </AppButton>
 
@@ -245,30 +253,32 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 )}
               </View>
             )}
-            <FlashList
-              data={filteredExercises}
-              renderItem={({ item }) => (
-                <CardExercise
-                  item={item}
-                  favorites={favorites}
-                  toggleFavorite={toggleFavorite}
-                  mode={mode as modeListExercises}
-                />
-              )}
-              keyExtractor={(item) => item.exerciseId}
-              // estimatedItemSize={110}
-              onEndReached={handleEndReached}
-              onEndReachedThreshold={0.5}
-              ListFooterComponent={
-                isFetchingNextPage ? (
-                  <View className="py-6 items-center">
-                    <Text className="typo-body text-lime-400">טוען תרגילים נוספים...</Text>
-                  </View>
-                ) : (
-                  <View className="h-20" />
-                )
-              }
-            />
+            <View className="w-full flex-1 px-6">
+              <FlashList
+                data={filteredExercises}
+                renderItem={({ item }) => (
+                  <CardExercise
+                    item={item}
+                    favorites={favorites}
+                    toggleFavorite={toggleFavorite}
+                    mode={mode as modeListExercises}
+                  />
+                )}
+                keyExtractor={(item) => item.exerciseId}
+                // estimatedItemSize={110}
+                onEndReached={handleEndReached}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={
+                  isFetchingNextPage ? (
+                    <View className="py-6 items-center">
+                      <Text className="typo-body text-lime-400">טוען תרגילים נוספים...</Text>
+                    </View>
+                  ) : (
+                    <View className="h-20 " />
+                  )
+                }
+              />
+            </View>
           </View>
           {mode === 'picker' && (
             <View className="absolute bottom-10 left-0 right-0 items-center px-10">

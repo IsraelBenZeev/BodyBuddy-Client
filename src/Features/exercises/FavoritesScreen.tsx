@@ -66,7 +66,7 @@ const FavoritesScreen = () => {
           </Pressable>
         </View>
       ) : (
-        <View className="flex-1 px-2">
+        <View className="flex-1 px-6">
           <FlashList
             data={exercises}
             renderItem={renderItem}

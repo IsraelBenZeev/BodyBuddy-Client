@@ -77,7 +77,7 @@ const AnimatedCarouselItem = ({
   const currentActiveId = activeId || '';
   return (
     <Animated.View
-      style={[{ width: widthCard, marginRight: gap, overflow: 'visible', flex: 1 }, animatedStyle]}
+      style={[{ width: widthCard, marginRight: gap, overflow: 'visible', flex: 1, direction: 'rtl' }, animatedStyle]}
     >
       {/* FIX: כאן אנחנו מעבירים את כל 4 הארגומנטים שה-renderItem מצפה להם */}
       {renderItem(item, isActive, isSwiped, currentActiveId, translateY)}
@@ -157,6 +157,7 @@ const CustomCarousel = ({
         contentContainerStyle={{
           paddingHorizontal: ITEM_SPACING,
           paddingBottom: variant === 'center' ? 80 : 20,
+          direction: 'ltr',
         }}
       >
         {data.map((item, index) => {
@@ -188,7 +189,7 @@ const CustomCarousel = ({
 };
 
 const styles = StyleSheet.create({
-  container: { width: '100%', flex: 1, paddingVertical: 0 },
+  container: { width: '100%', flex: 1, paddingVertical: 0, direction: 'ltr' },
 });
 
 export default CustomCarousel;
