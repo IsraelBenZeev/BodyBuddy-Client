@@ -101,7 +101,6 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
                     fontSize: 24,
                     fontWeight: '900',
                     color: 'white',
-                    fontStyle: 'italic',
                   }}
                   animationDuration={300} // מהירות הגלילה (במילי-שניות)
                 />

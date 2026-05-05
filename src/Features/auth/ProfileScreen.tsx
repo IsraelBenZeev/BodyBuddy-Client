@@ -14,7 +14,7 @@ import { differenceInYears, isValid, parseISO } from 'date-fns';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { ReactNode, useCallback, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -50,7 +50,7 @@ const WorkoutStatItem = ({ icon, value, label }: any) => (
     <View className="bg-white/5 p-3 rounded-2xl mb-2 border border-white/5 shadow-inner">
       <Ionicons name={icon} size={20} color={colors.lime[500]} />
     </View>
-    <Text className="typo-h3 text-white italic tracking-tighter">{value}</Text>
+    <Text className="typo-h3 text-white tracking-tighter">{value}</Text>
     <Text className="typo-caption-bold text-white/30 uppercase tracking-widest text-center mt-1">
       {label}
     </Text>
@@ -115,9 +115,9 @@ export default function ProfileScreen() {
             <View className="flex-1 items-start">
               <Animated.Text
                 entering={FadeInDown.delay(80).duration(300).damping(20)}
-                className="typo-label text-white/40 text-right italic"
+                className="typo-label text-white/40 text-right"
               >
-                MY PROFILE
+                הפרופיל שלי
               </Animated.Text>
               <Animated.Text
                 entering={FadeInDown.delay(160).duration(300).damping(20)}
@@ -197,25 +197,25 @@ export default function ProfileScreen() {
                 <WorkoutStatItem
                   icon="flash"
                   value={String(workoutStats?.weeklyCount ?? 0)}
-                  label="WEEKLY"
+                  label="שבועי"
                 />
                 <View className="w-[1px] h-12 bg-white/5" />
                 <WorkoutStatItem
                   icon="time"
                   value={formatMinutes(workoutStats?.weeklyMinutes ?? 0)}
-                  label="ACTIVE"
+                  label="פעיל"
                 />
                 <View className="w-[1px] h-12 bg-white/5" />
                 <WorkoutStatItem
                   icon="flame"
                   value={String(workoutStats?.streak ?? 0)}
-                  label="STREAK"
+                  label="רצף"
                 />
                 <View className="w-[1px] h-12 bg-white/5" />
                 <WorkoutStatItem
                   icon="trophy"
                   value={String(workoutStats?.totalCount ?? 0)}
-                  label="TOTAL"
+                  label="סה״כ"
                 />
               </View>
             </AnimatedCard>
@@ -264,7 +264,7 @@ export default function ProfileScreen() {
               </View>
               <View className="flex-1 items-start">
                 <Text className="typo-caption-bold text-white/30 uppercase tracking-widest text-right">
-                  Activity Level
+                  רמת פעילות
                 </Text>
                 <Text className="typo-h4 text-white text-right leading-tight">
                   {getActivityLabel(profile?.activity_level ?? null)}
@@ -273,6 +273,35 @@ export default function ProfileScreen() {
             </AnimatedCard>
           </View>
         )}
+        <View className="mb-8 px-6 space-y-4 items-start">
+          {/* מידע על הנוסחה - בולט פחות מהמשפטי */}
+          {/* הפרדה ויזואלית קטנה */}
+          <View className="border-t border-background-800 my-2 w-1/4 self-center opacity-30" />
+
+          {/* מדיניות פרטיות */}
+          <Text className="typo-label text-background-400">
+            {'בהמשך השימוש הינך מסכים ל'}
+            <Text
+              onPress={() =>
+                Linking.openURL('https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/')
+              }
+              className="text-lime-400 font-semibold"
+            >
+              {'מדיניות הפרטיות'}
+            </Text>
+          </Text>
+
+          {/* תמיכה */}
+          <Text className="typo-label text-background-400">
+            {'נתקלת בבעיה? '}
+            <Text
+              onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
+              className="text-lime-400 font-semibold"
+            >
+              {'צרו קשר עם התמיכה שלנו'}
+            </Text>
+          </Text>
+        </View>
       </ScrollView>
     </BackGround>
   );

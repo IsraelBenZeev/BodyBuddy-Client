@@ -98,7 +98,7 @@ export default function LoginScreen() {
                 fontSize: 16,
                 fontWeight: '600',
                 marginBottom: 8,
-                textAlign: 'right',
+                // textAlign: 'right',
               }}
               inputStyle={{
                 backgroundColor: colors.background[800],

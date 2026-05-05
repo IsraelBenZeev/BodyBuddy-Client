@@ -38,7 +38,7 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
         <Text className="typo-caption-bold text-lime-500 uppercase tracking-widest mb-2">
           {item.bodyParts_he || ''}
         </Text>
-        <Text className="typo-h3 text-white mb-6 italic">
+        <Text className="typo-h3 text-white mb-6">
           {item.name_he || ''}
         </Text>
       </View>

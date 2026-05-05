@@ -43,9 +43,11 @@ const FormInput = <T extends FieldValues>({
         <AppButton
           animationType="opacity"
           haptic="medium"
-          onPress={handleFocus} disabled={isPendingCreate} activeOpacity={0.7}
+          className="flex items-start"
+          onPress={handleFocus}
+          disabled={isPendingCreate}
+          activeOpacity={0.7}
         >
-
           <Text style={labelStyle}>{label}</Text>
         </AppButton>
       )}

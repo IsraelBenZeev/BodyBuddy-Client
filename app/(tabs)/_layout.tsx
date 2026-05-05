@@ -56,7 +56,7 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        animation: 'shift',
+        animation: 'fade',
         sceneStyle: {
           backgroundColor: colors.background[1200],
         },
@@ -91,6 +91,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          lazy: false,
           title: 'בית',
           tabBarLabelStyle: { color: colors.background[900] },
           tabBarIcon: homeIcon,
@@ -100,6 +101,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="workouts"
         options={{
+          lazy: false,
           title: 'אימונים',
           tabBarLabelStyle: { color: colors.background[900] },
           tabBarIcon: workoutsIcon,

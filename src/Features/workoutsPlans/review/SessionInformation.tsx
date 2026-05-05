@@ -115,7 +115,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             </tr>`
                 )
                 .join('')
-            : `<tr><td colspan="3" style="color:#4b5563;font-style:italic;padding:14px;">לא בוצעו חזרות</td></tr>`;
+            : `<tr><td colspan="3" style="color:#4b5563;padding:14px;">לא בוצעו חזרות</td></tr>`;
 
         return `
         <div class="exercise">
@@ -348,7 +348,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
               </>
             ) : (
               <View className="py-6 items-center justify-center">
-                <Text className="text-gray-500 text-sm italic">לא בוצעו חזרות לתרגיל זה</Text>
+                <Text className="text-gray-500 text-sm">לא בוצעו חזרות לתרגיל זה</Text>
               </View>
             )}
           </View>

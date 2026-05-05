@@ -6,19 +6,13 @@ import {
   goalOptions,
   ProfileFormData,
 } from '@/src/types/profile';
-import { calculateDailyCalories } from '@/src/utils/calculateMetrics';
-import { differenceInYears, isValid, parseISO } from 'date-fns';
-import { Ionicons } from '@expo/vector-icons';
 import LTRSlider from '@/src/ui/LTRSlider';
+import { calculateDailyCalories } from '@/src/utils/calculateMetrics';
+import { Ionicons } from '@expo/vector-icons';
+import { differenceInYears, isValid, parseISO } from 'date-fns';
 import { useCallback, useMemo, useRef } from 'react';
-import {
-  Control,
-  Controller,
-  UseFormSetValue,
-  UseFormTrigger,
-  useWatch,
-} from 'react-hook-form';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { Control, Controller, UseFormSetValue, UseFormTrigger, useWatch } from 'react-hook-form';
+import { ActivityIndicator, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInLeft } from 'react-native-reanimated';
 
 /** תיאור כיוון ההפרש בעברית */
@@ -27,6 +21,8 @@ const OFFSET_LABEL: Record<Goal, string> = {
   bulk: 'עודף קלורי',
   maintain: '',
 };
+
+const TDEE_INFO_URL = 'https://www.fuder.co.il/how-to-calculate-tdee/';
 
 interface GoalStepProps {
   control: Control<ProfileFormData>;
@@ -37,18 +33,15 @@ interface GoalStepProps {
   isPending: boolean;
 }
 
-const GoalStep = ({
-  control,
-  trigger,
-  setValue,
-  onBack,
-  onSubmit,
-  isPending,
-}: GoalStepProps) => {
+const GoalStep = ({ control, trigger, setValue, onBack, onSubmit, isPending }: GoalStepProps) => {
   const handleSubmit = useCallback(async () => {
     const isValid = await trigger(['goal', 'calorie_offset']);
     if (isValid) onSubmit();
   }, [trigger, onSubmit]);
+
+  const handleOpenTdeeInfo = useCallback(() => {
+    Linking.openURL(TDEE_INFO_URL);
+  }, []);
 
   // קריאת כל הנתונים שהיוזר כבר מילא בשלבים הקודמים + המטרה הנוכחית
   const formValues = useWatch({ control });
@@ -56,20 +49,13 @@ const GoalStep = ({
   // שומר את המטרה הקודמת כדי לזהות שינוי ולהגדיר ברירת מחדל מתאימה
   const prevGoalRef = useRef<string>(formValues.goal ?? '');
 
-  const showOffsetPicker =
-    formValues.goal === 'cut' || formValues.goal === 'bulk';
+  const showOffsetPicker = formValues.goal === 'cut' || formValues.goal === 'bulk';
 
   // כשהמטרה משתנה – מגדיר ברירת מחדל מתאימה ל-calorie_offset
   const currentGoal = formValues.goal;
-  if (
-    currentGoal !== prevGoalRef.current &&
-    (currentGoal === 'cut' || currentGoal === 'bulk')
-  ) {
+  if (currentGoal !== prevGoalRef.current && (currentGoal === 'cut' || currentGoal === 'bulk')) {
     // רק אם עברנו ממטרה אחרת (לא אותה מטרה)
-    if (
-      prevGoalRef.current !== 'cut' &&
-      prevGoalRef.current !== 'bulk'
-    ) {
+    if (prevGoalRef.current !== 'cut' && prevGoalRef.current !== 'bulk') {
       setValue('calorie_offset', DEFAULT_CALORIE_OFFSET[currentGoal]);
     }
     prevGoalRef.current = currentGoal ?? '';
@@ -81,19 +67,15 @@ const GoalStep = ({
     if (!formValues.goal || formValues.goal === 'maintain') {
       return null;
     }
-    return getOffsetIntensity(
-      formValues.calorie_offset ?? 500,
-      formValues.goal as Goal,
-    );
+    return getOffsetIntensity(formValues.calorie_offset ?? 500, formValues.goal as Goal);
   }, [formValues.goal, formValues.calorie_offset]);
 
   const dailyCalories = useMemo(() => {
     if (!formValues.goal) return null;
     const dob = formValues.date_of_birth;
     const parsedDate = dob ? parseISO(dob) : null;
-    const age = parsedDate && isValid(parsedDate)
-      ? differenceInYears(new Date(), parsedDate)
-      : null;
+    const age =
+      parsedDate && isValid(parsedDate) ? differenceInYears(new Date(), parsedDate) : null;
     return calculateDailyCalories(
       formValues.gender || null,
       formValues.weight ?? null,
@@ -101,7 +83,7 @@ const GoalStep = ({
       age,
       formValues.activity_level || null,
       formValues.goal,
-      formValues.calorie_offset ?? null,
+      formValues.calorie_offset ?? null
     );
   }, [
     formValues.gender,
@@ -114,15 +96,10 @@ const GoalStep = ({
   ]);
 
   return (
-    <Animated.View
-      entering={FadeInLeft.duration(400)}
-      className="flex-1 px-6"
-    >
+    <Animated.View entering={FadeInLeft.duration(400)} className="flex-1 px-6">
       {/* Header */}
       <View className="mb-6">
-        <Text className="typo-h1 text-white  mb-2">
-          מה המטרה שלך?
-        </Text>
+        <Text className="typo-h1 text-white  mb-2">מה המטרה שלך?</Text>
         <Text className="typo-body text-background-400 ">
           בחר/י את המטרה העיקרית שלך ונתאים לך תוכנית תזונה
         </Text>
@@ -161,23 +138,15 @@ const GoalStep = ({
                         }`}
                       >
                         <Ionicons
-                          name={
-                            option.icon as keyof typeof Ionicons.glyphMap
-                          }
+                          name={option.icon as keyof typeof Ionicons.glyphMap}
                           size={28}
-                          color={
-                            isSelected
-                              ? colors.lime[500]
-                              : colors.background[400]
-                          }
+                          color={isSelected ? colors.lime[500] : colors.background[400]}
                         />
                       </View>
                       <View className="flex-1 items-start">
                         <Text
                           className={`typo-h4 ${
-                            isSelected
-                              ? 'text-lime-500'
-                              : 'text-background-200'
+                            isSelected ? 'text-lime-500' : 'text-background-200'
                           }`}
                         >
                           {option.label}
@@ -190,11 +159,7 @@ const GoalStep = ({
                   );
                 })}
               </View>
-              {error && (
-                <Text className="typo-caption text-red-400  mt-3">
-                  {error.message}
-                </Text>
-              )}
+              {error && <Text className="typo-caption text-red-400  mt-3">{error.message}</Text>}
             </View>
           )}
         />
@@ -210,14 +175,9 @@ const GoalStep = ({
               control={control}
               name="calorie_offset"
               rules={{
-                validate: (v) =>
-                  (v >= 100 && v <= 1000) ||
-                  'יש לבחור הפרש בין 100 ל-1000 קלוריות',
+                validate: (v) => (v >= 100 && v <= 1000) || 'יש לבחור הפרש בין 100 ל-1000 קלוריות',
               }}
-              render={({
-                field: { onChange, value },
-                fieldState: { error },
-              }) => (
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <View className="bg-background-800 border border-background-600 rounded-2xl p-5">
                   {/* מספר גדול מרכזי */}
                   <View className="items-center mb-2">
@@ -268,9 +228,7 @@ const GoalStep = ({
                   )}
 
                   {error && (
-                    <Text className="typo-caption text-red-400  mt-2">
-                      {error.message}
-                    </Text>
+                    <Text className="typo-caption text-red-400  mt-2">{error.message}</Text>
                   )}
                 </View>
               )}
@@ -285,14 +243,8 @@ const GoalStep = ({
             className="mt-6 bg-background-800 rounded-2xl p-5 border border-lime-500/30"
           >
             <View className="flex-row items-center mb-3">
-              <Ionicons
-                name="nutrition-outline"
-                size={22}
-                color={colors.lime[500]}
-              />
-              <Text className="typo-label text-lime-500 mr-2">
-                התוכנית שלך מוכנה!
-              </Text>
+              <Ionicons name="nutrition-outline" size={22} color={colors.lime[500]} />
+              <Text className="typo-label text-lime-500 mr-2">התוכנית שלך מוכנה!</Text>
             </View>
 
             <Text className="typo-label text-background-300  mb-3">
@@ -300,16 +252,40 @@ const GoalStep = ({
             </Text>
 
             <View className="bg-background-700 rounded-xl p-5 border border-background-600 items-center">
-              <Text className="typo-caption text-background-400 mb-2">
-                קלוריות יומיות מומלצות
-              </Text>
+              <Text className="typo-caption text-background-400 mb-2">קלוריות יומיות מומלצות</Text>
               <View className="flex-row items-baseline">
-                <Text className="typo-label text-background-400 ml-1">
-                  קק״ל
-                </Text>
-                <Text className="typo-h1 text-lime-400">
-                  {dailyCalories.toLocaleString()}
-                </Text>
+                <Text className="typo-label text-background-400 ml-1">קק״ל</Text>
+                <Text className="typo-h1 text-lime-400">{dailyCalories.toLocaleString()}</Text>
+              </View>
+            </View>
+
+            <View className="mt-4 rounded-2xl border border-sky-500/20 bg-sky-500/10 p-4">
+              <View className="flex-row items-start gap-3">
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-sky-500/15">
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={22}
+                    color={colors.primary[100]}
+                  />
+                </View>
+
+                <View className="flex-1">
+                  <Text className="typo-label text-background-200 leading-6">
+                    אנחנו מחשבים את ההמלצה לפי נוסחת Mifflin-St Jeor Equation ובהתאם לרמת הפעילות
+                    והמטרה שלך.
+                  </Text>
+
+                  <Pressable
+                    onPress={handleOpenTdeeInfo}
+                    className="mt-3 flex-row items-center self-start gap-2 rounded-full border border-primary-500/25 bg-primary-500/10 px-3 py-2"
+                    accessibilityRole="link"
+                    accessibilityLabel="למידע נוסף על חישוב TDEE"
+                    accessibilityHint="פותח כתבה חיצונית עם הסבר מפורט על חישוב TDEE"
+                  >
+                    <Ionicons name="open-outline" size={16} color={colors.primary[100]} />
+                    <Text className="typo-caption-bold text-primary-100">למידע נוסף</Text>
+                  </Pressable>
+                </View>
               </View>
             </View>
 
@@ -339,11 +315,7 @@ const GoalStep = ({
           accessibilityRole="button"
           accessibilityLabel="חזרה"
         >
-          <Ionicons
-            name="arrow-forward"
-            size={16}
-            color={colors.background[400]}
-          />
+          <Ionicons name="arrow-forward" size={16} color={colors.background[400]} />
           <Text className="typo-label text-background-400">חזרה</Text>
         </Pressable>
 
@@ -360,14 +332,8 @@ const GoalStep = ({
             <ActivityIndicator color={colors.background[900]} size="small" />
           ) : (
             <>
-              <Ionicons
-                name="checkmark-circle"
-                size={20}
-                color={colors.background[900]}
-              />
-              <Text className="typo-btn-cta text-black">
-                סיום ושמירה
-              </Text>
+              <Ionicons name="checkmark-circle" size={20} color={colors.background[900]} />
+              <Text className="typo-btn-cta text-black">סיום ושמירה</Text>
             </>
           )}
         </Pressable>

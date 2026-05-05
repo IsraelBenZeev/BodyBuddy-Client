@@ -9,7 +9,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View, Linking } from 'react-native';
 import Buttons from './Buttons';
 import ExerciseHistory from './ExerciseHistory';
 import Information from './Information';
@@ -116,6 +116,22 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
               },
             ]}
           />
+          {/* Support & Disclaimer under Instructions */}
+          <View className="px-6 mt-4 mb-8">
+             <Text className="typo-label text-background-400">
+            {'נתקלת בבעיה? '}
+            <Text
+              onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
+              className="text-lime-400 font-semibold"
+            >
+              {'דווחו לנו'}
+            </Text>
+          </Text>
+
+            <Text className="typo-caption text-zinc-400 text-center mt-2">
+              {'המידע המוצג תורגם אוטומטית ואינו מהווה תחליף לייעוץ מקצועי. הביצוע באחריות המתאמן בלבד.'}
+            </Text>
+          </View>
         </View>
       </ScrollView>
       <Modal

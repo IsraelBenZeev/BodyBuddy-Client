@@ -27,6 +27,7 @@ interface CarouselProps {
   gap?: number;
   keyField?: string;
   onIndexChange?: (index: number) => void;
+  initialIndex?: number;
 }
 
 const AnimatedCarouselItem = ({
@@ -94,12 +95,16 @@ const CustomCarousel = ({
   gap = 15,
   keyField = 'id',
   onIndexChange,
+  initialIndex,
 }: CarouselProps) => {
-  const [activeId, setActiveId] = useState<string | number | null>(data[0]?.[keyField] || null);
-  const scrollX = useSharedValue(0);
-
   const TOTAL_ITEM_SIZE = widthCard + gap;
   const ITEM_SPACING = variant === 'center' ? (SCREEN_WIDTH - widthCard) / 2 : 20;
+  const initialScrollX = (initialIndex ?? 0) * TOTAL_ITEM_SIZE;
+
+  const [activeId, setActiveId] = useState<string | number | null>(
+    data[initialIndex ?? 0]?.[keyField] || null
+  );
+  const scrollX = useSharedValue(initialScrollX);
 
   const updateActiveId = (id: string | number) => {
     if (activeId !== id) setActiveId(id);
@@ -154,6 +159,7 @@ const CustomCarousel = ({
             }
           }
         }}
+        contentOffset={{ x: initialScrollX, y: 0 }}
         contentContainerStyle={{
           paddingHorizontal: ITEM_SPACING,
           paddingBottom: variant === 'center' ? 80 : 20,

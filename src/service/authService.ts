@@ -216,7 +216,7 @@ export const signInWithGoogle = async () => {
         useAuthStore.getState().setSession(sessionData.session);
         try {
           const profile = await getProfile(sessionData.session.user.id);
-          if (profile?.full_name && profile.age != null) {
+          if (profile?.full_name && (profile.date_of_birth != null || profile.age != null)) {
             router.replace('/(tabs)');
           } else {
             router.replace('/UserSetup');

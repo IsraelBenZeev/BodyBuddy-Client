@@ -37,7 +37,7 @@ export default function GlobalSuccess() {
                     ]}
                 />
                 {message ? (
-                    <Text className="typo-h4 text-lime-500 mt-2 italic uppercase">
+                    <Text className="typo-h4 text-lime-500 mt-2 uppercase">
                         {message}
                     </Text>
                 ) : null}
