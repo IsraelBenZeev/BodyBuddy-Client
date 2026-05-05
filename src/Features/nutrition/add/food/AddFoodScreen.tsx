@@ -3,7 +3,7 @@ import { calculateNutrients, getPortionUnit } from '@/src/Features/nutrition/uti
 import { useCreateFoodItem, useCreateNutritionEntry } from '@/src/hooks/useNutrition';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
-import type { CreateFoodFormData, MeasurementType } from '@/src/types/nutrition';
+import type { CreateFoodFormData, FoodItem, MeasurementType } from '@/src/types/nutrition';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import { Ionicons } from '@expo/vector-icons';
@@ -47,6 +47,30 @@ const AddFoodScreen = () => {
   const { mutate: createEntry, isPending: isCreatingEntry } = useCreateNutritionEntry(
     userId,
     today
+  );
+
+  const handleSelectExisting = useCallback(
+    (food: FoodItem, amount: number) => {
+      const nutrients = calculateNutrients(food, amount);
+      const portionUnit = getPortionUnit(food);
+      createEntry(
+        {
+          user_id: userId,
+          date: today,
+          food_name: food.name,
+          ...nutrients,
+          portion_size: amount,
+          portion_unit: portionUnit,
+          // מאכל מ-foods_db אינו ב-food_items — לא מעבירים food_item_id למניעת שגיאת FK
+          ...(food.source !== 'foods_db' && { food_item_id: food.id }),
+        },
+        {
+          onSuccess: () => router.back(),
+          onError: () => triggerSuccess('שגיאה בהוספה ליומן', 'failed'),
+        }
+      );
+    },
+    [userId, today, createEntry, router, triggerSuccess]
   );
 
   const handleSubmit = useCallback(
@@ -134,6 +158,7 @@ const AddFoodScreen = () => {
         </View>
         <AddNewFood
           onSubmit={handleSubmit}
+          onSelectExisting={handleSelectExisting}
           isPending={isCreatingFood || isCreatingEntry}
           onBack={() => router.back()}
           mode="standalone"

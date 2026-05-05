@@ -1,17 +1,15 @@
 import { colors } from '@/colors';
-import {
-  FOOD_CATEGORIES,
-  getCategoryById,
-  type FoodCategoryId,
-} from '@/src/Features/nutrition/add/food/foodCategories';
-import type { CreateFoodFormData, MeasurementType } from '@/src/types/nutrition';
+import { useSearchFoodItems } from '@/src/hooks/useNutrition';
+import { useAuthStore } from '@/src/store/useAuthStore';
+import type { CreateFoodFormData, FoodItem, MeasurementType } from '@/src/types/nutrition';
+import ValueStepper from '@/src/ui/ValueStepper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import Slider from '@react-native-community/slider';
 import * as Haptics from 'expo-haptics';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
+  FlatList,
   KeyboardAvoidingView,
-  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -20,8 +18,11 @@ import {
   View,
 } from 'react-native';
 
+type Phase = 'search' | 'db-amount' | 'custom-details';
+
 interface Props {
   onSubmit: (data: CreateFoodFormData, addToJournal: boolean) => void;
+  onSelectExisting?: (food: FoodItem, amount: number) => void;
   isPending: boolean;
   onBack?: () => void;
   mode?: 'standalone' | 'meal-builder';
@@ -38,319 +39,364 @@ interface Props {
 }
 
 const QUICK_SUGGESTIONS = ['חזה עוף', 'ביצה', 'קוואקר', 'גבינה לבנה', 'לחם'];
-const TOTAL_STEPS = 5;
 
-const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialValues, defaultConsumedAmount }: Props) => {
-  const [step, setStep] = useState(1);
+const AddNewFood = ({
+  onSubmit,
+  onSelectExisting,
+  isPending,
+  onBack,
+  mode = 'standalone',
+  initialValues,
+  defaultConsumedAmount,
+}: Props) => {
+  const userId = useAuthStore((s) => s.user?.id) ?? '';
 
-  // Step 1
-  const [foodName, setFoodName] = useState(initialValues?.food_name ?? '');
+  const [phase, setPhase] = useState<Phase>('search');
+  const [query, setQuery] = useState(initialValues?.food_name ?? '');
+  const [debouncedQuery, setDebouncedQuery] = useState(initialValues?.food_name ?? '');
 
-  // Step 2
+  // DB food
+  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
+  const [dbAmount, setDbAmount] = useState(100);
+
+  // Custom food
   const [measurementType, setMeasurementType] = useState<MeasurementType>(
     initialValues?.measurement_type ?? 'grams'
   );
-  // Step 3
   const [calories, setCalories] = useState(
     initialValues?.calories_per_100 != null ? String(initialValues.calories_per_100) : ''
   );
   const [proteinValue, setProteinValue] = useState(initialValues?.protein_per_100 ?? 0);
-
-
-
-  // Step 4
-  const [selectedCategoryId, setSelectedCategoryId] = useState<FoodCategoryId | null>(
-    (initialValues?.category as FoodCategoryId) ?? null
+  const [consumedAmount, setConsumedAmount] = useState<number>(
+    defaultConsumedAmount ?? 0
   );
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 300);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const { data: searchResults = [], isLoading } = useSearchFoodItems(debouncedQuery, userId);
 
   const isUnits = measurementType === 'units';
 
-  // Portion modal (שמור + יומן)
-  const [showPortionModal, setShowPortionModal] = useState(false);
-  const [portionAmount, setPortionAmount] = useState(isUnits ? 1 : 100);
-  const [consumedAmount, setConsumedAmount] = useState(
-    defaultConsumedAmount != null ? String(defaultConsumedAmount) : ''
-  );
-
-  const step1Valid = foodName.trim().length > 0;
-  const step2Valid = true;
-  const step3Valid = (parseFloat(calories) || 0) > 0;
-
-  const handleNext = useCallback(() => {
-    if (step === 1 && !step1Valid) return;
-    if (step === 2 && !step2Valid) return;
-    if (step === 3 && !step3Valid) return;
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
-  }, [step, step1Valid, step2Valid, step3Valid]);
-
-  const handleBack = useCallback(() => {
-    if (step === 1) {
-      onBack?.();
-    } else {
-      setStep((s) => s - 1);
-    }
-  }, [step, onBack]);
-
-  const toggleCategory = useCallback((id: FoodCategoryId) => {
-    setSelectedCategoryId((prev) => (prev === id ? null : id));
+  const handleSelectFromDB = useCallback((food: FoodItem) => {
+    Haptics.selectionAsync();
+    setSelectedFood(food);
+    setDbAmount(food.measurement_type === 'units' ? 1 : 100);
+    setPhase('db-amount');
   }, []);
 
-  const buildData = useCallback((portion?: number): CreateFoodFormData => {
-    const cal = parseFloat(calories) || 0;
-    if (isUnits) {
-      return {
-        food_name: foodName.trim(),
-        measurement_type: 'units',
-        category: selectedCategoryId ?? undefined,
-        calories_per_unit: cal || undefined,
-        protein_per_unit: proteinValue || undefined,
-        portion_size: portion,
-        portion_unit: portion != null ? 'unit' : undefined,
-      };
-    }
-    return {
-      food_name: foodName.trim(),
-      measurement_type: 'grams',
-      category: selectedCategoryId ?? undefined,
-      calories_per_100: cal || undefined,
-      protein_per_100: proteinValue || undefined,
-      portion_size: portion,
-      portion_unit: portion != null ? 'g' : undefined,
-    };
-  }, [isUnits, foodName, selectedCategoryId, calories, proteinValue]);
+  const handleStartCustom = useCallback(() => {
+    Haptics.selectionAsync();
+    setPhase('custom-details');
+  }, []);
 
-  const handleSubmit = useCallback(
-    (addToJournal: boolean) => {
-      onSubmit(buildData(), addToJournal);
-    },
-    [onSubmit, buildData]
-  );
-
-  const handleAddToJournal = useCallback(() => {
-    const parsed = parseFloat(consumedAmount);
-    if (!isNaN(parsed) && parsed > 0) {
-      onSubmit(buildData(parsed), true);
+  const handleBack = useCallback(() => {
+    if (phase === 'search') {
+      onBack?.();
     } else {
-      setPortionAmount(isUnits ? 1 : 100);
-      setShowPortionModal(true);
+      setPhase('search');
     }
-  }, [consumedAmount, isUnits, onSubmit, buildData]);
+  }, [phase, onBack]);
 
-  const confirmPortionAndSubmit = useCallback(() => {
-    setShowPortionModal(false);
-    onSubmit(buildData(portionAmount), true);
-  }, [onSubmit, buildData, portionAmount]);
+  const handleConfirmDB = useCallback(() => {
+    if (!selectedFood) return;
+    onSelectExisting?.(selectedFood, dbAmount);
+  }, [selectedFood, dbAmount, onSelectExisting]);
 
-  // ── Progress Bar ──────────────────────────────────────────────────────────────
-  const ProgressBar = () => (
-    <View className="flex-row gap-1.5 mb-6 px-1">
-      {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-        <View
-          key={i}
-          className={`h-1 flex-1 rounded-full ${i < step ? 'bg-lime-500' : 'bg-background-700'}`}
-        />
-      ))}
-    </View>
+  const buildCustomData = useCallback(
+    (portion?: number): CreateFoodFormData => {
+      const cal = parseFloat(calories) || 0;
+      if (isUnits) {
+        return {
+          food_name: query.trim(),
+          measurement_type: 'units',
+          calories_per_unit: cal || undefined,
+          protein_per_unit: proteinValue || undefined,
+          portion_size: portion,
+          portion_unit: portion != null ? 'unit' : undefined,
+        };
+      }
+      return {
+        food_name: query.trim(),
+        measurement_type: 'grams',
+        calories_per_100: cal || undefined,
+        protein_per_100: proteinValue || undefined,
+        portion_size: portion,
+        portion_unit: portion != null ? 'g' : undefined,
+      };
+    },
+    [isUnits, query, calories, proteinValue]
   );
 
-  // ── Input field ───────────────────────────────────────────────────────────────
-  const NumericInput = ({
-    value,
-    onChange,
-    placeholder,
-    label,
-    helper,
-  }: {
-    value: string;
-    onChange: (v: string) => void;
-    placeholder?: string;
-    label: string;
-    helper?: string;
-  }) => (
-    <View className="mb-4">
-      <Text className="typo-label text-background-400 mb-2 text-right">{label}</Text>
-      <TextInput
-        value={value}
-        onChangeText={onChange}
-        keyboardType="decimal-pad"
-        placeholder={placeholder ?? '0'}
-        placeholderTextColor={colors.background[500]}
-        style={{
-          backgroundColor: colors.background[800],
-          borderWidth: 1,
-          borderColor: colors.background[600],
-          borderRadius: 12,
-          padding: 14,
-          color: colors.white,
-          textAlign: 'right',
-          fontSize: 16,
-        }}
-      />
-      {helper != null && (
-        <Text className="typo-caption text-background-500 mt-1.5 text-right">{helper}</Text>
-      )}
-    </View>
+  const handleCustomSave = useCallback(
+    (addToJournal: boolean) => {
+      onSubmit(buildCustomData(addToJournal && consumedAmount > 0 ? consumedAmount : undefined), addToJournal);
+    },
+    [onSubmit, buildCustomData, consumedAmount]
   );
 
-  // ── Step 1: שם ───────────────────────────────────────────────────────────────
-  const renderStep1 = () => (
-    <View className="flex-1">
-      <Text className="typo-h2 text-lime-400 mb-2 text-right">
-        {mode === 'meal-builder' ? 'הוספת מזון חדש לארוחה' : 'בואו נוסיף מזון חדש'}
-      </Text>
-      <Text className="typo-label text-background-400 mb-8 text-right">
-        איך קוראים למזון הזה? תן לו שם שתזהה אותו בקלות
-      </Text>
+  const step3Valid = (parseFloat(calories) || 0) > 0;
 
-      <TextInput
-        value={foodName}
-        onChangeText={setFoodName}
-        placeholder="למשל: חזה עוף, אורז מלא, ביצה..."
-        placeholderTextColor={colors.background[500]}
-        autoFocus
-        style={{
-          backgroundColor: colors.background[800],
-          borderWidth: 1,
-          borderColor: foodName.trim() ? colors.lime[500] : colors.background[600],
-          borderRadius: 12,
-          padding: 14,
-          color: colors.white,
-          textAlign: 'right',
-          fontSize: 16,
-        }}
-      />
-
-      <View className="items-center mt-10 mb-6">
-        <View className="bg-background-800 w-24 h-24 rounded-3xl items-center justify-center border border-background-600">
-          <Ionicons name="nutrition-outline" size={44} color={colors.background[500]} />
-        </View>
-      </View>
-
-      <Text className="typo-caption text-background-500 text-center mb-3">הצעות מהירות</Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
-        {QUICK_SUGGESTIONS.map((s) => (
-          <Pressable
-            key={s}
-            onPress={() => setFoodName(s)}
-            className="bg-background-800 border border-background-600 rounded-full px-3 py-1.5"
-            accessibilityRole="button"
-            accessibilityLabel={s}
-          >
-            <Text className="typo-label text-background-300">{s}</Text>
-          </Pressable>
-        ))}
-      </View>
-    </View>
-  );
-
-  // ── Step 2: סוג מדידה ─────────────────────────────────────────────────────────
-  const renderStep2 = () => (
-    <View className="flex-1">
-      <Text className="typo-h2 text-lime-400 mb-2 text-right">
-        איך בדרך כלל מודדים את זה?
-      </Text>
-      <Text className="typo-label text-background-400 mb-8 text-right">
-        זה יקבע איך נשאל אותך בכל פעם שתוסיף את המזון הזה ליומן
-      </Text>
-
-      <View className="gap-3 mb-6">
-        <Pressable
-          onPress={() => setMeasurementType('grams')}
-          className={`rounded-2xl p-5 border-2 flex-row items-center ${
-            measurementType === 'grams'
-              ? 'border-lime-500 bg-lime-500/10'
-              : 'border-background-600 bg-background-800'
-          }`}
-          accessibilityRole="button"
-          accessibilityLabel="מדידה בגרמים"
-          accessibilityState={{ selected: measurementType === 'grams' }}
-        >
+  // ── Progress dots ────────────────────────────────────────────────────────────
+  const ProgressDots = () => (
+    <View className="flex-row gap-2 mb-6 justify-center">
+      {[0, 1].map((i) => {
+        const active = phase === 'search' ? i === 0 : i === 1;
+        const past = phase !== 'search' && i === 0;
+        return (
           <View
-            className={`w-12 h-12 rounded-xl items-center justify-center ${
-              measurementType === 'grams' ? 'bg-lime-500/20' : 'bg-background-700'
+            key={i}
+            className={`h-1.5 rounded-full ${
+              active ? 'bg-lime-500 w-6' : past ? 'bg-lime-500/50 w-4' : 'bg-background-700 w-4'
             }`}
-          >
-            <MaterialCommunityIcons
-              name="scale"
-              size={24}
-              color={measurementType === 'grams' ? colors.lime[500] : colors.background[400]}
-            />
-          </View>
-          <View className="flex-1 mr-3">
-            <Text
-              className={`typo-body-primary text-right ${
-                measurementType === 'grams' ? 'text-lime-400' : 'text-white'
-              }`}
-            >
-              בגרמים / מ״ל
-            </Text>
-            <Text className="typo-caption text-background-400 text-right mt-1">
-              מתאים לאורז, בשר, ירקות, שתייה
-            </Text>
-          </View>
-        </Pressable>
-
-        <Pressable
-          onPress={() => setMeasurementType('units')}
-          className={`rounded-2xl p-5 border-2 flex-row items-center ${
-            measurementType === 'units'
-              ? 'border-lime-500 bg-lime-500/10'
-              : 'border-background-600 bg-background-800'
-          }`}
-          accessibilityRole="button"
-          accessibilityLabel="מדידה ביחידות"
-          accessibilityState={{ selected: measurementType === 'units' }}
-        >
-          <View
-            className={`w-12 h-12 rounded-xl items-center justify-center ${
-              measurementType === 'units' ? 'bg-lime-500/20' : 'bg-background-700'
-            }`}
-          >
-            <MaterialCommunityIcons
-              name="counter"
-              size={24}
-              color={measurementType === 'units' ? colors.lime[500] : colors.background[400]}
-            />
-          </View>
-          <View className="flex-1 mr-3">
-            <Text
-              className={`typo-body-primary text-right ${
-                measurementType === 'units' ? 'text-lime-400' : 'text-white'
-              }`}
-            >
-              ביחידות
-            </Text>
-            <Text className="typo-caption text-background-400 text-right mt-1">
-              מתאים לביצה, פרי, פרוסת לחם, כוס
-            </Text>
-          </View>
-        </Pressable>
-      </View>
-
+          />
+        );
+      })}
     </View>
   );
 
-  // ── Step 3: ערכים תזונתיים ────────────────────────────────────────────────────
-  const renderStep3 = () => {
-    const unitLabel = isUnits ? 'יחידה' : '100 גרם';
-    const maxProtein = isUnits ? 50 : 100;
+  // ── Macro summary for a DB food ───────────────────────────────────────────────
+  const MacroChip = ({ label, value, unit }: { label: string; value: number | null; unit: string }) => (
+    <View className="items-center flex-1">
+      <Text className="typo-h3 text-white">{value ?? '—'}</Text>
+      <Text className="typo-caption text-background-400">{unit}</Text>
+      <Text className="typo-caption text-background-500">{label}</Text>
+    </View>
+  );
+
+  // ── Phase: Search ─────────────────────────────────────────────────────────────
+  const renderSearch = () => {
+    const showResults = debouncedQuery.trim().length >= 2;
+    const noResults = showResults && !isLoading && searchResults.length === 0;
 
     return (
       <View className="flex-1">
         <Text className="typo-h2 text-lime-400 mb-2 text-right">
-          {isUnits ? `כמה יש ב${unitLabel} אחד?` : `כמה יש ב-100 גרם?`}
+          {mode === 'meal-builder' ? 'הוספת מזון לארוחה' : 'חפש או הוסף מאכל'}
         </Text>
-        <Text className="typo-label text-background-400 mb-6 text-right">
-          {isUnits
-            ? 'הכנס את הערכים עבור יחידה אחת בלבד'
-            : 'את הערכים האלה תמצא על גב האריזה, או בחיפוש מהיר'}
+        <Text className="typo-label text-background-400 mb-4 text-right">
+          הקלד שם המאכל — נמצא לך את הנתונים
         </Text>
 
-        {/* קלוריות — quick chips + stepper + ידני */}
+        {/* Search input */}
+        <View
+          className="flex-row items-center bg-background-800 rounded-2xl border mb-3 px-4"
+          style={{ borderColor: query.trim() ? colors.lime[500] : colors.background[600] }}
+        >
+          <Ionicons name="search" size={18} color={colors.background[400]} />
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="חפש מאכל..."
+            placeholderTextColor={colors.background[500]}
+            autoFocus
+            returnKeyType="search"
+            style={{
+              flex: 1,
+              color: colors.white,
+              textAlign: 'right',
+              fontSize: 16,
+              paddingVertical: 14,
+              paddingHorizontal: 10,
+            }}
+          />
+          {isLoading && <ActivityIndicator size="small" color={colors.lime[500]} />}
+          {query.length > 0 && !isLoading && (
+            <Pressable
+              onPress={() => setQuery('')}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="נקה חיפוש"
+            >
+              <Ionicons name="close-circle" size={18} color={colors.background[500]} />
+            </Pressable>
+          )}
+        </View>
+
+        {/* Results */}
+        {showResults && searchResults.length > 0 && (
+          <View className="bg-background-800 rounded-2xl border border-background-700 mb-3 overflow-hidden">
+            {searchResults.map((food, idx) => {
+              const cal =
+                food.measurement_type === 'units'
+                  ? food.calories_per_unit
+                  : food.calories_per_100;
+              const calLabel =
+                food.measurement_type === 'units' ? 'קק"ל/יח׳' : 'קק"ל/100g';
+              const isLast = idx === searchResults.length - 1;
+              return (
+                <Pressable
+                  key={food.id}
+                  onPress={() => handleSelectFromDB(food)}
+                  className="flex-row items-center px-4 py-3.5"
+                  accessibilityRole="button"
+                  accessibilityLabel={`בחר ${food.name}`}
+                >
+                  <View className="flex-1">
+                    <Text className="typo-body-primary text-white text-right">{food.name}</Text>
+                    {cal != null && (
+                      <Text className="typo-caption text-background-400 text-right mt-0.5">
+                        {cal} {calLabel}
+                      </Text>
+                    )}
+                  </View>
+                  <MaterialCommunityIcons
+                    name="chevron-left"
+                    size={20}
+                    color={colors.background[500]}
+                  />
+                  {!isLast && (
+                    <View
+                      className="absolute bottom-0 left-4 right-4 h-[0.5px] bg-background-700"
+                    />
+                  )}
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
+
+        {/* No results */}
+        {noResults && (
+          <Text className="typo-caption text-background-500 text-center mb-3">
+            לא נמצאו תוצאות עבור &quot;{debouncedQuery}&quot;
+          </Text>
+        )}
+
+        {/* Add custom CTA */}
+        {showResults && query.trim().length > 0 && (
+          <Pressable
+            onPress={handleStartCustom}
+            className="flex-row items-center justify-center bg-background-800 border border-lime-500/40 rounded-2xl px-4 py-3.5 mb-3"
+            accessibilityRole="button"
+            accessibilityLabel={`הוסף ${query.trim()} כמאכל חדש`}
+          >
+            <Ionicons name="add-circle-outline" size={20} color={colors.lime[500]} />
+            <Text className="typo-body-primary text-lime-400 mr-2">
+              הוסף &quot;{query.trim()}&quot; כמאכל חדש
+            </Text>
+          </Pressable>
+        )}
+
+        {/* Quick suggestions (when query is empty) */}
+        {!showResults && (
+          <>
+            <Text className="typo-caption text-background-500 text-center mb-3 mt-4">
+              הצעות מהירות
+            </Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+              {QUICK_SUGGESTIONS.map((s) => (
+                <Pressable
+                  key={s}
+                  onPress={() => setQuery(s)}
+                  className="bg-background-800 border border-background-600 rounded-full px-3 py-1.5"
+                  accessibilityRole="button"
+                  accessibilityLabel={s}
+                >
+                  <Text className="typo-label text-background-300">{s}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </>
+        )}
+      </View>
+    );
+  };
+
+  // ── Phase: DB amount ──────────────────────────────────────────────────────────
+  const renderDbAmount = () => {
+    if (!selectedFood) return null;
+    const isUnitFood = selectedFood.measurement_type === 'units';
+    const cal = isUnitFood ? selectedFood.calories_per_unit : selectedFood.calories_per_100;
+    const prot = isUnitFood ? selectedFood.protein_per_unit : selectedFood.protein_per_100;
+    const carb = isUnitFood ? selectedFood.carbs_per_unit : selectedFood.carbs_per_100;
+    const fat = isUnitFood ? selectedFood.fat_per_unit : selectedFood.fat_per_100;
+    const unitLabel = isUnitFood ? 'יח׳' : 'גרם';
+    const suffix = isUnitFood ? 'יחידה' : '100g';
+
+    return (
+      <View className="flex-1">
+        <Text className="typo-h2 text-lime-400 mb-1 text-right">{selectedFood.name}</Text>
+        <Text className="typo-label text-background-400 mb-5 text-right">
+          הגדר כמות וסיים
+        </Text>
+
+        {/* Macro summary */}
+        <View className="bg-background-800 rounded-2xl p-4 border border-background-600 mb-5">
+          <Text className="typo-caption text-background-500 text-center mb-3">
+            ערכים תזונתיים ל{suffix}
+          </Text>
+          <View className="flex-row">
+            <MacroChip label="קלוריות" value={cal} unit="קק״ל" />
+            <View className="w-[1px] bg-background-700" />
+            <MacroChip label="חלבון" value={prot} unit="g" />
+            <View className="w-[1px] bg-background-700" />
+            <MacroChip label="פחמימות" value={carb} unit="g" />
+            <View className="w-[1px] bg-background-700" />
+            <MacroChip label="שומן" value={fat} unit="g" />
+          </View>
+        </View>
+
+        {/* Amount picker */}
+        <View className="bg-background-800 rounded-2xl p-5 border border-background-600 items-center">
+          <Text className="typo-label text-background-400 mb-4 text-center">כמות</Text>
+          <ValueStepper
+            value={dbAmount}
+            onChange={setDbAmount}
+            step={isUnitFood ? 0.5 : 10}
+            min={isUnitFood ? 0.5 : 10}
+            unit={unitLabel}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  // ── Phase: Custom details ──────────────────────────────────────────────────────
+  const renderCustomDetails = () => {
+    const maxProtein = isUnits ? 50 : 100;
+    const unitLabel = isUnits ? 'יחידה' : '100 גרם';
+
+    return (
+      <View className="flex-1">
+        <Text className="typo-h2 text-lime-400 mb-1 text-right">
+          יצירת מאכל חדש
+        </Text>
+        <Text className="typo-label text-background-400 mb-1 text-right">
+          {query.trim()}
+        </Text>
+        <Text className="typo-caption text-background-500 mb-5 text-right">
+          שם מדויק יאפשר לנו לאמת ערכים תזונתיים בעתיד
+        </Text>
+
+        {/* Measurement toggle */}
+        <View className="flex-row bg-background-800 rounded-2xl border border-background-600 p-1 mb-4">
+          {(['grams', 'units'] as MeasurementType[]).map((type) => {
+            const isActive = measurementType === type;
+            return (
+              <Pressable
+                key={type}
+                onPress={() => { setMeasurementType(type); Haptics.selectionAsync(); }}
+                className={`flex-1 py-2.5 rounded-xl items-center ${isActive ? 'bg-lime-500' : ''}`}
+                accessibilityRole="button"
+                accessibilityLabel={type === 'grams' ? 'מדידה בגרמים' : 'מדידה ביחידות'}
+                accessibilityState={{ selected: isActive }}
+              >
+                <Text className={`typo-body-primary ${isActive ? 'text-background-900' : 'text-background-400'}`}>
+                  {type === 'grams' ? 'גרמים' : 'יחידות'}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {/* Calories */}
         <View className="bg-background-800 rounded-2xl p-4 mb-4 border border-background-600">
           <View className="flex-row items-center justify-between mb-3">
             <Text className="typo-label text-background-400">
-              קלוריות ל{isUnits ? unitLabel : '-100 גרם'}
+              קלוריות ל{unitLabel}
             </Text>
             <View className="flex-row items-center" style={{ gap: 4 }}>
               <Text className="typo-h3 text-white">{calories || '0'}</Text>
@@ -370,13 +416,15 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
                   accessibilityRole="button"
                   accessibilityLabel={`${val} קלוריות`}
                 >
-                  <Text className={`typo-caption-bold ${isActive ? 'text-lime-400' : 'text-background-300'}`}>{val}</Text>
+                  <Text className={`typo-caption-bold ${isActive ? 'text-lime-400' : 'text-background-300'}`}>
+                    {val}
+                  </Text>
                 </Pressable>
               );
             })}
           </View>
 
-          {/* Stepper + TextInput */}
+          {/* Stepper */}
           <View className="flex-row items-center" style={{ gap: 8 }}>
             <Pressable
               onPress={() => { setCalories(String(Math.max(0, (parseInt(calories) || 0) + 50))); Haptics.selectionAsync(); }}
@@ -419,193 +467,152 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           </View>
         </View>
 
-        {/* חלבון — Slider */}
-        <View className="bg-background-800 rounded-2xl p-4 border border-background-600">
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="typo-label text-background-400">
-              חלבון ל{isUnits ? unitLabel : '-100 גרם'}
-            </Text>
-            <View className="flex-row items-center" style={{ gap: 4 }}>
-              <Text className="typo-h2 text-white">{Math.round(proteinValue)}</Text>
-              <Text className="typo-label text-background-400">גרם</Text>
-            </View>
-          </View>
-          <Slider
-            style={{ width: '100%', height: 40 }}
-            minimumValue={0}
-            maximumValue={maxProtein}
-            step={1}
+        {/* Protein */}
+        <View className="bg-background-800 rounded-2xl p-5 border border-background-600 mb-4 items-center">
+          <Text className="typo-label text-background-400 mb-4 text-center">
+            חלבון ל{unitLabel}{' '}
+            <Text className="text-background-600">(אופציונלי)</Text>
+          </Text>
+          <ValueStepper
             value={proteinValue}
-            onValueChange={(val) => {
-              setProteinValue(Math.round(val));
-              Haptics.selectionAsync();
-            }}
-            minimumTrackTintColor={colors.lime[500]}
-            maximumTrackTintColor={colors.background[600]}
-            thumbTintColor={colors.lime[500]}
+            onChange={setProteinValue}
+            step={0.5}
+            min={0}
+            unit="g"
           />
-          <View className="flex-row justify-between px-1 mt-1">
-            <Text className="typo-caption text-background-500">0</Text>
-            <Text className="typo-caption text-background-500">{Math.round(maxProtein / 2)}</Text>
-            <Text className="typo-caption text-background-500">{maxProtein}g</Text>
-          </View>
         </View>
 
-        {/* כמה אכלת — Slider */}
-        <View className="bg-background-800 rounded-2xl p-4 mt-4 border border-background-600">
-          <View className="flex-row items-center justify-between mb-2">
-            <Text className="typo-label text-background-400">
-              כמה אכלת? <Text className="text-background-600">(אופציונלי)</Text>
-            </Text>
-            <View className="flex-row items-center" style={{ gap: 4 }}>
-              <Text className="typo-h3 text-white">
-                {consumedAmount || '—'}
-              </Text>
-              <Text className="typo-label text-background-400">{isUnits ? 'יח׳' : 'גרם'}</Text>
-            </View>
-          </View>
-          <Slider
-            style={{ width: '100%', height: 40 }}
-            minimumValue={isUnits ? 0.5 : 10}
-            maximumValue={isUnits ? 10 : 500}
-            step={isUnits ? 0.5 : 10}
-            value={parseFloat(consumedAmount) || (isUnits ? 1 : 100)}
-            onValueChange={(v) => {
-              const val = isUnits ? Math.round(v * 2) / 2 : Math.round(v / 10) * 10;
-              setConsumedAmount(String(val));
-              Haptics.selectionAsync();
-            }}
-            minimumTrackTintColor={colors.lime[500]}
-            maximumTrackTintColor={colors.background[600]}
-            thumbTintColor={colors.lime[500]}
-          />
-          <View className="flex-row justify-between px-1 mt-1">
-            <Text className="typo-caption text-background-500">{isUnits ? '0.5' : '10'}</Text>
-            <Text className="typo-caption text-background-500">{isUnits ? '5' : '250'}</Text>
-            <Text className="typo-caption text-background-500">{isUnits ? '10 יח׳' : '500 גרם'}</Text>
-          </View>
-          <Text className="typo-caption text-background-600 text-right mt-2">
-            גרור רק אם תרצה להוסיף מזון זה ליומן כעת
+        {/* Consumed amount (optional) */}
+        <View className="bg-background-800 rounded-2xl p-5 border border-background-600 items-center">
+          <Text className="typo-label text-background-400 mb-4 text-center">
+            כמה אכלת?{' '}
+            <Text className="text-background-600">(אופציונלי)</Text>
           </Text>
+          <ValueStepper
+            value={consumedAmount}
+            onChange={setConsumedAmount}
+            step={isUnits ? 0.5 : 5}
+            min={0}
+            unit={isUnits ? 'יח׳' : 'גרם'}
+          />
         </View>
       </View>
     );
   };
 
-  // ── Step 4: קטגוריה ───────────────────────────────────────────────────────────
-  const renderStep4 = () => (
-    <View className="flex-1">
-      <Text className="typo-h2 text-lime-400 mb-2 text-right">
-        שים אותו בקטגוריה?
-      </Text>
-      <Text className="typo-label text-background-400 mb-5 text-right">
-        לא חובה, אבל עוזר למצוא אותו מהר יותר ברשימה
-      </Text>
+  // ── Bottom bar ────────────────────────────────────────────────────────────────
+  const renderBottomBar = () => {
+    if (phase === 'search') {
+      return (
+        <Pressable
+          onPress={() => onBack?.()}
+          className="bg-background-800 border border-white/10 h-14 rounded-2xl items-center justify-center"
+          accessibilityRole="button"
+          accessibilityLabel="חזרה"
+        >
+          <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
+        </Pressable>
+      );
+    }
 
-      {/* Grid מורחב */}
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }} className="mb-6">
-        {FOOD_CATEGORIES.map((cat) => {
-          const isSelected = selectedCategoryId === cat.id;
-          return (
-            <Pressable
-              key={cat.id}
-              onPress={() => toggleCategory(cat.id)}
-              className={`flex-row items-center rounded-xl border px-3 py-2 ${
-                isSelected
-                  ? 'border-lime-500 bg-lime-500/15'
-                  : 'border-background-600 bg-background-800'
-              }`}
-              accessibilityRole="button"
-              accessibilityLabel={cat.label}
-              accessibilityState={{ selected: isSelected }}
-            >
-              <MaterialCommunityIcons
-                name={cat.icon}
-                size={16}
-                color={isSelected ? colors.lime[500] : colors.background[400]}
-              />
-              <Text
-                className={`typo-caption-bold mr-1.5 ${
-                  isSelected ? 'text-lime-400' : 'text-background-400'
-                }`}
-              >
-                {cat.label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+    if (phase === 'db-amount') {
+      return (
+        <View className="flex-row gap-3">
+          <Pressable
+            onPress={handleBack}
+            className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
+            accessibilityRole="button"
+            accessibilityLabel="חזרה"
+          >
+            <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
+          </Pressable>
+          <Pressable
+            onPress={handleConfirmDB}
+            disabled={isPending}
+            className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
+            accessibilityRole="button"
+            accessibilityLabel="הוסף ליומן"
+          >
+            <MaterialCommunityIcons name="notebook-plus-outline" size={20} color={colors.background[900]} />
+            <Text className="typo-btn-cta mr-2 text-background-900">
+              {isPending ? 'שומר...' : mode === 'meal-builder' ? 'הוסף לארוחה' : 'הוסף ליומן'}
+            </Text>
+          </Pressable>
+        </View>
+      );
+    }
 
-      {/* כפתור דלג בולט */}
-      <Pressable
-        onPress={() => { setSelectedCategoryId(null); setStep(5); }}
-        className="border border-background-600 rounded-2xl py-3.5 items-center"
-        accessibilityRole="button"
-        accessibilityLabel="דלג על קטגוריה"
-      >
-        <Text className="typo-body-primary text-background-300">דלג על קטגוריה</Text>
-      </Pressable>
-    </View>
-  );
-
-  // ── Step 5: אישור ─────────────────────────────────────────────────────────────
-  const renderStep5 = () => {
-    const unitLabel = isUnits ? 'יחידה' : '100 גרם';
-    const cal = parseFloat(calories) || 0;
+    // custom-details
+    if (mode === 'meal-builder') {
+      return (
+        <View className="flex-row gap-3">
+          <Pressable
+            onPress={handleBack}
+            className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
+            accessibilityRole="button"
+            accessibilityLabel="חזרה"
+          >
+            <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
+          </Pressable>
+          <Pressable
+            onPress={() => handleCustomSave(false)}
+            disabled={isPending || !step3Valid}
+            className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
+              isPending || !step3Valid ? 'opacity-50 bg-background-700' : 'bg-lime-500'
+            }`}
+            accessibilityRole="button"
+            accessibilityLabel="שמור והוסף לארוחה"
+          >
+            <MaterialCommunityIcons name="silverware-fork-knife" size={20} color={colors.background[900]} />
+            <Text className="typo-btn-cta mr-2 text-background-900">
+              {isPending ? 'שומר...' : 'שמור והוסף לארוחה'}
+            </Text>
+          </Pressable>
+        </View>
+      );
+    }
 
     return (
-      <View className="flex-1">
-        <Text className="typo-h2 text-lime-400 mb-2 text-right">
-          הכל נראה טוב!
-        </Text>
-        <Text className="typo-label text-background-400 mb-6 text-right">
-          בדוק שהכל נכון לפני השמירה
-        </Text>
-
-        <View className="bg-background-800 rounded-2xl p-5 border border-background-600 gap-3">
-          <View className="flex-row items-center justify-between">
-            <Text className="typo-label text-background-400">שם</Text>
-            <Text className="typo-body-primary text-white text-right flex-1 mr-4">{foodName}</Text>
-          </View>
-          <View className="h-[1px] bg-background-700" />
-          <View className="flex-row items-center justify-between">
-            <Text className="typo-label text-background-400">מדידה</Text>
-            <Text className="typo-body-primary text-white">
-              {isUnits ? `ביחידות (${unitLabel})` : 'בגרמים'}
-            </Text>
-          </View>
-          <View className="h-[1px] bg-background-700" />
-          <View className="flex-row items-center justify-between">
-            <Text className="typo-label text-background-400">קלוריות ל{unitLabel}</Text>
-            <Text className="typo-body-primary text-lime-400">{cal} קק״ל</Text>
-          </View>
-          <View className="flex-row items-center justify-between">
-            <Text className="typo-label text-background-400">חלבון ל{unitLabel}</Text>
-            <Text className="typo-body-primary text-lime-400">{proteinValue}g</Text>
-          </View>
-
-          {selectedCategoryId != null && (
-            <>
-              <View className="h-[1px] bg-background-700" />
-              <View className="flex-row items-center justify-between">
-                <Text className="typo-label text-background-400">קטגוריה</Text>
-                <Text className="typo-body-primary text-white">
-                  {getCategoryById(selectedCategoryId)?.label}
-                </Text>
-              </View>
-            </>
-          )}
-        </View>
+      <View className="flex-row gap-3">
+        <Pressable
+          onPress={handleBack}
+          className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
+          accessibilityRole="button"
+          accessibilityLabel="חזרה"
+        >
+          <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
+        </Pressable>
+        <Pressable
+          onPress={() => handleCustomSave(false)}
+          disabled={isPending || !step3Valid}
+          className={`flex-1 flex-row items-center justify-center rounded-2xl border border-white/10 h-14 ${
+            isPending || !step3Valid ? 'bg-background-700 opacity-50' : 'bg-background-800'
+          }`}
+          accessibilityRole="button"
+          accessibilityLabel="שמור"
+        >
+          <MaterialCommunityIcons name="content-save-outline" size={20} color={colors.white} />
+          <Text className="typo-label text-white mr-2">
+            {isPending ? 'שומר...' : 'שמור'}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => handleCustomSave(true)}
+          disabled={isPending || !step3Valid}
+          className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
+            isPending || !step3Valid ? 'opacity-50 bg-background-700' : 'bg-lime-500'
+          }`}
+          accessibilityRole="button"
+          accessibilityLabel="שמור והוסף ליומן"
+        >
+          <MaterialCommunityIcons name="notebook-plus-outline" size={20} color={colors.background[900]} />
+          <Text className="typo-label mr-2 text-background-900">
+            שמור + יומן
+          </Text>
+        </Pressable>
       </View>
     );
   };
-
-  const canProceed = useMemo(() => {
-    if (step === 1) return step1Valid;
-    if (step === 2) return step2Valid;
-    if (step === 3) return step3Valid;
-    return true;
-  }, [step, step1Valid, step2Valid, step3Valid]);
 
   return (
     <KeyboardAvoidingView
@@ -618,198 +625,16 @@ const AddNewFood = ({ onSubmit, isPending, onBack, mode = 'standalone', initialV
           contentContainerStyle={{ paddingBottom: 120 }}
           keyboardShouldPersistTaps="handled"
         >
-          <ProgressBar />
-
-          {step === 1 && renderStep1()}
-          {step === 2 && renderStep2()}
-          {step === 3 && renderStep3()}
-          {step === 4 && renderStep4()}
-          {step === 5 && renderStep5()}
+          <ProgressDots />
+          {phase === 'search' && renderSearch()}
+          {phase === 'db-amount' && renderDbAmount()}
+          {phase === 'custom-details' && renderCustomDetails()}
         </ScrollView>
 
-        {/* כפתורי ניווט */}
         <View className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-background-900/95 border-t border-background-700">
-          {step < 5 ? (
-            <View className="flex-row gap-3">
-              <Pressable
-                onPress={handleBack}
-                className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
-              accessibilityRole="button"
-              accessibilityLabel="חזרה"
-              >
-                <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
-              </Pressable>
-              <Pressable
-                onPress={handleNext}
-                disabled={!canProceed}
-                className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
-                  canProceed ? 'bg-lime-500' : 'bg-background-700'
-                }`}
-                accessibilityRole="button"
-                accessibilityLabel="המשך"
-              >
-                <Text
-                  className={`typo-btn-cta ${
-                    canProceed ? 'text-background-900' : 'text-background-500'
-                  }`}
-                >
-                  המשך
-                </Text>
-              </Pressable>
-            </View>
-          ) : mode === 'meal-builder' ? (
-            <View className="flex-row gap-3">
-              <Pressable
-                onPress={handleBack}
-                className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
-              accessibilityRole="button"
-              accessibilityLabel="חזרה"
-              >
-                <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
-              </Pressable>
-              <Pressable
-                onPress={() => handleSubmit(false)}
-                disabled={isPending}
-                className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
-                  isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'
-                }`}
-                accessibilityRole="button"
-                accessibilityLabel="שמור והוסף לארוחה"
-              >
-                <MaterialCommunityIcons
-                  name="silverware-fork-knife"
-                  size={20}
-                  color={colors.background[900]}
-                />
-                <Text className="typo-btn-cta mr-2 text-background-900">
-                  {isPending ? 'שומר...' : 'שמור והוסף לארוחה'}
-                </Text>
-              </Pressable>
-            </View>
-          ) : (
-            <View className="flex-row gap-3">
-              <Pressable
-                onPress={handleBack}
-                className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
-              accessibilityRole="button"
-              accessibilityLabel="חזרה"
-              >
-                <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
-              </Pressable>
-              <Pressable
-                onPress={() => handleSubmit(false)}
-                disabled={isPending}
-                className={`flex-1 flex-row items-center justify-center rounded-2xl border border-white/10 h-14 ${
-                  isPending ? 'bg-background-700 opacity-50' : 'bg-background-800'
-                }`}
-                accessibilityRole="button"
-                accessibilityLabel="שמור"
-              >
-                <MaterialCommunityIcons name="content-save-outline" size={20} color={colors.white} />
-                <Text className="typo-label text-white mr-2">
-                  {isPending ? 'שומר...' : 'שמור'}
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={handleAddToJournal}
-                disabled={isPending}
-                className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
-                  isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'
-                }`}
-                accessibilityRole="button"
-                accessibilityLabel="שמור והוסף ליומן"
-              >
-                <MaterialCommunityIcons
-                  name="notebook-plus-outline"
-                  size={20}
-                  color={colors.background[900]}
-                />
-                <Text className="typo-label mr-2 text-background-900">
-                  שמור + יומן
-                </Text>
-              </Pressable>
-            </View>
-          )}
+          {renderBottomBar()}
         </View>
       </View>
-
-      {/* Modal: כמה אכלת? */}
-      <Modal
-        visible={showPortionModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowPortionModal(false)}
-      >
-        <Pressable
-          className="flex-1 bg-black/70 justify-end"
-          onPress={() => setShowPortionModal(false)}
-        >
-          <Pressable onPress={(e) => e.stopPropagation()}>
-            <View className="bg-background-900 rounded-t-3xl px-6 pt-6 pb-12">
-              {/* Handle */}
-              <View className="items-center mb-5">
-                <View className="w-12 h-1.5 bg-white/10 rounded-full" />
-              </View>
-
-              <Text className="typo-h3 text-white text-right mb-1">
-                כמה אכלת?
-              </Text>
-              <Text className="typo-label text-background-400 text-right mb-6">
-                {isUnits ? 'מספר יחידות' : 'כמות בגרמים'}
-              </Text>
-
-              {/* ערך גדול */}
-              <View className="bg-background-800 rounded-2xl p-5 mb-6 border border-background-600 items-center">
-                <Text className="text-white font-black" style={{ fontSize: 52, lineHeight: 60 }}>
-                  {portionAmount}
-                </Text>
-                <Text className="typo-body text-background-400 mt-1">
-                  {isUnits ? 'יחידות' : 'גרם'}
-                </Text>
-              </View>
-
-              {/* Slider */}
-              <Slider
-                style={{ width: '100%', height: 44 }}
-                minimumValue={isUnits ? 0.5 : 10}
-                maximumValue={isUnits ? 20 : 1000}
-                step={isUnits ? 0.5 : 5}
-                value={portionAmount}
-                onValueChange={(v) => {
-                  setPortionAmount(isUnits ? Math.round(v * 2) / 2 : Math.round(v / 5) * 5);
-                  Haptics.selectionAsync();
-                }}
-                minimumTrackTintColor={colors.lime[500]}
-                maximumTrackTintColor={colors.background[600]}
-                thumbTintColor={colors.lime[500]}
-              />
-              <View className="flex-row justify-between px-1 mt-1 mb-6">
-                <Text className="typo-caption text-background-500">
-                  {isUnits ? '0.5' : '10'}
-                </Text>
-                <Text className="typo-caption text-background-500">
-                  {isUnits ? '20 יחידות' : '1000g'}
-                </Text>
-              </View>
-
-              {/* כפתור אישור */}
-              <Pressable
-                onPress={confirmPortionAndSubmit}
-                disabled={isPending}
-                className={`rounded-2xl h-14 items-center justify-center ${
-                  isPending ? 'bg-background-700 opacity-50' : 'bg-lime-500'
-                }`}
-                accessibilityRole="button"
-                accessibilityLabel="הוסף ליומן"
-              >
-                <Text className="typo-btn-cta text-background-900">
-                  {isPending ? 'שומר...' : 'הוסף ליומן'}
-                </Text>
-              </Pressable>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
     </KeyboardAvoidingView>
   );
 };

@@ -45,6 +45,7 @@ export interface FoodItem {
   is_active: boolean;
   user_id?: string;
   measurement_type: MeasurementType;
+  source?: 'foods_db' | 'food_items';
   unit_weight_g?: number | null;
   // מסלול גרמים
   calories_per_100: number | null;

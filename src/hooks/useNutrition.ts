@@ -10,6 +10,7 @@ import {
     getFoodItems,
     getMealsWithItems,
     getNutritionEntries,
+    searchFoodItems,
 } from '@/src/service/nutritionService';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { CreateNutritionEntryPayload, MeasurementType } from '@/src/types/nutrition';
@@ -181,6 +182,16 @@ export const useMealsWithItems = (userId: string | undefined) => {
     queryFn: () => getMealsWithItems(userId!),
     enabled: !!userId,
     staleTime: Infinity,
+  });
+};
+
+/** חיפוש מאכלים לפי שם — debounce מתבצע בקומפוננטה */
+export const useSearchFoodItems = (query: string, userId: string) => {
+  return useQuery({
+    queryKey: ['food-items-search', userId, query],
+    queryFn: () => searchFoodItems(query, userId),
+    enabled: !!userId && query.trim().length >= 2,
+    staleTime: 1000 * 60 * 5,
   });
 };
 

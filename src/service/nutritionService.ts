@@ -164,6 +164,47 @@ export const deleteNutritionEntriesByGroupId = async (
 };
 
 /**
+ * חיפוש מאכלים לפי שם — קודם מאכלים אישיים (food_items), אחר כך מאגר גלובלי (foods).
+ */
+export const searchFoodItems = async (query: string, userId: string): Promise<FoodItem[]> => {
+  if (!userId || typeof userId !== 'string') throw new Error('Invalid user ID');
+  if (!query.trim()) return [];
+  try {
+    const trimmed = query.trim();
+
+    const [globalRes, userRes] = await Promise.all([
+      supabase
+        .from('foods')
+        .select('id, name, name_en, category, calories, protein, carbs, fat, serving_type, unit_weight_g')
+        .or(`name.ilike.%${trimmed}%,name_en.ilike.%${trimmed}%`)
+        .limit(8),
+
+      supabase
+        .from('food_items')
+        .select(`
+          id, name, category, is_active, user_id,
+          measurement_type, unit_weight_g,
+          calories_per_100, protein_per_100, carbs_per_100, fat_per_100,
+          calories_per_unit, protein_per_unit, carbs_per_unit, fat_per_unit,
+          created_at, updated_at
+        `)
+        .eq('user_id', userId)
+        .eq('is_active', true)
+        .ilike('name', `%${trimmed}%`)
+        .limit(5),
+    ]);
+
+    const globalFoods = (globalRes.data ?? []).map(normalizeGlobalFood);
+    const userFoods = (userRes.data ?? []).map(normalizeFoodItem);
+
+    return [...userFoods, ...globalFoods].slice(0, 10);
+  } catch (error) {
+    if (__DEV__) console.error('Search food items error:', error);
+    throw error;
+  }
+};
+
+/**
  * מחזיר את כל המאכלים שהמשתמש יכול לבחור: גלובליים (user_id null) + המאכלים שלו.
  */
 export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
@@ -190,6 +231,30 @@ export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
   }
 };
 
+function normalizeGlobalFood(row: Record<string, unknown>): FoodItem {
+  const isUnit = row.serving_type === 'unit';
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    category: (row.category as string) ?? undefined,
+    is_active: true,
+    user_id: undefined,
+    measurement_type: isUnit ? 'units' : 'grams',
+    unit_weight_g: row.unit_weight_g != null ? Number(row.unit_weight_g) : null,
+    calories_per_100: !isUnit ? Number(row.calories) : null,
+    protein_per_100: !isUnit ? Number(row.protein) : null,
+    carbs_per_100: !isUnit ? Number(row.carbs) : null,
+    fat_per_100: !isUnit ? Number(row.fat) : null,
+    calories_per_unit: isUnit ? Number(row.calories) : null,
+    protein_per_unit: isUnit ? Number(row.protein) : null,
+    carbs_per_unit: isUnit ? Number(row.carbs) : null,
+    fat_per_unit: isUnit ? Number(row.fat) : null,
+    created_at: '',
+    updated_at: '',
+    source: 'foods_db',
+  };
+}
+
 function normalizeFoodItem(row: Record<string, unknown>): FoodItem {
   const measurementType = (row.measurement_type as MeasurementType) ?? 'grams';
   return {
@@ -199,6 +264,7 @@ function normalizeFoodItem(row: Record<string, unknown>): FoodItem {
     is_active: row.is_active !== false,
     user_id: row.user_id as string | undefined,
     measurement_type: measurementType,
+    source: 'food_items',
     unit_weight_g: row.unit_weight_g != null ? Number(row.unit_weight_g) : null,
     calories_per_100: row.calories_per_100 != null ? Number(row.calories_per_100) : null,
     protein_per_100: row.protein_per_100 != null ? Number(row.protein_per_100) : null,
