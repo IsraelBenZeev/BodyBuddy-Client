@@ -1,7 +1,7 @@
+import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import { Image } from 'expo-image';
 import React from 'react';
 import { Text, View } from 'react-native';
-import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import GraphData from './GraphData';
 interface CardExerciseProgressProps {
   exercise: any;
@@ -42,9 +42,9 @@ const Title = React.memo(({ exerciseDetails }: TitleProps) => {
 });
 const CardExerciseProgress = React.memo(({ exercise }: CardExerciseProgressProps) => {
   return (
-    <View className="py-2 ">
+    <View className="py-4">
       <GraphData logs={exercise.allLogs} />
-      <View className="bg-zinc-800/50 rounded-2xl p-4 flex-row flex-wrap justify-between mt-4">
+      <View className="bg-zinc-800/50 rounded-2xl p-4 flex-row flex-wrap justify-between mt-6 border border-zinc-700/30">
         <StatItem label="משקל שיא" value={`${exercise.maxWeight} ק"ג`} />
         <StatItem label="חזרות שיא" value={exercise.maxReps.toString()} />
         <StatItem label="שיא סטים לאימון" value={exercise.maxSetsRecord.toString()} />
@@ -91,9 +91,9 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
   );
 });
 const StatItem = React.memo(({ label, value }: { label: string; value: string }) => (
-  <View className="w-[48%] mb-4">
+  <View className="w-[48%] mb-4" accessible={true} accessibilityLabel={`${label}: ${value}`}>
     <Text className="typo-caption text-zinc-500 mb-1">{label}</Text>
-    <Text className="typo-body-primary text-white">{value}</Text>
+    <Text className="typo-body-primary text-white font-semibold">{value}</Text>
   </View>
 ));
 export { CardEmptyExercise, CardExerciseProgress, StatItem, Title };
