@@ -12,9 +12,9 @@ import {
 } from '@/src/hooks/useNutrition';
 import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
 import BackGround from '@/src/ui/BackGround';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
-import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
 import {
   calculateNutritionGoals,
   getMotivationMessage,
@@ -61,8 +61,10 @@ const NutritionScreen = () => {
     user?.id ?? '',
     today
   );
-  const { mutate: deleteGroup, isPending: isDeletingGroup } =
-    useDeleteNutritionEntriesByGroupId(user?.id ?? '', today);
+  const { mutate: deleteGroup, isPending: isDeletingGroup } = useDeleteNutritionEntriesByGroupId(
+    user?.id ?? '',
+    today
+  );
 
   const goals = useMemo(() => {
     return calculateNutritionGoals(profile ?? null);
@@ -123,56 +125,80 @@ const NutritionScreen = () => {
   return (
     <BackGround>
       <View className="flex-1">
-        <ScrollView className="flex-1 px-5 py-8" contentContainerStyle={{ paddingBottom: 180 }}>
-          <Text className="typo-h1 text-white mb-2 text-right">תזונה</Text>
-          <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, alignSelf: 'flex-end', marginBottom: 16 }} />
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{
+            paddingBottom: 180,
+            alignItems: 'center',
+            paddingHorizontal: 20,
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="flex-1 w-full bg-background-950 rounded-md py-6 px-5 shadow-black shadow-md">
+            <View className="mt-2 mb-8">
+              <Text className="typo-h1 text-white mb-2 text-right">תזונה</Text>
+              <View
+                style={{
+                  height: 5,
+                  width: 60,
+                  backgroundColor: colors.lime[500],
+                  borderRadius: 10,
+                  alignSelf: 'flex-end',
+                  marginBottom: 16,
+                }}
+              />
+            </View>
 
-          {motivationData && (
-            <View className="flex-row items-center justify-center gap-2 bg-lime-500/10 border border-lime-500/30 rounded-2xl p-4 mb-6">
-              <Ionicons name={motivationData.icon} size={24} color={colors.lime[500]} />
-              <Text className="typo-body-primary text-lime-400 flex-1 text-right">
-                {motivationData.message}
+            {motivationData && (
+              <View className="bg-white/[0.03] rounded-3xl p-4 mb-4 border border-white/[0.05]">
+                <View className="flex-row items-center justify-center gap-2">
+                  <Ionicons name={motivationData.icon} size={22} color={colors.lime[500]} />
+                  <Text className="typo-body-primary text-lime-400 flex-1 text-right">
+                    {motivationData.message}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            <ProgressStats
+              label="קלוריות"
+              consumed={dailyConsumed.calories_consumed}
+              goal={goals.calories}
+              unit="קק״ל"
+              color={colors.white}
+              iconName="flame-outline"
+            />
+
+            <MacroPieChart
+              proteinConsumed={dailyConsumed.protein_consumed}
+              proteinGoal={goals.protein}
+            />
+
+            <View className="bg-white/[0.03] rounded-3xl p-5 mb-4 border border-white/[0.05]">
+              <View className="flex-row items-center justify-between mb-3">
+                <Text className="typo-body-primary text-white">איך אנחנו מחשבים את היעדים?</Text>
+                <Ionicons name="information-circle-outline" size={20} color={colors.lime[500]} />
+              </View>
+              <Text className="typo-label text-background-400 text-right leading-6">
+                • חלבון: מחושב על פי{' '}
+                {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג × משקל (
+                {profile?.weight} ק״ג){'\n'}• קלוריות: מחושבות לפי BMR × פעילות גופנית ± יעד
               </Text>
             </View>
-          )}
 
-          <ProgressStats
-            label="קלוריות"
-            consumed={dailyConsumed.calories_consumed}
-            goal={goals.calories}
-            unit="קק״ל"
-            color={colors.white}
-            iconName="flame-outline"
-          />
-
-          <MacroPieChart
-            proteinConsumed={dailyConsumed.protein_consumed}
-            proteinGoal={goals.protein}
-          />
-
-          <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600">
-            <View className="flex-row items-center justify-between mb-3">
-              <Text className="typo-body-primary text-white">איך אנחנו מחשבים את היעדים?</Text>
-              <Ionicons name="information-circle-outline" size={20} color={colors.lime[500]} />
-            </View>
-            <Text className="typo-label text-background-400 text-right leading-6">
-              • חלבון: מחושב על פי {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג × משקל ({profile?.weight} ק״ג){'\n'}• קלוריות: מחושבות לפי BMR × פעילות גופנית ± יעד
-            </Text>
+            <NutritionEntriesList
+              entries={entries}
+              onDelete={deleteEntry}
+              onDeleteGroup={deleteGroup}
+              isDeleting={isDeleting}
+              isDeletingGroup={isDeletingGroup}
+            />
           </View>
-
-          <NutritionEntriesList
-            entries={entries}
-            onDelete={deleteEntry}
-            onDeleteGroup={deleteGroup}
-            isDeleting={isDeleting}
-            isDeletingGroup={isDeletingGroup}
-          />
-
         </ScrollView>
 
         <Pressable
           onPress={handleShowOptions}
-          className="absolute left-5 right-5 flex-row items-center justify-center gap-2 rounded-full bg-lime-500 py-4 active:opacity-90"
+          className="absolute left-5 right-5 flex-row items-center justify-center gap-2 rounded-2xl bg-lime-500 h-14 active:opacity-90"
           accessibilityRole="button"
           accessibilityLabel="הוספת מאכל או ארוחה"
           style={{
@@ -198,10 +224,7 @@ const NutritionScreen = () => {
         onCameraAI={handleCameraAI}
       />
 
-      <CameraAIModal
-        visible={showCameraModal}
-        onClose={handleCloseCameraModal}
-      />
+      <CameraAIModal visible={showCameraModal} onClose={handleCloseCameraModal} />
 
       <ModalAddFoods
         visible={isAddFoodOpen}

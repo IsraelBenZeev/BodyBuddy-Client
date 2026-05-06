@@ -8,7 +8,6 @@ import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -38,7 +37,38 @@ interface Props {
   };
 }
 
-const QUICK_SUGGESTIONS = ['חזה עוף', 'ביצה', 'קוואקר', 'גבינה לבנה', 'לחם'];
+const QUICK_SUGGESTIONS = [
+  'חזה עוף',
+  'ביצה',
+  'אורז',
+  'גבינה לבנה',
+  'לחם',
+  'טונה',
+  'יוגורט',
+  'שיבולת שועל',
+  'קוטג׳',
+  'אבוקדו',
+  'בננה',
+  'תפוח',
+  'חומוס',
+  'טחינה',
+  'סלמון',
+  'שניצל',
+  'פסטה',
+  'תפוח אדמה',
+  'בטטה',
+  'עגבנייה',
+  'מלפפון',
+  'חלב',
+  'קורנפלקס',
+  'שקדים',
+  'אגוזים',
+  'גבינה צהובה',
+  'פיתה',
+  'לאפה',
+  'סלט',
+  'עוף',
+];
 
 const AddNewFood = ({
   onSubmit,
@@ -67,9 +97,7 @@ const AddNewFood = ({
     initialValues?.calories_per_100 != null ? String(initialValues.calories_per_100) : ''
   );
   const [proteinValue, setProteinValue] = useState(initialValues?.protein_per_100 ?? 0);
-  const [consumedAmount, setConsumedAmount] = useState<number>(
-    defaultConsumedAmount ?? 0
-  );
+  const [consumedAmount, setConsumedAmount] = useState<number>(defaultConsumedAmount ?? 0);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query), 300);
@@ -132,7 +160,10 @@ const AddNewFood = ({
 
   const handleCustomSave = useCallback(
     (addToJournal: boolean) => {
-      onSubmit(buildCustomData(addToJournal && consumedAmount > 0 ? consumedAmount : undefined), addToJournal);
+      onSubmit(
+        buildCustomData(addToJournal && consumedAmount > 0 ? consumedAmount : undefined),
+        addToJournal
+      );
     },
     [onSubmit, buildCustomData, consumedAmount]
   );
@@ -158,7 +189,15 @@ const AddNewFood = ({
   );
 
   // ── Macro summary for a DB food ───────────────────────────────────────────────
-  const MacroChip = ({ label, value, unit }: { label: string; value: number | null; unit: string }) => (
+  const MacroChip = ({
+    label,
+    value,
+    unit,
+  }: {
+    label: string;
+    value: number | null;
+    unit: string;
+  }) => (
     <View className="items-center flex-1">
       <Text className="typo-h3 text-white">{value ?? '—'}</Text>
       <Text className="typo-caption text-background-400">{unit}</Text>
@@ -172,11 +211,11 @@ const AddNewFood = ({
     const noResults = showResults && !isLoading && searchResults.length === 0;
 
     return (
-      <View className="flex-1">
-        <Text className="typo-h2 text-lime-400 mb-2 text-right">
+      <View className="flex-1 px-5 w-full">
+        <Text className="typo-h2 text-lime-400 mb-2 ">
           {mode === 'meal-builder' ? 'הוספת מזון לארוחה' : 'חפש או הוסף מאכל'}
         </Text>
-        <Text className="typo-label text-background-400 mb-4 text-right">
+        <Text className="typo-label text-background-400 mb-4 ">
           הקלד שם המאכל — נמצא לך את הנתונים
         </Text>
 
@@ -220,11 +259,8 @@ const AddNewFood = ({
           <View className="bg-background-800 rounded-2xl border border-background-700 mb-3 overflow-hidden">
             {searchResults.map((food, idx) => {
               const cal =
-                food.measurement_type === 'units'
-                  ? food.calories_per_unit
-                  : food.calories_per_100;
-              const calLabel =
-                food.measurement_type === 'units' ? 'קק"ל/יח׳' : 'קק"ל/100g';
+                food.measurement_type === 'units' ? food.calories_per_unit : food.calories_per_100;
+              const calLabel = food.measurement_type === 'units' ? 'קק"ל/יח׳' : 'קק"ל/100g';
               const isLast = idx === searchResults.length - 1;
               return (
                 <Pressable
@@ -235,9 +271,9 @@ const AddNewFood = ({
                   accessibilityLabel={`בחר ${food.name}`}
                 >
                   <View className="flex-1">
-                    <Text className="typo-body-primary text-white text-right">{food.name}</Text>
+                    <Text className="typo-body-primary text-white ">{food.name}</Text>
                     {cal != null && (
-                      <Text className="typo-caption text-background-400 text-right mt-0.5">
+                      <Text className="typo-caption text-background-400  mt-0.5">
                         {cal} {calLabel}
                       </Text>
                     )}
@@ -248,9 +284,7 @@ const AddNewFood = ({
                     color={colors.background[500]}
                   />
                   {!isLast && (
-                    <View
-                      className="absolute bottom-0 left-4 right-4 h-[0.5px] bg-background-700"
-                    />
+                    <View className="absolute bottom-0 left-4 right-4 h-[0.5px] bg-background-700" />
                   )}
                 </Pressable>
               );
@@ -286,7 +320,9 @@ const AddNewFood = ({
             <Text className="typo-caption text-background-500 text-center mb-3 mt-4">
               הצעות מהירות
             </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+            <View
+              style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}
+            >
               {QUICK_SUGGESTIONS.map((s) => (
                 <Pressable
                   key={s}
@@ -308,96 +344,192 @@ const AddNewFood = ({
   // ── Phase: DB amount ──────────────────────────────────────────────────────────
   const renderDbAmount = () => {
     if (!selectedFood) return null;
+
     const isUnitFood = selectedFood.measurement_type === 'units';
-    const cal = isUnitFood ? selectedFood.calories_per_unit : selectedFood.calories_per_100;
-    const prot = isUnitFood ? selectedFood.protein_per_unit : selectedFood.protein_per_100;
-    const carb = isUnitFood ? selectedFood.carbs_per_unit : selectedFood.carbs_per_100;
-    const fat = isUnitFood ? selectedFood.fat_per_unit : selectedFood.fat_per_100;
+    const factor = isUnitFood ? dbAmount : dbAmount / 100;
+
+    const totals = {
+      cal: Math.round(
+        ((isUnitFood ? selectedFood.calories_per_unit : selectedFood.calories_per_100) ?? 0) *
+          factor
+      ),
+      prot: (
+        ((isUnitFood ? selectedFood.protein_per_unit : selectedFood.protein_per_100) ?? 0) * factor
+      ).toFixed(1),
+      carb: (
+        ((isUnitFood ? selectedFood.carbs_per_unit : selectedFood.carbs_per_100) ?? 0) * factor
+      ).toFixed(1),
+      fat: (
+        ((isUnitFood ? selectedFood.fat_per_unit : selectedFood.fat_per_100) ?? 0) * factor
+      ).toFixed(1),
+    };
+
     const unitLabel = isUnitFood ? 'יח׳' : 'גרם';
-    const suffix = isUnitFood ? 'יחידה' : '100g';
 
     return (
-      <View className="flex-1">
-        <Text className="typo-h2 text-lime-400 mb-1 text-right">{selectedFood.name}</Text>
-        <Text className="typo-label text-background-400 mb-5 text-right">
-          הגדר כמות וסיים
-        </Text>
+      <View className="flex-1 px-8 w-full bg-background-950 rounded-md py-6 shadow-black shadow-md">
+        <View className="w-full items-start mb-2">
+          <Pressable
+            onPress={handleBack}
+            className="bg-background-800 border border-white/10 h-11 w-11 rounded-xl items-center justify-center"
+            accessibilityRole="button"
+            accessibilityLabel="חזרה"
+            accessibilityHint="חזרה לשלב הקודם"
+          >
+            <MaterialCommunityIcons name="chevron-right" size={22} color={colors.white} />
+          </Pressable>
+        </View>
 
-        {/* Macro summary */}
-        <View className="bg-background-800 rounded-2xl p-4 border border-background-600 mb-5">
-          <Text className="typo-caption text-background-500 text-center mb-3">
-            ערכים תזונתיים ל{suffix}
+        {/* Header - Minimalist & Elegant */}
+        <View className="mt-6 mb-12 items-center">
+          <View className="bg-lime-400/10 px-3 py-1 rounded-full mb-3">
+            <Text className="text-lime-400 text-[10px] font-bold uppercase tracking-[2px]">
+              Food Detail
+            </Text>
+          </View>
+          <Text className="text-white text-4xl font-light tracking-tight text-center">
+            {selectedFood.name}
           </Text>
-          <View className="flex-row">
-            <MacroChip label="קלוריות" value={cal} unit="קק״ל" />
-            <View className="w-[1px] bg-background-700" />
-            <MacroChip label="חלבון" value={prot} unit="g" />
-            <View className="w-[1px] bg-background-700" />
-            <MacroChip label="פחמימות" value={carb} unit="g" />
-            <View className="w-[1px] bg-background-700" />
-            <MacroChip label="שומן" value={fat} unit="g" />
+          <View className="h-[2px] w-8 bg-lime-400 mt-4 rounded-full" />
+        </View>
+
+        {/* Main Focus: The Calorie Ring/Display */}
+        <View className="items-center justify-center mb-12">
+          <View className="w-48 h-48 rounded-full border-[0.5px] border-white/10 items-center justify-center bg-white/[0.02]">
+            <Text className="text-white font-black" style={{ fontSize: 25 }}>
+              {totals.cal}
+            </Text>
+            <Text className="text-background-400 text-xs font-medium uppercase tracking-[1px] mt-1">
+              Calories
+            </Text>
           </View>
         </View>
 
-        {/* Amount picker */}
-        <View className="bg-background-800 rounded-2xl p-5 border border-background-600 items-center">
-          <Text className="typo-label text-background-400 mb-4 text-center">כמות</Text>
-          <ValueStepper
-            value={dbAmount}
-            onChange={setDbAmount}
-            step={isUnitFood ? 0.5 : 10}
-            min={isUnitFood ? 0.5 : 10}
-            unit={unitLabel}
-          />
+        {/* Amount Picker - Clean & Integrated */}
+        <View className="mb-12">
+          <View className="flex-row justify-between items-end mb-4 px-2">
+            <Text className="text-background-400 text-sm font-bold uppercase tracking-wider">
+              Quantity
+            </Text>
+            <View className="flex-row items-baseline">
+              <Text className="text-white text-2xl font-semibold">{dbAmount}</Text>
+              <Text className="text-background-500 text-sm ml-1">{unitLabel}</Text>
+            </View>
+          </View>
+
+          <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05]">
+            <ValueStepper
+              value={dbAmount}
+              onChange={setDbAmount}
+              step={isUnitFood ? 0.5 : 10}
+              min={isUnitFood ? 0.5 : 10}
+              unit="" // השארתי ריק כי הוספנו כותרת מעל
+            />
+          </View>
+        </View>
+
+        {/* Macros Grid - High-End Dashboard Style */}
+        <View className="flex-row justify-between px-2">
+          <View className="items-start">
+            <Text className="text-background-500 text-[10px] font-bold uppercase mb-2 tracking-widest">
+              Protein
+            </Text>
+            <View className="flex-row items-baseline">
+              <Text className="text-white text-xl font-medium">{totals.prot}</Text>
+              <Text className="text-background-600 text-[10px] ml-1">g</Text>
+            </View>
+          </View>
+
+          <View className="w-[1px] h-8 bg-white/10 self-end mb-1" />
+
+          <View className="items-start">
+            <Text className="text-background-500 text-[10px] font-bold uppercase mb-2 tracking-widest">
+              Carbs
+            </Text>
+            <View className="flex-row items-baseline">
+              <Text className="text-white text-xl font-medium">{totals.carb}</Text>
+              <Text className="text-background-600 text-[10px] ml-1">g</Text>
+            </View>
+          </View>
+
+          <View className="w-[1px] h-8 bg-white/10 self-end mb-1" />
+
+          <View className="items-start">
+            <Text className="text-background-500 text-[10px] font-bold uppercase mb-2 tracking-widest">
+              Fat
+            </Text>
+            <View className="flex-row items-baseline">
+              <Text className="text-white text-xl font-medium">{totals.fat}</Text>
+              <Text className="text-background-600 text-[10px] ml-1">g</Text>
+            </View>
+          </View>
         </View>
       </View>
     );
   };
-
   // ── Phase: Custom details ──────────────────────────────────────────────────────
   const renderCustomDetails = () => {
-    const maxProtein = isUnits ? 50 : 100;
     const unitLabel = isUnits ? 'יחידה' : '100 גרם';
 
     return (
-      <View className="flex-1">
-        <Text className="typo-h2 text-lime-400 mb-1 text-right">
-          יצירת מאכל חדש
-        </Text>
-        <Text className="typo-label text-background-400 mb-1 text-right">
-          {query.trim()}
-        </Text>
-        <Text className="typo-caption text-background-500 mb-5 text-right">
-          שם מדויק יאפשר לנו לאמת ערכים תזונתיים בעתיד
-        </Text>
+      <View className="flex-1 px-8 w-full bg-background-950 rounded-md py-6 shadow-black shadow-md">
+        <View className="w-full items-start mb-2">
+          <Pressable
+            onPress={handleBack}
+            className="bg-background-800 border border-white/10 h-11 w-11 rounded-xl items-center justify-center"
+            accessibilityRole="button"
+            accessibilityLabel="חזרה"
+            accessibilityHint="חזרה לשלב הקודם"
+          >
+            <MaterialCommunityIcons name="chevron-right" size={22} color={colors.white} />
+          </Pressable>
+        </View>
 
-        {/* Measurement toggle */}
-        <View className="flex-row bg-background-800 rounded-2xl border border-background-600 p-1 mb-4">
-          {(['grams', 'units'] as MeasurementType[]).map((type) => {
-            const isActive = measurementType === type;
-            return (
-              <Pressable
-                key={type}
-                onPress={() => { setMeasurementType(type); Haptics.selectionAsync(); }}
-                className={`flex-1 py-2.5 rounded-xl items-center ${isActive ? 'bg-lime-500' : ''}`}
-                accessibilityRole="button"
-                accessibilityLabel={type === 'grams' ? 'מדידה בגרמים' : 'מדידה ביחידות'}
-                accessibilityState={{ selected: isActive }}
-              >
-                <Text className={`typo-body-primary ${isActive ? 'text-background-900' : 'text-background-400'}`}>
-                  {type === 'grams' ? 'גרמים' : 'יחידות'}
-                </Text>
-              </Pressable>
-            );
-          })}
+        {/* Header - Minimalist & Elegant */}
+        <View className="mt-6 mb-8 items-center">
+          <View className="bg-lime-400/10 px-3 py-1 rounded-full mb-3">
+            <Text className="text-lime-400 text-[10px] font-bold uppercase tracking-[2px]">
+              Food Detail
+            </Text>
+          </View>
+          <Text className="text-white text-4xl font-light tracking-tight text-center">
+            {query.trim() || 'מאכל חדש'}
+          </Text>
+          <View className="h-[2px] w-8 bg-lime-400 mt-4 rounded-full" />
+        </View>
+
+        {/* Measurement toggle - integrated card */}
+        <View className="bg-white/[0.03] rounded-3xl p-4 border border-white/[0.05] mb-4">
+          <View className="flex-row bg-background-800 rounded-2xl border border-background-600 p-1">
+            {(['grams', 'units'] as MeasurementType[]).map((type) => {
+              const isActive = measurementType === type;
+              return (
+                <Pressable
+                  key={type}
+                  onPress={() => {
+                    setMeasurementType(type);
+                    Haptics.selectionAsync();
+                  }}
+                  className={`flex-1 py-2.5 rounded-xl items-center ${isActive ? 'bg-lime-500' : ''}`}
+                  accessibilityRole="button"
+                  accessibilityLabel={type === 'grams' ? 'מדידה בגרמים' : 'מדידה ביחידות'}
+                  accessibilityState={{ selected: isActive }}
+                >
+                  <Text
+                    className={`typo-body-primary ${isActive ? 'text-background-900' : 'text-background-400'}`}
+                  >
+                    {type === 'grams' ? 'גרמים' : 'יחידות'}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         {/* Calories */}
-        <View className="bg-background-800 rounded-2xl p-4 mb-4 border border-background-600">
+        <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05] mb-4">
           <View className="flex-row items-center justify-between mb-3">
-            <Text className="typo-label text-background-400">
-              קלוריות ל{unitLabel}
-            </Text>
+            <Text className="typo-label text-background-400">קלוריות ל{unitLabel}</Text>
             <View className="flex-row items-center" style={{ gap: 4 }}>
               <Text className="typo-h3 text-white">{calories || '0'}</Text>
               <Text className="typo-label text-background-400">קק״ל</Text>
@@ -405,29 +537,42 @@ const AddNewFood = ({
           </View>
 
           {/* Quick chips */}
-          <View className="flex-row flex-wrap mb-3" style={{ gap: 8 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ marginBottom: 12 }}
+            contentContainerStyle={{ gap: 8 }}
+          >
             {[50, 100, 150, 200, 250, 300].map((val) => {
               const isActive = parseInt(calories) === val;
               return (
                 <Pressable
                   key={val}
-                  onPress={() => { setCalories(String(val)); Haptics.selectionAsync(); }}
+                  onPress={() => {
+                    setCalories(String(val));
+                    Haptics.selectionAsync();
+                  }}
                   className={`rounded-xl px-3 py-2 border ${isActive ? 'bg-lime-500/20 border-lime-500' : 'bg-background-700 border-background-600'}`}
                   accessibilityRole="button"
                   accessibilityLabel={`${val} קלוריות`}
                 >
-                  <Text className={`typo-caption-bold ${isActive ? 'text-lime-400' : 'text-background-300'}`}>
+                  <Text
+                    className={`typo-caption-bold ${isActive ? 'text-lime-400' : 'text-background-300'}`}
+                  >
                     {val}
                   </Text>
                 </Pressable>
               );
             })}
-          </View>
+          </ScrollView>
 
           {/* Stepper */}
           <View className="flex-row items-center" style={{ gap: 8 }}>
             <Pressable
-              onPress={() => { setCalories(String(Math.max(0, (parseInt(calories) || 0) + 50))); Haptics.selectionAsync(); }}
+              onPress={() => {
+                setCalories(String(Math.max(0, (parseInt(calories) || 0) + 50)));
+                Haptics.selectionAsync();
+              }}
               className="w-11 h-11 items-center justify-center bg-lime-500 rounded-xl"
               accessibilityRole="button"
               accessibilityLabel="הוסף 50 קלוריות"
@@ -440,15 +585,8 @@ const AddNewFood = ({
               keyboardType="decimal-pad"
               placeholder="0"
               placeholderTextColor={colors.background[500]}
+              className="flex-1 bg-background-700 rounded-xl px-3 py-3 text-center text-white text-xl font-bold"
               style={{
-                flex: 1,
-                backgroundColor: colors.background[700],
-                borderRadius: 10,
-                padding: 12,
-                color: colors.white,
-                textAlign: 'center',
-                fontSize: 20,
-                fontWeight: 'bold',
                 borderWidth: 1,
                 borderColor:
                   (parseFloat(calories) || 0) > 0
@@ -457,7 +595,10 @@ const AddNewFood = ({
               }}
             />
             <Pressable
-              onPress={() => { setCalories(String(Math.max(0, (parseInt(calories) || 0) - 50))); Haptics.selectionAsync(); }}
+              onPress={() => {
+                setCalories(String(Math.max(0, (parseInt(calories) || 0) - 50)));
+                Haptics.selectionAsync();
+              }}
               className="w-11 h-11 items-center justify-center bg-background-700 rounded-xl border border-background-600"
               accessibilityRole="button"
               accessibilityLabel="הפחת 50 קלוריות"
@@ -468,10 +609,9 @@ const AddNewFood = ({
         </View>
 
         {/* Protein */}
-        <View className="bg-background-800 rounded-2xl p-5 border border-background-600 mb-4 items-center">
+        <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05] mb-4 items-center">
           <Text className="typo-label text-background-400 mb-4 text-center">
-            חלבון ל{unitLabel}{' '}
-            <Text className="text-background-600">(אופציונלי)</Text>
+            חלבון ל{unitLabel} <Text className="text-background-600 ">(אופציונלי)</Text>
           </Text>
           <ValueStepper
             value={proteinValue}
@@ -483,10 +623,9 @@ const AddNewFood = ({
         </View>
 
         {/* Consumed amount (optional) */}
-        <View className="bg-background-800 rounded-2xl p-5 border border-background-600 items-center">
+        <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05] items-center">
           <Text className="typo-label text-background-400 mb-4 text-center">
-            כמה אכלת?{' '}
-            <Text className="text-background-600">(אופציונלי)</Text>
+            כמה אכלת? <Text className="text-background-600">(אופציונלי)</Text>
           </Text>
           <ValueStepper
             value={consumedAmount}
@@ -504,84 +643,65 @@ const AddNewFood = ({
   const renderBottomBar = () => {
     if (phase === 'search') {
       return (
-        <Pressable
-          onPress={() => onBack?.()}
-          className="bg-background-800 border border-white/10 h-14 rounded-2xl items-center justify-center"
-          accessibilityRole="button"
-          accessibilityLabel="חזרה"
-        >
-          <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
-        </Pressable>
+        // <Pressable
+        //   onPress={() => onBack?.()}
+        //   className="bg-background-800 border border-white/10 h-14 rounded-2xl items-center justify-center"
+        //   accessibilityRole="button"
+        //   accessibilityLabel="חזרה"
+        // >
+        //   <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
+        // </Pressable>
+        <View></View>
       );
     }
 
     if (phase === 'db-amount') {
       return (
-        <View className="flex-row gap-3">
-          <Pressable
-            onPress={handleBack}
-            className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
-            accessibilityRole="button"
-            accessibilityLabel="חזרה"
-          >
-            <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
-          </Pressable>
-          <Pressable
-            onPress={handleConfirmDB}
-            disabled={isPending}
-            className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
-            accessibilityRole="button"
-            accessibilityLabel="הוסף ליומן"
-          >
-            <MaterialCommunityIcons name="notebook-plus-outline" size={20} color={colors.background[900]} />
-            <Text className="typo-btn-cta mr-2 text-background-900">
-              {isPending ? 'שומר...' : mode === 'meal-builder' ? 'הוסף לארוחה' : 'הוסף ליומן'}
-            </Text>
-          </Pressable>
-        </View>
+        <Pressable
+          onPress={handleConfirmDB}
+          disabled={isPending}
+          className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
+          accessibilityRole="button"
+          accessibilityLabel="הוסף ליומן"
+        >
+          <MaterialCommunityIcons
+            name="notebook-plus-outline"
+            size={20}
+            color={colors.background[900]}
+          />
+          <Text className="typo-btn-cta mr-2 text-background-900">
+            {isPending ? 'שומר...' : mode === 'meal-builder' ? 'הוסף לארוחה' : 'הוסף ליומן'}
+          </Text>
+        </Pressable>
       );
     }
 
     // custom-details
     if (mode === 'meal-builder') {
       return (
-        <View className="flex-row gap-3">
-          <Pressable
-            onPress={handleBack}
-            className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
-            accessibilityRole="button"
-            accessibilityLabel="חזרה"
-          >
-            <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
-          </Pressable>
-          <Pressable
-            onPress={() => handleCustomSave(false)}
-            disabled={isPending || !step3Valid}
-            className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
-              isPending || !step3Valid ? 'opacity-50 bg-background-700' : 'bg-lime-500'
-            }`}
-            accessibilityRole="button"
-            accessibilityLabel="שמור והוסף לארוחה"
-          >
-            <MaterialCommunityIcons name="silverware-fork-knife" size={20} color={colors.background[900]} />
-            <Text className="typo-btn-cta mr-2 text-background-900">
-              {isPending ? 'שומר...' : 'שמור והוסף לארוחה'}
-            </Text>
-          </Pressable>
-        </View>
+        <Pressable
+          onPress={() => handleCustomSave(false)}
+          disabled={isPending || !step3Valid}
+          className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
+            isPending || !step3Valid ? 'opacity-50 bg-background-700' : 'bg-lime-500'
+          }`}
+          accessibilityRole="button"
+          accessibilityLabel="שמור והוסף לארוחה"
+        >
+          <MaterialCommunityIcons
+            name="silverware-fork-knife"
+            size={20}
+            color={colors.background[900]}
+          />
+          <Text className="typo-btn-cta mr-2 text-background-900">
+            {isPending ? 'שומר...' : 'שמור והוסף לארוחה'}
+          </Text>
+        </Pressable>
       );
     }
 
     return (
       <View className="flex-row gap-3">
-        <Pressable
-          onPress={handleBack}
-          className="bg-background-800 border border-white/10 h-14 w-14 rounded-2xl items-center justify-center"
-          accessibilityRole="button"
-          accessibilityLabel="חזרה"
-        >
-          <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
-        </Pressable>
         <Pressable
           onPress={() => handleCustomSave(false)}
           disabled={isPending || !step3Valid}
@@ -592,9 +712,7 @@ const AddNewFood = ({
           accessibilityLabel="שמור"
         >
           <MaterialCommunityIcons name="content-save-outline" size={20} color={colors.white} />
-          <Text className="typo-label text-white mr-2">
-            {isPending ? 'שומר...' : 'שמור'}
-          </Text>
+          <Text className="typo-label text-white mr-2">{isPending ? 'שומר...' : 'שמור'}</Text>
         </Pressable>
         <Pressable
           onPress={() => handleCustomSave(true)}
@@ -605,10 +723,12 @@ const AddNewFood = ({
           accessibilityRole="button"
           accessibilityLabel="שמור והוסף ליומן"
         >
-          <MaterialCommunityIcons name="notebook-plus-outline" size={20} color={colors.background[900]} />
-          <Text className="typo-label mr-2 text-background-900">
-            שמור + יומן
-          </Text>
+          <MaterialCommunityIcons
+            name="notebook-plus-outline"
+            size={20}
+            color={colors.background[900]}
+          />
+          <Text className="typo-label mr-2 text-background-900">שמור + יומן</Text>
         </Pressable>
       </View>
     );
@@ -621,19 +741,20 @@ const AddNewFood = ({
     >
       <View className="flex-1">
         <ScrollView
-          className="flex-1 px-5 pt-4"
-          contentContainerStyle={{ paddingBottom: 120 }}
+          className="flex-1"
+          contentContainerStyle={{
+            paddingBottom: 120,
+            alignItems: 'center',
+            paddingHorizontal: 20,
+          }}
           keyboardShouldPersistTaps="handled"
         >
-          <ProgressDots />
+          {/* <ProgressDots /> */}
           {phase === 'search' && renderSearch()}
           {phase === 'db-amount' && renderDbAmount()}
           {phase === 'custom-details' && renderCustomDetails()}
         </ScrollView>
-
-        <View className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-background-900/95 border-t border-background-700">
-          {renderBottomBar()}
-        </View>
+        <View className="px-5 pb-4">{renderBottomBar()}</View>
       </View>
     </KeyboardAvoidingView>
   );
