@@ -112,6 +112,7 @@ const GraphData = ({ logs }: Props) => {
   };
 
   const currentData = getCurrentData();
+  const chartData = useMemo(() => [...currentData].reverse(), [currentData]);
 
   if (!logs || logs.length === 0 || currentData.length === 0) {
     return null;
@@ -150,9 +151,9 @@ const GraphData = ({ logs }: Props) => {
           <LineChart
             areaChart
             curved
-            data={currentData}
+            data={chartData}
             initialSpacing={20}
-            spacing={currentData.length > 1 ? Math.max(25, 250 / currentData.length) : 50}
+            spacing={chartData.length > 1 ? Math.max(25, 250 / chartData.length) : 50}
             thickness={3}
             hideRules
             hideYAxisText
