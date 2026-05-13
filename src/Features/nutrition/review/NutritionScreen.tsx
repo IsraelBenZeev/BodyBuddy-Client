@@ -198,7 +198,7 @@ const NutritionScreen = () => {
 
         <Pressable
           onPress={handleShowOptions}
-          className="absolute left-5 right-5 flex-row items-center justify-center gap-2 rounded-2xl bg-lime-500 h-14 active:opacity-90"
+          className="absolute left-5 right-5  flex-row items-center justify-center gap-2 rounded-2xl bg-lime-500 h-14 active:opacity-90 "
           accessibilityRole="button"
           accessibilityLabel="הוספת מאכל או ארוחה"
           style={{

@@ -236,7 +236,7 @@ export default function ProfileScreen() {
                   })(),
                   icon: 'calendar',
                 },
-                { label: 'מין', value: getGenderLabel(profile?.gender ?? null), icon: 'person' },
+                { label: 'מגדר', value: getGenderLabel(profile?.gender ?? null), icon: 'person' },
               ].map((item, index) => (
                 <AnimatedCard
                   key={index}

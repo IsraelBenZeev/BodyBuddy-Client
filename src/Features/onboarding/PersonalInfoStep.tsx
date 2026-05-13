@@ -85,7 +85,7 @@ const PersonalInfoStep = ({
       {/* Gender */}
       <View className="mb-4">
         <Text className="typo-label text-background-200  mb-1">
-          מין
+          מגדר
         </Text>
         <Controller
           control={control}

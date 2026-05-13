@@ -99,9 +99,9 @@ const GoalStep = ({ control, trigger, setValue, onBack, onSubmit, isPending }: G
     <Animated.View entering={FadeInLeft.duration(400)} className="flex-1 px-6">
       {/* Header */}
       <View className="mb-6">
-        <Text className="typo-h1 text-white  mb-2">מה המטרה שלך?</Text>
+        <Text className="typo-h1 text-white  mb-2">בחר/י את היעד שלך?</Text>
         <Text className="typo-body text-background-400 ">
-          בחר/י את המטרה העיקרית שלך ונתאים לך תוכנית תזונה
+          הגדירו את המטרה שלך כדי שנתאים לך תוכנית תזונה אישית.{' '}
         </Text>
       </View>
 
