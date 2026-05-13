@@ -1,25 +1,3 @@
-/**
- * HoldButton – כפתור "החזק לאישור"
- *
- * כפתור שמפעיל פעולה רק אחרי החזקה מתמשכת (למניעת לחיצות בטעות).
- * מציג אנימציית מילוי בזמן ההחזקה.
- *
- * fillVariant:
- * - 'fill-both-sides' – צבע מתמלא משני הקצוות ונפגש במרכז (ברירת מחדל)
- * - 'darken' – שכבה כהה שמתחזקת (opacity)
- *
- * @example
- * <HoldButton
- *   holdDurationMs={1500}
- *   onPress={() => startWorkout()}
- *   className="bg-lime-500 w-full py-4 rounded-2xl"
- *   fillVariant="fill-both-sides"
- *   fillColor="rgba(0,0,0,0.5)"
- * >
- *   <Text>התחל אימון</Text>
- * </HoldButton>
- */
-
 import * as Haptics from 'expo-haptics';
 import React, { useCallback } from 'react';
 import { Pressable, View } from 'react-native';
