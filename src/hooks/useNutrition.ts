@@ -206,7 +206,7 @@ export const useCreateMealWithItems = (userId: string) => {
       items,
     }: {
       name_meal: string;
-      items: { food_item_id: string; amount_g: number }[];
+      items: { food_item_id: string | null; food_id: string | null; amount_g: number }[];
     }) => createMealWithItems(userId, name_meal, items),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['meals-with-items', userId] });

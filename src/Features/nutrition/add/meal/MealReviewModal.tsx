@@ -85,7 +85,7 @@ export default function MealReviewModal({
       const amount = getAmount(mi);
       const info = mi.food_item!;
       const foodForCalc = {
-        id: mi.food_item_id,
+        id: mi.food_item_id ?? mi.food_id ?? '',
         name: info.name,
         measurement_type: info.measurement_type,
         unit_weight_g: info.unit_weight_g ?? null,
@@ -112,7 +112,7 @@ export default function MealReviewModal({
         fat: nutrients.fat,
         calories: Math.round(nutrients.calories),
         portion_unit: (info.measurement_type === 'units' ? 'unit' : 'g') as 'g' | 'unit',
-        food_item_id: mi.food_item_id,
+        food_item_id: mi.food_item_id ?? undefined,
         group_id: groupId,
         group_name: meal.name_meal || 'ארוחה',
       };
@@ -132,7 +132,7 @@ export default function MealReviewModal({
           const amount = getAmount(mi);
           const info = mi.food_item!;
           const foodForCalc = {
-            id: mi.food_item_id,
+            id: mi.food_item_id ?? mi.food_id ?? '',
             name: info.name,
             measurement_type: info.measurement_type,
             unit_weight_g: info.unit_weight_g ?? null,
@@ -247,7 +247,7 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
   const unitLabel = isUnits ? 'יחידה' : 'גרם';
 
   const foodForCalc = {
-    id: mealItem.food_item_id,
+    id: mealItem.food_item_id ?? mealItem.food_id ?? '',
     name: info.name,
     measurement_type: info.measurement_type,
     unit_weight_g: info.unit_weight_g ?? null,

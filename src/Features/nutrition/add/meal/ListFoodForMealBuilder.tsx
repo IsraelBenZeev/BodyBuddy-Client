@@ -1,8 +1,9 @@
-import AddNewFood from '@/src/Features/nutrition/add/food/AddNewFoodForm';
+import AddNewFood, { type Phase } from '@/src/Features/nutrition/add/food/AddNewFoodForm';
 import AddNewFoodSelection from '@/src/Features/nutrition/add/food/AddNewFoodSelection';
 import { getCategoryIconName } from '@/src/Features/nutrition/add/food/foodCategories';
 import type { CreateFoodFormData, FoodItem } from '@/src/types/nutrition';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
 export type AddStep = 'list' | 'amount' | 'create';
@@ -17,6 +18,7 @@ export interface ListFoodForMealBuilderProps {
   onSelectFood: (food: FoodItem) => void;
   addItemFromPortion: (amount: number, portionUnit: 'g' | 'unit') => void;
   onNewFoodSubmit: (data: CreateFoodFormData) => void;
+  onAddFoodFromDB: (food: FoodItem, amount: number) => void;
   isCreatingFood: boolean;
 }
 
@@ -30,8 +32,17 @@ const ListFoodForMealBuilder = ({
   onSelectFood,
   addItemFromPortion,
   onNewFoodSubmit,
+  onAddFoodFromDB,
   isCreatingFood,
 }: ListFoodForMealBuilderProps) => {
+  const [formPhase, setFormPhase] = useState<Phase>('search');
+
+  useEffect(() => {
+    if (addStep !== 'create') setFormPhase('search');
+  }, [addStep]);
+
+  const showHeaderButton = !(addStep === 'create' && formPhase !== 'search');
+
   return (
     <View className="flex-1 bg-background-950">
       {/* Handle עליון - נותן תחושה של דף נשלף */}
@@ -42,7 +53,7 @@ const ListFoodForMealBuilder = ({
       {/* Header - משופר עם היררכיה ברורה */}
       <View className="flex-row items-center justify-between px-6 py-4 border-b border-white/5">
         <View className="flex-1">
-          <Text className="typo-h2 text-white text-right tracking-tight">
+          <Text className="typo-h2 text-white  tracking-tight">
             {addStep === 'list' ? 'בחירת מאכל' : addStep === 'amount' ? 'כמות והגשה' : 'מאכל חדש'}
           </Text>
           {addStep === 'amount' && selectedFood && (
@@ -55,23 +66,27 @@ const ListFoodForMealBuilder = ({
           )}
         </View>
 
-        <Pressable
-          onPress={() => (addStep !== 'list' ? setAddStep('list') : closeAddModal())}
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="bg-background-800 w-11 h-11 rounded-2xl items-center justify-center border border-white/10 shadow-lg"
-          accessibilityRole="button"
-          accessibilityLabel={addStep !== 'list' ? 'חזרה לרשימה' : 'סגור'}
-        >
-          <Ionicons name={addStep !== 'list' ? 'arrow-forward' : 'close'} size={24} color="#fff" />
-        </Pressable>
+        {showHeaderButton && (
+          <Pressable
+            onPress={() => (addStep !== 'list' ? setAddStep('list') : closeAddModal())}
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="bg-background-800 w-11 h-11 rounded-2xl items-center justify-center border border-white/10 shadow-lg"
+            accessibilityRole="button"
+            accessibilityLabel={addStep !== 'list' ? 'חזרה לרשימה' : 'סגור'}
+          >
+            <Ionicons name={addStep !== 'list' ? 'arrow-forward' : 'close'} size={24} color="#fff" />
+          </Pressable>
+        )}
       </View>
 
       {addStep === 'create' ? (
         <AddNewFood
           mode="meal-builder"
           onSubmit={(data) => onNewFoodSubmit(data)}
+          onSelectExisting={onAddFoodFromDB}
           isPending={isCreatingFood}
           onBack={() => setAddStep('list')}
+          onPhaseChange={setFormPhase}
         />
       ) : addStep === 'list' ? (
         <View className="flex-1">

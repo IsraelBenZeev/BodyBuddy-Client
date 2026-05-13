@@ -5,6 +5,7 @@ import type { CreateFoodFormData, FoodItem, MeasurementType } from '@/src/types/
 import ValueStepper from '@/src/ui/ValueStepper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -17,13 +18,14 @@ import {
   View,
 } from 'react-native';
 
-type Phase = 'search' | 'db-amount' | 'custom-details';
+export type Phase = 'search' | 'db-amount' | 'custom-details';
 
 interface Props {
   onSubmit: (data: CreateFoodFormData, addToJournal: boolean) => void;
   onSelectExisting?: (food: FoodItem, amount: number) => void;
   isPending: boolean;
   onBack?: () => void;
+  onPhaseChange?: (phase: Phase) => void;
   mode?: 'standalone' | 'meal-builder';
   defaultConsumedAmount?: number;
   initialValues?: {
@@ -75,6 +77,7 @@ const AddNewFood = ({
   onSelectExisting,
   isPending,
   onBack,
+  onPhaseChange,
   mode = 'standalone',
   initialValues,
   defaultConsumedAmount,
@@ -103,6 +106,10 @@ const AddNewFood = ({
     const timer = setTimeout(() => setDebouncedQuery(query), 300);
     return () => clearTimeout(timer);
   }, [query]);
+
+  useEffect(() => {
+    onPhaseChange?.(phase);
+  }, [phase, onPhaseChange]);
 
   const { data: searchResults = [], isLoading } = useSearchFoodItems(debouncedQuery, userId);
 
@@ -169,41 +176,6 @@ const AddNewFood = ({
   );
 
   const step3Valid = (parseFloat(calories) || 0) > 0;
-
-  // ── Progress dots ────────────────────────────────────────────────────────────
-  const ProgressDots = () => (
-    <View className="flex-row gap-2 mb-6 justify-center">
-      {[0, 1].map((i) => {
-        const active = phase === 'search' ? i === 0 : i === 1;
-        const past = phase !== 'search' && i === 0;
-        return (
-          <View
-            key={i}
-            className={`h-1.5 rounded-full ${
-              active ? 'bg-lime-500 w-6' : past ? 'bg-lime-500/50 w-4' : 'bg-background-700 w-4'
-            }`}
-          />
-        );
-      })}
-    </View>
-  );
-
-  // ── Macro summary for a DB food ───────────────────────────────────────────────
-  const MacroChip = ({
-    label,
-    value,
-    unit,
-  }: {
-    label: string;
-    value: number | null;
-    unit: string;
-  }) => (
-    <View className="items-center flex-1">
-      <Text className="typo-h3 text-white">{value ?? '—'}</Text>
-      <Text className="typo-caption text-background-400">{unit}</Text>
-      <Text className="typo-caption text-background-500">{label}</Text>
-    </View>
-  );
 
   // ── Phase: Search ─────────────────────────────────────────────────────────────
   const renderSearch = () => {
@@ -367,19 +339,7 @@ const AddNewFood = ({
     const unitLabel = isUnitFood ? 'יח׳' : 'גרם';
 
     return (
-      <View className="flex-1 px-8 w-full bg-background-950 rounded-md py-6 shadow-black shadow-md">
-        <View className="w-full items-start mb-2">
-          <Pressable
-            onPress={handleBack}
-            className="bg-background-800 border border-white/10 h-11 w-11 rounded-xl items-center justify-center"
-            accessibilityRole="button"
-            accessibilityLabel="חזרה"
-            accessibilityHint="חזרה לשלב הקודם"
-          >
-            <MaterialCommunityIcons name="chevron-right" size={22} color={colors.white} />
-          </Pressable>
-        </View>
-
+      <View className="flex-1 px-8 w-full rounded-md py-6 shadow-black shadow-md">
         {/* Header - Minimalist & Elegant */}
         <View className="mt-6 mb-12 items-center">
           <View className="bg-lime-400/10 px-3 py-1 rounded-full mb-3">
@@ -472,19 +432,7 @@ const AddNewFood = ({
     const unitLabel = isUnits ? 'יחידה' : '100 גרם';
 
     return (
-      <View className="flex-1 px-8 w-full bg-background-950 rounded-md py-6 shadow-black shadow-md">
-        <View className="w-full items-start mb-2">
-          <Pressable
-            onPress={handleBack}
-            className="bg-background-800 border border-white/10 h-11 w-11 rounded-xl items-center justify-center"
-            accessibilityRole="button"
-            accessibilityLabel="חזרה"
-            accessibilityHint="חזרה לשלב הקודם"
-          >
-            <MaterialCommunityIcons name="chevron-right" size={22} color={colors.white} />
-          </Pressable>
-        </View>
-
+      <View className="flex-1 px-8 w-full  rounded-md py-6 shadow-black shadow-md">
         {/* Header - Minimalist & Elegant */}
         <View className="mt-6 mb-8 items-center">
           <View className="bg-lime-400/10 px-3 py-1 rounded-full mb-3">
@@ -642,17 +590,7 @@ const AddNewFood = ({
   // ── Bottom bar ────────────────────────────────────────────────────────────────
   const renderBottomBar = () => {
     if (phase === 'search') {
-      return (
-        // <Pressable
-        //   onPress={() => onBack?.()}
-        //   className="bg-background-800 border border-white/10 h-14 rounded-2xl items-center justify-center"
-        //   accessibilityRole="button"
-        //   accessibilityLabel="חזרה"
-        // >
-        //   <MaterialCommunityIcons name="chevron-right" size={24} color={colors.white} />
-        // </Pressable>
-        <View></View>
-      );
+      return null;
     }
 
     if (phase === 'db-amount') {
@@ -660,7 +598,7 @@ const AddNewFood = ({
         <Pressable
           onPress={handleConfirmDB}
           disabled={isPending}
-          className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
+          className={`w-full flex-row items-center justify-center rounded-2xl h-14 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
           accessibilityRole="button"
           accessibilityLabel="הוסף ליומן"
         >
@@ -682,7 +620,7 @@ const AddNewFood = ({
         <Pressable
           onPress={() => handleCustomSave(false)}
           disabled={isPending || !step3Valid}
-          className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
+          className={`w-full flex-row items-center justify-center rounded-2xl h-14 ${
             isPending || !step3Valid ? 'opacity-50 bg-background-700' : 'bg-lime-500'
           }`}
           accessibilityRole="button"
@@ -740,10 +678,40 @@ const AddNewFood = ({
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View className="flex-1">
+        <View className="flex flex-row justify-between px-6">
+          {phase !== 'search' && (
+            <View className="">
+              <Pressable
+                onPress={handleBack}
+                className="bg-background-800 border border-white/10 h-11 w-11 rounded-xl items-center justify-center"
+                accessibilityRole="button"
+                accessibilityLabel="חזרה"
+                accessibilityHint="חזרה לשלב הקודם"
+              >
+                <MaterialCommunityIcons name="chevron-right" size={22} color={colors.white} />
+              </Pressable>
+              <View className="w-11 h-11" />
+            </View>
+          )}
+          {mode !== 'meal-builder' && (
+            <View className="">
+              <Pressable
+                onPress={() => router.back()}
+                className="bg-background-800 w-11 h-11 rounded-xl items-center justify-center border border-white/10"
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="סגור"
+              >
+                <Ionicons name="close" size={20} color="#fff" />
+              </Pressable>
+            </View>
+          )}
+        </View>
         <ScrollView
           className="flex-1"
           contentContainerStyle={{
-            paddingBottom: 120,
+            flexGrow: 1,
+            paddingBottom: 24,
             alignItems: 'center',
             paddingHorizontal: 20,
           }}
@@ -753,8 +721,8 @@ const AddNewFood = ({
           {phase === 'search' && renderSearch()}
           {phase === 'db-amount' && renderDbAmount()}
           {phase === 'custom-details' && renderCustomDetails()}
+          <View className="w-full mt-auto px-5 pb-4">{renderBottomBar()}</View>
         </ScrollView>
-        <View className="px-5 pb-4">{renderBottomBar()}</View>
       </View>
     </KeyboardAvoidingView>
   );

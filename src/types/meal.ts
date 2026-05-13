@@ -13,7 +13,8 @@ export interface MealItem {
   id: string;
   created_at: string;
   meal_id: string;
-  food_item_id: string;
+  food_item_id: string | null;
+  food_id: string | null;
   /** גרמים אם measurement_type='grams', מספר יחידות אם 'units' */
   amount_g: number;
 }
@@ -44,7 +45,7 @@ export type MealBuilderParams = {
   mode: 'create' | 'edit' | 'save_from_log';
   initialName?: string;
   initialItems?: {
-    food_item_id: string;
+    food_item_id: string | null;
     name: string;
     amount_g: number;
     protein_per_100: number;
@@ -58,7 +59,8 @@ export type MealBuilderParams = {
 
 /** פריט לארוחה בטופס (לפני שמירה) */
 export interface MealItemForm {
-  food_item_id: string;
+  food_item_id: string | null;
+  food_id: string | null;
   name: string;
   /** גרמים אם measurement_type='grams', מספר יחידות אם 'units' */
   amount_g: number;

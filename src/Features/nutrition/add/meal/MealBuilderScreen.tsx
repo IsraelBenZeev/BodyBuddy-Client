@@ -39,9 +39,9 @@ interface MealItemRowProps {
 
 const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowProps) => {
   const nutrients = useMemo(() => calculateNutrients(
-    { ...item, id: item.food_item_id, is_active: true, created_at: '', updated_at: '', calories_per_unit: item.calories_per_unit ?? null, protein_per_unit: item.protein_per_unit ?? null, carbs_per_unit: item.carbs_per_unit ?? null, fat_per_unit: item.fat_per_unit ?? null },
+    { ...item, id: item.food_item_id ?? item.food_id ?? '', is_active: true, created_at: '', updated_at: '', calories_per_unit: item.calories_per_unit ?? null, protein_per_unit: item.protein_per_unit ?? null, carbs_per_unit: item.carbs_per_unit ?? null, fat_per_unit: item.fat_per_unit ?? null },
     item.amount_g
-  ), [item.food_item_id, item.amount_g, item.calories_per_unit, item.protein_per_unit, item.carbs_per_unit, item.fat_per_unit]);
+  ), [item.food_item_id, item.food_id, item.amount_g, item.calories_per_unit, item.protein_per_unit, item.carbs_per_unit, item.fat_per_unit]);
 
   const cal = Math.round(nutrients.calories);
   const amountLabel = item.measurement_type === 'units' ? `${item.amount_g} יחידה` : `${item.amount_g}g`;
@@ -96,6 +96,7 @@ const MealBuilderScreen = () => {
       const aiItems: AIMealResultItem[] = JSON.parse(params.initialItemsJson);
       return aiItems.map((item) => ({
         food_item_id: '',
+        food_id: null,
         name: item.food_name,
         amount_g: item.estimated_grams,
         measurement_type: 'grams' as const,
@@ -151,7 +152,7 @@ const MealBuilderScreen = () => {
         const nutrients = calculateNutrients(
           {
             ...i,
-            id: i.food_item_id,
+            id: i.food_item_id ?? i.food_id ?? '',
             is_active: true,
             created_at: '',
             updated_at: '',
@@ -191,6 +192,7 @@ const MealBuilderScreen = () => {
         ...prev,
         {
           food_item_id: selectedFood.id,
+          food_id: null,
           name: selectedFood.name,
           amount_g: amount,
           measurement_type: selectedFood.measurement_type,
@@ -207,6 +209,31 @@ const MealBuilderScreen = () => {
       closeAddModal();
     },
     [selectedFood, closeAddModal]
+  );
+
+  const addFoodFromDB = useCallback(
+    (food: FoodItem, amount: number) => {
+      setItems((prev) => [
+        ...prev,
+        {
+          food_item_id: null,
+          food_id: food.id,
+          name: food.name,
+          amount_g: amount,
+          measurement_type: food.measurement_type,
+          protein_per_100: food.protein_per_100,
+          carbs_per_100: food.carbs_per_100,
+          fat_per_100: food.fat_per_100,
+          calories_per_100: food.calories_per_100,
+          calories_per_unit: food.calories_per_unit ?? null,
+          protein_per_unit: food.protein_per_unit ?? null,
+          carbs_per_unit: food.carbs_per_unit ?? null,
+          fat_per_unit: food.fat_per_unit ?? null,
+        },
+      ]);
+      closeAddModal();
+    },
+    [closeAddModal]
   );
 
   const handleNewFoodSubmit = useCallback(
@@ -243,6 +270,7 @@ const MealBuilderScreen = () => {
               ...prev,
               {
                 food_item_id: newFood.id,
+                food_id: null,
                 name: newFood.name,
                 amount_g: defaultAmount,
                 measurement_type: newFood.measurement_type,
@@ -344,6 +372,7 @@ const MealBuilderScreen = () => {
       const resolvedItems = await resolvePendingItems();
       const payload = resolvedItems.map((it) => ({
         food_item_id: it.food_item_id,
+        food_id: it.food_id,
         amount_g: it.amount_g,
       }));
       createMeal(
@@ -374,6 +403,7 @@ const MealBuilderScreen = () => {
     }
     const mealPayload = resolvedItems.map((it) => ({
       food_item_id: it.food_item_id,
+      food_id: it.food_id,
       amount_g: it.amount_g,
     }));
     const groupId =
@@ -388,7 +418,7 @@ const MealBuilderScreen = () => {
       const nutrients = calculateNutrients(
         {
           ...it,
-          id: it.food_item_id,
+          id: it.food_item_id ?? it.food_id ?? '',
           is_active: true,
           created_at: '',
           updated_at: '',
@@ -409,7 +439,7 @@ const MealBuilderScreen = () => {
         fat: nutrients.fat,
         calories: Math.round(nutrients.calories),
         portion_unit: (it.measurement_type === 'units' ? 'unit' : 'g') as 'g' | 'unit',
-        food_item_id: it.food_item_id,
+        food_item_id: it.food_item_id ?? undefined,
         group_id: groupId,
         group_name: trimmed,
       };
@@ -796,6 +826,7 @@ const MealBuilderScreen = () => {
           onSelectFood={onSelectFood}
           addItemFromPortion={addItemFromPortion}
           onNewFoodSubmit={handleNewFoodSubmit}
+          onAddFoodFromDB={addFoodFromDB}
           isCreatingFood={isCreatingFood}
         />
       </Modal>
