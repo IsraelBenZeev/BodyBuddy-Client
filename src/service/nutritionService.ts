@@ -175,7 +175,12 @@ export const searchFoodItems = async (query: string, userId: string): Promise<Fo
     const [globalRes, userRes] = await Promise.all([
       supabase
         .from('foods')
-        .select('id, name, name_en, category, calories, protein, carbs, fat, serving_type, unit_weight_g')
+        .select(`
+          id, name, name_en,
+          default_measurement_type, default_serving_weight_g,
+          calories_per_100g, protein_per_100g, carbs_per_100g, fat_per_100g,
+          nutrition_category, culinary_category
+        `)
         .or(`name.ilike.%${trimmed}%,name_en.ilike.%${trimmed}%`)
         .limit(8),
 
@@ -232,23 +237,32 @@ export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
 };
 
 function normalizeGlobalFood(row: Record<string, unknown>): FoodItem {
-  const isUnit = row.serving_type === 'unit';
+  const isUnit = row.default_measurement_type === 'unit';
+  const servingWeightG =
+    row.default_serving_weight_g != null ? Number(row.default_serving_weight_g) : null;
+  const caloriesPer100 = Number(row.calories_per_100g ?? 0);
+  const proteinPer100 = Number(row.protein_per_100g ?? 0);
+  const carbsPer100 = Number(row.carbs_per_100g ?? 0);
+  const fatPer100 = Number(row.fat_per_100g ?? 0);
+  const unitRatio = servingWeightG != null ? servingWeightG / 100 : null;
+
   return {
     id: row.id as string,
     name: row.name as string,
-    category: (row.category as string) ?? undefined,
+    category: ((row.nutrition_category as string | null) ??
+      (row.culinary_category as string | null)) ?? undefined,
     is_active: true,
     user_id: undefined,
     measurement_type: isUnit ? 'units' : 'grams',
-    unit_weight_g: row.unit_weight_g != null ? Number(row.unit_weight_g) : null,
-    calories_per_100: !isUnit ? Number(row.calories) : null,
-    protein_per_100: !isUnit ? Number(row.protein) : null,
-    carbs_per_100: !isUnit ? Number(row.carbs) : null,
-    fat_per_100: !isUnit ? Number(row.fat) : null,
-    calories_per_unit: isUnit ? Number(row.calories) : null,
-    protein_per_unit: isUnit ? Number(row.protein) : null,
-    carbs_per_unit: isUnit ? Number(row.carbs) : null,
-    fat_per_unit: isUnit ? Number(row.fat) : null,
+    unit_weight_g: servingWeightG,
+    calories_per_100: !isUnit ? caloriesPer100 : null,
+    protein_per_100: !isUnit ? proteinPer100 : null,
+    carbs_per_100: !isUnit ? carbsPer100 : null,
+    fat_per_100: !isUnit ? fatPer100 : null,
+    calories_per_unit: isUnit && unitRatio != null ? caloriesPer100 * unitRatio : null,
+    protein_per_unit: isUnit && unitRatio != null ? proteinPer100 * unitRatio : null,
+    carbs_per_unit: isUnit && unitRatio != null ? carbsPer100 * unitRatio : null,
+    fat_per_unit: isUnit && unitRatio != null ? fatPer100 * unitRatio : null,
     created_at: '',
     updated_at: '',
     source: 'foods_db',
@@ -430,10 +444,6 @@ export const getMealsWithItems = async (
             name, measurement_type, unit_weight_g, is_active,
             calories_per_100, protein_per_100, carbs_per_100, fat_per_100,
             calories_per_unit, protein_per_unit, carbs_per_unit, fat_per_unit
-          ),
-          foods (
-            name, serving_type, unit_weight_g,
-            calories, protein, carbs, fat
           )
         )
       `)
@@ -441,6 +451,52 @@ export const getMealsWithItems = async (
       .order('created_at', { ascending: false });
 
     if (mealsError) throw mealsError;
+
+    const foodIds = Array.from(
+      new Set(
+        (mealsData ?? [])
+          .flatMap((meal: Record<string, unknown>) =>
+            ((meal.meal_items as Record<string, unknown>[] | null) ?? [])
+              .map((item) => item.food_id as string | null)
+          )
+          .filter((id): id is string => typeof id === 'string' && id.length > 0)
+      )
+    );
+
+    let foodsById = new Map<string, MealItemFoodInfo>();
+    if (foodIds.length > 0) {
+      const { data: foodsData, error: foodsError } = await supabase
+        .from('foods')
+        .select(`
+          id, name,
+          default_measurement_type, default_serving_weight_g,
+          calories_per_100g, protein_per_100g, carbs_per_100g, fat_per_100g
+        `)
+        .in('id', foodIds);
+
+      if (foodsError) throw foodsError;
+      foodsById = new Map(
+        (foodsData ?? []).map((food) => {
+          const normalized = normalizeGlobalFood(food as Record<string, unknown>);
+          return [
+            normalized.id,
+            {
+              name: normalized.name,
+              measurement_type: normalized.measurement_type,
+              unit_weight_g: normalized.unit_weight_g,
+              calories_per_100: normalized.calories_per_100,
+              protein_per_100: normalized.protein_per_100,
+              carbs_per_100: normalized.carbs_per_100,
+              fat_per_100: normalized.fat_per_100,
+              calories_per_unit: normalized.calories_per_unit,
+              protein_per_unit: normalized.protein_per_unit,
+              carbs_per_unit: normalized.carbs_per_unit,
+              fat_per_unit: normalized.fat_per_unit,
+            },
+          ];
+        })
+      );
+    }
 
     return (mealsData ?? []).map((row: Record<string, unknown>) => {
       const meal = normalizeMeal(row);
@@ -450,7 +506,8 @@ export const getMealsWithItems = async (
         return fi == null || fi.is_active !== false;
       }).map((mi: Record<string, unknown>) => {
         const food_item = (mi.food_items ?? mi.food_item) as Record<string, unknown> | null;
-        const foods_data = mi.foods as Record<string, unknown> | null;
+        const foodId = (mi.food_id as string | null) ?? null;
+        const foods_data = foodId != null ? foodsById.get(foodId) : undefined;
 
         let foodInfo: MealItemFoodInfo | undefined;
 
@@ -470,21 +527,7 @@ export const getMealsWithItems = async (
             fat_per_unit: food_item.fat_per_unit != null ? Number(food_item.fat_per_unit) : null,
           };
         } else if (foods_data != null) {
-          const isUnit = foods_data.serving_type === 'unit';
-          const measurementType: MeasurementType = isUnit ? 'units' : 'grams';
-          foodInfo = {
-            name: (foods_data.name as string) ?? '',
-            measurement_type: measurementType,
-            unit_weight_g: foods_data.unit_weight_g != null ? Number(foods_data.unit_weight_g) : null,
-            calories_per_100: !isUnit ? Number(foods_data.calories ?? 0) : null,
-            protein_per_100: !isUnit ? Number(foods_data.protein ?? 0) : null,
-            carbs_per_100: !isUnit ? Number(foods_data.carbs ?? 0) : null,
-            fat_per_100: !isUnit ? Number(foods_data.fat ?? 0) : null,
-            calories_per_unit: isUnit ? Number(foods_data.calories ?? 0) : null,
-            protein_per_unit: isUnit ? Number(foods_data.protein ?? 0) : null,
-            carbs_per_unit: isUnit ? Number(foods_data.carbs ?? 0) : null,
-            fat_per_unit: isUnit ? Number(foods_data.fat ?? 0) : null,
-          };
+          foodInfo = foods_data;
         }
 
         return {
@@ -492,7 +535,7 @@ export const getMealsWithItems = async (
           created_at: mi.created_at as string,
           meal_id: String(mi.meal_id),
           food_item_id: (mi.food_item_id as string | null) ?? null,
-          food_id: (mi.food_id as string | null) ?? null,
+          food_id: foodId,
           amount_g: Number(mi.amount_g ?? 0),
           food_item: foodInfo,
         };
