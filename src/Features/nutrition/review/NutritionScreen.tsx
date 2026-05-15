@@ -23,8 +23,17 @@ import {
 } from '@/src/utils/calculateNutritionMetrics';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 const NutritionScreen = () => {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
@@ -53,6 +62,35 @@ const NutritionScreen = () => {
     setShowCameraModal(true);
   }, []);
   const handleCloseCameraModal = useCallback(() => setShowCameraModal(false), []);
+
+  const buttonOpacity = useRef(new Animated.Value(0)).current;
+  const buttonTranslateY = useRef(new Animated.Value(16)).current;
+  const isButtonVisibleRef = useRef(false);
+  const [isButtonVisible, setIsButtonVisible] = useState(false);
+
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const y = event.nativeEvent.contentOffset.y;
+      const shouldShow = y > 80;
+      if (shouldShow !== isButtonVisibleRef.current) {
+        isButtonVisibleRef.current = shouldShow;
+        setIsButtonVisible(shouldShow);
+        Animated.parallel([
+          Animated.timing(buttonOpacity, {
+            toValue: shouldShow ? 1 : 0,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+          Animated.timing(buttonTranslateY, {
+            toValue: shouldShow ? 0 : 12,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
+    },
+    [buttonOpacity, buttonTranslateY]
+  );
 
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
   const { data: entries = [], isLoading: isEntriesLoading } = useNutritionEntries(user?.id, today);
@@ -133,6 +171,8 @@ const NutritionScreen = () => {
             paddingHorizontal: 20,
           }}
           keyboardShouldPersistTaps="handled"
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
         >
           <View className="flex-1 w-full bg-background-950 rounded-md py-6 px-5 shadow-black shadow-md">
             <View className="mt-2 mb-8">
@@ -145,7 +185,7 @@ const NutritionScreen = () => {
                   borderRadius: 10,
                   marginBottom: 16,
                 }}
-              className=''
+                className=""
               />
             </View>
 
@@ -195,24 +235,35 @@ const NutritionScreen = () => {
             />
           </View>
         </ScrollView>
-
-        <Pressable
-          onPress={handleShowOptions}
-          className="absolute left-5 right-5   flex-row items-center justify-center gap-2 rounded-2xl bg-lime-500 h-14 active:opacity-90 "
-          accessibilityRole="button"
-          accessibilityLabel="הוספת מאכל או ארוחה"
+        <Animated.View
+          pointerEvents={isButtonVisible ? 'auto' : 'none'}
           style={{
-            bottom: 130,
-            shadowColor: colors.lime[500],
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.45,
-            shadowRadius: 12,
-            elevation: 10,
+            position: 'absolute',
+            left: 16,
+            right: 16,
+            bottom: 112,
+            opacity: buttonOpacity,
+            transform: [{ translateY: buttonTranslateY }],
           }}
         >
-          <Ionicons name="add-circle" size={26} color={colors.background[900]} />
-          <Text className="typo-btn-cta text-background-900">הוספת מאכל או ארוחה</Text>
-        </Pressable>
+          <Pressable
+            onPress={handleShowOptions}
+            className="flex-row items-center justify-center gap-3 rounded-2xl bg-lime-500 h-14"
+            style={({ pressed }) => ({
+              transform: [{ scale: pressed ? 0.97 : 1 }],
+              shadowColor: '#84cc16',
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.55,
+              shadowRadius: 18,
+              elevation: 14,
+            })}
+            accessibilityRole="button"
+            accessibilityLabel="הוספת מאכל או ארוחה"
+          >
+            <Ionicons name="add-circle" size={24} color="black" />
+            <Text className="typo-btn-cta text-black">הוספת מאכל או ארוחה</Text>
+          </Pressable>
+        </Animated.View>
       </View>
 
       <AddOptionsSheet

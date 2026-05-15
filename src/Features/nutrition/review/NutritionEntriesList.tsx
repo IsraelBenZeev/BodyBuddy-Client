@@ -1,8 +1,9 @@
 import { colors } from '@/colors';
+import EntryDetailModal from '@/src/Features/nutrition/review/EntryDetailModal';
 import type { NutritionEntry } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useCallback, useMemo } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 /** טווחי שעות ליום */
 const TIME_SLOTS: { key: string; label: string; start: number; end: number }[] = [
@@ -10,7 +11,7 @@ const TIME_SLOTS: { key: string; label: string; start: number; end: number }[] =
   { key: 'noon', label: 'צהריים', start: 12, end: 15 },
   { key: 'afternoon', label: 'אחר צהריים', start: 15, end: 18 },
   { key: 'evening', label: 'ערב', start: 18, end: 21 },
-  { key: 'night', label: 'לילה', start: 21, end: 30 }, // 21-24 + 0-6
+  { key: 'night', label: 'לילה', start: 21, end: 30 },
 ];
 
 function getHourFromIso(iso: string): number {
@@ -24,7 +25,7 @@ function getTimeSlotKey(iso: string): string {
   if (h >= 12 && h < 15) return 'noon';
   if (h >= 15 && h < 18) return 'afternoon';
   if (h >= 18 && h < 21) return 'evening';
-  return 'night'; // 21-24 or 0-6
+  return 'night';
 }
 
 interface Props {
@@ -35,16 +36,11 @@ interface Props {
   isDeletingGroup?: boolean;
 }
 
-/** מחזיר טקסט תצוגה לפי סוג המדידה */
 function formatEntryPortionLine(entry: NutritionEntry): string {
-  const total = entry.portion_size;
-  if (entry.portion_unit === 'unit') {
-    return `${entry.food_name} × ${total}`;
-  }
-  return `${entry.food_name} ${total} גרם`;
+  if (entry.portion_unit === 'unit') return `${entry.food_name} × ${entry.portion_size}`;
+  return `${entry.food_name} ${entry.portion_size} גרם`;
 }
 
-/** בלוק לתצוגה: קבוצה (ארוחה) או רשומה בודדת */
 type ListBlock =
   | { type: 'group'; groupId: string; entries: NutritionEntry[] }
   | { type: 'single'; entry: NutritionEntry };
@@ -78,13 +74,11 @@ function groupEntriesIntoBlocks(entries: NutritionEntry[]): ListBlock[] {
   return blocks;
 }
 
-/** מחזיר את ה-created_at של בלוק (לשיוך לציר זמן) */
 function getBlockTimestamp(block: ListBlock): string {
   if (block.type === 'group') return block.entries[0]?.created_at ?? '';
   return block.entry.created_at;
 }
 
-/** מקובץ בלוקים לפי טווחי שעות, ממוין בוקר -> לילה */
 function groupBlocksByTimeSlot(blocks: ListBlock[]): Map<string, ListBlock[]> {
   const order = ['morning', 'noon', 'afternoon', 'evening', 'night'];
   const bySlot = new Map<string, ListBlock[]>();
@@ -99,29 +93,76 @@ function groupBlocksByTimeSlot(blocks: ListBlock[]): Map<string, ListBlock[]> {
   return bySlot;
 }
 
-// —— קומפוננטת רינדור מאכל אחת (אותה תצוגה לרשומה בודדת ולבתוך ארוחה) ——
+// —— מאקרו-בר ——
+
+const MacroBar = React.memo(function MacroBar({ entry }: { entry: NutritionEntry }) {
+  return (
+    <View className="flex-row border-t border-background-700 px-3.5 py-2.5">
+      <View className="flex-row items-center flex-1 justify-around">
+        <View className="flex-row items-center gap-1">
+          <View className="w-2 h-2 rounded-full bg-lime-500 ml-1.5" />
+          <Text className="typo-caption text-background-300">
+            חלבון <Text className="typo-caption text-lime-400">{Math.round(entry.protein)}g</Text>
+          </Text>
+        </View>
+        <View className="w-[1px] h-3 bg-background-600" />
+        <View className="flex-row items-center gap-1">
+          <View className="w-2 h-2 rounded-full bg-orange-400 ml-1.5" />
+          <Text className="typo-caption text-background-300">
+            פחמימות <Text className="typo-caption text-orange-300">{Math.round(entry.carbs)}g</Text>
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+});
+
+// —— שורת מאכל ——
 
 interface FoodEntryRowProps {
   entry: NutritionEntry;
   onDelete: (id: string) => void;
   isDeleting: boolean;
+  onPress: () => void;
 }
 
-const FoodEntryRow = React.memo(function FoodEntryRow({ entry, onDelete, isDeleting }: FoodEntryRowProps) {
-  const handleDelete = useCallback(() => onDelete(entry.id), [onDelete, entry.id]);
+const FoodEntryRow = React.memo(function FoodEntryRow({
+  entry,
+  onDelete,
+  isDeleting,
+  onPress,
+}: FoodEntryRowProps) {
+  const handleDelete = useCallback(() => {
+    Alert.alert(
+      'הסרה מהיומן',
+      `האם להסיר את "${entry.food_name}" מהיומן?`,
+      [
+        { text: 'ביטול', style: 'cancel' },
+        { text: 'הסר', style: 'destructive', onPress: () => onDelete(entry.id) },
+      ]
+    );
+  }, [onDelete, entry.id, entry.food_name]);
+
   return (
-    <View className="bg-background-800 rounded-2xl border border-background-600 overflow-hidden">
+    <Pressable
+      onPress={onPress}
+      className="bg-background-800 rounded-2xl border border-background-600 overflow-hidden"
+      accessibilityRole="button"
+      accessibilityLabel={`פרטי ${entry.food_name}`}
+      accessibilityHint="לחץ לפרטים מלאים"
+    >
       <View className="flex-row items-center p-3.5">
         <View className="bg-background-700 rounded-xl w-12 h-12 items-center justify-center mr-1">
           <Ionicons name="nutrition-outline" size={22} color={colors.orange[400]} />
         </View>
-        <View className="flex-1 mr-3">
-          <Text className="typo-body-primary text-white " numberOfLines={2}>
+        <View className="flex-1 mr-2">
+          <Text className="typo-body-primary text-white" numberOfLines={2}>
             {formatEntryPortionLine(entry)}
           </Text>
-          <Text className="typo-caption text-background-400  mt-0.5">
-            {entry.calories} קק״ל
-          </Text>
+        </View>
+        <View className="items-center mx-2">
+          <Text className="typo-h4 text-white">{Math.round(entry.calories)}</Text>
+          <Text className="typo-caption text-background-400">קק״ל</Text>
         </View>
         <Pressable
           onPress={handleDelete}
@@ -129,51 +170,33 @@ const FoodEntryRow = React.memo(function FoodEntryRow({ entry, onDelete, isDelet
           className="bg-red-500/10 rounded-xl p-2"
           accessibilityRole="button"
           accessibilityLabel={`מחק ${entry.food_name}`}
+          hitSlop={8}
         >
           <Ionicons name="trash-outline" size={18} color={colors.red[500]} />
         </Pressable>
       </View>
       <MacroBar entry={entry} />
-    </View>
+    </Pressable>
   );
 });
 
-const MacroBar = React.memo(function MacroBar({ entry }: { entry: NutritionEntry }) {
-  return (
-    <View className="flex-row border-t border-background-700 px-3.5 py-2.5">
-      <View className="flex-row items-center flex-1 justify-around">
-        <View className="flex-row items-center">
-          <View className="w-2 h-2 rounded-full bg-lime-500 ml-1.5" />
-          <Text className="typo-caption text-background-300">
-            חלבון <Text className="typo-caption text-lime-500">{entry.protein}g</Text>
-          </Text>
-        </View>
-        <View className="flex-row items-center">
-          <View className="w-2 h-2 rounded-full bg-gray-400 ml-1.5"/>
-          <Text className="typo-caption text-background-300">
-            קלוריות <Text className="typo-caption text-gray-400">{entry.calories}</Text>
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-});
-
-// —— כרטיס רשומה בודדת (משתמש ב-FoodEntryRow) ——
+// —— כרטיס רשומה בודדת ——
 
 const SingleEntryCard = React.memo(function SingleEntryCard({
   entry,
   onDelete,
   isDeleting,
+  onPress,
 }: {
   entry: NutritionEntry;
   onDelete: (id: string) => void;
   isDeleting: boolean;
+  onPress: () => void;
 }) {
-  return <FoodEntryRow entry={entry} onDelete={onDelete} isDeleting={isDeleting} />;
+  return <FoodEntryRow entry={entry} onDelete={onDelete} isDeleting={isDeleting} onPress={onPress} />;
 });
 
-// —— כרטיס ארוחה (משתמש ב-FoodEntryRow לכל מאכל + אופציה למחיקת ארוחה) ——
+// —— כרטיס ארוחה ——
 
 const GroupBlockCard = React.memo(function GroupBlockCard({
   groupName,
@@ -183,6 +206,8 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
   onDeleteGroup,
   isDeleting,
   isDeletingGroup,
+  onPressEntry,
+  onPressGroup,
 }: {
   groupName: string;
   groupId: string;
@@ -191,19 +216,39 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
   onDeleteGroup?: (groupId: string) => void;
   isDeleting: boolean;
   isDeletingGroup?: boolean;
+  onPressEntry: (entry: NutritionEntry) => void;
+  onPressGroup: () => void;
 }) {
-  const totalCal = entries.reduce((sum, e) => sum + e.calories, 0);
-  const handleDeleteGroup = useCallback(() => onDeleteGroup?.(groupId), [onDeleteGroup, groupId]);
+  const totalCal = Math.round(entries.reduce((sum, e) => sum + e.calories, 0));
+  const totalProtein = Math.round(entries.reduce((s, e) => s + (e.protein || 0), 0));
+  const totalCarbs = Math.round(entries.reduce((s, e) => s + (e.carbs || 0), 0));
+
+  const handleDeleteGroup = useCallback(() => {
+    Alert.alert(
+      'מחיקת ארוחה',
+      `האם למחוק את "${groupName}" (${entries.length} פריטים)?`,
+      [
+        { text: 'ביטול', style: 'cancel' },
+        { text: 'מחק', style: 'destructive', onPress: () => onDeleteGroup?.(groupId) },
+      ]
+    );
+  }, [onDeleteGroup, groupId, groupName, entries.length]);
 
   return (
     <View className="bg-background-800 rounded-3xl border border-white/5 overflow-hidden shadow-lg mb-4">
-      <View className="flex-row items-center px-4 py-4 bg-background-700/30 border-b border-white/5">
+      <Pressable
+        onPress={onPressGroup}
+        className="flex-row items-center px-4 py-4 bg-background-700/30 border-b border-white/5"
+        accessibilityRole="button"
+        accessibilityLabel={`פרטי ארוחה ${groupName}`}
+        accessibilityHint="לחץ לפרטים מלאים"
+      >
         <View className="bg-lime-500/10 rounded-xl w-12 h-12 items-center justify-center ml-3">
           <Ionicons name="restaurant" size={22} color="#84cc16" />
         </View>
         <View className="flex-1">
-          <Text className="typo-body-primary text-white ">{groupName}</Text>
-          <Text className="typo-caption text-gray-400  mt-0.5">
+          <Text className="typo-body-primary text-white">{groupName}</Text>
+          <Text className="typo-caption text-gray-400 mt-0.5">
             {entries.length} פריטים •{' '}
             <Text className="text-lime-400 font-medium">{totalCal} קק״ל</Text>
           </Text>
@@ -212,19 +257,25 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
           <Pressable
             onPress={handleDeleteGroup}
             disabled={isDeletingGroup}
-            className="bg-red-500/20 rounded-xl p-2.5 mr-2 flex-row items-center"
+            className="bg-red-500/20 rounded-xl p-2.5 ml-2 flex-row items-center"
             accessibilityRole="button"
             accessibilityLabel={`מחק ארוחה ${groupName}`}
+            hitSlop={8}
           >
             <Ionicons name="trash-outline" size={18} color={colors.red[500]} />
-            <Text className="typo-caption-bold text-red-400 mt-0.5">מחק ארוחה</Text>
+            <Text className="typo-caption-bold text-red-400 mt-0.5"> מחק</Text>
           </Pressable>
         )}
-      </View>
+      </Pressable>
 
       {entries.map((entry) => (
         <View key={entry.id} className="px-4 py-2">
-          <FoodEntryRow entry={entry} onDelete={onDelete} isDeleting={isDeleting} />
+          <FoodEntryRow
+            entry={entry}
+            onDelete={onDelete}
+            isDeleting={isDeleting}
+            onPress={() => onPressEntry(entry)}
+          />
         </View>
       ))}
 
@@ -235,13 +286,17 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
           </Text>
           <View className="h-[1px] flex-1 bg-white/5 mx-3" />
         </View>
-        <View className="flex-row items-center justify-center">
+        <View className="flex-row items-center justify-center gap-4 ">
           <View className="items-center">
             <Text className="typo-caption text-gray-400 mb-1">חלבון</Text>
-            <View className="bg-lime-500/10 px-2 py-1 rounded-lg">
-              <Text className="typo-label text-lime-500">
-                {Math.round(entries.reduce((s, e) => s + (e.protein || 0), 0))}g
-              </Text>
+            <View className="bg-lime-500/10 px-3 py-1 rounded-lg">
+              <Text className="typo-label text-lime-500">{totalProtein}g</Text>
+            </View>
+          </View>
+          <View className="items-center">
+            <Text className="typo-caption text-gray-400 mb-1">פחמימות</Text>
+            <View className="bg-orange-400/10 px-3 py-1 rounded-lg">
+              <Text className="typo-label text-orange-300">{totalCarbs}g</Text>
             </View>
           </View>
         </View>
@@ -250,7 +305,12 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
   );
 });
 
-// —— רינדור סקשן ציר זמן (כותרת + רשימת בלוקים) ——
+// —— סקשן ציר זמן ——
+
+type ModalState =
+  | { type: 'single'; entry: NutritionEntry }
+  | { type: 'group'; entries: NutritionEntry[]; groupName: string }
+  | null;
 
 const TimeSlotSection = React.memo(function TimeSlotSection({
   slotLabel,
@@ -260,6 +320,7 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
   onDeleteGroup,
   isDeleting,
   isDeletingGroup,
+  onOpenModal,
 }: {
   slotLabel: string;
   slotKey: string;
@@ -268,6 +329,7 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
   onDeleteGroup?: (groupId: string) => void;
   isDeleting: boolean;
   isDeletingGroup?: boolean;
+  onOpenModal: (state: NonNullable<ModalState>) => void;
 }) {
   if (blocks.length === 0) return null;
 
@@ -279,7 +341,7 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
         <View className="bg-background-700/80 rounded-xl px-3 py-1.5">
           <Text className="typo-label text-lime-400">{slotLabel}</Text>
           {slotInfo != null && (
-            <Text className="typo-caption text-background-400 ">
+            <Text className="typo-caption text-background-400">
               {slotInfo.start === 21 ? '21:00–06:00' : `${slotInfo.start}:00–${slotInfo.end}:00`}
             </Text>
           )}
@@ -297,6 +359,14 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
               onDeleteGroup={onDeleteGroup}
               isDeleting={isDeleting}
               isDeletingGroup={isDeletingGroup}
+              onPressEntry={(entry) => onOpenModal({ type: 'single', entry })}
+              onPressGroup={() =>
+                onOpenModal({
+                  type: 'group',
+                  entries: block.entries,
+                  groupName: block.entries[0]?.group_name || 'ארוחה',
+                })
+              }
             />
           </View>
         ) : (
@@ -305,6 +375,7 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
               entry={block.entry}
               onDelete={onDelete}
               isDeleting={isDeleting}
+              onPress={() => onOpenModal({ type: 'single', entry: block.entry })}
             />
           </View>
         )
@@ -313,6 +384,8 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
   );
 });
 
+// —— קומפוננט ראשי ——
+
 const NutritionEntriesList = ({
   entries,
   onDelete,
@@ -320,8 +393,18 @@ const NutritionEntriesList = ({
   isDeleting,
   isDeletingGroup = false,
 }: Props) => {
+  const [modalState, setModalState] = useState<ModalState>(null);
+
   const blocks = useMemo(() => groupEntriesIntoBlocks(entries), [entries]);
   const bySlot = useMemo(() => groupBlocksByTimeSlot(blocks), [blocks]);
+
+  const handleOpenModal = useCallback((state: NonNullable<ModalState>) => {
+    setModalState(state);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setModalState(null);
+  }, []);
 
   if (entries.length === 0) {
     return (
@@ -359,9 +442,18 @@ const NutritionEntriesList = ({
             onDeleteGroup={onDeleteGroup}
             isDeleting={isDeleting}
             isDeletingGroup={isDeletingGroup}
+            onOpenModal={handleOpenModal}
           />
         );
       })}
+
+      <EntryDetailModal
+        visible={modalState !== null}
+        onClose={handleCloseModal}
+        entry={modalState?.type === 'single' ? modalState.entry : undefined}
+        groupEntries={modalState?.type === 'group' ? modalState.entries : undefined}
+        groupName={modalState?.type === 'group' ? modalState.groupName : undefined}
+      />
     </View>
   );
 };
