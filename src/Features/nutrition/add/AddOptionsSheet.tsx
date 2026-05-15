@@ -43,7 +43,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
               <View className="w-12 h-1.5 bg-white/10 rounded-full" />
             </View>
 
-            <Text className="typo-h3 text-white text-right mb-4">מה תרצה להוסיף?</Text>
+            <Text className="typo-h3 text-white  mb-4">מה תרצה להוסיף?</Text>
 
             {/* ─── Hero Card: AI Camera ─── */}
             <Pressable
@@ -62,8 +62,8 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                     </View>
                     <Text className="typo-caption text-lime-400">✦ ✦</Text>
                   </View>
-                  <Text className="typo-h2 text-lime-300 text-right">צלם עם AI</Text>
-                  <Text className="typo-label text-lime-500/80 text-right mt-1">
+                  <Text className="typo-h2 text-lime-300 ">צלם עם AI</Text>
+                  <Text className="typo-label text-lime-500/80  mt-1">
                     צלם ארוחה ו-AI יזהה אוטומטית את המרכיבים והערכים התזונתיים
                   </Text>
                   <View className="flex-row items-center mt-3 gap-1">
@@ -81,7 +81,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
             </Pressable>
 
             {/* ─── כותרת מתחה ─── */}
-            <Text className="typo-caption-bold text-background-400 text-right mb-3">
+            <Text className="typo-caption-bold text-background-400  mb-3">
               אפשרויות נוספות
             </Text>
 
@@ -94,14 +94,14 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   accessibilityRole="button"
                   accessibilityLabel={opt.label}
-                  className="flex-row items-center p-4 rounded-2xl border border-white/5 bg-background-800"
+                  className="flex-row items-center p-4 rounded-2xl border border-white/5 bg-background-800 gap-3"
                 >
                   <View className={`w-10 h-10 rounded-xl items-center justify-center ml-3 ${opt.iconBg}`}>
                     <Ionicons name={opt.icon} size={20} color={opt.color} />
                   </View>
                   <View className="flex-1">
-                    <Text className="typo-body-primary text-white text-right">{opt.label}</Text>
-                    <Text className="typo-caption text-gray-500 text-right mt-0.5">{opt.description}</Text>
+                    <Text className="typo-body-primary text-white ">{opt.label}</Text>
+                    <Text className="typo-caption text-gray-500  mt-0.5">{opt.description}</Text>
                   </View>
                   <Ionicons name="chevron-back" size={14} color="#4b5563" />
                 </Pressable>

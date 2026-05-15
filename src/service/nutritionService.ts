@@ -585,6 +585,77 @@ export const createMealWithItems = async (
   }
 };
 
+// ── Recent Foods ───────────────────────────────────────────────────────────────
+
+/**
+ * מחזיר עד 8 מאכלים אחרונים שהמשתמש השתמש בהם, לפי last_used_at.
+ */
+export const getRecentFoods = async (userId: string): Promise<FoodItem[]> => {
+  if (!userId) return [];
+  try {
+    const { data, error } = await supabase
+      .from('user_recent_foods')
+      .select(`
+        food_item_id, food_id, last_used_at,
+        food_items (
+          id, name, category, is_active, user_id,
+          measurement_type, unit_weight_g,
+          calories_per_100, protein_per_100, carbs_per_100, fat_per_100,
+          calories_per_unit, protein_per_unit, carbs_per_unit, fat_per_unit,
+          created_at, updated_at
+        ),
+        foods (
+          id, name, name_en,
+          default_measurement_type, default_serving_weight_g,
+          calories_per_100g, protein_per_100g, carbs_per_100g, fat_per_100g,
+          nutrition_category, culinary_category
+        )
+      `)
+      .eq('user_id', userId)
+      .order('last_used_at', { ascending: false })
+      .limit(8);
+
+    if (error) throw error;
+
+    return (data ?? [])
+      .map((row) => {
+        const fi = row.food_items as unknown as Record<string, unknown> | null;
+        const f = row.foods as unknown as Record<string, unknown> | null;
+        if (fi != null) return normalizeFoodItem(fi);
+        if (f != null) return normalizeGlobalFood(f);
+        return null;
+      })
+      .filter((item): item is FoodItem => item !== null);
+  } catch (error) {
+    if (__DEV__) console.error('Get recent foods error:', error);
+    return [];
+  }
+};
+
+/**
+ * מעדכן (או יוצר) רשומת שימוש אחרון עבור מאכל נבחר.
+ * fire-and-forget — כשלון לא זורק.
+ */
+export const trackFoodUsage = async (userId: string, food: FoodItem): Promise<void> => {
+  if (!userId) return;
+  try {
+    const isGlobalFood = food.source === 'foods_db';
+    if (isGlobalFood) {
+      await supabase.from('user_recent_foods').upsert(
+        { user_id: userId, food_id: food.id, food_item_id: null, last_used_at: new Date().toISOString() },
+        { onConflict: 'user_id,food_id' }
+      );
+    } else {
+      await supabase.from('user_recent_foods').upsert(
+        { user_id: userId, food_item_id: food.id, food_id: null, last_used_at: new Date().toISOString() },
+        { onConflict: 'user_id,food_item_id' }
+      );
+    }
+  } catch (error) {
+    if (__DEV__) console.error('Track food usage error:', error);
+  }
+};
+
 // ── AI Image Analysis ──────────────────────────────────────────────────────────
 
 const AI_AGENT_URL = process.env.EXPO_PUBLIC_AI_AGENT_URL ?? '';

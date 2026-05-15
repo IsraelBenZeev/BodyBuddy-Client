@@ -10,10 +10,13 @@ import {
     getFoodItems,
     getMealsWithItems,
     getNutritionEntries,
+    getRecentFoods,
     searchFoodItems,
+    trackFoodUsage,
 } from '@/src/service/nutritionService';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { CreateNutritionEntryPayload, MeasurementType } from '@/src/types/nutrition';
+import type { FoodItem } from '@/src/types/nutrition';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useNutritionEntries = (userId: string | undefined, date: string) => {
@@ -192,6 +195,28 @@ export const useSearchFoodItems = (query: string, userId: string) => {
     queryFn: () => searchFoodItems(query, userId),
     enabled: !!userId && query.trim().length >= 2,
     staleTime: 1000 * 60 * 5,
+  });
+};
+
+/** מאכלים אחרונים ששימשו את המשתמש */
+export const useRecentFoods = (userId: string | undefined) => {
+  return useQuery({
+    queryKey: ['recent-foods', userId],
+    queryFn: () => getRecentFoods(userId!),
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+/** מעקב אחר שימוש במאכל (fire-and-forget, מעדכן last_used_at) */
+export const useTrackFoodUsage = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (food: FoodItem) => trackFoodUsage(userId, food),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recent-foods', userId] });
+    },
   });
 };
 

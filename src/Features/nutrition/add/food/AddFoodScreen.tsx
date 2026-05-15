@@ -1,6 +1,6 @@
 import AddNewFood from '@/src/Features/nutrition/add/food/AddNewFoodForm';
 import { calculateNutrients, getPortionUnit } from '@/src/Features/nutrition/utils/nutritionCalc';
-import { useCreateFoodItem, useCreateNutritionEntry } from '@/src/hooks/useNutrition';
+import { useCreateFoodItem, useCreateNutritionEntry, useTrackFoodUsage } from '@/src/hooks/useNutrition';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { CreateFoodFormData, FoodItem, MeasurementType } from '@/src/types/nutrition';
@@ -44,6 +44,7 @@ const AddFoodScreen = () => {
   );
 
   const { mutate: createFoodItem, isPending: isCreatingFood } = useCreateFoodItem(userId);
+  const { mutate: trackUsage } = useTrackFoodUsage(userId);
   const { mutate: createEntry, isPending: isCreatingEntry } = useCreateNutritionEntry(
     userId,
     today
@@ -106,6 +107,7 @@ const AddFoodScreen = () => {
         },
         {
           onSuccess: (newFood) => {
+            trackUsage(newFood);
             if (!addToJournal) {
               triggerSuccess('המזון נוסף בהצלחה', 'success');
               router.back();
@@ -136,7 +138,7 @@ const AddFoodScreen = () => {
         }
       );
     },
-    [userId, today, createFoodItem, createEntry, router, triggerSuccess]
+    [userId, today, createFoodItem, createEntry, trackUsage, router, triggerSuccess]
   );
 
   return (

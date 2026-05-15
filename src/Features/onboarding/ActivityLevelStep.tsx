@@ -78,7 +78,7 @@ const ActivityLevelStep = ({
             rules={{ validate: (v) => v !== '' || 'יש לבחור רמת פעילות' }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View>
-                <View className="gap-3 ">
+                <View className="gap-3">
                   {activityLevelOptions.map((option) => {
                     const isSelected = value === option.value;
                     const iconName = activityIcons[option.value];
@@ -86,7 +86,7 @@ const ActivityLevelStep = ({
                       <Pressable
                         key={option.value}
                         onPress={() => onChange(option.value)}
-                        className={`flex-row items-center rounded-2xl p-4 border-2  ${
+                        className={`flex-row items-center rounded-2xl p-4 border-2 gap-3 ${
                           isSelected
                             ? 'border-lime-500 bg-background-700'
                             : 'border-background-600 bg-background-800'

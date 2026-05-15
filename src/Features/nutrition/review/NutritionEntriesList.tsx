@@ -116,10 +116,10 @@ const FoodEntryRow = React.memo(function FoodEntryRow({ entry, onDelete, isDelet
           <Ionicons name="nutrition-outline" size={22} color={colors.orange[400]} />
         </View>
         <View className="flex-1 mr-3">
-          <Text className="typo-body-primary text-white text-right" numberOfLines={2}>
+          <Text className="typo-body-primary text-white " numberOfLines={2}>
             {formatEntryPortionLine(entry)}
           </Text>
-          <Text className="typo-caption text-background-400 text-right mt-0.5">
+          <Text className="typo-caption text-background-400  mt-0.5">
             {entry.calories} קק״ל
           </Text>
         </View>
@@ -202,8 +202,8 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
           <Ionicons name="restaurant" size={22} color="#84cc16" />
         </View>
         <View className="flex-1">
-          <Text className="typo-body-primary text-white text-right">{groupName}</Text>
-          <Text className="typo-caption text-gray-400 text-right mt-0.5">
+          <Text className="typo-body-primary text-white ">{groupName}</Text>
+          <Text className="typo-caption text-gray-400  mt-0.5">
             {entries.length} פריטים •{' '}
             <Text className="text-lime-400 font-medium">{totalCal} קק״ל</Text>
           </Text>
@@ -279,7 +279,7 @@ const TimeSlotSection = React.memo(function TimeSlotSection({
         <View className="bg-background-700/80 rounded-xl px-3 py-1.5">
           <Text className="typo-label text-lime-400">{slotLabel}</Text>
           {slotInfo != null && (
-            <Text className="typo-caption text-background-400 text-right">
+            <Text className="typo-caption text-background-400 ">
               {slotInfo.start === 21 ? '21:00–06:00' : `${slotInfo.start}:00–${slotInfo.end}:00`}
             </Text>
           )}

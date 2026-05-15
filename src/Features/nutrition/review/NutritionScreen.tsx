@@ -136,16 +136,16 @@ const NutritionScreen = () => {
         >
           <View className="flex-1 w-full bg-background-950 rounded-md py-6 px-5 shadow-black shadow-md">
             <View className="mt-2 mb-8">
-              <Text className="typo-h1 text-white mb-2 text-right">תזונה</Text>
+              <Text className="typo-h1 text-white mb-2">תזונה</Text>
               <View
                 style={{
                   height: 5,
                   width: 60,
                   backgroundColor: colors.lime[500],
                   borderRadius: 10,
-                  alignSelf: 'flex-end',
                   marginBottom: 16,
                 }}
+              className=''
               />
             </View>
 
@@ -153,7 +153,7 @@ const NutritionScreen = () => {
               <View className="bg-white/[0.03] rounded-3xl p-4 mb-4 border border-white/[0.05]">
                 <View className="flex-row items-center justify-center gap-2">
                   <Ionicons name={motivationData.icon} size={22} color={colors.lime[500]} />
-                  <Text className="typo-body-primary text-lime-400 flex-1 text-right">
+                  <Text className="typo-body-primary text-lime-400 flex-1 ;">
                     {motivationData.message}
                   </Text>
                 </View>
@@ -179,7 +179,7 @@ const NutritionScreen = () => {
                 <Text className="typo-body-primary text-white">איך אנחנו מחשבים את היעדים?</Text>
                 <Ionicons name="information-circle-outline" size={20} color={colors.lime[500]} />
               </View>
-              <Text className="typo-label text-background-400 text-right leading-6">
+              <Text className="typo-label text-background-400 ; leading-6">
                 • חלבון: מחושב על פי{' '}
                 {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג × משקל (
                 {profile?.weight} ק״ג){'\n'}• קלוריות: מחושבות לפי BMR × פעילות גופנית ± יעד
@@ -198,11 +198,11 @@ const NutritionScreen = () => {
 
         <Pressable
           onPress={handleShowOptions}
-          className="absolute left-5 right-5  flex-row items-center justify-center gap-2 rounded-2xl bg-lime-500 h-14 active:opacity-90 "
+          className="absolute left-5 right-5   flex-row items-center justify-center gap-2 rounded-2xl bg-lime-500 h-14 active:opacity-90 "
           accessibilityRole="button"
           accessibilityLabel="הוספת מאכל או ארוחה"
           style={{
-            bottom: 90,
+            bottom: 130,
             shadowColor: colors.lime[500],
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.45,
