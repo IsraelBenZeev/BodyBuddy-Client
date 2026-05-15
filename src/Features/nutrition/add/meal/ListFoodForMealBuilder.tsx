@@ -52,31 +52,36 @@ const ListFoodForMealBuilder = ({
 
       {/* Header - משופר עם היררכיה ברורה */}
       <View className="flex-row items-center justify-between px-6 py-4 border-b border-white/5">
-        <View className="flex-1">
-          <Text className="typo-h2 text-white  tracking-tight">
-            {addStep === 'list' ? 'בחירת מאכל' : addStep === 'amount' ? 'כמות והגשה' : 'מאכל חדש'}
-          </Text>
-          {addStep === 'amount' && selectedFood && (
-            <View className="flex-row items-center mt-1">
-              <Ionicons name="cart-outline" size={12} color="#84cc16" />
-              <Text className="typo-caption-bold text-lime-500 text-right mr-1 uppercase tracking-tighter">
-                מוסיף ל: {nameMeal || 'ארוחה חדשה'}
-              </Text>
-            </View>
+        <View className="flex-1 flex-row gap-3 items-center">
+          {showHeaderButton && (
+            <Pressable
+              onPress={() => (addStep !== 'list' ? setAddStep('list') : closeAddModal())}
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              className="bg-background-800 w-11 h-11 rounded-2xl items-center justify-center border border-white/10 shadow-lg"
+              accessibilityRole="button"
+              accessibilityLabel={addStep !== 'list' ? 'חזרה לרשימה' : 'סגור'}
+            >
+              <Ionicons
+                name={addStep !== 'list' ? 'arrow-forward' : 'close'}
+                size={20}
+                color="#fff"
+              />
+            </Pressable>
           )}
+          <View>
+            <Text className="typo-h2 text-white  tracking-tight ">
+              {addStep === 'list' ? 'בחירת מאכל' : addStep === 'amount' ? 'כמות והגשה' : 'מאכל חדש'}
+            </Text>
+            {addStep === 'amount' && selectedFood && (
+              <View className="flex-row items-center mt-1">
+                <Ionicons name="cart-outline" size={12} color="#84cc16" />
+                <Text className="typo-caption-bold text-lime-500 text-right mr-1 uppercase tracking-tighter">
+                  מוסיף ל: {nameMeal || 'ארוחה חדשה'}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
-
-        {showHeaderButton && (
-          <Pressable
-            onPress={() => (addStep !== 'list' ? setAddStep('list') : closeAddModal())}
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="bg-background-800 w-11 h-11 rounded-2xl items-center justify-center border border-white/10 shadow-lg"
-            accessibilityRole="button"
-            accessibilityLabel={addStep !== 'list' ? 'חזרה לרשימה' : 'סגור'}
-          >
-            <Ionicons name={addStep !== 'list' ? 'arrow-forward' : 'close'} size={24} color="#fff" />
-          </Pressable>
-        )}
       </View>
 
       {addStep === 'create' ? (
@@ -126,12 +131,12 @@ const ListFoodForMealBuilder = ({
               <Pressable
                 onPress={() => onSelectFood(item)}
                 style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}
-                className="bg-background-800 border-b-4 border-black/20 rounded-3xl p-4 flex-row items-center"
+                className="bg-background-800 border-b-4 border-black/20 rounded-3xl p-4 flex-row items-center gap-3"
                 accessibilityRole="button"
                 accessibilityLabel={`${item.name} - בחר מאכל`}
               >
                 {/* אייקון מאכל מעוצב */}
-                <View className="bg-orange-500/20 w-14 h-14 rounded-2xl items-center justify-center ml-4 shadow-inner">
+                <View className="bg-orange-500/20 w-14 h-14 rounded-2xl items-center justify-center ml-2 shadow-inner">
                   <MaterialCommunityIcons
                     name={getCategoryIconName(item.category)}
                     size={28}
@@ -140,10 +145,8 @@ const ListFoodForMealBuilder = ({
                 </View>
 
                 <View className="flex-1">
-                  <Text className="typo-h4 text-white text-right tracking-tight">
-                    {item.name}
-                  </Text>
-                  <View className="flex-row items-center mt-1.5">
+                  <Text className="typo-h4 text-white tracking-tight">{item.name}</Text>
+                  <View className="flex-row items-center mt-1">
                     <View className="bg-background-900 px-2 py-0.5 rounded-md border border-white/5">
                       <Text className="typo-caption-bold text-orange-400">
                         {item.measurement_type === 'units'
@@ -153,9 +156,7 @@ const ListFoodForMealBuilder = ({
                       </Text>
                     </View>
                     <Text className="typo-caption text-gray-500 text-right mr-2">
-                      {item.measurement_type === 'units'
-                        ? `ליחידה`
-                        : 'ל-100 ג׳'}
+                      {item.measurement_type === 'units' ? `ליחידה` : 'ל-100 ג׳'}
                     </Text>
                   </View>
                 </View>

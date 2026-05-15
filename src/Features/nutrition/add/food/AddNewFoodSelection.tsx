@@ -1,4 +1,8 @@
-import { calculateNutrients, getAmountLabel, getPortionUnit } from '@/src/Features/nutrition/utils/nutritionCalc';
+import {
+  calculateNutrients,
+  getAmountLabel,
+  getPortionUnit,
+} from '@/src/Features/nutrition/utils/nutritionCalc';
 import type { FoodItem } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -12,158 +16,133 @@ interface Props {
   submitLabel?: string;
 }
 
-const AddNewFoodSelection = ({ foodItem, onSubmit, isPending, onBack, submitLabel = 'הוסף ליומן אכילה' }: Props) => {
+const AddNewFoodSelection = ({
+  foodItem,
+  onSubmit,
+  isPending,
+  onBack,
+  submitLabel = 'הוסף ליומן אכילה',
+}: Props) => {
   const isUnits = foodItem.measurement_type === 'units';
   const unitLabel = getAmountLabel(foodItem);
 
-  // עבור grams: ברירת מחדל 100g. עבור units: ברירת מחדל 1
-  const [quantity, setQuantity] = useState(isUnits ? 1 : 1);
+  const [quantity, setQuantity] = useState(isUnits ? 1 : 100);
 
-  // אם grams, כל "מנה" = 100g. משתמש בוחר quantity
-  const portionAmount = useMemo(() => {
-    if (isUnits) return quantity;
-    return quantity * 100;
-  }, [isUnits, quantity]);
+  const portionAmount = useMemo(() => quantity, [quantity]);
 
   const calculatedMacros = useMemo(
     () => calculateNutrients(foodItem, portionAmount),
     [foodItem, portionAmount]
   );
 
-  const handleQuantityChange = useCallback((delta: number) => {
-    setQuantity((q) => Math.max(0.5, q + delta));
-  }, []);
+  const handleQuantityChange = useCallback(
+    (delta: number) => {
+      const min = isUnits ? 0.5 : 10;
+      const step = isUnits ? 0.5 : 10;
+      setQuantity((q) => Math.max(min, Math.round((q + delta * step) * 10) / 10));
+    },
+    [isUnits]
+  );
 
   const handleSubmit = useCallback(() => {
     onSubmit(portionAmount, getPortionUnit(foodItem));
   }, [portionAmount, foodItem, onSubmit]);
 
   return (
-    <View className="flex-1 px-6 py-6 bg-background-900 ">
-      {/* כותרת ושם המאכל */}
-      <View className="mb-8">
-        <Text className="typo-h1 text-white text-right mb-1">
-          {isUnits ? `כמה ${unitLabel}?` : 'כמה גרם?'}
-        </Text>
-        <Text className="typo-h4 text-lime-400 text-right opacity-90">
-          {foodItem.name}
-        </Text>
-      </View>
+    <View className="flex-1 px-6 pt-12 pb-6 bg-background-900">
+      {/* Header Section with Back Button */}
+      <View className="flex-row items-center  mb-10 gap-3">
+        {/* כפתור חזרה בפינה הימנית */}
+        <Pressable
+          onPress={onBack}
+          className="w-12 h-12 bg-background-800 rounded-2xl items-center justify-center border border-white/10 active:scale-90"
+        >
+          <Ionicons name="chevron-forward" size={24} color="#9ca3af" />
+        </Pressable>
 
-      {/* כרטיס בחירת כמות */}
-      <View className="bg-background-800 rounded-3xl p-5 border border-white/5 mb-6 shadow-xl">
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="typo-label text-gray-400 uppercase tracking-wider">
-            {isUnits ? `כמות ${unitLabel}` : 'כמות (×100 גרם)'}
+        {/* כותרת מרכזית */}
+        <View className="flex-1 ">
+          {/* קיזוז כדי שהכותרת תהיה במרכז המסך */}
+          <Text className="text-2xl font-black text-white">
+            {isUnits ? `כמה ${unitLabel}?` : 'כמה גרם?'}
           </Text>
-          <View className="bg-lime-500/10 px-3 py-1 rounded-full flex-row items-center">
-            <Ionicons name="scale-outline" size={14} color="#84cc16" />
-            <Text className="typo-caption-bold text-lime-500 mr-1">
-              {isUnits ? `${quantity} ${unitLabel}` : `${portionAmount} גרם`}
-            </Text>
+          <View className="bg-lime-500/10 px-3 py-0.5 rounded-lg mt-1 border border-lime-500/10">
+            <Text className="text-lime-400 font-bold text-[12px]">{foodItem.name}</Text>
           </View>
         </View>
+      </View>
 
-        {/* Stepper מרכזי */}
-        <View className="flex-row items-center justify-between bg-background-900/50 rounded-2xl p-2 border border-white/5">
+      {/* Quantity Controller Card */}
+      <View className="bg-background-800 rounded-[35px] p-8 border border-white/5 mb-6 shadow-2xl">
+        <View className="flex-row items-center justify-between">
           <Pressable
-            onPress={() => handleQuantityChange(0.5)}
-            className="w-14 h-14 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
-            accessibilityRole="button"
-            accessibilityLabel={`הגדל כמות`}
+            onPress={() => handleQuantityChange(-1)}
+            className="w-14 h-14 items-center justify-center bg-background-700 rounded-2xl border border-white/5 active:scale-90"
           >
-            <Ionicons name="add" size={28} color="#000" />
+            <Ionicons name="remove" size={28} color="#f87171" />
           </Pressable>
 
           <View className="items-center">
-            <Text className="typo-h1 text-white">{quantity}</Text>
-            <Text className="typo-caption-bold text-gray-500 uppercase">
-              {isUnits ? unitLabel : 'מנות'}
+            <Text className="text-5xl font-black text-white leading-tight">{quantity}</Text>
+            <Text className="text-[10px] text-gray-500 font-bold uppercase tracking-[3px] mt-1">
+              {isUnits ? unitLabel : 'גרם'}
             </Text>
           </View>
 
           <Pressable
-            onPress={() => handleQuantityChange(-0.5)}
-            className="w-14 h-14 items-center justify-center bg-background-700 rounded-xl active:scale-95"
-            accessibilityRole="button"
-            accessibilityLabel="הפחת כמות"
+            onPress={() => handleQuantityChange(1)}
+            className="w-14 h-14 items-center justify-center bg-lime-500 rounded-2xl shadow-lg shadow-lime-500/20 active:scale-90"
           >
-            <Ionicons name="remove" size={28} color="#fff" />
+            <Ionicons name="add" size={28} color="#064e3b" />
           </Pressable>
         </View>
 
-        {/* איפוס — רק עבור units */}
-        {isUnits && (
-          <View className="mt-3 flex-row gap-2">
-            <Pressable
-              onPress={() => setQuantity(1)}
-              className="flex-1 bg-background-700 rounded-xl py-2 items-center border border-white/5"
-              accessibilityRole="button"
-              accessibilityLabel="איפוס כמות"
-            >
-              <Text className="typo-caption-bold text-gray-400">איפוס</Text>
-            </Pressable>
-          </View>
-        )}
+        <Pressable
+          onPress={() => setQuantity(isUnits ? 1 : 100)}
+          className="mt-6 self-center px-4 py-2 rounded-full bg-white/5 border border-white/5"
+        >
+          <Text className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+            איפוס ל-100
+          </Text>
+        </Pressable>
       </View>
 
-      {/* כרטיס ערכים תזוניים */}
-      <View className="bg-background-800 rounded-3xl p-6 border border-white/5 mb-8">
-        <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest text-center mb-5">
-          {isUnits
-            ? `ערכים תזוניים ל-${quantity} ${unitLabel}`
-            : `ערכים תזוניים ל-${portionAmount} גרם`}
-        </Text>
-
-        <View className="flex-row items-center justify-around">
-          {/* קלוריות */}
-          <View className="items-center flex-1">
-            <Text className="typo-caption-bold text-gray-500 uppercase mb-2">קלוריות</Text>
-            <Text style={{ fontSize: 42, lineHeight: 46 }} className="font-black text-white">
-              {calculatedMacros.calories}
-            </Text>
-            <Text className="typo-caption text-lime-400 mt-1">קק״ל</Text>
+      {/* Nutrition Summary */}
+      <View className="bg-background-800 rounded-[32px] py-8 border border-white/5 mb-8 flex-row items-center justify-around">
+        <View className="items-center">
+          <Text className="text-[10px] text-gray-500 font-bold uppercase mb-2 tracking-widest">
+            קלוריות
+          </Text>
+          <View className="flex-row items-baseline">
+            <Text className="text-4xl font-black text-white">{calculatedMacros.calories}</Text>
+            <Text className="text-[10px] text-lime-400 ml-1.5 font-bold">kcal</Text>
           </View>
+        </View>
 
-          <View className="w-[1px] h-16 bg-white/10" />
+        <View className="w-[1px] h-12 bg-white/10" />
 
-          {/* חלבון */}
-          <View className="items-center flex-1">
-            <Text className="typo-caption-bold text-gray-500 uppercase mb-2">חלבון</Text>
-            <Text style={{ fontSize: 42, lineHeight: 46 }} className="font-black text-lime-500">
-              {calculatedMacros.protein}
-            </Text>
-            <Text className="typo-caption text-gray-500 mt-1">גרם</Text>
+        <View className="items-center">
+          <Text className="text-[10px] text-gray-500 font-bold uppercase mb-2 tracking-widest">
+            חלבון
+          </Text>
+          <View className="flex-row items-baseline">
+            <Text className="text-4xl font-black text-blue-400">{calculatedMacros.protein}</Text>
+            <Text className="text-[10px] text-blue-400/60 ml-1.5 font-bold">g</Text>
           </View>
         </View>
       </View>
 
-      {/* כפתורי פעולה */}
-      <View className="flex-row gap-4 mt-auto pb-4">
-        <View className="flex-1">
-          <Pressable
-            onPress={onBack}
-            className="bg-background-700 h-16 rounded-2xl items-center justify-center border border-white/5"
-            accessibilityRole="button"
-            accessibilityLabel="חזור"
-          >
-            <Text className="typo-btn-secondary text-gray-400">חזור</Text>
-          </Pressable>
-        </View>
-        <View className="flex-[2]">
-          <Pressable
-            onPress={handleSubmit}
-            disabled={isPending}
-            style={({ pressed }) => [{ opacity: pressed || isPending ? 0.8 : 1 }]}
-            className="bg-lime-500 h-16 rounded-2xl items-center justify-center shadow-lg shadow-lime-500/20"
-            accessibilityRole="button"
-            accessibilityLabel={submitLabel}
-          >
-            <Text className="typo-btn-cta text-black">
-              {isPending ? 'מעדכן...' : submitLabel}
-            </Text>
-          </Pressable>
-        </View>
+      {/* Submit Button Only */}
+      <View className="mt-auto pb-4">
+        <Pressable
+          onPress={handleSubmit}
+          disabled={isPending}
+          className="bg-lime-500 h-16 rounded-3xl items-center justify-center shadow-xl shadow-lime-500/30 active:scale-95"
+        >
+          <Text className="text-[#064e3b] font-black text-lg">
+            {isPending ? 'מעדכן...' : submitLabel}
+          </Text>
+        </Pressable>
       </View>
     </View>
   );

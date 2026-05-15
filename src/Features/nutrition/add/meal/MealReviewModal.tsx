@@ -4,14 +4,7 @@ import { useCreateNutritionEntriesBulk } from '@/src/hooks/useNutrition';
 import type { MealItem, MealItemFoodInfo, MealWithItems } from '@/src/types/meal';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-    ActivityIndicator,
-    Modal,
-    Pressable,
-    ScrollView,
-    Text,
-    View,
-} from 'react-native';
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 interface Props {
   visible: boolean;
@@ -151,9 +144,10 @@ export default function MealReviewModal({
           const n = calculateNutrients(foodForCalc, amount);
           acc.calories += Math.round(n.calories);
           acc.protein += Math.round(n.protein);
+          acc.carbs += Math.round(n.carbs);
           return acc;
         },
-        { calories: 0, protein: 0 }
+        { calories: 0, protein: 0, carbs: 0 }
       ),
     [items, getAmount]
   );
@@ -169,13 +163,18 @@ export default function MealReviewModal({
     >
       <View style={{ flex: 1, backgroundColor: colors.background[900] }}>
         <View className="flex-row items-center justify-between border-b border-background-700 px-5 py-3">
-          <Pressable onPress={onClose} className="p-3" accessibilityRole="button" accessibilityLabel="סגור">
-            <Ionicons name="close" size={24} color={colors.white} />
-          </Pressable>
           <Text className="typo-h4 text-white" numberOfLines={1}>
             {meal.name_meal || 'ארוחה'}
           </Text>
           <View className="w-10" />
+          <Pressable
+            onPress={onClose}
+            className="p-3"
+            accessibilityRole="button"
+            accessibilityLabel="סגור"
+          >
+            <Ionicons name="close" size={24} color={colors.white} />
+          </Pressable>
         </View>
 
         <ScrollView
@@ -183,7 +182,7 @@ export default function MealReviewModal({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16 }}
         >
-          <Text className="typo-label text-background-400 mb-4 text-right">
+          <Text className="typo-label text-background-400 mb-4">
             התאם כמות לכל מאכל ואז אשר להוספה ליומן
           </Text>
 
@@ -197,7 +196,7 @@ export default function MealReviewModal({
             />
           ))}
 
-          <View className="mt-4 py-3 border-t border-background-700">
+          <View className="mt-4 py-3 border-t border-background-700 px-4">
             <View className="flex-row items-center justify-between mb-1">
               <Text className="typo-body-primary text-lime-400">סה״כ קלוריות</Text>
               <Text className="typo-h4 text-white">{totals.calories} קק״ל</Text>
@@ -205,6 +204,10 @@ export default function MealReviewModal({
             <View className="flex-row items-center justify-between">
               <Text className="typo-body-primary text-lime-500">סה״כ חלבון</Text>
               <Text className="typo-h4 text-white">{totals.protein} גרם</Text>
+            </View>
+            <View className="flex-row items-center justify-between">
+              <Text className="typo-body-primary text-lime-500">סה״כ פחמימות</Text>
+              <Text className="typo-h4 text-white">{totals.carbs} גרם</Text>
             </View>
           </View>
         </ScrollView>
@@ -241,7 +244,12 @@ interface MealReviewRowProps {
   onQuantityChange: (delta: number) => void;
 }
 
-const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amount, onQuantityChange }: MealReviewRowProps) {
+const MealReviewRow = React.memo(function MealReviewRow({
+  mealItem,
+  state,
+  amount,
+  onQuantityChange,
+}: MealReviewRowProps) {
   const info = mealItem.food_item!;
   const isUnits = info.measurement_type === 'units';
   const unitLabel = isUnits ? 'יחידה' : 'גרם';
@@ -268,54 +276,69 @@ const MealReviewRow = React.memo(function MealReviewRow({ mealItem, state, amoun
   const calories = Math.round(nutrients.calories);
 
   return (
-    <View className="bg-background-800 border border-white/5 rounded-3xl p-4 mb-4 shadow-sm">
-      {/* שורה עליונה: שם וקלוריות */}
-      <View className="flex-row items-center justify-between mb-3">
-        <View className="flex-1 ml-3">
-          <Text className="typo-h4 text-white text-right" numberOfLines={2}>
+    <View className="bg-background-800 border border-white/5 rounded-[32px] p-5 mb-4 shadow-lg">
+      {/* Header Section */}
+      <View className="flex-row items-start justify-between mb-5">
+        <View className="flex-1 ml-4">
+          <Text className="typo-h3 text-white leading-tight" numberOfLines={2}>
             {info.name}
           </Text>
+          <Text className="typo-caption text-gray-500 mt-1">
+            {isUnits ? `${amount} ${unitLabel}` : `${amount} גרם`}
+          </Text>
         </View>
-        <View className="items-end">
-          <Text className="typo-h4 text-lime-500">{calories}</Text>
-          <Text className="typo-caption text-gray-500">קק״ל</Text>
+
+        <View className="bg-lime-500/10 px-4 py-2 rounded-2xl border border-lime-500/10 items-center justify-center">
+          <Text className="text-xl font-bold text-lime-400 leading-none">{calories}</Text>
+          <Text className="text-[10px] text-lime-500/70 uppercase font-bold tracking-tighter">
+            קק״ל
+          </Text>
         </View>
       </View>
 
-      {/* אזור השליטה בכמות */}
-      <View className="flex-row items-center justify-between bg-background-900/40 p-3 rounded-2xl border border-white/5">
-        <View className="flex-row items-center bg-background-700 rounded-xl p-1 shadow-inner">
+      {/* Control Panel */}
+      <View className="bg-background-900/60 p-2 rounded-[24px] border border-white/5 flex-row items-center">
+        {/* Stepper Group */}
+        <View className="flex-row items-center bg-background-700/50 rounded-[20px] p-1.5 border border-white/5">
           <Pressable
-            onPress={() => onQuantityChange(0.5)}
-            className="w-11 h-11 items-center justify-center bg-lime-500/10 rounded-lg active:bg-lime-500/20"
-            accessibilityRole="button"
-            accessibilityLabel={`הגדל כמות ${info.name}`}
+            onPress={() => onQuantityChange(10)}
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="w-12 h-12 items-center justify-center bg-lime-500 rounded-xl shadow-sm"
           >
-            <Ionicons name="add" size={22} color="#84cc16" />
+            <Ionicons name="add" size={26} color="#000" />
           </Pressable>
 
-          <View className="px-4 items-center">
-            <Text className="typo-h4 text-white">{state.quantity}</Text>
-            <Text className="typo-caption-bold text-gray-500 uppercase">{unitLabel}</Text>
+          <View className="px-5 items-center min-w-[70px]">
+            <Text className="text-xl font-bold text-white">{state.quantity}</Text>
+            <Text className="text-[10px] text-gray-500 font-bold uppercase">{unitLabel}</Text>
           </View>
 
           <Pressable
             onPress={() => onQuantityChange(-0.5)}
-            className="w-11 h-11 items-center justify-center bg-white/5 rounded-lg active:bg-white/10"
-            accessibilityRole="button"
-            accessibilityLabel={`הפחת כמות ${info.name}`}
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="w-12 h-12 items-center justify-center bg-background-600 rounded-xl border border-white/5"
           >
-            <Ionicons name="remove" size={22} color="#f87171" />
+            <Ionicons name="remove" size={26} color="#f87171" />
           </Pressable>
         </View>
 
-        {/* תצוגת חישוב */}
-        <View className="flex-1 items-center mr-4">
-          <Text className="typo-caption text-gray-400 text-center mb-1">
-            {isUnits ? `${amount} ${unitLabel}` : `${amount} גרם`}
-          </Text>
-          <View className="flex-row gap-2">
-            <Text className="typo-caption text-lime-400">P {nutrients.protein}g</Text>
+        {/* Nutrients Breakdown */}
+        <View className="flex-1 items-end mr-4">
+          <View className="flex-row gap-3">
+            <View className="items-center">
+              <Text className="text-[10px] text-blue-400 font-bold uppercase">P</Text>
+              <Text className="text-sm font-bold text-blue-400">{nutrients.protein}g</Text>
+            </View>
+            <View className="w-[1px] h-6 bg-white/5 self-center" />
+            <View className="items-center">
+              <Text className="text-[10px] text-orange-400 font-bold uppercase">C</Text>
+              <Text className="text-sm font-bold text-orange-400">{nutrients.carbs}g</Text>
+            </View>
+            <View className="w-[1px] h-6 bg-white/5 self-center" />
+            <View className="items-center">
+              <Text className="text-[10px] text-red-400 font-bold uppercase">F</Text>
+              <Text className="text-sm font-bold text-red-400">{nutrients.fat}g</Text>
+            </View>
           </View>
         </View>
       </View>

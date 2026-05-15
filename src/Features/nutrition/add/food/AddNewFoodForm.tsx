@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -102,6 +103,7 @@ const AddNewFood = ({
     initialValues?.calories_per_100 != null ? String(initialValues.calories_per_100) : ''
   );
   const [proteinValue, setProteinValue] = useState(initialValues?.protein_per_100 ?? 0);
+  const [carbsValue, setCarbsValue] = useState(initialValues?.carbs_per_100 ?? 0);
   const [consumedAmount, setConsumedAmount] = useState<number>(defaultConsumedAmount ?? 0);
 
   useEffect(() => {
@@ -114,7 +116,7 @@ const AddNewFood = ({
   }, [phase, onPhaseChange]);
 
   const { data: searchResults = [], isLoading } = useSearchFoodItems(debouncedQuery, userId);
-  const { data: recentFoods = [] } = useRecentFoods(userId || undefined);
+  const { data: recentFoods = [], isLoading: isRecentLoading } = useRecentFoods(userId || undefined);
   const { mutate: trackUsage } = useTrackFoodUsage(userId);
 
   const isUnits = measurementType === 'units';
@@ -154,6 +156,7 @@ const AddNewFood = ({
           measurement_type: 'units',
           calories_per_unit: cal || undefined,
           protein_per_unit: proteinValue || undefined,
+          carbs_per_unit: carbsValue || undefined,
           portion_size: portion,
           portion_unit: portion != null ? 'unit' : undefined,
         };
@@ -163,11 +166,12 @@ const AddNewFood = ({
         measurement_type: 'grams',
         calories_per_100: cal || undefined,
         protein_per_100: proteinValue || undefined,
+        carbs_per_100: carbsValue || undefined,
         portion_size: portion,
         portion_unit: portion != null ? 'g' : undefined,
       };
     },
-    [isUnits, query, calories, proteinValue]
+    [isUnits, query, calories, proteinValue, carbsValue]
   );
 
   const handleCustomSave = useCallback(
@@ -188,7 +192,7 @@ const AddNewFood = ({
     const noResults = showResults && !isLoading && searchResults.length === 0;
 
     return (
-      <View className="flex-1 px-8 w-full">
+      <View className="flex-1 px-4 w-full">
         {/* Header — same pattern as db-amount */}
         <View className="mb-6 items-center">
           <View className="bg-lime-400/10 px-3 py-1 rounded-full mb-3">
@@ -298,13 +302,13 @@ const AddNewFood = ({
         {showResults && query.trim().length > 0 && (
           <Pressable
             onPress={handleStartCustom}
-            className="flex-row items-center justify-center bg-lime-500/10 border border-lime-500/30 rounded-3xl px-4 py-4 mb-3"
+            className=" flex-row items-center justify-center gap-2 p bg-lime-500/10 border border-lime-500/30 rounded-3xl px-8 py-4 mb-3"
             accessibilityRole="button"
-            accessibilityLabel={`הוסף ${query.trim()} כמאכל חדש`}
+            accessibilityLabel={`הוסף ${query.trim()} כמאכל מותאם אישית`}
           >
             <Ionicons name="add-circle-outline" size={20} color={colors.lime[500]} />
             <Text className="typo-body-primary text-lime-400 mr-2">
-              הוסף &quot;{query.trim()}&quot; כמאכל חדש
+              הוסף &quot;{query.trim()}&quot; כמאכל מותאם אישית
             </Text>
           </Pressable>
         )}
@@ -312,51 +316,58 @@ const AddNewFood = ({
         {/* Recent foods + Quick suggestions (when query is empty) */}
         {!showResults && (
           <>
-            {recentFoods.length > 0 && (
+            {(isRecentLoading || recentFoods.length > 0) && (
               <>
                 <View className="flex-row items-center mb-3 mt-2">
                   <View className="flex-1 h-[0.5px] bg-white/[0.06]" />
                   <Text className="typo-caption text-background-500 mx-3">שמישים לאחרונה</Text>
                   <View className="flex-1 h-[0.5px] bg-white/[0.06]" />
                 </View>
-                <View className="bg-white/[0.03] rounded-3xl border border-white/[0.05] mb-4 overflow-hidden">
-                  {recentFoods.slice(0, 5).map((food, idx) => {
-                    const cal =
-                      food.measurement_type === 'units'
-                        ? food.calories_per_unit
-                        : food.calories_per_100;
-                    const calLabel =
-                      food.measurement_type === 'units' ? 'קק"ל/יח׳' : 'קק"ל/100g';
-                    const isLast = idx === Math.min(recentFoods.length, 5) - 1;
-                    return (
-                      <Pressable
-                        key={food.id}
-                        onPress={() => handleSelectFromDB(food)}
-                        className="flex-row items-center px-5 py-4"
-                        accessibilityRole="button"
-                        accessibilityLabel={`בחר ${food.name}`}
-                      >
-                        <View className="flex-1">
-                          <Text className="typo-body-primary text-white">{food.name}</Text>
-                          {cal != null && (
-                            <Text className="typo-caption text-background-400 mt-0.5">
-                              {cal} {calLabel}
-                            </Text>
+                {isRecentLoading ? (
+                  <View className="bg-white/[0.03] rounded-3xl border border-white/[0.05] mb-4 flex-row items-center justify-center py-5 gap-3">
+                    <ActivityIndicator size="small" color={colors.lime[500]} />
+                    <Text className="typo-caption text-background-500">טוען מההיסטוריה...</Text>
+                  </View>
+                ) : (
+                  <View className="bg-white/[0.03] rounded-3xl border border-white/[0.05] mb-4 overflow-hidden">
+                    {recentFoods.slice(0, 5).map((food, idx) => {
+                      const cal =
+                        food.measurement_type === 'units'
+                          ? food.calories_per_unit
+                          : food.calories_per_100;
+                      const calLabel =
+                        food.measurement_type === 'units' ? 'קק"ל/יח׳' : 'קק"ל/100g';
+                      const isLast = idx === Math.min(recentFoods.length, 5) - 1;
+                      return (
+                        <Pressable
+                          key={food.id}
+                          onPress={() => handleSelectFromDB(food)}
+                          className="flex-row items-center px-5 py-4"
+                          accessibilityRole="button"
+                          accessibilityLabel={`בחר ${food.name}`}
+                        >
+                          <View className="flex-1">
+                            <Text className="typo-body-primary text-white">{food.name}</Text>
+                            {cal != null && (
+                              <Text className="typo-caption text-background-400 mt-0.5">
+                                {cal} {calLabel}
+                              </Text>
+                            )}
+                          </View>
+                          <MaterialCommunityIcons
+                            name="history"
+                            size={16}
+                            color={colors.background[500]}
+                            importantForAccessibility="no"
+                          />
+                          {!isLast && (
+                            <View className="absolute bottom-0 left-5 right-5 h-[0.5px] bg-white/[0.06]" />
                           )}
-                        </View>
-                        <MaterialCommunityIcons
-                          name="history"
-                          size={16}
-                          color={colors.background[500]}
-                          importantForAccessibility="no"
-                        />
-                        {!isLast && (
-                          <View className="absolute bottom-0 left-5 right-5 h-[0.5px] bg-white/[0.06]" />
-                        )}
-                      </Pressable>
-                    );
-                  })}
-                </View>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                )}
               </>
             )}
             <View className="flex-row items-center mb-3">
@@ -496,6 +507,18 @@ const AddNewFood = ({
             </View>
           </View>
         </View>
+
+        <View className="mt-6 px-2">
+          <Text className="typo-caption text-background-500 text-center">
+            {'מצאתם טעות בערכים? '}
+            <Text
+              onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
+              className="text-lime-400"
+            >
+              {'דווחו לנו'}
+            </Text>
+          </Text>
+        </View>
       </View>
     );
   };
@@ -504,7 +527,7 @@ const AddNewFood = ({
     const unitLabel = isUnits ? 'יחידה' : '100 גרם';
 
     return (
-      <View className="flex-1 px-4 w-full">
+      <View className="flex-1 px-4 w-full ">
         {/* Header - Minimalist & Elegant */}
         <View className="mb-6 items-center">
           <View className="bg-lime-400/10 px-3 py-1 rounded-full mb-3">
@@ -636,7 +659,7 @@ const AddNewFood = ({
         {/* Protein */}
         <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05] mb-4 items-center">
           <Text className="typo-label text-background-400 mb-4 text-center">
-            חלבון ל{unitLabel} <Text className=" text-background-600 ">(אופציונלי)</Text>
+            חלבון ל{unitLabel} <Text className="text-background-600">(אופציונלי)</Text>
           </Text>
           <ValueStepper
             value={proteinValue}
@@ -647,10 +670,25 @@ const AddNewFood = ({
           />
         </View>
 
+        {/* Carbs */}
+        <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05] mb-4 items-center">
+          <Text className="typo-label text-background-400 mb-4 text-center">
+            פחמימות ל{unitLabel} <Text className="text-background-600">(אופציונלי)</Text>
+          </Text>
+          <ValueStepper
+            value={carbsValue}
+            onChange={setCarbsValue}
+            step={1}
+            min={0}
+            unit="g"
+          />
+        </View>
+
         {/* Consumed amount (optional) */}
         <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05] items-center">
           <Text className="typo-label text-background-400 mb-4 text-center">
-            כמה אכלת? <Text className="text-background-600">(אופציונלי)</Text>
+            {mode === 'meal-builder' ? 'כמות מנה בארוחה' : 'כמה אכלת? (אופציונלי)'}{' '}
+            <Text className="text-background-600"></Text>
           </Text>
           <ValueStepper
             value={consumedAmount}
@@ -755,19 +793,18 @@ const AddNewFood = ({
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View className="flex-1">
-        <View className="flex flex-row justify-between px-6">
+        <View className="flex flex-row justify-between px-6 ">
           {phase !== 'search' && (
             <View className="">
               <Pressable
                 onPress={handleBack}
-                className="bg-background-800 border border-white/10 h-11 w-11 rounded-xl items-center justify-center"
+                className="bg-background-800 border border-white/10 h-11 w-11 rounded-xl items-center justify-center "
                 accessibilityRole="button"
                 accessibilityLabel="חזרה"
                 accessibilityHint="חזרה לשלב הקודם"
               >
                 <MaterialCommunityIcons name="chevron-right" size={22} color={colors.white} />
               </Pressable>
-              <View className="w-11 h-11" />
             </View>
           )}
           {mode !== 'meal-builder' && (

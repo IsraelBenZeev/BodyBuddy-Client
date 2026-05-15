@@ -40,7 +40,7 @@ const ModalAddFoods = ({ visible, onClose, userId, date }: ModalAddFoodsProps) =
         <View style={sheetStyles.handleContainer}>
           <Pressable
             onPress={onClose}
-            style={{ position: 'absolute' as const, left: 16, top: 12 }}
+            style={{ position: 'absolute' as const, right: 16, top: 12 }}
             accessibilityRole="button"
             accessibilityLabel="סגור"
           >

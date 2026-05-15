@@ -47,34 +47,89 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
   const amountLabel = item.measurement_type === 'units' ? `${item.amount_g} יחידה` : `${item.amount_g}g`;
 
   return (
-    <View className="bg-background-800 border border-white/5 rounded-2xl p-4">
-      <View className="flex-row items-center mb-2">
-        <View className="bg-background-700 w-10 h-10 rounded-xl items-center justify-center ml-3">
-          <Ionicons name="nutrition" size={18} color="#fb923c" />
-        </View>
-        <Text className="typo-body-primary text-white flex-1 text-right" numberOfLines={1}>
+    // <View className="bg-background-800 border border-white/5 rounded-2xl p-4 ">
+    //   <View className="flex-row items-center mb-2">
+    //     <View className="bg-background-700 w-10 h-10 rounded-xl items-center justify-center ml-3">
+    //       <Ionicons name="nutrition" size={18} color="#fb923c" />
+    //     </View>
+    //     <Text className="typo-body-primary text-white flex-1" numberOfLines={1}>
+    //       {item.name}
+    //     </Text>
+    //     <View className="flex-row gap-2">
+    //       <Pressable onPress={() => onEdit(index)} className="bg-background-700 p-2 rounded-xl" hitSlop={10} accessibilityRole="button" accessibilityLabel={`ערוך ${item.name}`}>
+    //         <Ionicons name="pencil-outline" size={16} color="#a3a3a3" />
+    //       </Pressable>
+    //       <Pressable onPress={() => onRemove(index)} className="bg-red-500/10 p-2 rounded-xl" hitSlop={10} accessibilityRole="button" accessibilityLabel={`מחק ${item.name}`}>
+    //         <Ionicons name="trash-outline" size={16} color="#f87171" />
+    //       </Pressable>
+    //     </View>
+    //   </View>
+    //   <View className="flex-row items-center gap-2 mb-1">
+    //     <Text className="typo-caption text-gray-400">{amountLabel}</Text>
+    //     <View className="w-1 h-1 rounded-full bg-gray-600" />
+    //     <Text className="typo-caption-bold text-lime-400">{cal} קק״ל</Text>
+    //   </View>
+    //   <View className="flex-row gap-3">
+    //     <Text className="typo-caption text-blue-400">P {nutrients.protein}g</Text>
+    //     <Text className="typo-caption text-orange-400">C {nutrients.carbs}g</Text>
+    //     <Text className="typo-caption text-red-400">F {nutrients.fat}g</Text>
+    //   </View>
+    // </View>
+    <View className="bg-background-800 border border-white/5 rounded-2xl p-4 mb-3">
+  {/* Header: Icon, Name and Actions */}
+  <View className="flex-row items-center justify-between mb-3">
+    <View className="flex-row items-center flex-1 gap-3">
+      <View className="bg-orange-500/10 w-10 h-10 rounded-xl items-center justify-center ">
+        <Ionicons name="nutrition" size={20} color="#fb923c" />
+      </View>
+      <View className="flex-1">
+        <Text className="typo-body-bold text-white leading-tight" numberOfLines={1}>
           {item.name}
         </Text>
-        <View className="flex-row gap-2">
-          <Pressable onPress={() => onEdit(index)} className="bg-background-700 p-2 rounded-xl" hitSlop={10} accessibilityRole="button" accessibilityLabel={`ערוך ${item.name}`}>
-            <Ionicons name="pencil-outline" size={16} color="#a3a3a3" />
-          </Pressable>
-          <Pressable onPress={() => onRemove(index)} className="bg-red-500/10 p-2 rounded-xl" hitSlop={10} accessibilityRole="button" accessibilityLabel={`מחק ${item.name}`}>
-            <Ionicons name="trash-outline" size={16} color="#f87171" />
-          </Pressable>
-        </View>
-      </View>
-      <View className="flex-row items-center gap-2 mb-1">
-        <Text className="typo-caption text-gray-400">{amountLabel}</Text>
-        <View className="w-1 h-1 rounded-full bg-gray-600" />
-        <Text className="typo-caption-bold text-lime-400">{cal} קק״ל</Text>
-      </View>
-      <View className="flex-row gap-3">
-        <Text className="typo-caption text-blue-400">P {nutrients.protein}g</Text>
-        <Text className="typo-caption text-orange-400">C {nutrients.carbs}g</Text>
-        <Text className="typo-caption text-red-400">F {nutrients.fat}g</Text>
+        <Text className="typo-caption text-gray-500 mt-0.5">{amountLabel}</Text>
       </View>
     </View>
+
+    <View className="flex-row gap-2">
+      <Pressable 
+        onPress={() => onEdit(index)} 
+        className="bg-background-700 p-2.5 rounded-xl" 
+        hitSlop={10}
+      >
+        <Ionicons name="pencil" size={16} color="#a3a3a3" />
+      </Pressable>
+      <Pressable 
+        onPress={() => onRemove(index)} 
+        className="bg-red-500/10 p-2.5 rounded-xl" 
+        hitSlop={10}
+      >
+        <Ionicons name="trash-outline" size={16} color="#f87171" />
+      </Pressable>
+    </View>
+  </View>
+
+  {/* Stats Section */}
+  <View className="flex-row items-center justify-between pt-3 border-t border-white/5">
+    <View className="flex-row items-center gap-4">
+      <View className='flex items-center justify-center'>
+        <Text className="typo-caption text-blue-400 mb-0.5">חלבון</Text>
+        <Text className="typo-body-bold text-blue-400">{nutrients.protein}g</Text>
+      </View>
+      <View className='flex items-center justify-center'>
+        <Text className="typo-caption text-orange-400 mb-0.5">פחמימה</Text>
+        <Text className="typo-body-bold text-orange-400">{nutrients.carbs}g</Text>
+      </View>
+      <View className='flex items-center justify-center'>
+        <Text className="typo-caption text-red-400 mb-0.5">שומן</Text>
+        <Text className="typo-body-bold text-red-400">{nutrients.fat}g</Text>
+      </View>
+    </View>
+    
+    <View className="bg-lime-400/10 px-3 py-1.5 rounded-lg border border-lime-400/20">
+      <Text className="typo-body-bold text-lime-400">{cal} קק״ל</Text>
+    </View>
+  </View>
+</View>
   );
 });
 
@@ -484,7 +539,7 @@ const MealBuilderScreen = () => {
         </View>
         {/* קלט שם הארוחה */}
         <View className="mb-8">
-          <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest mb-2 text-right px-1">
+          <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
             איך נקרא לארוחה?
           </Text>
           <TextInput
@@ -498,7 +553,7 @@ const MealBuilderScreen = () => {
 
         {/* כותרת רשימת הפריטים */}
         <View className="flex-row items-center justify-between mb-4 px-1">
-          <View className="flex-row items-center">
+          <View className="flex-row items-center justify-center gap-2">
             <Ionicons name="list" size={18} color="#84cc16" />
             <Text className="typo-h4 text-white mr-2">מרכיבי הארוחה</Text>
           </View>

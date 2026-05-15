@@ -131,21 +131,26 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
       {/* כפתור הוספה צף בתחתית — מוצג רק כשיש מאכלים */}
       {foodItems.length > 0 && (
-        <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
-          <Pressable
-            onPress={handleAddNewFood}
-            className="bg-lime-500 rounded-2xl py-4 flex-col items-center justify-center"
-            style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-            accessibilityRole="button"
-            accessibilityLabel="הוסף מאכל חדש לרשימה"
-          >
-            <Ionicons name="add-circle" size={28} color="#000" />
-            <Text className="typo-btn-cta text-black mt-2">הוסף מאכל חדש לרשימה</Text>
-          </Pressable>
-          <Text className="typo-caption text-gray-500 text-center mt-3">
-            * המזונות שתגדיר כאן יהיו זמינים להוספה מהירה ליומן
-          </Text>
-        </View>
+              <View className="absolute bottom-3 left-6 right-6 shadow-2xl">
+                <Pressable
+                  onPress={handleAddNewFood}
+                  style={({ pressed }) => [
+                    {
+                      transform: [{ scale: pressed ? 0.96 : 1 }],
+                      opacity: pressed ? 0.9 : 1,
+                    },
+                  ]}
+                  className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3"
+                  accessibilityRole="button"
+                  accessibilityLabel="הוסף מאכל חדש לרשימה"
+                >
+                  <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
+                    <Ionicons name="add" size={26} color="#84cc16" />
+                  </View>
+                  <Text className="typo-btn-cta text-lime-400">הוסף מאכל חדש</Text>
+                </Pressable>
+              </View>
+        
       )}
 
       <DeleteConfirmModal
@@ -188,7 +193,7 @@ const FoodCard = React.memo(function FoodCard({
       accessibilityRole="button"
       accessibilityLabel={`${item.name} - בחר מאכל`}
     >
-      <View className="flex-row items-center p-4">
+      <View className="flex-row items-center p-4 gap-3 ">
         <View className="bg-orange-500/10 rounded-2xl w-14 h-14 items-center justify-center ml-4 border border-orange-500/10">
           <MaterialCommunityIcons
             name={getCategoryIconName(item.category)}
@@ -198,7 +203,7 @@ const FoodCard = React.memo(function FoodCard({
         </View>
 
         <View className="flex-1">
-          <Text className="typo-h4 text-white text-right" numberOfLines={1}>
+          <Text className="typo-h4 text-white" numberOfLines={1}>
             {item.name}
           </Text>
           <View className="flex-row items-center mt-1">
@@ -211,7 +216,7 @@ const FoodCard = React.memo(function FoodCard({
           </View>
         </View>
 
-        <View className="flex-row items-center mr-1">
+        <View className="flex-row items-center mr-1 gap-3">
           {item.user_id === userId && (
             <Pressable
               onPress={handleDelete}
