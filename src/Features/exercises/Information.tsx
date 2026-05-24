@@ -27,7 +27,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
     return (
         <View className="px-5 w-full space-y-3 mt-4 gap-3">
             {/* כרטיס שריר עיקרי */}
-            <View className="flex-row items-center bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl">
+            <View className="flex-row items-center bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl ">
                 {gender && targetParts.length > 0 && (
                     <MiniAvatar
                         selectedParts={targetParts}
@@ -35,7 +35,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
                         preferBack={preferBack}
                     />
                 )}
-                <View className="flex-1 mr-4">
+                <View className="flex-1 ml-4 items-start">
                     <Text className="typo-caption-bold text-zinc-500  mb-1 uppercase tracking-tighter">שריר עיקרי</Text>
                     <Text className="typo-h4 text-white">
                         {exercise?.targetMuscles_he}
@@ -47,7 +47,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
             <View className="flex-row space-x-3 gap-3">
 
                 {/* ציוד - כרטיס חצי רוחב */}
-                <View className="flex-1 bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl">
+                <View className="flex-1 bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl items-start">
                     <View className="bg-zinc-800 p-2 rounded-xl mb-3">
                         <IconsFitnessTools size={20} color="#D7FF00" />
                     </View>
@@ -58,7 +58,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
                 </View>
 
                 {/* מסייעים - כרטיס חצי רוחב */}
-                <View className="flex-1 bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl">
+                <View className="flex-1 bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl items-start">
                     <View className="bg-zinc-800 p-2 rounded-xl mb-3">
                         <IconSecondaryMuscle size={20} color="#D7FF00" />
                     </View>

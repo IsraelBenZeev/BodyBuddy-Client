@@ -118,7 +118,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           />
           {/* Support & Disclaimer under Instructions */}
           <View className="px-6 mt-4 mb-8">
-             <Text className="typo-label text-background-400">
+             <Text className="typo-label text-background-400 text-left">
             {'נתקלת בבעיה? '}
             <Text
               onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
