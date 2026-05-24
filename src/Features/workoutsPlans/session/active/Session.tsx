@@ -135,19 +135,19 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             entering={FadeIn.duration(600)}
             exiting={FadeOut.duration(400)}
         >
-            <View className="px-6 flex-row justify-between items-center py-4 gap-3">
-                <Text className="typo-h2 text-white flex-1" numberOfLines={1}>{workoutPlan.title}</Text>
+            <View className="px-6 flex-row justify-between items-center py-4 gap-3 ">
+                <Text className="typo-h2 text-white flex-1 text-left" numberOfLines={1}>{workoutPlan.title}</Text>
                 <View className="bg-background-800 px-4 py-2 rounded-2xl border border-white/5 shrink-0">
                     <TimerDisplay />
                 </View>
             </View>
 
-            <View className="px-6">
+            <View className="px-6 items-start mb-4">
                 <Text className="typo-body-small text-zinc-400">
                     תרגיל {activeIndex + 1} מתוך {exercises?.length}
                 </Text>
             </View>
-            <View className="flex-1" style={{ height: SCREEN_HEIGHT * 0.85 }}>
+            <View className="flex-1 items-start" style={{ height: SCREEN_HEIGHT * 0.85 }}>
                 <CustomCarousel
                     data={exercises || []}
                     widthCard={SCREEN_WIDTH * 0.95}

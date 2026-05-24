@@ -146,7 +146,7 @@ const GraphData = ({ logs }: Props) => {
       </View>
 
       {/* גרף */}
-      <View className="bg-zinc-900 rounded-2xl p-3 border border-zinc-800 overflow-hidden">
+      <View className="bg-zinc-900 rounded-2xl p-3 border border-zinc-800 overflow-hidden bd items-start">
         <View style={{ direction: 'ltr', height: 280 }}>
           <LineChart
             areaChart

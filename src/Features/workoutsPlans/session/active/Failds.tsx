@@ -79,7 +79,7 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                                 exiting={SlideOutUp.duration(300)}
                             >
                                 <View className="w-full flex-row gap-2">
-                                    <View className="flex-1">
+                                    <View className="flex-1 items-start">
                                         <StepInput
                                             control={control}
                                             name={`exercises.${item.exerciseId}.sets.${index}.weight`}

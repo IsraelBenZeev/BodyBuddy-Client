@@ -35,8 +35,8 @@ const CardWorkouPlan = ({workoutPlan}: Props) => {
 
                     {/* תיאור (אם קיים) */}
                     {workoutPlan?.description && (
-                        <View className="mt-6 bg-zinc-900/40 p-4 rounded-2xl border-l-4 border-lime-500">
-                            <Text className="typo-label text-zinc-300 text-right leading-6">
+                        <View className="mt-6 bg-zinc-900/40 p-4 rounded-2xl" style={{ borderRightWidth: 4, borderRightColor: colors.lime[500] }}>
+                            <Text className="typo-label text-zinc-300 text-left leading-6">
                                 {workoutPlan.description}
                             </Text>
                         </View>

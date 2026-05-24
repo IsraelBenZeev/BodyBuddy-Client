@@ -91,7 +91,7 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
   );
 });
 const StatItem = React.memo(({ label, value }: { label: string; value: string }) => (
-  <View className="w-[48%] mb-4" accessible={true} accessibilityLabel={`${label}: ${value}`}>
+  <View className="w-[48%] mb-4 items-start" accessible={true} accessibilityLabel={`${label}: ${value}`}>
     <Text className="typo-caption text-zinc-500 mb-1">{label}</Text>
     <Text className="typo-body-primary text-white font-semibold">{value}</Text>
   </View>

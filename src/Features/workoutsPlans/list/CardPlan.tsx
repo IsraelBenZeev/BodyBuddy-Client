@@ -133,7 +133,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
       {/* 2. תוכן האימון */}
       <View className="p-5 flex-1 justify-between ">
 
-        <View>
+        <View className='items-start'>
           <Text className="typo-caption-bold text-lime-500 mb-1 uppercase tracking-widest">
             Workout Plan
           </Text>
@@ -142,7 +142,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           </Text>
         </View>
 
-        <Text numberOfLines={3} className="typo-label text-zinc-400 mt-3 leading-5">
+        <Text numberOfLines={3} className="typo-label text-zinc-400 mt-3 leading- text-left">
           {plan?.description}
         </Text>
         <View className="flex-row items-center gap-2">
