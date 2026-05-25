@@ -57,7 +57,7 @@ const ExerciseHistory = ({ exerciseId }: Props) => {
   }
 
   return (
-    <View className="px-4 pt-4 pb-8">
+    <View className="px-4 pt-4 pb-8 items-start">
       {/* כרטיסי PR */}
       <Text className="typo-body-primary text-white text-right mb-3">שיאים אישיים</Text>
       <View className="flex-row gap-3 mb-6">

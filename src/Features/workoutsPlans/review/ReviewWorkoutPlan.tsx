@@ -98,7 +98,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
   }, [selectedSession]);
   return (
     <Animated.View
-      className="flex-1"
+      className="flex-1 "
       entering={FadeIn.duration(600)} // משך זמן הכניסה במילי-שניות
       exiting={FadeOut.duration(400)} // משך זמן היציאה
     >

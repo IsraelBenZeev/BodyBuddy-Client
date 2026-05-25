@@ -127,7 +127,7 @@ const ExerciseItem = React.memo(function ExerciseItem({
           />
         )}
       </View>
-      <View className="flex-1 mr-4">
+      <View className="flex-1 mr-4 items-start">
         <Text className="typo-body-primary text-white" numberOfLines={1}>
           {exercise.name_he || exercise.name}
         </Text>

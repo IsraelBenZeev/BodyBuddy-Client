@@ -102,23 +102,25 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             exercise={exerciseData}
             gender={profile?.gender as 'male' | 'female' | undefined}
           />
-          {/* <TabsMenager instructions={exerciseData?.instructions_he} /> */}
-          <TabsManager
-            initialTab={1}
-            tabs={[
-              {
-                title: 'היסטוריה',
-                Component: <ExerciseHistory exerciseId={exerciseData.exerciseId} />,
-              },
-              {
-                title: 'הוראות',
-                Component: <Instractions instructions={exerciseData?.instructions_he} />,
-              },
-            ]}
-          />
-          {/* Support & Disclaimer under Instructions */}
-          <View className="px-6 mt-4 mb-8">
-             <Text className="typo-label text-background-400 text-left">
+
+            {/* <TabsMenager instructions={exerciseData?.instructions_he} /> */}
+            <TabsManager
+              initialTab={1}
+              tabs={[
+                {
+                  title: 'היסטוריה',
+                  Component: <ExerciseHistory exerciseId={exerciseData.exerciseId} />,
+                },
+                {
+                  title: 'הוראות',
+                  Component: <Instractions instructions={exerciseData?.instructions_he} />,
+                },
+              ]}
+            />
+        </View>
+        {/* Support & Disclaimer under Instructions */}
+        <View className="px-6 mt-4 mb-8">
+          <Text className="typo-label text-background-400 text-left">
             {'נתקלת בבעיה? '}
             <Text
               onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
@@ -128,10 +130,11 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             </Text>
           </Text>
 
-            <Text className="typo-caption text-zinc-400 text-center mt-2">
-              {'המידע המוצג תורגם אוטומטית ואינו מהווה תחליף לייעוץ מקצועי. הביצוע באחריות המתאמן בלבד.'}
-            </Text>
-          </View>
+          <Text className="typo-caption text-zinc-400 text-center mt-2">
+            {
+              'המידע המוצג תורגם אוטומטית ואינו מהווה תחליף לייעוץ מקצועי. הביצוע באחריות המתאמן בלבד.'
+            }
+          </Text>
         </View>
       </ScrollView>
       <Modal

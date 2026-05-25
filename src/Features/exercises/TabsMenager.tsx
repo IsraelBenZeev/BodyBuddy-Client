@@ -167,8 +167,8 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
   };
 
   return (
-    <View className="w-full flex-1">
-      <View className="flex-1">
+    <View className="w-full">
+      <View>
         {/* Tab Bar */}
         <View className="mx-6 mt-4 mb-2 bg-background-850 rounded-full p-1 relative flex-row items-center h-12 border border-gray-800 overflow-hidden">
           <Animated.View
@@ -206,7 +206,7 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
 
         {/* תוכן עם זיהוי מחוות – תופס את שאר הגובה */}
         <PanGestureHandler onHandlerStateChange={onGestureEvent} activeOffsetX={[-20, 20]}>
-          <View className="flex-1 p-6">{tabs[activeTab].Component}</View>
+          <View className="p-6">{tabs[activeTab].Component}</View>
         </PanGestureHandler>
       </View>
     </View>

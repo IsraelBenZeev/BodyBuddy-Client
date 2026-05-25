@@ -28,9 +28,6 @@ export const useSessionCreateWorkout = (user_id: string, workoutPlanId: string) 
     mutationFn: async ({ session }: { session: SessionDBType }) => await createSession(session),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [keyCashSessions, workoutPlanId, user_id] });
-      queryClient.invalidateQueries({
-        queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, user_id],
-      });
       queryClient.invalidateQueries({ queryKey: ['userWorkoutStats', user_id] });
     },
     onError: (error) => {
@@ -44,9 +41,14 @@ export const useSessionCreateExerciseLog = (user_id: string, workoutPlanId: stri
   return useMutation({
     mutationFn: async ({ exerciseLog }: { exerciseLog: ExerciseLogDBType[] }) =>
       await createSessionExerciseLogs(exerciseLog),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       triggerSuccess('האימון נשמר בהצלחה', 'success');
       queryClient.invalidateQueries({ queryKey: [keyCashSessions, workoutPlanId, user_id] });
+      queryClient.invalidateQueries({ queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, user_id] });
+      const uniqueExerciseIds = [...new Set(variables.exerciseLog.map((log) => log.exercise_id))];
+      uniqueExerciseIds.forEach((exerciseId) => {
+        queryClient.invalidateQueries({ queryKey: ['exerciseHistory', exerciseId, user_id] });
+      });
     },
     onError: (error) => {
       console.error('Mutation Error - Exercise Logs:', error);
