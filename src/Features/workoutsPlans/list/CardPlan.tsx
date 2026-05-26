@@ -102,6 +102,7 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           borderWidth: 1,
           borderRadius: 40,
           marginTop: 30,
+          direction: 'rtl',
         },
       ]}
     >

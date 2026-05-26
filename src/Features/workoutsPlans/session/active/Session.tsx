@@ -147,7 +147,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                     תרגיל {activeIndex + 1} מתוך {exercises?.length}
                 </Text>
             </View>
-            <View className="flex-1 items-start" style={{ height: SCREEN_HEIGHT * 0.85 }}>
+            <View className="flex-1" style={{ height: SCREEN_HEIGHT * 0.85 }}>
                 <CustomCarousel
                     data={exercises || []}
                     widthCard={SCREEN_WIDTH * 0.95}

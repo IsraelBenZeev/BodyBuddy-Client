@@ -78,7 +78,7 @@ const AnimatedCarouselItem = ({
   const currentActiveId = activeId || '';
   return (
     <Animated.View
-      style={[{ width: widthCard, marginRight: gap, overflow: 'visible', flex: 1, direction: 'rtl' }, animatedStyle]}
+      style={[{ width: widthCard, marginRight: gap, overflow: 'visible', }, animatedStyle]}
     >
       {/* FIX: כאן אנחנו מעבירים את כל 4 הארגומנטים שה-renderItem מצפה להם */}
       {renderItem(item, isActive, isSwiped, currentActiveId, translateY)}

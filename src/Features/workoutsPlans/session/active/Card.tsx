@@ -33,12 +33,12 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
   if (!item) return null;
 
   return (
-    <View className="bg-background-900 p-2 ">
-      <View className="justify-center w-full px-6 items-start">
+    <View className="bg-background-900 p-2">
+      <View className="justify-center w-full px-6 items-end">
         <Text className="typo-caption-bold text-lime-500 uppercase tracking-widest mb-2">
           {item.bodyParts_he || ''}
         </Text>
-        <Text className="typo-h3 text-white mb-6 ">
+        <Text className="typo-h3 text-white mb-6">
           {item.name_he || ''}
         </Text>
       </View>
