@@ -36,7 +36,7 @@ const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
 
   return (
     <View className="bg-background-800 rounded-2xl p-5 mb-4 border border-background-600 items-center">
-      <Text className="typo-h4 text-white mb-4  w-full">יעד חלבון יומי</Text>
+      <Text className="typo-h4 text-white mb-4  w-full text-left">יעד חלבון יומי</Text>
 
       <View className="items-center justify-center mb-5" style={{ width: CHART_SIZE, height: CHART_SIZE }}>
         <PieChart
