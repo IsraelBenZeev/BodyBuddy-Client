@@ -44,7 +44,7 @@ const ListFoodForMealBuilder = ({
   const showHeaderButton = !(addStep === 'create' && formPhase !== 'search');
 
   return (
-    <View className="flex-1 bg-background-950">
+    <View className="flex-1 bg-background-950 bd">
       {/* Handle עליון - נותן תחושה של דף נשלף */}
       <View className="items-center pt-3 pb-1">
         <View className="w-12 h-1.5 bg-white/10 rounded-full" />
@@ -68,7 +68,7 @@ const ListFoodForMealBuilder = ({
               />
             </Pressable>
           )}
-          <View>
+          <View className=''>
             <Text className="typo-h2 text-white  tracking-tight ">
               {addStep === 'list' ? 'בחירת מאכל' : addStep === 'amount' ? 'כמות והגשה' : 'מאכל חדש'}
             </Text>
@@ -131,7 +131,7 @@ const ListFoodForMealBuilder = ({
               <Pressable
                 onPress={() => onSelectFood(item)}
                 style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}
-                className="bg-background-800 border-b-4 border-black/20 rounded-3xl p-4 flex-row items-center gap-3"
+                className="bg-background-800 border-b-4 border-black/20 rounded-3xl p-4 flex-row items-center gap-3 text-left "
                 accessibilityRole="button"
                 accessibilityLabel={`${item.name} - בחר מאכל`}
               >
@@ -144,7 +144,7 @@ const ListFoodForMealBuilder = ({
                   />
                 </View>
 
-                <View className="flex-1">
+                <View className="flex-1 items-start">
                   <Text className="typo-h4 text-white tracking-tight">{item.name}</Text>
                   <View className="flex-row items-center mt-1">
                     <View className="bg-background-900 px-2 py-0.5 rounded-md border border-white/5">

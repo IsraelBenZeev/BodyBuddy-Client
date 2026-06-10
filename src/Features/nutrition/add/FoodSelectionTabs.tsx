@@ -18,8 +18,8 @@ export default function FoodSelectionTabs({ userId, date, onClose }: Props) {
     { title: 'ארוחות', Component: <Meals userId={userId} date={date} onClose={onClose} /> },
   ];
   return (
-    <View className="flex-1 ">
-      <TabsManager initialTab={0} tabs={tabs} />
+    <View className="flex-1">
+      <TabsManager initialTab={0} tabs={tabs} flex />
     </View>
   );
 }

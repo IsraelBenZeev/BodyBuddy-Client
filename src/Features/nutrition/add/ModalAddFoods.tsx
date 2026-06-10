@@ -36,7 +36,7 @@ const ModalAddFoods = ({ visible, onClose, userId, date }: ModalAddFoodsProps) =
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <View style={{ flex: 1, backgroundColor: colors.background[900] }}>
+      <View style={{ flex: 1, backgroundColor: colors.background[900] }} className='vu'>
         <View style={sheetStyles.handleContainer}>
           <Pressable
             onPress={onClose}

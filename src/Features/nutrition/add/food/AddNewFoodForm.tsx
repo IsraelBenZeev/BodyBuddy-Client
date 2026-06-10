@@ -266,7 +266,7 @@ const AddNewFood = ({
                   accessibilityRole="button"
                   accessibilityLabel={`בחר ${food.name}`}
                 >
-                  <View className="flex-1">
+                  <View className="flex-1 items-start">
                     <Text className="typo-body-primary text-white">{food.name}</Text>
                     {cal != null && (
                       <Text className="typo-caption text-background-400 mt-0.5">
@@ -324,12 +324,12 @@ const AddNewFood = ({
                   <View className="flex-1 h-[0.5px] bg-white/[0.06]" />
                 </View>
                 {isRecentLoading ? (
-                  <View className="bg-white/[0.03] rounded-3xl border border-white/[0.05] mb-4 flex-row items-center justify-center py-5 gap-3">
+                  <View className="bg-white/[0.03] rounded-3xl border border-white/[0.05] mb-4 flex-row items-center justify-center py-5 gap-3 ">
                     <ActivityIndicator size="small" color={colors.lime[500]} />
                     <Text className="typo-caption text-background-500">טוען מההיסטוריה...</Text>
                   </View>
                 ) : (
-                  <View className="bg-white/[0.03] rounded-3xl border border-white/[0.05] mb-4 overflow-hidden">
+                  <View className="bg-white/[0.03] rounded-3xl border border-white/[0.05] mb-4 overflow-hidden ">
                     {recentFoods.slice(0, 5).map((food, idx) => {
                       const cal =
                         food.measurement_type === 'units'
@@ -346,7 +346,7 @@ const AddNewFood = ({
                           accessibilityRole="button"
                           accessibilityLabel={`בחר ${food.name}`}
                         >
-                          <View className="flex-1">
+                          <View className="flex-1 items-start">
                             <Text className="typo-body-primary text-white">{food.name}</Text>
                             {cal != null && (
                               <Text className="typo-caption text-background-400 mt-0.5">

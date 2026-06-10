@@ -3,7 +3,6 @@ import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc
 import { useDeleteMeal, useMealsWithItems } from '@/src/hooks/useNutrition';
 import type { MealWithItems } from '@/src/types/meal';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
-import EmptyState from '@/src/ui/EmptyState';
 import ScreenHeader from '@/src/ui/ScreenHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -59,16 +58,41 @@ export default function Meals({ userId, date, onClose }: Props) {
 
   if (meals.length === 0) {
     return (
-      <EmptyState
-        icon={<Ionicons name="restaurant-outline" size={64} color={colors.background[400]} />}
-        title="עדיין אין לך ארוחות"
-        description="צור את הארוחה הראשונה שלך – תבחר מאכלים וכמויות ותשמור כארוחה"
-        action={{
-          label: 'צור את הארוחה הראשונה שלך',
-          onPress: handleCreateFirstMeal,
-          icon: <Ionicons name="add-circle-outline" size={24} color={colors.background[900]} />,
-        }}
-      />
+      <View className="flex-1 bg-background-900 px-5 pt-6">
+        <ScreenHeader title="הארוחות שלי" subtitle="בחר ארוחה מוכנה כדי להוסיף ליום שלך" />
+        <View className="flex-1 items-center px-6 gap-8">
+          <View className="items-center gap-4 mb-10">
+            <View className="items-center justify-center" style={{ width: 160, height: 160 }}>
+              <View className="absolute w-40 h-40 bg-lime-500/5 rounded-full" />
+              <View className="absolute w-28 h-28 bg-lime-500/8 rounded-full" />
+              <View className="bg-background-800 border border-white/8 p-8 rounded-full">
+                <Ionicons name="restaurant-outline" size={44} color="#84cc16" />
+              </View>
+            </View>
+            <Text className="typo-h2 text-white text-center">עדיין לא נוספו ארוחות</Text>
+            <Text className="typo-label text-gray-400 text-center">
+              צור ארוחה מוכנה עם מאכלים וכמויות כדי להוסיף אותה בקלות ביום שלך
+            </Text>
+          </View>
+          <Pressable
+            onPress={handleCreateFirstMeal}
+            style={({ pressed }) => [
+              {
+                transform: [{ scale: pressed ? 0.96 : 1 }],
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
+            className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3 w-full"
+            accessibilityRole="button"
+            accessibilityLabel="צור ארוחה חדשה לשמירה"
+          >
+            <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
+              <Ionicons name="add" size={26} color="#84cc16" />
+            </View>
+            <Text className="typo-btn-cta text-lime-400">צור ארוחה חדשה</Text>
+          </Pressable>
+        </View>
+      </View>
     );
   }
 

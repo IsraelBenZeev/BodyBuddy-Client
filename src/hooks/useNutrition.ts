@@ -115,6 +115,7 @@ export const useFoodItems = (userId: string | undefined) => {
     queryFn: () => getFoodItems(userId!),
     enabled: !!userId,
     staleTime: Infinity,
+    refetchOnMount: 'always',
   });
 };
 

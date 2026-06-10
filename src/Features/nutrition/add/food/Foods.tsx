@@ -3,7 +3,6 @@ import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc
 import { useCreateNutritionEntry, useDeleteFoodItem, useFoodItems } from '@/src/hooks/useNutrition';
 import type { FoodItem } from '@/src/types/nutrition';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
-import EmptyState from '@/src/ui/EmptyState';
 import ScreenHeader from '@/src/ui/ScreenHeader';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -52,9 +51,17 @@ const Foods = ({ userId, date, onClose }: Props) => {
     deleteFood(id);
   }, [foodToDelete, deleteFood]);
 
-  const renderItem = useCallback(({ item }: { item: FoodItem }) => (
-    <FoodCard item={item} userId={userId} onSelect={handleFoodSelect} onDelete={setFoodToDelete} />
-  ), [userId, handleFoodSelect]);
+  const renderItem = useCallback(
+    ({ item }: { item: FoodItem }) => (
+      <FoodCard
+        item={item}
+        userId={userId}
+        onSelect={handleFoodSelect}
+        onDelete={setFoodToDelete}
+      />
+    ),
+    [userId, handleFoodSelect]
+  );
 
   const handlePortionSubmit = useCallback(
     (amount: number, portionUnit: 'g' | 'unit') => {
@@ -97,7 +104,11 @@ const Foods = ({ userId, date, onClose }: Props) => {
     <View className="flex-1 bg-background-900 px-5 pt-6">
       <ScreenHeader
         title="רשימת המאכלים שלי"
-        subtitle={foodItems.length > 0 ? `בחר מאכל מתוך ${foodItems.length} פריטים` : 'עדיין לא הוספת מזונות'}
+        subtitle={
+          foodItems.length > 0
+            ? `בחר מאכל מתוך ${foodItems.length} פריטים`
+            : 'עדיין לא הוספת מזונות'
+        }
       />
 
       {isLoading ? (
@@ -105,16 +116,38 @@ const Foods = ({ userId, date, onClose }: Props) => {
           <ActivityIndicator color="#84cc16" size="large" />
         </View>
       ) : foodItems.length === 0 ? (
-        <EmptyState
-          icon={<Ionicons name="search-outline" size={60} color="#4b5563" />}
-          title="רשימת המאכלים שלך ריקה"
-          description="נראה שעדיין לא הוספת מוצרים. הוסף את המזונות שאתה אוכל בדרך כלל כדי שיופיעו כאן."
-          action={{
-            label: "הוסף מאכל ראשון",
-            onPress: handleAddNewFood,
-            icon: <Ionicons name="add-circle" size={24} color="#000" />,
-          }}
-        />
+        <View className="flex-1 items-center  px-6 gap-8">
+          <View className="items-center gap-4 mb-10">
+            <View className="items-center justify-center" style={{ width: 160, height: 160 }}>
+              <View className="absolute w-40 h-40 bg-lime-500/5 rounded-full" />
+              <View className="absolute w-28 h-28 bg-lime-500/8 rounded-full" />
+              <View className="bg-background-800 border border-white/8 p-8 rounded-full">
+                <MaterialCommunityIcons name="food-off-outline" size={44} color="#84cc16" />
+              </View>
+            </View>
+            <Text className="typo-h2 text-white text-center">עדיין לא נוספו מאכלים</Text>
+            <Text className="typo-label text-gray-400 text-center">
+              הוסף מאכלים לרשימה שלך כדי לעקוב אחרי התזונה שלך
+            </Text>
+          </View>
+          <Pressable
+            onPress={handleAddNewFood}
+            style={({ pressed }) => [
+              {
+                transform: [{ scale: pressed ? 0.96 : 1 }],
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
+            className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3 w-full"
+            accessibilityRole="button"
+            accessibilityLabel="צור מאכל חדש לשמירה"
+          >
+            <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
+              <Ionicons name="add" size={26} color="#84cc16" />
+            </View>
+            <Text className="typo-btn-cta text-lime-400">צור מאכל חדש</Text>
+          </Pressable>
+        </View>
       ) : (
         <FlatList
           data={foodItems}
@@ -131,26 +164,25 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
       {/* כפתור הוספה צף בתחתית — מוצג רק כשיש מאכלים */}
       {foodItems.length > 0 && (
-              <View className="absolute bottom-3 left-6 right-6 shadow-2xl">
-                <Pressable
-                  onPress={handleAddNewFood}
-                  style={({ pressed }) => [
-                    {
-                      transform: [{ scale: pressed ? 0.96 : 1 }],
-                      opacity: pressed ? 0.9 : 1,
-                    },
-                  ]}
-                  className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3"
-                  accessibilityRole="button"
-                  accessibilityLabel="הוסף מאכל חדש לרשימה"
-                >
-                  <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
-                    <Ionicons name="add" size={26} color="#84cc16" />
-                  </View>
-                  <Text className="typo-btn-cta text-lime-400">הוסף מאכל חדש</Text>
-                </Pressable>
-              </View>
-        
+        <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
+          <Pressable
+            onPress={handleAddNewFood}
+            style={({ pressed }) => [
+              {
+                transform: [{ scale: pressed ? 0.96 : 1 }],
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
+            className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3"
+            accessibilityRole="button"
+            accessibilityLabel="הוסף מאכל חדש לרשימה"
+          >
+            <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
+              <Ionicons name="add" size={26} color="#84cc16" />
+            </View>
+            <Text className="typo-btn-cta text-lime-400 ">הוסף מאכל חדש</Text>
+          </Pressable>
+        </View>
       )}
 
       <DeleteConfirmModal
@@ -180,10 +212,13 @@ const FoodCard = React.memo(function FoodCard({
   onDelete: (food: FoodItem) => void;
 }) {
   const handlePress = useCallback(() => onSelect(item), [onSelect, item]);
-  const handleDelete = useCallback((e: any) => {
-    e.stopPropagation();
-    onDelete(item);
-  }, [onDelete, item]);
+  const handleDelete = useCallback(
+    (e: any) => {
+      e.stopPropagation();
+      onDelete(item);
+    },
+    [onDelete, item]
+  );
 
   return (
     <Pressable
@@ -203,12 +238,13 @@ const FoodCard = React.memo(function FoodCard({
         </View>
 
         <View className="flex-1">
-          <Text className="typo-h4 text-white" numberOfLines={1}>
+          <Text className="typo-h4 text-white text-left" numberOfLines={1}>
             {item.name}
           </Text>
           <View className="flex-row items-center mt-1">
             <Text className="typo-caption-bold text-lime-400">
-              {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100}{' '}קק״ל
+              {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100}{' '}
+              קק״ל
             </Text>
             <Text className="typo-caption text-gray-500 mr-1">
               {item.measurement_type === 'units' ? `/ ליחידה` : '/ ל-100 גרם'}
@@ -237,7 +273,8 @@ const FoodCard = React.memo(function FoodCard({
       <View className="flex-row bg-white/5 px-4 py-3 justify-around items-center">
         <View className="items-center flex-1">
           <Text className="typo-caption-bold text-lime-400">
-            {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100} קק״ל
+            {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100}{' '}
+            קק״ל
           </Text>
           <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">קלוריות</Text>
         </View>

@@ -82,7 +82,7 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
       <View className="bg-orange-500/10 w-10 h-10 rounded-xl items-center justify-center ">
         <Ionicons name="nutrition" size={20} color="#fb923c" />
       </View>
-      <View className="flex-1">
+      <View className="flex-1 items-start">
         <Text className="typo-body-bold text-white leading-tight" numberOfLines={1}>
           {item.name}
         </Text>
@@ -539,7 +539,7 @@ const MealBuilderScreen = () => {
         </View>
         {/* קלט שם הארוחה */}
         <View className="mb-8">
-          <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
+          <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest mb-2 px-1 text-left">
             איך נקרא לארוחה?
           </Text>
           <TextInput
