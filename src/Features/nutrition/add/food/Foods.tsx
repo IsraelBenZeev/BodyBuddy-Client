@@ -8,6 +8,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import ActionButton from '@/src/ui/ActionButton';
 import AddNewFoodSelection from './AddNewFoodSelection';
 
 interface Props {
@@ -130,23 +131,12 @@ const Foods = ({ userId, date, onClose }: Props) => {
               הוסף מאכלים לרשימה שלך כדי לעקוב אחרי התזונה שלך
             </Text>
           </View>
-          <Pressable
+          <ActionButton
             onPress={handleAddNewFood}
-            style={({ pressed }) => [
-              {
-                transform: [{ scale: pressed ? 0.96 : 1 }],
-                opacity: pressed ? 0.9 : 1,
-              },
-            ]}
-            className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3 w-full"
-            accessibilityRole="button"
+            label="צור מאכל חדש"
             accessibilityLabel="צור מאכל חדש לשמירה"
-          >
-            <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
-              <Ionicons name="add" size={26} color="#84cc16" />
-            </View>
-            <Text className="typo-btn-cta text-lime-400">צור מאכל חדש</Text>
-          </Pressable>
+            fullWidth
+          />
         </View>
       ) : (
         <FlatList
@@ -165,23 +155,11 @@ const Foods = ({ userId, date, onClose }: Props) => {
       {/* כפתור הוספה צף בתחתית — מוצג רק כשיש מאכלים */}
       {foodItems.length > 0 && (
         <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
-          <Pressable
+          <ActionButton
             onPress={handleAddNewFood}
-            style={({ pressed }) => [
-              {
-                transform: [{ scale: pressed ? 0.96 : 1 }],
-                opacity: pressed ? 0.9 : 1,
-              },
-            ]}
-            className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3"
-            accessibilityRole="button"
+            label="הוסף מאכל חדש"
             accessibilityLabel="הוסף מאכל חדש לרשימה"
-          >
-            <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
-              <Ionicons name="add" size={26} color="#84cc16" />
-            </View>
-            <Text className="typo-btn-cta text-lime-400 ">הוסף מאכל חדש</Text>
-          </Pressable>
+          />
         </View>
       )}
 

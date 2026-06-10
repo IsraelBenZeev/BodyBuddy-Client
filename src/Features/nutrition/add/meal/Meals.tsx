@@ -4,6 +4,7 @@ import { useDeleteMeal, useMealsWithItems } from '@/src/hooks/useNutrition';
 import type { MealWithItems } from '@/src/types/meal';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
 import ScreenHeader from '@/src/ui/ScreenHeader';
+import ActionButton from '@/src/ui/ActionButton';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -74,23 +75,12 @@ export default function Meals({ userId, date, onClose }: Props) {
               צור ארוחה מוכנה עם מאכלים וכמויות כדי להוסיף אותה בקלות ביום שלך
             </Text>
           </View>
-          <Pressable
+          <ActionButton
             onPress={handleCreateFirstMeal}
-            style={({ pressed }) => [
-              {
-                transform: [{ scale: pressed ? 0.96 : 1 }],
-                opacity: pressed ? 0.9 : 1,
-              },
-            ]}
-            className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3 w-full"
-            accessibilityRole="button"
+            label="צור ארוחה חדשה"
             accessibilityLabel="צור ארוחה חדשה לשמירה"
-          >
-            <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
-              <Ionicons name="add" size={26} color="#84cc16" />
-            </View>
-            <Text className="typo-btn-cta text-lime-400">צור ארוחה חדשה</Text>
-          </Pressable>
+            fullWidth
+          />
         </View>
       </View>
     );
@@ -134,23 +124,11 @@ export default function Meals({ userId, date, onClose }: Props) {
 
       {/* כפתור יצירת ארוחה - צף בתחתית */}
       <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
-        <Pressable
+        <ActionButton
           onPress={handleCreateFirstMeal}
-          style={({ pressed }) => [
-            {
-              transform: [{ scale: pressed ? 0.96 : 1 }],
-              opacity: pressed ? 0.9 : 1,
-            },
-          ]}
-          className="bg-gradient-to-r from-lime-500/15 to-lime-500/5 border border-lime-500/40 rounded-full py-3 px-6 flex-row items-center justify-center gap-3"
-          accessibilityRole="button"
+          label="צור ארוחה חדשה"
           accessibilityLabel="צור ארוחה חדשה לשמירה"
-        >
-          <View className="bg-lime-500/25 w-12 h-12 rounded-full items-center justify-center border border-lime-500/50">
-            <Ionicons name="add" size={26} color="#84cc16" />
-          </View>
-          <Text className="typo-btn-cta text-lime-400">צור ארוחה חדשה</Text>
-        </Pressable>
+        />
       </View>
 
       <DeleteConfirmModal
