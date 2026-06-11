@@ -267,8 +267,8 @@ const MealCard = React.memo(function MealCard({
             <View className="bg-lime-500/10 w-12 h-12 rounded-2xl items-center justify-center ml-3 border border-lime-500/10">
               <Ionicons name="restaurant" size={22} color="#bef264" />
             </View>
-            <View className="flex-1">
-              <Text className="typo-h4 text-white font-bold" numberOfLines={1}>
+            <View className="flex-1 items-start">
+              <Text className="typo-h4 text-white font-bold text-left" numberOfLines={1}>
                 {meal.name_meal || 'ארוחה חדשה'}
               </Text>
               <Text className="text-xs text-gray-500 font-medium">
@@ -277,7 +277,7 @@ const MealCard = React.memo(function MealCard({
             </View>
           </View>
 
-          <View className="flex-row items-center gap-2">
+          <View className="flex-row items-center gap-2 ">
             <Pressable
               onPress={(e) => {
                 e.stopPropagation();

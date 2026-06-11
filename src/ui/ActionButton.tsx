@@ -44,18 +44,18 @@ const VARIANT_CONFIG: Record<
     activityColor: '#84cc16',
   },
   secondary: {
-    button: 'bg-background-800 border border-white/10 rounded-2xl',
-    iconWrapper: 'bg-white/5 border border-white/5 rounded-xl',
+    button: 'bg-gradient-to-r from-white/10 to-white/5 border border-white/60 rounded-full',
+    iconWrapper: 'bg-white/15 border border-white/20 rounded-full',
     textClass: 'typo-btn-cta text-white',
     iconColor: '#ffffff',
     activityColor: '#ffffff',
   },
   primary: {
-    button: 'bg-lime-500 rounded-2xl',
-    iconWrapper: 'bg-black/10 rounded-xl',
-    textClass: 'typo-btn-cta text-black',
-    iconColor: '#000000',
-    activityColor: '#000000',
+    button: 'bg-gradient-to-r from-lime-500/30 to-lime-500/10 border border-lime-500 rounded-full',
+    iconWrapper: 'bg-lime-500/40 border border-lime-500/80 rounded-full',
+    textClass: 'typo-btn-cta text-lime-300',
+    iconColor: '#bef264',
+    activityColor: '#bef264',
   },
 };
 

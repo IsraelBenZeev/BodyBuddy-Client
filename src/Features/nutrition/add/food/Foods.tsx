@@ -131,11 +131,13 @@ const Foods = ({ userId, date, onClose }: Props) => {
               הוסף מאכלים לרשימה שלך כדי לעקוב אחרי התזונה שלך
             </Text>
           </View>
+
           <ActionButton
             onPress={handleAddNewFood}
             label="צור מאכל חדש"
             accessibilityLabel="צור מאכל חדש לשמירה"
             fullWidth
+            variant="outline"
           />
         </View>
       ) : (
@@ -154,11 +156,12 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
       {/* כפתור הוספה צף בתחתית — מוצג רק כשיש מאכלים */}
       {foodItems.length > 0 && (
-        <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
+        <View className="absolute bottom-8 left-6 right-6 ">
           <ActionButton
             onPress={handleAddNewFood}
             label="הוסף מאכל חדש"
             accessibilityLabel="הוסף מאכל חדש לרשימה"
+            variant="primary"
           />
         </View>
       )}

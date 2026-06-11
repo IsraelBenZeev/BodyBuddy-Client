@@ -13,6 +13,7 @@ import {
 import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
+import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 import {
@@ -246,23 +247,15 @@ const NutritionScreen = () => {
             transform: [{ translateY: buttonTranslateY }],
           }}
         >
-          <Pressable
+
+          <ActionButton
             onPress={handleShowOptions}
-            className="flex-row items-center justify-center gap-3 rounded-2xl bg-lime-500 h-14"
-            style={({ pressed }) => ({
-              transform: [{ scale: pressed ? 0.97 : 1 }],
-              shadowColor: '#84cc16',
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.55,
-              shadowRadius: 18,
-              elevation: 14,
-            })}
-            accessibilityRole="button"
-            accessibilityLabel="הוספת מאכל או ארוחה"
-          >
-            <Ionicons name="add-circle" size={24} color="black" />
-            <Text className="typo-btn-cta text-black">הוספת מאכל או ארוחה</Text>
-          </Pressable>
+            iconName="add-circle"
+            label="הוספת מאכל או ארוחה"
+            variant="primary"
+            fullWidth
+          />
+            
         </Animated.View>
       </View>
 
@@ -275,7 +268,12 @@ const NutritionScreen = () => {
         onCameraAI={handleCameraAI}
       />
 
-      <CameraAIModal visible={showCameraModal} onClose={handleCloseCameraModal} />
+      <CameraAIModal
+        visible={showCameraModal}
+        onClose={handleCloseCameraModal}
+        userId={user?.id ?? ''}
+        date={today}
+      />
 
       <ModalAddFoods
         visible={isAddFoodOpen}

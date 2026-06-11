@@ -667,6 +667,10 @@ export const analyzeNutritionImage = async (imageBase64: string, signal?: AbortS
     body: JSON.stringify({ image: imageBase64 }),
     signal,
   });
-  if (!response.ok) throw new Error('שגיאה בניתוח התמונה');
+  if (!response.ok) {
+    const body = await response.text().catch(() => '(no body)');
+    console.error('[analyzeNutritionImage] status:', response.status, 'body:', body);
+    throw new Error('שגיאה בניתוח התמונה');
+  }
   return response.json() as Promise<AIAnalysisResult>;
 };

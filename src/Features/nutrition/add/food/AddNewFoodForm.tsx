@@ -2,6 +2,7 @@ import { colors } from '@/colors';
 import { useRecentFoods, useSearchFoodItems, useTrackFoodUsage } from '@/src/hooks/useNutrition';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import type { CreateFoodFormData, FoodItem, MeasurementType } from '@/src/types/nutrition';
+import ActionButton from '@/src/ui/ActionButton';
 import ValueStepper from '@/src/ui/ValueStepper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -710,79 +711,61 @@ const AddNewFood = ({
 
     if (phase === 'db-amount') {
       return (
-        <Pressable
+        <ActionButton
           onPress={handleConfirmDB}
           disabled={isPending}
-          className={`w-full flex-row items-center justify-center rounded-2xl h-14 ${isPending ? 'opacity-50 bg-background-700' : 'bg-lime-500'}`}
-          accessibilityRole="button"
-          accessibilityLabel="הוסף ליומן"
-        >
-          <MaterialCommunityIcons
-            name="notebook-plus-outline"
-            size={20}
-            color={colors.background[900]}
-          />
-          <Text className="typo-btn-cta mr-2 text-background-900">
-            {isPending ? 'שומר...' : mode === 'meal-builder' ? 'הוסף לארוחה' : 'הוסף ליומן'}
-          </Text>
-        </Pressable>
+          loading={isPending}
+          label={mode === 'meal-builder' ? 'הוסף לארוחה' : 'הוסף ליומן'}
+          iconName="add-circle"
+          variant="primary"
+          size="lg"
+          fullWidth
+        />
       );
     }
 
     // custom-details
     if (mode === 'meal-builder') {
       return (
-        <Pressable
+        <ActionButton
           onPress={() => handleCustomSave(false)}
           disabled={isPending || !step3Valid}
-          className={`w-full flex-row items-center justify-center rounded-2xl h-14 ${
-            isPending || !step3Valid ? 'opacity-50 bg-background-700' : 'bg-lime-500'
-          }`}
-          accessibilityRole="button"
-          accessibilityLabel="שמור והוסף לארוחה"
-        >
-          <MaterialCommunityIcons
-            name="silverware-fork-knife"
-            size={20}
-            color={colors.background[900]}
-          />
-          <Text className="typo-btn-cta mr-2 text-background-900">
-            {isPending ? 'שומר...' : 'שמור והוסף לארוחה'}
-          </Text>
-        </Pressable>
+          loading={isPending}
+          label="שמור והוסף לארוחה"
+          iconName="add-circle"
+          variant="primary"
+          size="lg"
+          fullWidth
+        />
       );
     }
 
     return (
       <View className="flex-row gap-3">
-        <Pressable
-          onPress={() => handleCustomSave(false)}
-          disabled={isPending || !step3Valid}
-          className={`flex-1 flex-row items-center justify-center rounded-2xl border border-white/10 h-14 ${
-            isPending || !step3Valid ? 'bg-background-700 opacity-50' : 'bg-background-800'
-          }`}
-          accessibilityRole="button"
-          accessibilityLabel="שמור"
-        >
-          <MaterialCommunityIcons name="content-save-outline" size={20} color={colors.white} />
-          <Text className="typo-label text-white mr-2">{isPending ? 'שומר...' : 'שמור'}</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => handleCustomSave(true)}
-          disabled={isPending || !step3Valid}
-          className={`flex-1 flex-row items-center justify-center rounded-2xl h-14 ${
-            isPending || !step3Valid ? 'opacity-50 bg-background-700' : 'bg-lime-500'
-          }`}
-          accessibilityRole="button"
-          accessibilityLabel="שמור והוסף ליומן"
-        >
-          <MaterialCommunityIcons
-            name="notebook-plus-outline"
-            size={20}
-            color={colors.background[900]}
+        <View style={{ flex: 1 }}>
+          <ActionButton
+            onPress={() => handleCustomSave(false)}
+            disabled={isPending || !step3Valid}
+            loading={isPending}
+            label="שמור"
+            iconName="save-outline"
+            variant="secondary"
+            size="md"
+            fullWidth
           />
-          <Text className="typo-label mr-2 text-background-900">שמור + יומן</Text>
-        </Pressable>
+        </View>
+        <View style={{ flex: 1 }}>
+          <ActionButton
+            onPress={() => handleCustomSave(true)}
+            disabled={isPending || !step3Valid}
+            loading={isPending}
+            label="שמור + יומן"
+            iconName="add-circle"
+            variant="primary"
+            size="md"
+            fullWidth
+          />
+        </View>
       </View>
     );
   };
