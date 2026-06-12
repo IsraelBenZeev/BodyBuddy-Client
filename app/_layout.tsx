@@ -8,7 +8,7 @@ import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { DevSettings, I18nManager, Platform, StatusBar, StyleSheet } from 'react-native';
+import { I18nManager, Platform, StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { QueryClientManager } from 'reactotron-react-query';
@@ -18,9 +18,6 @@ import Reactotron from '../ReactotronConfig';
 if (Platform.OS !== 'web') {
   I18nManager.allowRTL(true);
   I18nManager.forceRTL(true);
-  if (!I18nManager.isRTL && __DEV__) {
-    DevSettings.reload();
-  }
 }
 
 SplashScreen.preventAutoHideAsync();

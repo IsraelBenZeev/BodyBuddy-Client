@@ -26,7 +26,8 @@
       "PowerShell(Add-MpPreference *)",
       "PowerShell(Get-ChildItem *)",
       "PowerShell(Get-Process *)",
-      "PowerShell(Test-NetConnection *)"
+      "PowerShell(Test-NetConnection *)",
+      "Skill(build-aab)"
     ]
   },
   "enableAllProjectMcpServers": true,
