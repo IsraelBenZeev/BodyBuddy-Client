@@ -487,9 +487,10 @@ export default function MealReviewModal({
           acc.calories += Math.round(n.calories);
           acc.protein += Math.round(n.protein);
           acc.carbs += Math.round(n.carbs);
+          acc.fat += Math.round(n.fat);
           return acc;
         },
-        { calories: 0, protein: 0, carbs: 0 }
+        { calories: 0, protein: 0, carbs: 0, fat: 0 }
       ),
     [items, getAmount]
   );
@@ -536,21 +537,31 @@ export default function MealReviewModal({
             />
           ))}
 
-          <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05] mt-2">
-            <Text className="text-background-400 text-[10px] font-bold uppercase tracking-[2px] mb-4 text-center">
-              סיכום ערכים תזונתיים
-            </Text>
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-background-300 font-medium">קלוריות</Text>
-              <Text className="text-white font-bold">{totals.calories} קק״ל</Text>
+          <View className="bg-lime-500/[0.05] rounded-3xl p-5 border border-lime-500/20 mt-2">
+            <Text className="typo-caption-bold text-lime-400 mb-4 text-center tracking-widest">סה״כ ארוחה</Text>
+            <View className="bg-lime-500/10 border border-lime-500/25 rounded-2xl p-4 mb-3 items-center">
+              <Text className="typo-caption text-lime-400 mb-0.5">קלוריות</Text>
+              <View className="flex-row items-baseline gap-1.5">
+                <Text className="text-4xl font-black text-white">{totals.calories}</Text>
+                <Text className="typo-body-primary text-lime-400 font-bold">קק״ל</Text>
+              </View>
             </View>
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-background-300 font-medium">חלבון</Text>
-              <Text className="text-white font-bold">{totals.protein} גרם</Text>
-            </View>
-            <View className="flex-row justify-between items-center">
-              <Text className="text-background-300 font-medium">פחמימות</Text>
-              <Text className="text-white font-bold">{totals.carbs} גרם</Text>
+            <View className="flex-row gap-2">
+              <View className="flex-1 bg-blue-500/[0.06] border border-blue-500/20 rounded-2xl p-3 items-center">
+                <Text className="typo-caption text-blue-400 mb-0.5">חלבון</Text>
+                <Text className="typo-h4 text-white">{totals.protein}</Text>
+                <Text className="typo-caption text-background-500">גרם</Text>
+              </View>
+              <View className="flex-1 bg-amber-500/[0.06] border border-amber-500/20 rounded-2xl p-3 items-center">
+                <Text className="typo-caption text-amber-400 mb-0.5">פחמימות</Text>
+                <Text className="typo-h4 text-white">{totals.carbs}</Text>
+                <Text className="typo-caption text-background-500">גרם</Text>
+              </View>
+              <View className="flex-1 bg-red-500/[0.06] border border-red-500/20 rounded-2xl p-3 items-center">
+                <Text className="typo-caption text-red-400 mb-0.5">שומן</Text>
+                <Text className="typo-h4 text-white">{totals.fat}</Text>
+                <Text className="typo-caption text-background-500">גרם</Text>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -631,38 +642,47 @@ const MealReviewRow = React.memo(function MealReviewRow({
         </View>
       </View>
 
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center bg-background-800 rounded-2xl border border-background-600 p-1">
-          <Pressable
-            onPress={() => onQuantityChange(isUnits ? 0.5 : 10)}
-            className="w-10 h-10 bg-lime-500 rounded-xl items-center justify-center"
-          >
-            <Ionicons name="add" size={20} color="#000" />
-          </Pressable>
-          <View className="px-4 items-center min-w-[60px]">
-            <Text className="text-white font-bold text-lg">{state.quantity}</Text>
-          </View>
-          <Pressable
-            onPress={() => onQuantityChange(-0.5)}
-            className="w-10 h-10 bg-background-700 rounded-xl items-center justify-center border border-background-600"
-          >
-            <Ionicons name="remove" size={20} color="#fff" />
-          </Pressable>
+      <View className="flex-row items-center justify-between mb-4">
+        <Pressable
+          onPress={() => onQuantityChange(-(isUnits ? 0.5 : 10))}
+          className="w-12 h-12 items-center justify-center bg-background-700 rounded-xl border border-background-600 active:scale-95"
+          accessibilityRole="button"
+          accessibilityLabel="הקטן כמות"
+        >
+          <Ionicons name="remove" size={22} color="#fff" />
+        </Pressable>
+
+        <View className="items-center flex-1">
+          <Text className="text-4xl font-bold text-white">{state.quantity}</Text>
+          <Text className="typo-label text-background-400 mt-1">{unitLabel}</Text>
         </View>
 
-        <View className="flex-row gap-4">
-          <View className="items-center">
-            <Text className="text-[9px] text-background-500 uppercase font-bold">P</Text>
-            <Text className="text-xs font-bold text-white">{nutrients.protein}</Text>
-          </View>
-          <View className="items-center">
-            <Text className="text-[9px] text-background-500 uppercase font-bold">C</Text>
-            <Text className="text-xs font-bold text-white">{nutrients.carbs}</Text>
-          </View>
-          <View className="items-center">
-            <Text className="text-[9px] text-background-500 uppercase font-bold">F</Text>
-            <Text className="text-xs font-bold text-white">{nutrients.fat}</Text>
-          </View>
+        <Pressable
+          onPress={() => onQuantityChange(isUnits ? 0.5 : 10)}
+          className="w-12 h-12 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
+          accessibilityRole="button"
+          accessibilityLabel="הגדל כמות"
+        >
+          <Ionicons name="add" size={22} color="#000" />
+        </Pressable>
+      </View>
+
+      <View className="flex-row gap-1.5">
+        <View className="flex-1 bg-lime-500/[0.06] border border-lime-500/15 rounded-xl p-2 items-center">
+          <Text className="typo-label text-white font-bold">{calories}</Text>
+          <Text className="typo-caption text-lime-400">קק״ל</Text>
+        </View>
+        <View className="flex-1 bg-blue-500/[0.06] border border-blue-500/15 rounded-xl p-2 items-center">
+          <Text className="typo-label text-white font-bold">{nutrients.protein}</Text>
+          <Text className="typo-caption text-blue-400">חלבון</Text>
+        </View>
+        <View className="flex-1 bg-amber-500/[0.06] border border-amber-500/15 rounded-xl p-2 items-center">
+          <Text className="typo-label text-white font-bold">{nutrients.carbs}</Text>
+          <Text className="typo-caption text-amber-400">פחמ׳</Text>
+        </View>
+        <View className="flex-1 bg-red-500/[0.06] border border-red-500/15 rounded-xl p-2 items-center">
+          <Text className="typo-label text-white font-bold">{nutrients.fat}</Text>
+          <Text className="typo-caption text-red-400">שומן</Text>
         </View>
       </View>
     </View>

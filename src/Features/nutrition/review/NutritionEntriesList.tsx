@@ -155,10 +155,16 @@ const FoodEntryRow = React.memo(function FoodEntryRow({
         <View className="bg-background-700 rounded-xl w-12 h-12 items-center justify-center mr-1">
           <Ionicons name="nutrition-outline" size={22} color={colors.orange[400]} />
         </View>
-        <View className="flex-1 mr-2  items-start">
+        <View className="flex-1 mr-2 items-start">
           <Text className="typo-body-primary text-white text-left" numberOfLines={2}>
             {formatEntryPortionLine(entry)}
           </Text>
+          {entry.source === 'ai' && (
+            <View className="flex-row items-center gap-1 bg-lime-500/15 border border-lime-500/30 rounded-full px-2 py-0.5 mt-1">
+              <View className="w-1 h-1 rounded-full bg-lime-400" />
+              <Text className="typo-caption text-lime-400">AI</Text>
+            </View>
+          )}
         </View>
         <View className="items-center mx-2">
           <Text className="typo-h4 text-white">{Math.round(entry.calories)}</Text>
@@ -247,7 +253,15 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
           <Ionicons name="restaurant" size={22} color="#84cc16" />
         </View>
         <View className="flex-1 items-start">
-          <Text className="typo-body-primary text-white">{groupName}</Text>
+          <View className="flex-row items-center gap-2">
+            <Text className="typo-body-primary text-white">{groupName}</Text>
+            {entries[0]?.source === 'ai' && (
+              <View className="flex-row items-center gap-1 bg-lime-500/15 border border-lime-500/30 rounded-full px-2 py-0.5">
+                <View className="w-1 h-1 rounded-full bg-lime-400" />
+                <Text className="typo-caption text-lime-400">AI</Text>
+              </View>
+            )}
+          </View>
           <Text className="typo-caption text-gray-400 mt-0.5">
             {entries.length} פריטים •{' '}
             <Text className="text-lime-400 font-medium">{totalCal} קק״ל</Text>

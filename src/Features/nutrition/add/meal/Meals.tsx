@@ -268,10 +268,18 @@ const MealCard = React.memo(function MealCard({
               <Ionicons name="restaurant" size={22} color="#bef264" />
             </View>
             <View className="flex-1 items-start">
-              <Text className="typo-h4 text-white font-bold text-left" numberOfLines={1}>
-                {meal.name_meal || 'ארוחה חדשה'}
-              </Text>
-              <Text className="text-xs text-gray-500 font-medium">
+              <View className="flex-row items-center gap-2">
+                <Text className="typo-h4 text-white font-bold text-left" numberOfLines={1}>
+                  {meal.name_meal || 'ארוחה חדשה'}
+                </Text>
+                {meal.is_ai_generated && (
+                  <View className="flex-row items-center gap-1 bg-lime-500/15 border border-lime-500/30 rounded-full px-2 py-0.5">
+                    <View className="w-1 h-1 rounded-full bg-lime-400" />
+                    <Text className="typo-caption text-lime-400">AI</Text>
+                  </View>
+                )}
+              </View>
+              <Text className="typo-caption text-gray-500">
                 {(meal.meal_items ?? []).length} מרכיבים רשומים
               </Text>
             </View>
@@ -316,19 +324,24 @@ const MealCard = React.memo(function MealCard({
         </View>
       </View>
 
-      {/* רשימת מרכיבים תחתונה - טקסטואלית בלבד למניעת עומס */}
-      {(meal.meal_items ?? []).length > 0 && (
-        <View className="px-6 pb-4 flex-row flex-wrap items-center">
-          <Ionicons name="list" size={12} color="#4b5563" className="ml-2" />
-          <Text className="text-[10px] text-gray-500 italic" numberOfLines={1}>
-            {(meal.meal_items ?? [])
-              .slice(0, 5)
-              .map((mi: any) => mi.food_item?.name)
-              .join(' • ')}
-            {(meal.meal_items ?? []).length > 5 ? ' ועוד...' : ''}
-          </Text>
-        </View>
-      )}
+      {/* רשימת מרכיבים תחתונה + תאריך */}
+      <View className="px-6 pb-4">
+        {(meal.meal_items ?? []).length > 0 && (
+          <View className="flex-row flex-wrap items-center mb-1">
+            <Ionicons name="list" size={12} color="#4b5563" className="ml-2" />
+            <Text className="typo-caption text-gray-500 italic" numberOfLines={1}>
+              {(meal.meal_items ?? [])
+                .slice(0, 5)
+                .map((mi: any) => mi.food_item?.name)
+                .join(' • ')}
+              {(meal.meal_items ?? []).length > 5 ? ' ועוד...' : ''}
+            </Text>
+          </View>
+        )}
+        <Text className="typo-caption text-background-600">
+          {new Date(meal.created_at).toLocaleString('he-IL', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
+        </Text>
+      </View>
     </Pressable>
   );
 });

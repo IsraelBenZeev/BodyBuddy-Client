@@ -86,12 +86,14 @@ const AddNewFoodSelection = ({
         <View className="flex-row items-center justify-between">
           <Pressable
             onPress={() => handleQuantityChange(-1)}
-            className="w-11 h-11 items-center justify-center bg-background-700 rounded-xl border border-background-600 active:scale-95"
+            className="w-14 h-14 items-center justify-center bg-background-700 rounded-xl border border-background-600 active:scale-95"
+            accessibilityRole="button"
+            accessibilityLabel="הקטן כמות"
           >
-            <Ionicons name="remove" size={22} color="#fff" />
+            <Ionicons name="remove" size={24} color="#fff" />
           </Pressable>
 
-          <View className="items-center">
+          <View className="items-center flex-1">
             <Text className="text-4xl font-bold text-white tracking-tight">{quantity}</Text>
             <Text className="typo-label text-background-400 mt-1">
               {isUnits ? unitLabel : 'גרם'}
@@ -100,15 +102,19 @@ const AddNewFoodSelection = ({
 
           <Pressable
             onPress={() => handleQuantityChange(1)}
-            className="w-11 h-11 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
+            className="w-14 h-14 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
+            accessibilityRole="button"
+            accessibilityLabel="הגדל כמות"
           >
-            <Ionicons name="add" size={22} color="#000" />
+            <Ionicons name="add" size={24} color="#000" />
           </Pressable>
         </View>
 
         <Pressable
           onPress={() => setQuantity(isUnits ? 1 : 100)}
           className="mt-4 self-center px-4 py-2 rounded-xl bg-background-700 border border-background-600 active:scale-95"
+          accessibilityRole="button"
+          accessibilityLabel="איפוס כמות"
           disabled={quantity === (isUnits ? 1 : 100)}
         >
           <Text className="typo-caption-bold text-background-300">
@@ -118,26 +124,29 @@ const AddNewFoodSelection = ({
       </View>
 
       {/* Nutrition Summary */}
-      <View className="bg-white/[0.03] rounded-3xl p-6 border border-white/[0.05] mb-4 flex-row items-center justify-around">
-        <View className="items-center">
-          <Text className="typo-label text-background-400 mb-1">
-            קלוריות
-          </Text>
-          <View className="flex-row items-baseline" style={{ gap: 4 }}>
-            <Text className="text-2xl font-bold text-white">{calculatedMacros.calories}</Text>
-            <Text className="typo-label text-lime-400 font-bold">קק״ל</Text>
+      <View className="bg-white/[0.03] rounded-3xl p-5 border border-white/[0.05] mb-4">
+        <View className="bg-lime-500/10 border border-lime-500/20 rounded-2xl p-3 mb-3 items-center">
+          <Text className="typo-caption text-lime-400 mb-0.5">קלוריות</Text>
+          <View className="flex-row items-baseline gap-1.5">
+            <Text className="text-4xl font-black text-white">{calculatedMacros.calories}</Text>
+            <Text className="typo-body-primary text-lime-400 font-bold">קק״ל</Text>
           </View>
         </View>
-
-        <View className="w-[1px] h-8 bg-white/[0.05]" />
-
-        <View className="items-center">
-          <Text className="typo-label text-background-400 mb-1">
-            חלבון
-          </Text>
-          <View className="flex-row items-baseline" style={{ gap: 4 }}>
-            <Text className="text-2xl font-bold text-white">{calculatedMacros.protein}</Text>
-            <Text className="typo-label text-background-400 font-bold">g</Text>
+        <View className="flex-row gap-2">
+          <View className="flex-1 bg-blue-500/[0.06] border border-blue-500/20 rounded-2xl p-3 items-center">
+            <Text className="typo-caption text-blue-400 mb-0.5">חלבון</Text>
+            <Text className="typo-h4 text-white">{calculatedMacros.protein}</Text>
+            <Text className="typo-caption text-background-500">גרם</Text>
+          </View>
+          <View className="flex-1 bg-amber-500/[0.06] border border-amber-500/20 rounded-2xl p-3 items-center">
+            <Text className="typo-caption text-amber-400 mb-0.5">פחמימות</Text>
+            <Text className="typo-h4 text-white">{calculatedMacros.carbs}</Text>
+            <Text className="typo-caption text-background-500">גרם</Text>
+          </View>
+          <View className="flex-1 bg-red-500/[0.06] border border-red-500/20 rounded-2xl p-3 items-center">
+            <Text className="typo-caption text-red-400 mb-0.5">שומן</Text>
+            <Text className="typo-h4 text-white">{calculatedMacros.fat}</Text>
+            <Text className="typo-caption text-background-500">גרם</Text>
           </View>
         </View>
       </View>

@@ -16,14 +16,59 @@ interface SecondaryOption {
   icon: 'search' | 'add-circle-outline' | 'restaurant-outline';
   label: string;
   description: string;
-  color: string;
-  iconBg: string;
+  colors: {
+    rowBg: string;
+    rowBorder: string;
+    iconBg: string;
+    iconBorder: string;
+    iconColor: string;
+    labelColor: string;
+  };
 }
 
 const SECONDARY_OPTIONS: SecondaryOption[] = [
-  { key: 'list', icon: 'search', label: 'הוסף מתוך הרשימה', description: 'בחר מהמאגר שלך', color: '#60a5fa', iconBg: 'bg-blue-500/15' },
-  { key: 'food', icon: 'add-circle-outline', label: 'מאכל חדש', description: 'צור מאכל מותאם אישית', color: '#a78bfa', iconBg: 'bg-violet-500/15' },
-  { key: 'meal', icon: 'restaurant-outline', label: 'ארוחה חדשה', description: 'בנה ממספר מרכיבים', color: '#fb923c', iconBg: 'bg-orange-500/15' },
+  {
+    key: 'list',
+    icon: 'search',
+    label: 'הוסף מתוך הרשימה',
+    description: 'בחר מהמאגר שלך',
+    colors: {
+      rowBg: 'rgba(96,165,250,0.18)',
+      rowBorder: 'rgba(96,165,250,0.45)',
+      iconBg: 'rgba(96,165,250,0.28)',
+      iconBorder: 'rgba(147,197,253,0.5)',
+      iconColor: '#bfdbfe',
+      labelColor: '#dbeafe',
+    },
+  },
+  {
+    key: 'food',
+    icon: 'add-circle-outline',
+    label: 'מאכל חדש',
+    description: 'צור מאכל מותאם אישית',
+    colors: {
+      rowBg: 'rgba(167,139,250,0.18)',
+      rowBorder: 'rgba(167,139,250,0.45)',
+      iconBg: 'rgba(167,139,250,0.28)',
+      iconBorder: 'rgba(196,181,253,0.5)',
+      iconColor: '#ede9fe',
+      labelColor: '#ede9fe',
+    },
+  },
+  {
+    key: 'meal',
+    icon: 'restaurant-outline',
+    label: 'ארוחה חדשה',
+    description: 'בנה ממספר מרכיבים',
+    colors: {
+      rowBg: 'rgba(251,146,60,0.18)',
+      rowBorder: 'rgba(251,146,60,0.45)',
+      iconBg: 'rgba(251,146,60,0.28)',
+      iconBorder: 'rgba(253,186,116,0.5)',
+      iconColor: '#fed7aa',
+      labelColor: '#ffedd5',
+    },
+  },
 ];
 
 const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onAddMeal, onCameraAI }: Props) => {
@@ -39,78 +84,135 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
           <View className="bg-background-900 rounded-t-3xl px-5 pt-5 pb-10">
 
             {/* Handle */}
-            <View className="items-center mb-5">
-              <View className="w-12 h-1.5 bg-white/10 rounded-full" />
+            <View className="items-center mb-6">
+              <View className="w-10 h-1 bg-white/10 rounded-full" />
             </View>
 
-            <Text className="typo-h3 text-white  mb-4 text-left">מה תרצה להוסיף?</Text>
+            <Text className="typo-h3 text-white mb-5 text-left">מה תרצה להוסיף?</Text>
 
-            {/* ─── Hero Card: AI Camera ─── */}
+            {/* ─── Hero: AI Camera ─── */}
             <Pressable
               onPress={handlers.camera}
-              style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
+              style={({ pressed }) => [{
+                transform: [{ scale: pressed ? 0.97 : 1 }],
+                opacity: pressed ? 0.9 : 1,
+                backgroundColor: 'rgba(132,204,22,0.15)',
+                borderColor: 'rgba(132,204,22,0.5)',
+                borderWidth: 1,
+              }]}
               accessibilityRole="button"
-              accessibilityLabel="צלם עם AI"
-              className="rounded-3xl overflow-hidden mb-4 border border-lime-500/30 bg-lime-500/10 items-start"
+              accessibilityLabel="צלם ארוחה עם AI"
+              className="rounded-3xl mb-5"
             >
-              <View className="p-5 flex-row items-center justify-between">
-                {/* טקסט */}
-                <View className="flex-1 ml-4 items-start">
-                  <View className="flex-row items-center gap-2 mb-2">
-                    <View className="bg-lime-500 rounded-md px-2 py-0.5">
-                      <Text className="typo-caption-bold text-black">AI</Text>
-                    </View>
-                    <Text className="typo-caption text-lime-400">✦ ✦</Text>
-                  </View>
-                  <Text className="typo-h2 text-lime-300 ">צלם עם AI</Text>
-                  <Text className="typo-label text-lime-500/80  mt-1 text-left">
-                    צלם ארוחה ו-AI יזהה אוטומטית את המרכיבים והערכים התזונתיים
-                  </Text>
-                  <View className="flex-row items-center mt-3 gap-1">
-                    <Text className="typo-caption-bold text-lime-400">התחל עכשיו</Text>
-                    <Ionicons name="chevron-back" size={12} color="rgb(163,230,53)" />
-                  </View>
+              <View className="flex-row items-center gap-4 p-5">
+                {/* Icon */}
+                <View
+                  style={{
+                    width: 68,
+                    height: 68,
+                    borderRadius: 34,
+                    backgroundColor: 'rgba(132,204,22,0.25)',
+                    borderWidth: 1,
+                    borderColor: 'rgba(132,204,22,0.55)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Ionicons name="camera" size={30} color="#a3e635" />
                 </View>
-                {/* אייקון גדול */}
-                <View className="bg-lime-500/20 w-20 h-20 rounded-2xl items-center justify-center border border-lime-500/30">
-                  <Ionicons name="camera" size={48} color="rgb(163,230,53)" />
+
+                {/* Text */}
+                <View className="flex-1 items-start gap-1">
+                  <View
+                    style={{
+                      backgroundColor: 'rgba(132,204,22,0.18)',
+                      borderWidth: 1,
+                      borderColor: 'rgba(132,204,22,0.4)',
+                      borderRadius: 99,
+                      paddingHorizontal: 10,
+                      paddingVertical: 2,
+                      marginBottom: 2,
+                    }}
+                  >
+                    <Text className="typo-caption-bold text-lime-300">AI</Text>
+                  </View>
+                  <Text className="typo-h3 text-lime-300 text-left">צלם עם AI</Text>
+                  <Text className="typo-caption text-lime-500/70 text-left">
+                    זהוי אוטומטי של מרכיבים וערכים תזונתיים
+                  </Text>
+                  <View className="flex-row items-center mt-1 gap-1">
+                    <Text className="typo-caption-bold text-lime-400">התחל עכשיו</Text>
+                    <Ionicons name="chevron-back" size={11} color="#a3e635" />
+                  </View>
                 </View>
               </View>
-              {/* פס תחתון */}
-              <View className="h-0.5 bg-lime-500/30" />
             </Pressable>
 
-            {/* ─── כותרת מתחה ─── */}
-            <Text className="typo-caption-bold text-background-400  mb-3 text-left">
+            {/* ─── Section label ─── */}
+            <Text className="typo-caption-bold text-white/25 mb-3 text-left">
               אפשרויות נוספות
             </Text>
 
-            {/* ─── 3 כרטיסים קומפקטיים ─── */}
-            <View className="gap-2">
+            {/* ─── Secondary options ─── */}
+            <View className="gap-2.5">
               {SECONDARY_OPTIONS.map((opt) => (
                 <Pressable
                   key={opt.key}
                   onPress={handlers[opt.key]}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  style={({ pressed }) => [{
+                    transform: [{ scale: pressed ? 0.98 : 1 }],
+                    opacity: pressed ? 0.8 : 1,
+                    backgroundColor: opt.colors.rowBg,
+                    borderColor: opt.colors.rowBorder,
+                    borderWidth: 1,
+                  }]}
                   accessibilityRole="button"
                   accessibilityLabel={opt.label}
-                  className="flex-row items-center p-4 rounded-2xl border border-white/5 bg-background-800 gap-3"
+                  className="flex-row items-center gap-3.5 px-4 py-3.5 rounded-2xl"
                 >
-                  <View className={`w-10 h-10 rounded-xl items-center justify-center ml-3 gap-2 ${opt.iconBg}`}>
-                    <Ionicons name={opt.icon} size={20} color={opt.color} />
+                  {/* Icon circle */}
+                  <View
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      backgroundColor: opt.colors.iconBg,
+                      borderWidth: 1,
+                      borderColor: opt.colors.iconBorder,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Ionicons name={opt.icon} size={18} color={opt.colors.iconColor} />
                   </View>
+
+                  {/* Labels */}
                   <View className="flex-1">
-                    <Text className="typo-body-primary text-white text-left">{opt.label}</Text>
-                    <Text className="typo-caption text-gray-500  mt-0.5 text-left">{opt.description}</Text>
+                    <Text style={{ color: opt.colors.labelColor }} className="typo-body-primary text-left">
+                      {opt.label}
+                    </Text>
+                    <Text className="typo-caption text-white/50 mt-0.5 text-left">{opt.description}</Text>
                   </View>
-                  <Ionicons name="chevron-back" size={14} color="#4b5563" />
+
+                  <Ionicons name="chevron-back" size={13} color="rgba(255,255,255,0.25)" />
                 </Pressable>
               ))}
             </View>
 
-            {/* ביטול */}
-            <Pressable onPress={onClose} className="mt-4 h-12 items-center justify-center" accessibilityRole="button" accessibilityLabel="ביטול">
-              <Text className="typo-body-primary text-gray-400">ביטול</Text>
+            {/* ─── Cancel ─── */}
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [{
+                opacity: pressed ? 0.6 : 1,
+                backgroundColor: 'rgba(255,255,255,0.07)',
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.14)',
+              }]}
+              className="mt-5 h-12 items-center justify-center rounded-full"
+              accessibilityRole="button"
+              accessibilityLabel="ביטול"
+            >
+              <Text className="typo-body-primary text-white/40">ביטול</Text>
             </Pressable>
 
           </View>
