@@ -1,4 +1,4 @@
-import AIResults from '@/src/Features/nutrition/add/food/AIResults';
+import AIResults, { MOCK_AI_FOOD, MOCK_AI_MEAL } from '@/src/Features/nutrition/add/ai/AIResults';
 import { analyzeNutritionImage } from '@/src/service/nutritionService';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { AIAnalysisResult } from '@/src/types/nutrition';
@@ -197,6 +197,27 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
                 >
                   <Text className="typo-body-primary text-gray-500">ביטול</Text>
                 </Pressable>
+
+                {__DEV__ && (
+                  <View className="mt-4 pt-4 border-t border-white/10 flex-row gap-2">
+                    <Pressable
+                      onPress={() => setAnalysisResult(MOCK_AI_MEAL)}
+                      className="flex-1 h-10 items-center justify-center bg-background-800 border border-lime-500/30 rounded-xl"
+                      accessibilityRole="button"
+                      accessibilityLabel="טען mock ארוחה"
+                    >
+                      <Text className="typo-caption text-lime-400">🧪 Mock ארוחה</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setAnalysisResult(MOCK_AI_FOOD)}
+                      className="flex-1 h-10 items-center justify-center bg-background-800 border border-blue-500/30 rounded-xl"
+                      accessibilityRole="button"
+                      accessibilityLabel="טען mock מאכל"
+                    >
+                      <Text className="typo-caption text-blue-400">🧪 Mock מאכל</Text>
+                    </Pressable>
+                  </View>
+                )}
               </>
             )}
 
