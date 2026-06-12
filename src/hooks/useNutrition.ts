@@ -230,10 +230,12 @@ export const useCreateMealWithItems = (userId: string) => {
     mutationFn: ({
       name_meal,
       items,
+      is_ai_generated,
     }: {
       name_meal: string;
       items: { food_item_id: string | null; food_id: string | null; amount_g: number }[];
-    }) => createMealWithItems(userId, name_meal, items),
+      is_ai_generated?: boolean;
+    }) => createMealWithItems(userId, name_meal, items, is_ai_generated),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['meals-with-items', userId] });
       triggerSuccess('הארוחה נשמרה בהצלחה', 'success');

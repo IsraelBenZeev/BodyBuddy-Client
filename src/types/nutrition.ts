@@ -33,6 +33,8 @@ export interface NutritionEntry {
   group_id?: string | null;
   /** שם התצוגה של הקבוצה (למשל שם הארוחה) */
   group_name?: string | null;
+  /** 'ai' = נוצר מניתוח AI, null = הוספה ידנית */
+  source?: 'ai' | null;
   created_at: string;
 }
 
@@ -91,6 +93,7 @@ export interface CreateNutritionEntryPayload {
   food_item_id?: string;
   group_id?: string | null;
   group_name?: string | null;
+  source?: 'ai' | null;
 }
 
 export interface MacroSplit {
@@ -127,6 +130,8 @@ export interface AIFoodResult {
   protein_per_100: number;
   measurement_type?: MeasurementType;
   serving_amount?: number;
+  /** משקל יחידה אחת בגרמים — חובה כשהמדידה היא units */
+  unit_weight_g?: number;
   category?: string;
   // optional לתאימות לאחור
   carbs_per_100?: number;

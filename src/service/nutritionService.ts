@@ -46,6 +46,7 @@ function normalizeNutritionEntry(row: Record<string, unknown>): NutritionEntry {
     food_item_id: row.food_item_id as string | undefined,
     group_id: (row.group_id as string | null) ?? undefined,
     group_name: (row.group_name as string | null) ?? undefined,
+    source: (row.source as 'ai' | null) ?? null,
     created_at: row.created_at as string,
   };
 }
@@ -70,6 +71,7 @@ export const createNutritionEntry = async (
       food_item_id: payload.food_item_id ?? null,
       group_id: payload.group_id ?? null,
       group_name: payload.group_name ?? null,
+      source: payload.source ?? null,
     };
     const { data, error } = await supabase
       .from('nutrition_entries')
@@ -106,6 +108,7 @@ export const createNutritionEntriesBulk = async (
       food_item_id: p.food_item_id ?? null,
       group_id: p.group_id ?? null,
       group_name: p.group_name ?? null,
+      source: p.source ?? null,
     }));
     const { data, error } = await supabase
       .from('nutrition_entries')
@@ -400,6 +403,7 @@ function normalizeMeal(row: Record<string, unknown>): Meal {
     created_at: row.created_at as string,
     user_id: row.user_id as string,
     name_meal: (row.name_meal as string) ?? '',
+    is_ai_generated: Boolean(row.is_ai_generated),
   };
 }
 
@@ -554,12 +558,13 @@ export const getMealsWithItems = async (
 export const createMealWithItems = async (
   userId: string,
   name_meal: string,
-  items: { food_item_id: string | null; food_id: string | null; amount_g: number }[]
+  items: { food_item_id: string | null; food_id: string | null; amount_g: number }[],
+  is_ai_generated?: boolean
 ): Promise<Meal> => {
   try {
     const { data: mealRow, error: mealError } = await supabase
       .from('meals')
-      .insert({ user_id: userId, name_meal })
+      .insert({ user_id: userId, name_meal, is_ai_generated: is_ai_generated ?? false })
       .select()
       .single();
 
@@ -661,9 +666,16 @@ export const trackFoodUsage = async (userId: string, food: FoodItem): Promise<vo
 const AI_AGENT_URL = process.env.EXPO_PUBLIC_AI_AGENT_URL ?? '';
 
 export const analyzeNutritionImage = async (imageBase64: string, signal?: AbortSignal): Promise<AIAnalysisResult> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+  if (!token) throw new Error('נדרשת התחברות');
+
   const response = await fetch(AI_AGENT_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
     body: JSON.stringify({ image: imageBase64 }),
     signal,
   });
@@ -672,5 +684,9 @@ export const analyzeNutritionImage = async (imageBase64: string, signal?: AbortS
     console.error('[analyzeNutritionImage] status:', response.status, 'body:', body);
     throw new Error('שגיאה בניתוח התמונה');
   }
-  return response.json() as Promise<AIAnalysisResult>;
+  const result = await response.json() as AIAnalysisResult;
+  if (__DEV__) {
+    console.log('[AI Food Analysis] תוצאה מהסוכן:', JSON.stringify(result, null, 2));
+  }
+  return result;
 };

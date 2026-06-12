@@ -6,6 +6,7 @@ export interface Meal {
   created_at: string;
   user_id: string;
   name_meal: string;
+  is_ai_generated?: boolean;
 }
 
 /** תואם לטבלת meal_items ב-Supabase */
