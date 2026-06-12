@@ -146,7 +146,7 @@ const FoodEntryRow = React.memo(function FoodEntryRow({
   return (
     <Pressable
       onPress={onPress}
-      className="bg-background-800 rounded-2xl border border-background-600 overflow-hidden"
+      className="bg-background-800 rounded-2xl border border-background-600 overflow-hidden "
       accessibilityRole="button"
       accessibilityLabel={`פרטי ${entry.food_name}`}
       accessibilityHint="לחץ לפרטים מלאים"
@@ -155,8 +155,8 @@ const FoodEntryRow = React.memo(function FoodEntryRow({
         <View className="bg-background-700 rounded-xl w-12 h-12 items-center justify-center mr-1">
           <Ionicons name="nutrition-outline" size={22} color={colors.orange[400]} />
         </View>
-        <View className="flex-1 mr-2">
-          <Text className="typo-body-primary text-white" numberOfLines={2}>
+        <View className="flex-1 mr-2  items-start">
+          <Text className="typo-body-primary text-white text-left" numberOfLines={2}>
             {formatEntryPortionLine(entry)}
           </Text>
         </View>
@@ -246,7 +246,7 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
         <View className="bg-lime-500/10 rounded-xl w-12 h-12 items-center justify-center ml-3">
           <Ionicons name="restaurant" size={22} color="#84cc16" />
         </View>
-        <View className="flex-1">
+        <View className="flex-1 items-start">
           <Text className="typo-body-primary text-white">{groupName}</Text>
           <Text className="typo-caption text-gray-400 mt-0.5">
             {entries.length} פריטים •{' '}

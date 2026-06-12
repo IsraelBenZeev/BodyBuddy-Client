@@ -10,8 +10,9 @@ interface TabItem {
 
 // 2. עדכון ה-Props - הסרנו את instructions והוספנו את tabs
 interface TabsManagerProps {
-  tabs: TabItem[]; // מערך של טאבים
-  initialTab?: number; // אופציונלי, ברירת מחדל 0
+  tabs: TabItem[];
+  initialTab?: number;
+  flex?: boolean; // כשמוגדר true: flex-1 על כל הקונטיינרים, בלי padding על תוכן
 }
 // const TabsManager = ({ instructions }: TabsManagerProps) => {
 //     const [activeTab, setActiveTab] = useState(0);
@@ -112,7 +113,7 @@ interface TabsManagerProps {
 //     );
 // };
 // 3. עדכון שורת הפונקציה
-const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
+const TabsManager = ({ tabs, initialTab = 0, flex = false }: TabsManagerProps) => {
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -167,8 +168,8 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
   };
 
   return (
-    <View className="w-full">
-      <View>
+    <View className={flex ? 'flex-1' : 'w-full'}>
+      <View className={flex ? 'flex-1' : ''}>
         {/* Tab Bar */}
         <View className="mx-6 mt-4 mb-2 bg-background-850 rounded-full p-1 relative flex-row items-center h-12 border border-gray-800 overflow-hidden">
           <Animated.View
@@ -206,7 +207,7 @@ const TabsManager = ({ tabs, initialTab = 0 }: TabsManagerProps) => {
 
         {/* תוכן עם זיהוי מחוות – תופס את שאר הגובה */}
         <PanGestureHandler onHandlerStateChange={onGestureEvent} activeOffsetX={[-20, 20]}>
-          <View className="p-6">{tabs[activeTab].Component}</View>
+          <View className={flex ? 'flex-1' : 'p-6'}>{tabs[activeTab].Component}</View>
         </PanGestureHandler>
       </View>
     </View>

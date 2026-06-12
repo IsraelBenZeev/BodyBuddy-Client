@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
-import type { AddStep } from '@/src/Features/nutrition/add/meal/ListFoodForMealBuilder';
 import ListFoodForMealBuilder from '@/src/Features/nutrition/add/meal/ListFoodForMealBuilder';
+import ActionButton from '@/src/ui/ActionButton';
 import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
 import {
   useCreateFoodItem,
@@ -18,7 +18,6 @@ import Slider from '@react-native-community/slider';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Modal,
   Pressable,
@@ -82,7 +81,7 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
       <View className="bg-orange-500/10 w-10 h-10 rounded-xl items-center justify-center ">
         <Ionicons name="nutrition" size={20} color="#fb923c" />
       </View>
-      <View className="flex-1">
+      <View className="flex-1 items-start">
         <Text className="typo-body-bold text-white leading-tight" numberOfLines={1}>
           {item.name}
         </Text>
@@ -173,8 +172,7 @@ const MealBuilderScreen = () => {
   const [nameMeal, setNameMeal] = useState(initialName || '');
   const [items, setItems] = useState<MealItemState[]>(parsedInitialItems);
   const [addModalVisible, setAddModalVisible] = useState(false);
-  const [addStep, setAddStep] = useState<AddStep>('list');
-  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
+
   const [savingMode, setSavingMode] = useState<'list' | 'list-and-journal' | null>(null);
   const [editDraft, setEditDraft] = useState<{
     index: number;
@@ -224,46 +222,36 @@ const MealBuilderScreen = () => {
   );
 
   const openAddModal = useCallback(() => {
-    setSelectedFood(null);
-    setAddStep('list');
     setAddModalVisible(true);
   }, []);
 
   const closeAddModal = useCallback(() => {
     setAddModalVisible(false);
-    setSelectedFood(null);
-    setAddStep('list');
-  }, []);
-
-  const onSelectFood = useCallback((food: FoodItem) => {
-    setSelectedFood(food);
-    setAddStep('amount');
   }, []);
 
   const addItemFromPortion = useCallback(
-    (amount: number, _portionUnit: 'g' | 'unit') => {
-      if (!selectedFood) return;
+    (food: FoodItem, amount: number, _portionUnit: 'g' | 'unit') => {
       setItems((prev) => [
         ...prev,
         {
-          food_item_id: selectedFood.id,
+          food_item_id: food.id,
           food_id: null,
-          name: selectedFood.name,
+          name: food.name,
           amount_g: amount,
-          measurement_type: selectedFood.measurement_type,
-          protein_per_100: selectedFood.protein_per_100,
-          carbs_per_100: selectedFood.carbs_per_100,
-          fat_per_100: selectedFood.fat_per_100,
-          calories_per_100: selectedFood.calories_per_100,
-          calories_per_unit: selectedFood.calories_per_unit ?? null,
-          protein_per_unit: selectedFood.protein_per_unit ?? null,
-          carbs_per_unit: selectedFood.carbs_per_unit ?? null,
-          fat_per_unit: selectedFood.fat_per_unit ?? null,
+          measurement_type: food.measurement_type,
+          protein_per_100: food.protein_per_100,
+          carbs_per_100: food.carbs_per_100,
+          fat_per_100: food.fat_per_100,
+          calories_per_100: food.calories_per_100,
+          calories_per_unit: food.calories_per_unit ?? null,
+          protein_per_unit: food.protein_per_unit ?? null,
+          carbs_per_unit: food.carbs_per_unit ?? null,
+          fat_per_unit: food.fat_per_unit ?? null,
         },
       ]);
       closeAddModal();
     },
-    [selectedFood, closeAddModal]
+    [closeAddModal]
   );
 
   const addFoodFromDB = useCallback(
@@ -539,7 +527,7 @@ const MealBuilderScreen = () => {
         </View>
         {/* קלט שם הארוחה */}
         <View className="mb-8">
-          <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
+          <Text className="typo-caption-bold text-gray-400 uppercase tracking-widest mb-2 px-1 text-left">
             איך נקרא לארוחה?
           </Text>
           <TextInput
@@ -583,53 +571,34 @@ const MealBuilderScreen = () => {
 
         {/* כפתורי פעולה בתחתית הרשימה */}
         <View className="mt-6 gap-4">
-          <Pressable
+          <ActionButton
             onPress={openAddModal}
-            className="bg-background-800 border border-dashed border-white/20 rounded-2xl py-4 flex-row items-center justify-center"
-            accessibilityRole="button"
-            accessibilityLabel="הוסף מאכל לארוחה"
-          >
-            <Ionicons name="add-circle" size={22} color="#84cc16" />
-            <Text className="typo-btn-cta text-lime-500 mr-2">הוסף מאכל לארוחה</Text>
-          </Pressable>
+            label="הוסף מאכל לארוחה"
+            iconName="add-circle"
+            fullWidth
+          />
 
           <View className="gap-3">
-            <Pressable
+            <ActionButton
               onPress={handleSaveListOnly}
+              label="הוסף לרשימה בלבד"
+              iconName="list"
+              variant="secondary"
+              size="lg"
+              fullWidth
               disabled={!canSave}
-              className={`rounded-2xl h-14 flex-row items-center justify-center border border-white/10 ${
-                canSave ? 'bg-background-800' : 'bg-background-700 opacity-50'
-              }`}
-              accessibilityRole="button"
-              accessibilityLabel="הוסף לרשימה בלבד"
-            >
-              {savingMode === 'list' && isSaving ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <>
-                  <Text className="typo-btn-cta text-white mr-2">הוסף לרשימה בלבד</Text>
-                  <Ionicons name="list" size={22} color="#fff" />
-                </>
-              )}
-            </Pressable>
-            <Pressable
+              loading={savingMode === 'list' && isSaving}
+            />
+            <ActionButton
               onPress={handleSaveListAndJournal}
+              label="הוסף לרשימה וליומן"
+              iconName="checkmark-circle"
+              variant="primary"
+              size="lg"
+              fullWidth
               disabled={!canSave}
-              className={`rounded-2xl h-16 flex-row items-center justify-center shadow-lg ${
-                canSave ? 'bg-lime-500 shadow-lime-500/20' : 'bg-background-700 opacity-50'
-              }`}
-              accessibilityRole="button"
-              accessibilityLabel="הוסף לרשימה וליומן"
-            >
-              {savingMode === 'list-and-journal' && (isSaving || isAddingToJournal) ? (
-                <ActivityIndicator color="#000" size="small" />
-              ) : (
-                <>
-                  <Ionicons name="checkmark-circle" size={24} color="#000" />
-                  <Text className="typo-h4 text-black mr-2">הוסף לרשימה וליומן</Text>
-                </>
-              )}
-            </Pressable>
+              loading={savingMode === 'list-and-journal' && (isSaving || isAddingToJournal)}
+            />
           </View>
         </View>
       </View>
@@ -872,13 +841,9 @@ const MealBuilderScreen = () => {
         onRequestClose={closeAddModal}
       >
         <ListFoodForMealBuilder
-          addStep={addStep}
-          setAddStep={setAddStep}
-          selectedFood={selectedFood}
           nameMeal={nameMeal}
           closeAddModal={closeAddModal}
           foodItems={foodItems}
-          onSelectFood={onSelectFood}
           addItemFromPortion={addItemFromPortion}
           onNewFoodSubmit={handleNewFoodSubmit}
           onAddFoodFromDB={addFoodFromDB}

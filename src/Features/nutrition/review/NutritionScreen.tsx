@@ -13,6 +13,7 @@ import {
 import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
+import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 import {
@@ -176,7 +177,7 @@ const NutritionScreen = () => {
         >
           <View className="flex-1 w-full bg-background-950 rounded-md py-6 px-5 shadow-black shadow-md">
             <View className="mt-2 mb-8">
-              <Text className="typo-h1 text-white mb-2">תזונה</Text>
+              <Text className="typo-h1 text-white mb-2 text-left">תזונה</Text>
               <View
                 style={{
                   height: 5,
@@ -193,7 +194,7 @@ const NutritionScreen = () => {
               <View className="bg-white/[0.03] rounded-3xl p-4 mb-4 border border-white/[0.05]">
                 <View className="flex-row items-center justify-center gap-2">
                   <Ionicons name={motivationData.icon} size={22} color={colors.lime[500]} />
-                  <Text className="typo-body-primary text-lime-400 flex-1 ;">
+                  <Text className="typo-body-primary text-lime-400 flex-1 text-left">
                     {motivationData.message}
                   </Text>
                 </View>
@@ -215,11 +216,11 @@ const NutritionScreen = () => {
             />
 
             <View className="bg-white/[0.03] rounded-3xl p-5 mb-4 border border-white/[0.05]">
-              <View className="flex-row items-center justify-between mb-3">
-                <Text className="typo-body-primary text-white">איך אנחנו מחשבים את היעדים?</Text>
+              <View className="flex-row items-center gap-2 mb-3">
                 <Ionicons name="information-circle-outline" size={20} color={colors.lime[500]} />
+                <Text className="typo-body-primary text-white">איך אנחנו מחשבים את היעדים?</Text>
               </View>
-              <Text className="typo-label text-background-400 ; leading-6">
+              <Text className="typo-label text-background-400 leading-6 text-left">
                 • חלבון: מחושב על פי{' '}
                 {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג × משקל (
                 {profile?.weight} ק״ג){'\n'}• קלוריות: מחושבות לפי BMR × פעילות גופנית ± יעד
@@ -246,23 +247,15 @@ const NutritionScreen = () => {
             transform: [{ translateY: buttonTranslateY }],
           }}
         >
-          <Pressable
+
+          <ActionButton
             onPress={handleShowOptions}
-            className="flex-row items-center justify-center gap-3 rounded-2xl bg-lime-500 h-14"
-            style={({ pressed }) => ({
-              transform: [{ scale: pressed ? 0.97 : 1 }],
-              shadowColor: '#84cc16',
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.55,
-              shadowRadius: 18,
-              elevation: 14,
-            })}
-            accessibilityRole="button"
-            accessibilityLabel="הוספת מאכל או ארוחה"
-          >
-            <Ionicons name="add-circle" size={24} color="black" />
-            <Text className="typo-btn-cta text-black">הוספת מאכל או ארוחה</Text>
-          </Pressable>
+            iconName="add-circle"
+            label="הוספת מאכל או ארוחה"
+            variant="primary"
+            fullWidth
+          />
+            
         </Animated.View>
       </View>
 
@@ -275,7 +268,12 @@ const NutritionScreen = () => {
         onCameraAI={handleCameraAI}
       />
 
-      <CameraAIModal visible={showCameraModal} onClose={handleCloseCameraModal} />
+      <CameraAIModal
+        visible={showCameraModal}
+        onClose={handleCloseCameraModal}
+        userId={user?.id ?? ''}
+        date={today}
+      />
 
       <ModalAddFoods
         visible={isAddFoodOpen}

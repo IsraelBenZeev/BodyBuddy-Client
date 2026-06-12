@@ -1,31 +1,35 @@
+import AIResults from '@/src/Features/nutrition/add/food/AIResults';
 import { analyzeNutritionImage } from '@/src/service/nutritionService';
 import { useUIStore } from '@/src/store/useUIStore';
 import type { AIAnalysisResult } from '@/src/types/nutrition';
+import ActionButton from '@/src/ui/ActionButton';
 import ScanAnimation from '@/src/ui/Animations/ScanAnimation';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
+  userId: string;
+  date: string;
 }
 
 type ModalState = 'idle' | 'loading' | 'error';
 
-const CameraAIModal = ({ visible, onClose }: Props) => {
-  const router = useRouter();
+const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
   const { triggerSuccess } = useUIStore();
   const [state, setState] = useState<ModalState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [analysisResult, setAnalysisResult] = useState<AIAnalysisResult | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (visible) {
       setState('idle');
       setErrorMsg('');
+      setAnalysisResult(null);
     }
   }, [visible]);
 
@@ -36,44 +40,20 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
     try {
       const analysis: AIAnalysisResult = await analyzeNutritionImage(base64, controller.signal);
       if (controller.signal.aborted) return;
-      console.log('AI response: ', analysis);
-
-      onClose();
-      if (analysis.type === 'food') {
-        router.push({
-          pathname: '/add-food/[mode]',
-          params: {
-            mode: 'create',
-            food_name: analysis.food_name,
-            protein_per_100: String(analysis.protein_per_100),
-            carbs_per_100: String(analysis.carbs_per_100),
-            fat_per_100: String(analysis.fat_per_100),
-            calories_per_100: String(analysis.calories_per_100),
-            measurement_type: analysis.measurement_type ?? 'grams',
-            ...(analysis.category != null && { category: analysis.category }),
-            ...(analysis.serving_amount != null && { serving_amount: String(analysis.serving_amount) }),
-          },
-        });
-      } else {
-        router.push({
-          pathname: '/MealBuilder/[paramse]',
-          params: {
-            paramse: 'create',
-            initialName: analysis.meal_name,
-            initialItemsJson: JSON.stringify(analysis.items),
-          },
-        });
-      }
-    } catch {
+      setAnalysisResult(analysis);
+      setState('idle');
+    } catch (err) {
       if (abortControllerRef.current?.signal.aborted) return;
+      console.error('[CameraAI] analyzeNutritionImage failed:', err);
       setErrorMsg('שגיאה בניתוח התמונה. נסה שוב.');
       setState('error');
     }
-  }, [onClose, router]);
+  }, []);
 
   const handleCancel = useCallback(() => {
     abortControllerRef.current?.abort();
     setState('idle');
+    setAnalysisResult(null);
     onClose();
     triggerSuccess('בקשתך בוטלה', 'success');
   }, [onClose, triggerSuccess]);
@@ -110,8 +90,26 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
   const handleClose = useCallback(() => {
     setErrorMsg('');
     setState('idle');
+    setAnalysisResult(null);
     onClose();
   }, [onClose]);
+
+  // ── When AI result is ready — show AIResults full screen ──
+  if (analysisResult) {
+    return (
+      <Modal visible={visible} transparent={false} animationType="slide" onRequestClose={() => setAnalysisResult(null)}>
+        <View className="flex-1 bg-background-900">
+          <AIResults
+            aiResult={analysisResult}
+            userId={userId}
+            date={date}
+            onClose={handleClose}
+            onBack={() => setAnalysisResult(null)}
+          />
+        </View>
+      </Modal>
+    );
+  }
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
@@ -171,27 +169,25 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                 </View>
 
                 {/* ─── CTA Buttons ─── */}
-                <Pressable
-                  onPress={handleCapture}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
-                  className="bg-lime-500 rounded-2xl h-16 items-center justify-center flex-row gap-2.5 mb-3"
-                  accessibilityRole="button"
-                  accessibilityLabel="צלם ארוחה"
-                >
-                  <Ionicons name="camera" size={22} color="#000" />
-                  <Text className="typo-btn-cta text-black">צלם ארוחה</Text>
-                </Pressable>
+                <View className="mb-3">
+                  <ActionButton
+                    onPress={handleCapture}
+                    label="צלם ארוחה"
+                    iconName="camera"
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                  />
+                </View>
 
-                <Pressable
+                <ActionButton
                   onPress={handlePickFromGallery}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="bg-background-800 border border-white/10 rounded-2xl h-16 items-center justify-center flex-row gap-2 "
-                  accessibilityRole="button"
-                  accessibilityLabel="העלה מהגלריה"
-                >
-                  <Ionicons name="images-outline" size={18} color="#9ca3af" />
-                  <Text className="typo-btn-secondary text-gray-400">העלה מהגלריה</Text>
-                </Pressable>
+                  label="העלה מהגלריה"
+                  iconName="images-outline"
+                  variant="secondary"
+                  size="lg"
+                  fullWidth
+                />
 
                 <Pressable
                   onPress={handleClose}
@@ -210,14 +206,16 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                 <Text className="typo-label text-lime-400 text-center mt-4">
                   AI מנתח את התמונה...
                 </Text>
-                <Pressable
-                  onPress={handleCancel}
-                  className="mt-4 bg-background-800 border border-white/10 rounded-2xl h-12 w-full items-center justify-center"
-                  accessibilityRole="button"
-                  accessibilityLabel="בטל ניתוח"
-                >
-                  <Text className="typo-body-primary text-gray-400">ביטול</Text>
-                </Pressable>
+                <View className="mt-4">
+                  <ActionButton
+                    onPress={handleCancel}
+                    label="ביטול"
+                    iconName="close-circle-outline"
+                    variant="secondary"
+                    size="md"
+                    fullWidth
+                  />
+                </View>
               </View>
             )}
 
@@ -230,16 +228,14 @@ const CameraAIModal = ({ visible, onClose }: Props) => {
                   <Text className="typo-h3 text-white text-center">משהו השתבש</Text>
                   <Text className="typo-label text-gray-400 text-center mt-2 px-6">{errorMsg}</Text>
                 </View>
-                <Pressable
+                <ActionButton
                   onPress={handleRetry}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
-                  className="bg-lime-500 rounded-2xl h-14 items-center justify-center flex-row gap-2"
-                  accessibilityRole="button"
-                  accessibilityLabel="נסה שוב"
-                >
-                  <Ionicons name="refresh" size={18} color="#000" />
-                  <Text className="typo-btn-cta text-black">נסה שוב</Text>
-                </Pressable>
+                  label="נסה שוב"
+                  iconName="refresh"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                />
                 <Pressable
                   onPress={handleClose}
                   className="mt-3 h-12 items-center justify-center"

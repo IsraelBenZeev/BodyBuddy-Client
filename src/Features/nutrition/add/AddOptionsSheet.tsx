@@ -43,7 +43,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
               <View className="w-12 h-1.5 bg-white/10 rounded-full" />
             </View>
 
-            <Text className="typo-h3 text-white  mb-4">מה תרצה להוסיף?</Text>
+            <Text className="typo-h3 text-white  mb-4 text-left">מה תרצה להוסיף?</Text>
 
             {/* ─── Hero Card: AI Camera ─── */}
             <Pressable
@@ -51,11 +51,11 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
               style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
               accessibilityRole="button"
               accessibilityLabel="צלם עם AI"
-              className="rounded-3xl overflow-hidden mb-4 border border-lime-500/30 bg-lime-500/10"
+              className="rounded-3xl overflow-hidden mb-4 border border-lime-500/30 bg-lime-500/10 items-start"
             >
               <View className="p-5 flex-row items-center justify-between">
                 {/* טקסט */}
-                <View className="flex-1 ml-4">
+                <View className="flex-1 ml-4 items-start">
                   <View className="flex-row items-center gap-2 mb-2">
                     <View className="bg-lime-500 rounded-md px-2 py-0.5">
                       <Text className="typo-caption-bold text-black">AI</Text>
@@ -63,7 +63,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                     <Text className="typo-caption text-lime-400">✦ ✦</Text>
                   </View>
                   <Text className="typo-h2 text-lime-300 ">צלם עם AI</Text>
-                  <Text className="typo-label text-lime-500/80  mt-1">
+                  <Text className="typo-label text-lime-500/80  mt-1 text-left">
                     צלם ארוחה ו-AI יזהה אוטומטית את המרכיבים והערכים התזונתיים
                   </Text>
                   <View className="flex-row items-center mt-3 gap-1">
@@ -81,7 +81,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
             </Pressable>
 
             {/* ─── כותרת מתחה ─── */}
-            <Text className="typo-caption-bold text-background-400  mb-3">
+            <Text className="typo-caption-bold text-background-400  mb-3 text-left">
               אפשרויות נוספות
             </Text>
 
@@ -96,12 +96,12 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                   accessibilityLabel={opt.label}
                   className="flex-row items-center p-4 rounded-2xl border border-white/5 bg-background-800 gap-3"
                 >
-                  <View className={`w-10 h-10 rounded-xl items-center justify-center ml-3 ${opt.iconBg}`}>
+                  <View className={`w-10 h-10 rounded-xl items-center justify-center ml-3 gap-2 ${opt.iconBg}`}>
                     <Ionicons name={opt.icon} size={20} color={opt.color} />
                   </View>
                   <View className="flex-1">
-                    <Text className="typo-body-primary text-white ">{opt.label}</Text>
-                    <Text className="typo-caption text-gray-500  mt-0.5">{opt.description}</Text>
+                    <Text className="typo-body-primary text-white text-left">{opt.label}</Text>
+                    <Text className="typo-caption text-gray-500  mt-0.5 text-left">{opt.description}</Text>
                   </View>
                   <Ionicons name="chevron-back" size={14} color="#4b5563" />
                 </Pressable>
