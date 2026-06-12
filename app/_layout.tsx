@@ -45,7 +45,9 @@ export default function RootLayout() {
   const url = Linking.useURL();
   // רישום listener ל-Supabase auth + טעינת session קיים – בלי זה ה-store לא מתעדכן אחרי התחברות
   useEffect(() => {
-    useAuthStore.getState().initialize();
+    useAuthStore.getState().initialize().finally(() => {
+      SplashScreen.hideAsync().catch(() => {});
+    });
   }, []);
 
   // לכוד את ה-URL של OAuth לפני שהקומפוננט auth-callback עולה (הוא מחמיץ את האירוע בגלל טיימינג)

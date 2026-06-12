@@ -155,8 +155,8 @@ const MealBuilderScreen = () => {
         amount_g: item.estimated_grams,
         measurement_type: 'grams' as const,
         protein_per_100: item.protein_per_100,
-        carbs_per_100: 0,
-        fat_per_100: 0,
+        carbs_per_100: item.carbs_per_100 ?? 0,
+        fat_per_100: item.fat_per_100 ?? 0,
         calories_per_100: item.calories_per_100,
         calories_per_unit: null,
         protein_per_unit: null,
@@ -370,8 +370,6 @@ const MealBuilderScreen = () => {
               calories_per_100: editDraft.calories_per_100,
               calories_per_unit: editDraft.calories_per_unit,
               protein_per_unit: editDraft.protein_per_unit,
-              carbs_per_100: 0,
-              fat_per_100: 0,
             }
           : item
       )
@@ -389,8 +387,8 @@ const MealBuilderScreen = () => {
           name: i.name,
           measurement_type: i.measurement_type ?? 'grams',
           protein_per_100: i.protein_per_100,
-          carbs_per_100: 0,
-          fat_per_100: 0,
+          carbs_per_100: i.carbs_per_100 ?? 0,
+          fat_per_100: i.fat_per_100 ?? 0,
           calories_per_100: i.calories_per_100,
           calories_per_unit: i.calories_per_unit ?? null,
           protein_per_unit: i.protein_per_unit ?? null,
