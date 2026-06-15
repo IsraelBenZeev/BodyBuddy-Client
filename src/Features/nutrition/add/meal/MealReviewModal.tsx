@@ -244,6 +244,7 @@ export default function MealReviewModal({
             onPress={handleConfirm}
             disabled={isPending || items.length === 0}
             label="הוסף ליומן"
+            iconName="checkmark-circle"
             variant="primary"
           />
         </View>

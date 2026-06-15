@@ -135,6 +135,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
           <ActionButton
             onPress={handleAddNewFood}
             label="צור מאכל חדש"
+            iconName="add"
             accessibilityLabel="צור מאכל חדש לשמירה"
             fullWidth
             variant="outline"
@@ -160,6 +161,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
           <ActionButton
             onPress={handleAddNewFood}
             label="הוסף מאכל חדש"
+            iconName="add"
             accessibilityLabel="הוסף מאכל חדש לרשימה"
             variant="primary"
           />

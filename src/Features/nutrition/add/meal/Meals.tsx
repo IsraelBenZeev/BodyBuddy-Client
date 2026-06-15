@@ -78,6 +78,7 @@ export default function Meals({ userId, date, onClose }: Props) {
           <ActionButton
             onPress={handleCreateFirstMeal}
             label="צור ארוחה חדשה"
+            iconName="add"
             accessibilityLabel="צור ארוחה חדשה לשמירה"
             fullWidth
           />
@@ -127,6 +128,7 @@ export default function Meals({ userId, date, onClose }: Props) {
         <ActionButton
           onPress={handleCreateFirstMeal}
           label="צור ארוחה חדשה"
+          iconName="add"
           accessibilityLabel="צור ארוחה חדשה לשמירה"
         />
       </View>

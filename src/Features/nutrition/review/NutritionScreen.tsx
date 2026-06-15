@@ -258,7 +258,7 @@ const NutritionScreen = () => {
             })()}
 
             <View
-              className="rounded-3xl p-2 mb-4"
+              className="rounded-3xl px-3 py-2 mb-4"
               style={{
                 borderWidth: 1,
                 borderColor: toRgba(remainingAccentColor, 0.3),
