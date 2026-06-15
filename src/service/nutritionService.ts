@@ -225,7 +225,7 @@ export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
         measurement_type, unit_weight_g,
         calories_per_100, protein_per_100, carbs_per_100, fat_per_100,
         calories_per_unit, protein_per_unit, carbs_per_unit, fat_per_unit,
-        created_at, updated_at
+        is_ai_generated, created_at, updated_at
       `)
       .or(`user_id.is.null,user_id.eq.${userId}`)
       .eq('is_active', true)
@@ -291,6 +291,7 @@ function normalizeFoodItem(row: Record<string, unknown>): FoodItem {
     protein_per_unit: row.protein_per_unit != null ? Number(row.protein_per_unit) : null,
     carbs_per_unit: row.carbs_per_unit != null ? Number(row.carbs_per_unit) : null,
     fat_per_unit: row.fat_per_unit != null ? Number(row.fat_per_unit) : null,
+    is_ai_generated: row.is_ai_generated === true,
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
   };
@@ -316,6 +317,7 @@ export const createFoodItem = async (
     protein_per_unit?: number | null;
     carbs_per_unit?: number | null;
     fat_per_unit?: number | null;
+    is_ai_generated?: boolean;
   },
 ): Promise<FoodItem> => {
   try {
@@ -325,6 +327,7 @@ export const createFoodItem = async (
       name: foodData.name,
       category: foodData.category ?? null,
       measurement_type: foodData.measurement_type,
+      is_ai_generated: foodData.is_ai_generated ?? false,
       // grams path (NOT NULL in DB — use 0 as default for units path)
       calories_per_100: isGrams ? (foodData.calories_per_100 ?? 0) : 0,
       protein_per_100: isGrams ? (foodData.protein_per_100 ?? 0) : 0,

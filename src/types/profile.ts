@@ -14,6 +14,10 @@ export interface Profile {
   avatar_url: string | null;
   /** גרם חלבון לכל ק"ג משקל – ברירת מחדל 1.7 */
   protein_per_kg: number | null;
+  /** הצגת פס פחמימות במסך תזונה – null/true = מוצג, false = מוסתר */
+  show_carbs_bar: boolean | null;
+  /** הצגת פס שומנים במסך תזונה – null/true = מוצג, false = מוסתר */
+  show_fat_bar: boolean | null;
 }
 
 export type Gender = 'male' | 'female';

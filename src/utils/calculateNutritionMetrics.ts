@@ -91,7 +91,8 @@ const formatCalories = (n: number): string =>
 
 export interface MotivationContent {
   message: string;
-  icon: 'trophy-outline' | 'barbell-outline' | 'flame-outline' | 'flash-outline' | 'star-outline';
+  icon: 'trophy-outline' | 'barbell-outline' | 'flame-outline' | 'flash-outline' | 'star-outline' | 'warning-outline' | 'alert-circle-outline';
+  severity?: 'warning' | 'danger';
 }
 
 export const getMotivationMessage = (
@@ -99,12 +100,21 @@ export const getMotivationMessage = (
   progress: number,
 ): MotivationContent | null => {
   const remainingFormatted = formatCalories(caloriesRemaining);
+  const overageFormatted = formatCalories(-caloriesRemaining);
 
   if (progress >= 100) {
+    if (caloriesRemaining < -300) {
+      return {
+        message: `עברת את היעד ב־${overageFormatted} קק״ל`,
+        icon: 'alert-circle-outline',
+        severity: 'danger',
+      };
+    }
     if (caloriesRemaining < 0) {
       return {
-        message: `הגעת ליעד! עברת ב־${remainingFormatted} קק״ל – מחר חדש`,
-        icon: 'trophy-outline',
+        message: `עברת ב־${overageFormatted} קק״ל`,
+        icon: 'warning-outline',
+        severity: 'warning',
       };
     }
     return { message: 'יום מושלם! השלמת את היעד היומי', icon: 'trophy-outline' };

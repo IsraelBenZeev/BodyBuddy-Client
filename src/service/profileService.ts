@@ -1,6 +1,11 @@
 import { supabase } from '@/supabase_client';
 import { CreateProfilePayload, Profile } from '../types/profile';
 
+interface ProfileDisplaySettings {
+  show_carbs_bar?: boolean;
+  show_fat_bar?: boolean;
+}
+
 /** שליפת פרופיל לפי user_id */
 export const getProfile = async (userId: string): Promise<Profile | null> => {
   try {
@@ -16,6 +21,18 @@ export const getProfile = async (userId: string): Promise<Profile | null> => {
     console.error('Get profile error:', error);
     throw error;
   }
+};
+
+/** עדכון הגדרות תצוגה בלבד (שדות show_*) */
+export const updateProfileDisplaySettings = async (
+  userId: string,
+  settings: ProfileDisplaySettings,
+): Promise<void> => {
+  const { error } = await supabase
+    .from('profiles')
+    .update(settings)
+    .eq('user_id', userId);
+  if (error) throw error;
 };
 
 /** יצירה או עדכון פרופיל */

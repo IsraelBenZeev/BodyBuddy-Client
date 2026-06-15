@@ -59,6 +59,7 @@ export interface FoodItem {
   protein_per_unit: number | null;
   carbs_per_unit: number | null;
   fat_per_unit: number | null;
+  is_ai_generated?: boolean;
   created_at: string;
   updated_at: string;
 }
