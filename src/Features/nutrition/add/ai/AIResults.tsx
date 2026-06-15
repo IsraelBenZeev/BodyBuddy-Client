@@ -197,7 +197,7 @@ const AIResults = ({ aiResult, userId, date, onClose, onBack }: Props) => {
   const foodMacros = useMemo(() => calcFood(food), [food]);
 
   const isFoodValid = useMemo(
-    () => food.food_name.trim().length > 0 && food.calories_per_100 > 0 && food.protein_per_100 > 0 && food.carbs_per_100 > 0 && food.amount > 0,
+    () => food.food_name.trim().length > 0 && food.calories_per_100 > 0 && food.amount > 0,
     [food]
   );
 
@@ -205,7 +205,7 @@ const AIResults = ({ aiResult, userId, date, onClose, onBack }: Props) => {
     () =>
       meal.items.length > 0 &&
       meal.items.every(
-        (item) => item.food_name.trim().length > 0 && item.calories_per_100 > 0 && item.protein_per_100 > 0 && item.carbs_per_100 > 0 && item.estimated_grams > 0
+        (item) => item.food_name.trim().length > 0 && item.calories_per_100 > 0 && item.estimated_grams > 0
       ),
     [meal.items]
   );
@@ -249,6 +249,7 @@ const AIResults = ({ aiResult, userId, date, onClose, onBack }: Props) => {
               carbs_per_100: food.carbs_per_100,
               fat_per_100: food.fat_per_100,
               unit_weight_g: food.measurement_type === 'units' ? food.unit_weight_g : null,
+              is_ai_generated: true,
             });
           } catch {}
         }
@@ -294,6 +295,7 @@ const AIResults = ({ aiResult, userId, date, onClose, onBack }: Props) => {
                   protein_per_100: item.protein_per_100,
                   carbs_per_100: item.carbs_per_100,
                   fat_per_100: item.fat_per_100,
+                  is_ai_generated: true,
                 })
               )
             );
@@ -493,10 +495,10 @@ const AIResults = ({ aiResult, userId, date, onClose, onBack }: Props) => {
             <Text className="typo-caption text-background-400 mb-3 text-left">ערכים ל-100 גרם</Text>
             <View className="flex-row gap-2 mb-2">
               <MacroField label="קלוריות" value={food.calories_per_100} onChange={(v) => setFood((p) => ({ ...p, calories_per_100: v }))} borderClass={showErrors && food.calories_per_100 === 0 ? 'border-red-500' : 'border-lime-500/40'} step={10} />
-              <MacroField label="חלבון" value={food.protein_per_100} onChange={(v) => setFood((p) => ({ ...p, protein_per_100: v }))} borderClass={showErrors && food.protein_per_100 === 0 ? 'border-red-500' : 'border-blue-500/40'} step={1} />
+              <MacroField label="חלבון" value={food.protein_per_100} onChange={(v) => setFood((p) => ({ ...p, protein_per_100: v }))} borderClass="border-blue-500/40" step={1} />
             </View>
             <View className="flex-row gap-2 mb-4">
-              <MacroField label="פחמימות" value={food.carbs_per_100} onChange={(v) => setFood((p) => ({ ...p, carbs_per_100: v }))} borderClass={showErrors && food.carbs_per_100 === 0 ? 'border-red-500' : 'border-amber-500/40'} step={5} />
+              <MacroField label="פחמימות" value={food.carbs_per_100} onChange={(v) => setFood((p) => ({ ...p, carbs_per_100: v }))} borderClass="border-amber-500/40" step={5} />
               <MacroField label="שומן" value={food.fat_per_100} onChange={(v) => setFood((p) => ({ ...p, fat_per_100: v }))} borderClass="border-red-500/40" step={5} />
             </View>
 
@@ -657,10 +659,10 @@ const AIResults = ({ aiResult, userId, date, onClose, onBack }: Props) => {
                     <Text className="typo-caption text-background-500 mb-2 text-left">ל-100 גרם</Text>
                     <View className="flex-row gap-2 mb-2">
                       <MacroField label="קלוריות" value={item.calories_per_100} onChange={(v) => updateItem(item.localId, { calories_per_100: v })} borderClass={showErrors && item.calories_per_100 === 0 ? 'border-red-500' : 'border-lime-500/40'} step={10} />
-                      <MacroField label="חלבון" value={item.protein_per_100} onChange={(v) => updateItem(item.localId, { protein_per_100: v })} borderClass={showErrors && item.protein_per_100 === 0 ? 'border-red-500' : 'border-blue-500/40'} step={1} />
+                      <MacroField label="חלבון" value={item.protein_per_100} onChange={(v) => updateItem(item.localId, { protein_per_100: v })} borderClass="border-blue-500/40" step={1} />
                     </View>
                     <View className="flex-row gap-2 mb-4">
-                      <MacroField label="פחמימות" value={item.carbs_per_100} onChange={(v) => updateItem(item.localId, { carbs_per_100: v })} borderClass={showErrors && item.carbs_per_100 === 0 ? 'border-red-500' : 'border-amber-500/40'} step={5} />
+                      <MacroField label="פחמימות" value={item.carbs_per_100} onChange={(v) => updateItem(item.localId, { carbs_per_100: v })} borderClass="border-amber-500/40" step={5} />
                       <MacroField label="שומן" value={item.fat_per_100} onChange={(v) => updateItem(item.localId, { fat_per_100: v })} borderClass="border-red-500/40" step={5} />
                     </View>
 

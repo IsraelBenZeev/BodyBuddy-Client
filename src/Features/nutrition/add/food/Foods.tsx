@@ -251,21 +251,43 @@ const FoodCard = React.memo(function FoodCard({
         </View>
       </View>
 
-      <View className="flex-row bg-white/5 px-4 py-3 justify-around items-center">
-        <View className="items-center flex-1">
-          <Text className="typo-caption-bold text-lime-400">
-            {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100}{' '}
-            קק״ל
+      <View className="flex-row px-3 py-3 gap-2">
+        <View className="flex-1 bg-lime-500/10 border border-lime-500/20 rounded-2xl py-2 items-center">
+          <Text className="typo-caption text-lime-400">קלוריות</Text>
+          <Text className="typo-caption-bold text-white mt-0.5">
+            {item.measurement_type === 'units' ? item.calories_per_unit : item.calories_per_100}
           </Text>
-          <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">קלוריות</Text>
         </View>
-        <View className="w-[1px] h-4 bg-white/10" />
-        <View className="items-center flex-1">
-          <Text className="typo-caption-bold text-lime-500">
+        <View className="flex-1 bg-blue-500/[0.06] border border-blue-500/20 rounded-2xl py-2 items-center">
+          <Text className="typo-caption text-blue-400">חלבון</Text>
+          <Text className="typo-caption-bold text-white mt-0.5">
             {item.measurement_type === 'units' ? item.protein_per_unit : item.protein_per_100}g
           </Text>
-          <Text className="typo-caption-bold text-gray-500 uppercase mt-0.5">חלבון</Text>
         </View>
+        <View className="flex-1 bg-amber-500/[0.06] border border-amber-500/20 rounded-2xl py-2 items-center">
+          <Text className="typo-caption text-amber-400">פחמימות</Text>
+          <Text className="typo-caption-bold text-white mt-0.5">
+            {item.measurement_type === 'units' ? item.carbs_per_unit : item.carbs_per_100}g
+          </Text>
+        </View>
+      </View>
+
+      <View className="px-5 pb-3 flex-row items-center justify-between">
+        <Text className="typo-caption text-background-600">
+          {new Date(item.created_at).toLocaleString('he-IL', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </Text>
+        {item.is_ai_generated && (
+          <View className="flex-row items-center gap-1 bg-lime-500/15 border border-lime-500/30 rounded-full px-2 py-0.5">
+            <Ionicons name="sparkles" size={10} color="#a3e635" />
+            <Text className="typo-caption text-lime-400">AI</Text>
+          </View>
+        )}
       </View>
     </Pressable>
   );

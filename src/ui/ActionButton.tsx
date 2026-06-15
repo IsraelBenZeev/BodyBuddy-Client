@@ -51,7 +51,7 @@ const VARIANT_CONFIG: Record<
     activityColor: '#ffffff',
   },
   primary: {
-    button: 'bg-gradient-to-r from-lime-500/30 to-lime-500/10 border border-lime-500 rounded-full',
+    button: 'bg-background-700/80 border border-lime-500 rounded-full',
     iconWrapper: 'bg-lime-500/40 border border-lime-500/80 rounded-full',
     textClass: 'typo-btn-cta text-lime-300',
     iconColor: '#bef264',

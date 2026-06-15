@@ -58,7 +58,7 @@ const AddNewFoodSelection = ({
           onPress={onBack}
           accessibilityRole="button"
           accessibilityLabel="חזרה לרשימה"
-          className="absolute left-4 w-11 h-11 bg-background-700 rounded-xl items-center justify-center border border-background-600 active:scale-95"
+          className="absolute right-4 w-11 h-11 bg-background-700 rounded-xl items-center justify-center border border-background-600 active:scale-95"
         >
           <Ionicons name="chevron-forward" size={22} color="#fff" />
         </Pressable>

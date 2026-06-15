@@ -106,6 +106,11 @@ const AddNewFood = ({
   const [proteinValue, setProteinValue] = useState(initialValues?.protein_per_100 ?? 0);
   const [carbsValue, setCarbsValue] = useState(initialValues?.carbs_per_100 ?? 0);
   const [consumedAmount, setConsumedAmount] = useState<number>(defaultConsumedAmount ?? 0);
+  const [pendingAction, setPendingAction] = useState<'save' | 'journal' | null>(null);
+
+  useEffect(() => {
+    if (!isPending) setPendingAction(null);
+  }, [isPending]);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query), 300);
@@ -271,7 +276,7 @@ const AddNewFood = ({
                     <Text className="typo-body-primary text-white">{food.name}</Text>
                     {cal != null && (
                       <Text className="typo-caption text-background-400 mt-0.5">
-                        {cal} {calLabel}
+                        {Math.round(cal)} {calLabel}
                       </Text>
                     )}
                   </View>
@@ -351,7 +356,7 @@ const AddNewFood = ({
                             <Text className="typo-body-primary text-white">{food.name}</Text>
                             {cal != null && (
                               <Text className="typo-caption text-background-400 mt-0.5">
-                                {cal} {calLabel}
+                                {Math.round(cal)} {calLabel}
                               </Text>
                             )}
                           </View>
@@ -744,9 +749,9 @@ const AddNewFood = ({
       <View className="flex-row gap-3">
         <View style={{ flex: 1 }}>
           <ActionButton
-            onPress={() => handleCustomSave(false)}
+            onPress={() => { setPendingAction('save'); handleCustomSave(false); }}
             disabled={isPending || !step3Valid}
-            loading={isPending}
+            loading={isPending && pendingAction === 'save'}
             label="שמור"
             iconName="save-outline"
             variant="secondary"
@@ -756,9 +761,9 @@ const AddNewFood = ({
         </View>
         <View style={{ flex: 1 }}>
           <ActionButton
-            onPress={() => handleCustomSave(true)}
+            onPress={() => { setPendingAction('journal'); handleCustomSave(true); }}
             disabled={isPending || !step3Valid}
-            loading={isPending}
+            loading={isPending && pendingAction === 'journal'}
             label="שמור + יומן"
             iconName="add-circle"
             variant="primary"

@@ -123,7 +123,7 @@ export default function Meals({ userId, date, onClose }: Props) {
       />
 
       {/* כפתור יצירת ארוחה - צף בתחתית */}
-      <View className="absolute bottom-8 left-6 right-6 shadow-2xl">
+      <View className="absolute bottom-8 left-6 right-6 shadow-2xl ">
         <ActionButton
           onPress={handleCreateFirstMeal}
           label="צור ארוחה חדשה"
@@ -268,17 +268,9 @@ const MealCard = React.memo(function MealCard({
               <Ionicons name="restaurant" size={22} color="#bef264" />
             </View>
             <View className="flex-1 items-start">
-              <View className="flex-row items-center gap-2">
-                <Text className="typo-h4 text-white font-bold text-left" numberOfLines={1}>
-                  {meal.name_meal || 'ארוחה חדשה'}
-                </Text>
-                {meal.is_ai_generated && (
-                  <View className="flex-row items-center gap-1 bg-lime-500/15 border border-lime-500/30 rounded-full px-2 py-0.5">
-                    <View className="w-1 h-1 rounded-full bg-lime-400" />
-                    <Text className="typo-caption text-lime-400">AI</Text>
-                  </View>
-                )}
-              </View>
+              <Text className="typo-h4 text-white font-bold text-left" numberOfLines={1}>
+                {meal.name_meal || 'ארוחה חדשה'}
+              </Text>
               <Text className="typo-caption text-gray-500">
                 {(meal.meal_items ?? []).length} מרכיבים רשומים
               </Text>
@@ -338,9 +330,17 @@ const MealCard = React.memo(function MealCard({
             </Text>
           </View>
         )}
-        <Text className="typo-caption text-background-600">
-          {new Date(meal.created_at).toLocaleString('he-IL', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
-        </Text>
+        <View className="flex-row items-center justify-between">
+          <Text className="typo-caption text-background-600">
+            {new Date(meal.created_at).toLocaleString('he-IL', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
+          </Text>
+          {meal.is_ai_generated && (
+            <View className="flex-row items-center gap-1 bg-lime-500/15 border border-lime-500/30 rounded-full px-2 py-0.5">
+              <Ionicons name="sparkles" size={10} color="#a3e635" />
+              <Text className="typo-caption text-lime-400">AI</Text>
+            </View>
+          )}
+        </View>
       </View>
     </Pressable>
   );

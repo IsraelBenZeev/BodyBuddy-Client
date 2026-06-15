@@ -104,7 +104,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
               accessibilityLabel="צלם ארוחה עם AI"
               className="rounded-3xl mb-5"
             >
-              <View className="flex-row items-center gap-4 p-5">
+              <View className="flex-row items-center gap-4 p-5 border border-slate-700 rounded-3xl">
                 {/* Icon */}
                 <View
                   style={{
@@ -122,7 +122,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                 </View>
 
                 {/* Text */}
-                <View className="flex-1 items-start gap-1">
+                <View className="flex-1 items-start gap-1 ">
                   <View
                     style={{
                       backgroundColor: 'rgba(132,204,22,0.18)',
@@ -132,9 +132,13 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                       paddingHorizontal: 10,
                       paddingVertical: 2,
                       marginBottom: 2,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 4,
                     }}
                   >
-                    <Text className="typo-caption-bold text-lime-300">AI</Text>
+                    <Ionicons name="sparkles" size={15} color="#a3e635" />
+                    {/* <Text className="typo-caption-bold text-lime-300">AI</Text> */}
                   </View>
                   <Text className="typo-h3 text-lime-300 text-left">צלם עם AI</Text>
                   <Text className="typo-caption text-lime-500/70 text-left">
@@ -168,7 +172,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
                   }]}
                   accessibilityRole="button"
                   accessibilityLabel={opt.label}
-                  className="flex-row items-center gap-3.5 px-4 py-3.5 rounded-2xl"
+                  className="flex-row items-center gap-3.5 px-4 py-3.5 rounded-2xl border border-slate-700"
                 >
                   {/* Icon circle */}
                   <View

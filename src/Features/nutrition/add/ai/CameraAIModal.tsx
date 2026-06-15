@@ -7,7 +7,7 @@ import ScanAnimation from '@/src/ui/Animations/ScanAnimation';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Linking, Modal, Pressable, Text, View } from 'react-native';
 
 interface Props {
   visible: boolean;
@@ -197,6 +197,24 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
                 >
                   <Text className="typo-body-primary text-gray-500">ביטול</Text>
                 </Pressable>
+
+                <View className="mt-4 bg-white/[0.03] border border-white/[0.07] rounded-2xl px-4 py-3 flex-row items-start gap-3">
+                  <Ionicons name="information-circle-outline" size={18} color="#6b7280" style={{ marginTop: 1 }} />
+                  <View className="flex-1 gap-1 items-start">
+                    <Text className="typo-caption text-background-400 text-left">
+                      {'הניתוח מבוצע על ידי AI ועלול להכיל שגיאות. השימוש בו הינו על אחריות המשתמש בלבד.'}
+                    </Text>
+                    <Text className="typo-caption text-background-400">
+                      {'זיהוי שגוי? '}
+                      <Text
+                        onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
+                        className="text-lime-400 font-semibold"
+                      >
+                        {'דווח לנו'}
+                      </Text>
+                    </Text>
+                  </View>
+                </View>
 
                 {__DEV__ && (
                   <View className="mt-4 pt-4 border-t border-white/10 flex-row gap-2">
