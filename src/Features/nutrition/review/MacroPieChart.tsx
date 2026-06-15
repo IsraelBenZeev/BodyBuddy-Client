@@ -1,4 +1,6 @@
 import { colors } from '@/colors';
+
+const PROTEIN_COLOR = 'rgb(96, 165, 250)';
 import { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
@@ -21,7 +23,7 @@ const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
     return [
       {
         value: proteinConsumed,
-        color: colors.lime[500],
+        color: PROTEIN_COLOR,
         text: '',
         tooltipText: `נצרך: ${proteinConsumed}ג׳`,
       },
@@ -62,7 +64,7 @@ const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
               </Text>
               <Text
                 className="typo-caption-bold leading-tight"
-                style={{ color: pct >= 100 ? colors.lime[400] : colors.lime[500] }}
+                style={{ color: pct >= 100 ? 'rgb(147, 197, 253)' : PROTEIN_COLOR }}
               >
                 {pct}%
               </Text>
@@ -73,7 +75,7 @@ const MacroPieChart = ({ proteinConsumed, proteinGoal }: Props) => {
 
       <View className="flex-row items-center justify-between w-full">
         <View className="flex-row items-center gap-2">
-          <View className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.lime[500] }} />
+          <View className="w-3 h-3 rounded-full" style={{ backgroundColor: PROTEIN_COLOR }} />
           <Text className="typo-label text-white">נצרך</Text>
         </View>
         <Text className="typo-label text-background-400">{proteinConsumed}ג׳</Text>

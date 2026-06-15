@@ -97,22 +97,18 @@ function groupBlocksByTimeSlot(blocks: ListBlock[]): Map<string, ListBlock[]> {
 
 const MacroBar = React.memo(function MacroBar({ entry }: { entry: NutritionEntry }) {
   return (
-    <View className="flex-row border-t border-background-700 px-3.5 py-2.5">
-      <View className="flex-row items-center flex-1 justify-around">
-        <View className="flex-row items-center gap-1">
-          <View className="w-2 h-2 rounded-full bg-lime-500 ml-1.5" />
-          <Text className="typo-caption text-background-300">
-            חלבון <Text className="typo-caption text-lime-400">{Math.round(entry.protein)}g</Text>
-          </Text>
-        </View>
-        <View className="w-[1px] h-3 bg-background-600" />
-        <View className="flex-row items-center gap-1">
-          <View className="w-2 h-2 rounded-full bg-orange-400 ml-1.5" />
-          <Text className="typo-caption text-background-300">
-            פחמימות <Text className="typo-caption text-orange-300">{Math.round(entry.carbs)}g</Text>
-          </Text>
-        </View>
-      </View>
+    <View className="flex-row border-t border-background-700 px-4 py-2.5 items-center justify-around">
+      <Text className="typo-caption text-background-500">
+        קלוריות <Text className="typo-caption-bold text-lime-400">{Math.round(entry.calories)}</Text>
+      </Text>
+      <View className="w-[1px] h-3 bg-background-600" />
+      <Text className="typo-caption text-background-500">
+        חלבון <Text className="typo-caption-bold text-blue-400">{Math.round(entry.protein)}g</Text>
+      </Text>
+      <View className="w-[1px] h-3 bg-background-600" />
+      <Text className="typo-caption text-background-500">
+        פחמימות <Text className="typo-caption-bold text-amber-400">{Math.round(entry.carbs)}g</Text>
+      </Text>
     </View>
   );
 });
@@ -293,26 +289,22 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
         </View>
       ))}
 
-      <View className="bg-background-900/50 px-4 py-4 border-t border-white/5">
-        <View className="flex-row justify-between items-center mb-3 px-1">
-          <Text className="typo-caption-bold text-background-400 tracking-widest uppercase">
-            סיכום ערכים לארוחה
+      <View className="bg-background-900/50 px-4 py-3 border-t border-white/5">
+        <Text className="typo-caption-bold text-background-400 tracking-widest uppercase mb-2 text-center">
+          סיכום ערכים לארוחה
+        </Text>
+        <View className="flex-row items-center justify-around">
+          <Text className="typo-caption text-background-500">
+            קלוריות <Text className="typo-label text-lime-400">{totalCal}</Text>
           </Text>
-          <View className="h-[1px] flex-1 bg-white/5 mx-3" />
-        </View>
-        <View className="flex-row items-center justify-center gap-4 ">
-          <View className="items-center">
-            <Text className="typo-caption text-gray-400 mb-1">חלבון</Text>
-            <View className="bg-lime-500/10 px-3 py-1 rounded-lg">
-              <Text className="typo-label text-lime-500">{totalProtein}g</Text>
-            </View>
-          </View>
-          <View className="items-center">
-            <Text className="typo-caption text-gray-400 mb-1">פחמימות</Text>
-            <View className="bg-orange-400/10 px-3 py-1 rounded-lg">
-              <Text className="typo-label text-orange-300">{totalCarbs}g</Text>
-            </View>
-          </View>
+          <View className="w-[1px] h-3 bg-background-600" />
+          <Text className="typo-caption text-background-500">
+            חלבון <Text className="typo-label text-blue-400">{totalProtein}g</Text>
+          </Text>
+          <View className="w-[1px] h-3 bg-background-600" />
+          <Text className="typo-caption text-background-500">
+            פחמימות <Text className="typo-label text-amber-400">{totalCarbs}g</Text>
+          </Text>
         </View>
       </View>
     </View>
