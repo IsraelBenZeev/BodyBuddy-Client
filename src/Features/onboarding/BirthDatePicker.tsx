@@ -2,9 +2,9 @@ import { colors } from '@/colors';
 import { getDaysInMonth, isValid, parseISO } from 'date-fns';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
 import {
   Animated,
-  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Text,
@@ -61,13 +61,25 @@ const PickerItem: React.FC<PickerItemProps> = React.memo(
 
     const scale = scrollY.interpolate({
       inputRange,
-      outputRange: [0.6, 0.8, 1.2, 0.8, 0.6],
+      outputRange: [0.65, 0.82, 1.18, 0.82, 0.65],
       extrapolate: 'clamp',
     });
 
     const opacity = scrollY.interpolate({
       inputRange,
-      outputRange: [0.1, 0.35, 1, 0.35, 0.1],
+      outputRange: [0.15, 0.45, 1, 0.45, 0.15],
+      extrapolate: 'clamp',
+    });
+
+    const color = scrollY.interpolate({
+      inputRange,
+      outputRange: [
+        'rgba(113,113,122,1)',
+        'rgba(161,161,170,1)',
+        'rgba(213,255,95,1)',
+        'rgba(161,161,170,1)',
+        'rgba(113,113,122,1)',
+      ],
       extrapolate: 'clamp',
     });
 
@@ -85,14 +97,15 @@ const PickerItem: React.FC<PickerItemProps> = React.memo(
           opacity,
         }}
       >
-        <Text
-          className="typo-label"
+        <Animated.Text
           style={{
-            color: 'rgba(255,255,255,0.75)',
+            fontSize: 14,
+            fontWeight: '500',
+            color,
           }}
         >
           {String(item)}
-        </Text>
+        </Animated.Text>
       </Animated.View>
     );
   }
@@ -115,7 +128,7 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
   flex,
   label,
 }) => {
-  const flatListRef = useRef<FlatList>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
   const scrollY = useRef(new Animated.Value(selectedIndex * ITEM_HEIGHT)).current;
   const lastHapticIndex = useRef(selectedIndex);
   const lastScrolledIndex = useRef<number | null>(null);
@@ -125,16 +138,14 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
     [data]
   );
 
-  // גלילה לערך שהשתנה מבחוץ (למשל clamping יום כשחודש משתנה)
   useEffect(() => {
     if (lastScrolledIndex.current === null) {
-      // initial mount מטופל ע"י initialScrollIndex
       lastScrolledIndex.current = selectedIndex;
       return;
     }
     if (lastScrolledIndex.current !== selectedIndex) {
       const timer = setTimeout(() => {
-        flatListRef.current?.scrollToOffset({ offset: selectedIndex * ITEM_HEIGHT, animated: true });
+        scrollViewRef.current?.scrollTo({ y: selectedIndex * ITEM_HEIGHT, animated: true });
         lastScrolledIndex.current = selectedIndex;
       }, 0);
       return () => clearTimeout(timer);
@@ -163,39 +174,21 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
     [data.length, onSelect]
   );
 
-  const getItemLayout = useCallback(
-    (_: unknown, index: number) => ({
-      length: ITEM_HEIGHT,
-      offset: ITEM_HEIGHT * index,
-      index,
-    }),
-    []
-  );
-
-  const renderItem = useCallback(
-    ({ item, index }: { item: string | number; index: number }) => (
-      <PickerItem item={item} index={index} scrollY={scrollY} />
-    ),
-    [scrollY]
-  );
-
-  const keyExtractor = useCallback((_: unknown, index: number) => String(index), []);
-
   return (
     <View style={{ flex }}>
       <Text
         style={{
           color: colors.background[400],
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: '600',
           textAlign: 'center',
+          letterSpacing: 0.5,
           marginBottom: 4,
         }}
       >
         {label}
       </Text>
       <View style={{ height: CONTAINER_HEIGHT, overflow: 'hidden' }}>
-        {/* קו הדגשה למרכז */}
         <View
           pointerEvents="none"
           style={{
@@ -206,31 +199,28 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
             height: ITEM_HEIGHT,
             borderTopWidth: 1,
             borderBottomWidth: 1,
-            borderColor: `${colors.lime[500]}50`,
-            backgroundColor: `${colors.lime[500]}10`,
-            borderRadius: 8,
+            borderColor: 'rgba(150,200,40,0.45)',
+            backgroundColor: 'rgba(150,200,40,0.08)',
+            borderRadius: 10,
             zIndex: 0,
           }}
         />
-        <FlatList
-          ref={flatListRef}
-          data={paddedData}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          extraData={selectedIndex}
-          initialScrollIndex={selectedIndex}
+        <ScrollView
+          ref={scrollViewRef}
+          showsVerticalScrollIndicator={false}
           snapToInterval={ITEM_HEIGHT}
           decelerationRate="fast"
-          showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           onScroll={handleScroll}
           onMomentumScrollEnd={handleMomentumEnd}
-          getItemLayout={getItemLayout}
+          contentOffset={{ x: 0, y: selectedIndex * ITEM_HEIGHT }}
+          nestedScrollEnabled
           style={{ zIndex: 1 }}
-          onScrollToIndexFailed={() => {
-            flatListRef.current?.scrollToOffset({ offset: selectedIndex * ITEM_HEIGHT, animated: false });
-          }}
-        />
+        >
+          {paddedData.map((item, index) => (
+            <PickerItem key={String(index)} item={item} index={index} scrollY={scrollY} />
+          ))}
+        </ScrollView>
       </View>
     </View>
   );

@@ -5,12 +5,12 @@ import {
   DEFAULT_PROTEIN_PER_KG,
   ProfileFormData,
 } from '@/src/types/profile';
-import { Ionicons } from '@expo/vector-icons';
+import ActionButton from '@/src/ui/ActionButton';
 import LTRSlider from '@/src/ui/LTRSlider';
+import { Ionicons } from '@expo/vector-icons';
 import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   Text,
@@ -190,46 +190,41 @@ const ActivityLevelStep = ({
       {/* כפתורי פעולה */}
       <View className="pt-1 pb-3 gap-2">
         <View className="flex-row gap-3">
-          <Pressable
-            onPress={onBack}
-            disabled={isPending}
-            className="flex-row items-center justify-center gap-1.5 flex-1 rounded-xl py-2 disabled:opacity-70 active:opacity-70"
-            accessibilityRole="button"
-            accessibilityLabel="חזרה"
-          >
-            <Ionicons name="arrow-forward" size={16} color={colors.background[400]} />
-            <Text className="typo-label text-background-400">חזרה</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={handleNext}
-            disabled={isPending}
-            className="flex-row items-center justify-center gap-2 flex-1 rounded-2xl py-3 shadow-lg bg-lime-500 disabled:opacity-70 active:opacity-90"
-            accessibilityRole="button"
-            accessibilityLabel="הבא"
-          >
-            <Ionicons name="arrow-back" size={20} color={colors.background[900]} />
-            <Text className="typo-btn-cta text-black">הבא</Text>
-          </Pressable>
+          <View className="flex-1">
+            <ActionButton
+              onPress={onBack}
+              label="חזרה"
+              iconName="arrow-forward"
+              variant="secondary"
+              size="md"
+              fullWidth
+              disabled={isPending}
+            />
+          </View>
+          <View className="flex-1">
+            <ActionButton
+              onPress={handleNext}
+              label="הבא"
+              iconName="arrow-back"
+              variant="outline"
+              size="md"
+              fullWidth
+              disabled={isPending}
+              loading={isPending}
+            />
+          </View>
         </View>
-
         {onSubmit && (
-          <Pressable
+          <ActionButton
             onPress={handleFinishAndSave}
+            label="סיום ושמירה"
+            iconName="checkmark-circle"
+            variant="primary"
+            size="md"
+            fullWidth
             disabled={isPending}
-            className="flex-row items-center justify-center gap-2 py-2.5 rounded-xl border border-lime-500 bg-lime-500/15 disabled:opacity-70 active:opacity-90"
-            accessibilityRole="button"
-            accessibilityLabel="סיום ושמירה"
-          >
-            {isPending ? (
-              <ActivityIndicator color={colors.lime[500]} size="small" />
-            ) : (
-              <>
-                <Ionicons name="checkmark-circle" size={20} color={colors.lime[500]} />
-                <Text className="typo-btn-cta text-lime-500">סיום ושמירה</Text>
-              </>
-            )}
-          </Pressable>
+            loading={isPending}
+          />
         )}
       </View>
     </Animated.View>

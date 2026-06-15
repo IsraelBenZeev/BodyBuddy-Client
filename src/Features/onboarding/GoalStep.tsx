@@ -6,13 +6,14 @@ import {
   goalOptions,
   ProfileFormData,
 } from '@/src/types/profile';
+import ActionButton from '@/src/ui/ActionButton';
 import LTRSlider from '@/src/ui/LTRSlider';
 import { calculateDailyCalories } from '@/src/utils/calculateMetrics';
 import { Ionicons } from '@expo/vector-icons';
 import { differenceInYears, isValid, parseISO } from 'date-fns';
 import { useCallback, useMemo, useRef } from 'react';
 import { Control, Controller, UseFormSetValue, UseFormTrigger, useWatch } from 'react-hook-form';
-import { ActivityIndicator, Linking, Pressable, ScrollView, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInLeft } from 'react-native-reanimated';
 
 /** תיאור כיוון ההפרש בעברית */
@@ -308,35 +309,29 @@ const GoalStep = ({ control, trigger, setValue, onBack, onSubmit, isPending }: G
 
       {/* כפתורי פעולה – חזרה, סיום ושמירה */}
       <View className="flex-row gap-3 pt-1 pb-3">
-        <Pressable
-          onPress={onBack}
-          disabled={isPending}
-          className="flex-row items-center justify-center gap-1.5 flex-1 rounded-xl py-2 disabled:opacity-70 active:opacity-70"
-          accessibilityRole="button"
-          accessibilityLabel="חזרה"
-        >
-          <Ionicons name="arrow-forward" size={16} color={colors.background[400]} />
-          <Text className="typo-label text-background-400">חזרה</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={handleSubmit}
-          disabled={isPending}
-          className={`flex-row items-center justify-center gap-2 flex-1 rounded-2xl py-3 shadow-lg ${
-            isPending ? 'bg-lime-700' : 'bg-lime-500'
-          } disabled:opacity-70 active:opacity-90`}
-          accessibilityRole="button"
-          accessibilityLabel="סיום ושמירה"
-        >
-          {isPending ? (
-            <ActivityIndicator color={colors.background[900]} size="small" />
-          ) : (
-            <>
-              <Ionicons name="checkmark-circle" size={20} color={colors.background[900]} />
-              <Text className="typo-btn-cta text-black">סיום ושמירה</Text>
-            </>
-          )}
-        </Pressable>
+        <View className="flex-1">
+          <ActionButton
+            onPress={onBack}
+            label="חזרה"
+            iconName="arrow-forward"
+            variant="secondary"
+            size="md"
+            fullWidth
+            disabled={isPending}
+          />
+        </View>
+        <View className="flex-1">
+          <ActionButton
+            onPress={handleSubmit}
+            label="סיום ושמירה"
+            iconName="checkmark-circle"
+            variant="outline"
+            size="md"
+            fullWidth
+            disabled={isPending}
+            loading={isPending}
+          />
+        </View>
       </View>
     </Animated.View>
   );
