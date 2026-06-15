@@ -100,17 +100,10 @@ const WorkoutList = () => {
               haptic="medium"
               animationType="opacity"
               onPress={handleCreateNew}
-              className="bg-lime-500 items-center justify-center rounded-full w-16 h-16 shadow-2xl"
+              className="bg-lime-500/20 border border-lime-500/50 items-center justify-center rounded-full w-16 h-16 shadow-md shadow-black"
               accessibilityLabel="צור אימון חדש"
-              style={{
-                elevation: 10,
-                shadowColor: colors.lime[500],
-                shadowOffset: { width: 0, height: 5 },
-                shadowOpacity: 0.5,
-                shadowRadius: 15,
-              }}
             >
-              <IconAddToList color={colors.background[900]} size={36} />
+              <IconAddToList color={colors.lime[300]} size={36} />
             </AppButton>
           </View>
         )}

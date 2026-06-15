@@ -4,6 +4,7 @@ import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { daysInHebrew, WorkoutPlan } from '@/src/types/workout';
 // import { IconCalendar } from '@/src/ui/IconsSVG';
 import AppButton from '@/src/ui/PressableOpacity';
+import ActionButton from '@/src/ui/ActionButton';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { router, useFocusEffect } from 'expo-router';
@@ -174,15 +175,14 @@ const CardPlan = ({ plan, isActive }: CardPlanProps) => {
           </View>
           <View className="flex-row items-center justify-center gap-4">
             <View className="flex-1">
-              <AppButton
-                haptic="medium"
-                animationType="opacity"
-                className="bg-lime-500 px-3 py-2 rounded-2xl items-center"
-                accessibilityLabel={`הצג אימון: ${plan.title}`}
+              <ActionButton
                 onPress={handleViewWorkout}
-              >
-                <Text className="typo-btn-cta text-background-850">הצג אימון</Text>
-              </AppButton>
+                label="הצג אימון"
+                variant="primary"
+                size="sm"
+                fullWidth
+                accessibilityLabel={`הצג אימון: ${plan.title}`}
+              />
             </View>
             <View className="flex-col items-center gap-1">
               <AppButton
