@@ -50,6 +50,50 @@ Every screen and component **must** follow this hierarchy — no exceptions.
 - Never use `StyleSheet` or inline `style={{ fontSize: ... }}` for text size/weight — always Tailwind className
 - Exception: hero display numbers that need sizes outside the scale (e.g. `style={{ fontSize: 52 }}`) are allowed only when no Tailwind class fits
 
+## Design Language
+
+The visual identity is dark, premium, and lime-accented. Every new component must follow these rules.
+
+### Colors
+- **Primary accent**: `lime[300]` (`rgb(213,255,95)`) for active icons/text, `lime[500]` (`rgb(150,200,40)`) for borders/backgrounds
+- **Backgrounds**: `background[900]` for surfaces/tab bar, `background[950]` for main card containers
+- **Secondary text**: `background[400]` for inactive/muted labels
+- **Semantic**: `orange[400]` for carbs, `rgb(234,179,8)` for fat, `red[400]` for danger/overage
+
+### Roundedness
+| Element | Value |
+|---------|-------|
+| Full pills (buttons, tab bar, chips) | `rounded-full` / `borderRadius: 32` |
+| Cards, modals, large containers | `rounded-3xl` |
+| Small chips / inline badges | `rounded-2xl` |
+| Never | `rounded-sm`, `rounded-md`, `rounded-lg`, or no rounding on interactive elements |
+
+### Interactive Elements (Buttons)
+**Always use `src/ui/ActionButton.tsx` for buttons — never build a custom button from scratch.**
+
+`ActionButton` supports: `variant` (`outline` / `secondary` / `primary`), `size` (`sm` / `md` / `lg`), `iconName`, `label`, `fullWidth`, `loading`, `disabled`.
+
+- **Shape**: always `rounded-full`
+- **Structure**: icon wrapper (circle) + label text side by side
+- **Focused/primary state**: semi-transparent lime background + colored border
+  - Background: `rgba(150, 200, 40, 0.18–0.25)`
+  - Border: `rgba(150, 200, 40, 0.45–0.5)` with `borderWidth: 1`
+  - Icon color: `lime[300]`
+- **Inactive/secondary state**: `transparent` background, `background[400]` color
+- Never use solid opaque lime fill for buttons — always semi-transparent
+
+### Cards & Containers
+- Background: semi-transparent dark (`bg-background-950`, `bg-white/[0.03]`)
+- Border: `borderWidth: 1` with low-opacity color (`rgba(255,255,255,0.05–0.10)` or colored at `0.25–0.35`)
+- Padding: `p-4` or `p-5`
+- Shadow: `shadow-black shadow-md` on elevated surfaces
+
+### Tab Bar
+- Floating pill: `borderRadius: 32`, `left/right: 16`, `bottom: insets.bottom`
+- Background: `background[900]` with `borderWidth: 1, borderColor: rgba(255,255,255,0.07)`
+- Active tab icon: lime semi-transparent circle (`rgba(150,200,40,0.18)` bg + `rgba(150,200,40,0.45)` border)
+- Height: `74`
+
 ## Accessibility (a11y)
 Every new component **must** meet these requirements — no exceptions:
 
