@@ -11,6 +11,7 @@ interface ActionButtonProps {
   onPress: () => void;
   label: string;
   iconName?: IoniconName;
+  children?: React.ReactNode;
   size?: ButtonSize;
   variant?: ButtonVariant;
   fullWidth?: boolean;
@@ -62,7 +63,8 @@ const VARIANT_CONFIG: Record<
 export default function ActionButton({
   onPress,
   label,
-  iconName = 'add',
+  iconName,
+  children,
   size = 'md',
   variant = 'outline',
   fullWidth = false,
@@ -74,6 +76,7 @@ export default function ActionButton({
   const sizeConfig = SIZE_CONFIG[size];
   const variantConfig = VARIANT_CONFIG[variant];
   const isDisabled = disabled || loading;
+  const showIconWrapper = !!(iconName || children || loading);
 
   return (
     <Pressable
@@ -91,15 +94,19 @@ export default function ActionButton({
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: isDisabled, busy: loading }}
     >
-      <View
-        className={`${variantConfig.iconWrapper} ${sizeConfig.icon} items-center justify-center`}
-      >
-        {loading ? (
-          <ActivityIndicator size="small" color={variantConfig.activityColor} />
-        ) : (
-          <Ionicons name={iconName} size={sizeConfig.iconSize} color={variantConfig.iconColor} />
-        )}
-      </View>
+      {showIconWrapper && (
+        <View
+          className={`${variantConfig.iconWrapper} ${sizeConfig.icon} items-center justify-center`}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color={variantConfig.activityColor} />
+          ) : children ? (
+            children
+          ) : (
+            <Ionicons name={iconName!} size={sizeConfig.iconSize} color={variantConfig.iconColor} />
+          )}
+        </View>
+      )}
       <Text className={variantConfig.textClass}>{label}</Text>
     </Pressable>
   );
