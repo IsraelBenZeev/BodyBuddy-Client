@@ -1,7 +1,7 @@
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import AppButton from '@/src/ui/PressableOpacity';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+
 import { ScrollView, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -83,28 +83,17 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
           ))}
         </ScrollView>
 
-        {/* CTA Button עם gradient */}
-        <AppButton animationType="scale" haptic="success" onPress={onNavigate} className="w-full" accessibilityLabel="צפה בתרגילים לאזורים הנבחרים">
-          <LinearGradient
-            colors={['#a3e635', '#84cc16']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={{
-              height: 54,
-              borderRadius: 14,
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              shadowColor: '#84cc16',
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.5,
-              shadowRadius: 14,
-            }}
-          >
-            <Text className="typo-btn-cta text-zinc-950">
-              צפה בתרגילים
-            </Text>
-          </LinearGradient>
+        {/* CTA Button */}
+        <AppButton
+          animationType="scale"
+          haptic="success"
+          onPress={onNavigate}
+          className="w-full h-14 bg-lime-500/20 border border-lime-500/50 rounded-full items-center justify-center"
+          accessibilityLabel="צפה בתרגילים לאזורים הנבחרים"
+        >
+          <Text className="typo-btn-cta text-lime-300">
+            צפה בתרגילים
+          </Text>
         </AppButton>
       </View>
     </Animated.View>

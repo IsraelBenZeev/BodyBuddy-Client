@@ -3,6 +3,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
+import * as Haptics from 'expo-haptics';
 import { useCallback, useState } from 'react';
 import { Dimensions, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -20,9 +21,11 @@ const AvatarSelectorScreen = () => {
   const router = useRouter();
 
   const handleTogglePart = useCallback((partName: BodyPart) => {
-    setSelectedParts((prev) =>
-      prev.includes(partName) ? prev.filter((p) => p !== partName) : [...prev, partName]
-    );
+    setSelectedParts((prev) => {
+      const isRemoving = prev.includes(partName);
+      Haptics.impactAsync(isRemoving ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Medium);
+      return isRemoving ? prev.filter((p) => p !== partName) : [...prev, partName];
+    });
   }, []);
 
   const handleToggleSide = useCallback(
