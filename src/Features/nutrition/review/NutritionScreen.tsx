@@ -258,19 +258,19 @@ const NutritionScreen = () => {
             })()}
 
             <View
-              className="rounded-3xl p-5 mb-4"
+              className="rounded-3xl p-2 mb-4"
               style={{
                 borderWidth: 1,
                 borderColor: toRgba(remainingAccentColor, 0.3),
                 backgroundColor: toRgba(remainingAccentColor, 0.07),
               }}
             >
-              <Text className="typo-label text-background-400 mb-3 text-right">
+              <Text className="typo-label text-background-400 text-left">
                 {isOverCals ? 'חרגת מהיעד' : 'נותר להיום'}
               </Text>
 
               <View className="items-center mb-4">
-                <Text style={{ fontSize: 52, fontWeight: '900', color: remainingAccentColor, lineHeight: 60 }}>
+                <Text style={{ fontSize: 35, fontWeight: '700', color: remainingAccentColor, lineHeight: 40 }}>
                   {(isOverCals ? overageCals : remainingCals).toLocaleString('he-IL')}
                 </Text>
                 <Text className="typo-body text-background-400">
@@ -281,7 +281,7 @@ const NutritionScreen = () => {
               <View style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginBottom: 16 }} />
 
               <View className="flex-row justify-around">
-                <View className="items-center gap-1">
+                <View className="items-center gap-1 ">
                   <Text className="typo-h3" style={{ color: colors.orange[400] }}>{remainingCarbs}g</Text>
                   <Text className="typo-caption text-background-400">פחמימות</Text>
                 </View>

@@ -21,11 +21,11 @@ const TabButton = ({ routeName, children, onPress, label }: TabButtonProps) => {
     if (focused) {
       viewRef.current?.animate({
         0: { scale: 1, translateY: 0 },
-        1: { scale: 1.1, translateY: -15 }, // הקפיצה למעלה
+        1: { scale: 1.08, translateY: -10 },
       });
     } else {
       viewRef.current?.animate({
-        0: { scale: 1.1, translateY: -15 },
+        0: { scale: 1.08, translateY: -10 },
         1: { scale: 1, translateY: 0 },
       });
     }
@@ -39,16 +39,34 @@ const TabButton = ({ routeName, children, onPress, label }: TabButtonProps) => {
       accessibilityLabel={label}
       accessibilityState={{ selected: focused }}
     >
-      <View style={styles.contentWrapper} className="">
+      <View style={styles.contentWrapper}>
         <Animatable.View
           ref={viewRef}
           duration={300}
-          style={[styles.btn, { backgroundColor: focused ? colors.lime[400] : 'transparent' }]}
+          style={[
+            styles.btn,
+            focused
+              ? {
+                  backgroundColor: 'rgba(150, 200, 40, 0.18)',
+                  borderWidth: 1,
+                  borderColor: 'rgba(150, 200, 40, 0.45)',
+                }
+              : {
+                  backgroundColor: 'transparent',
+                  borderWidth: 1,
+                  borderColor: 'transparent',
+                },
+          ]}
         >
           {children}
         </Animatable.View>
 
-        <Text className="typo-caption-bold -mt-2.5" style={{ color: focused ? colors.lime[400] : colors.background[100] }}>{label}</Text>
+        <Text
+          className="typo-caption-bold -mt-2.5"
+          style={{ color: focused ? colors.lime[300] : colors.background[400] }}
+        >
+          {label}
+        </Text>
       </View>
     </Pressable>
   );

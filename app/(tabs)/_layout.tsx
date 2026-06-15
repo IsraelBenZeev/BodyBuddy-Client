@@ -10,7 +10,7 @@ export default function TabsLayout() {
 
   const nutritionIcon = useCallback(
     ({ focused }: { focused: boolean }) => (
-      <IconFoodsTab size={24} color={focused ? 'black' : colors.background[100]} />
+      <IconFoodsTab size={24} color={focused ? colors.lime[300] : colors.background[400]} />
     ),
     []
   );
@@ -21,7 +21,7 @@ export default function TabsLayout() {
 
   const workoutsIcon = useCallback(
     ({ focused }: { focused: boolean }) => (
-      <IconsFitnessTools size={24} color={focused ? 'black' : colors.background[100]} />
+      <IconsFitnessTools size={24} color={focused ? colors.lime[300] : colors.background[400]} />
     ),
     []
   );
@@ -32,7 +32,7 @@ export default function TabsLayout() {
 
   const homeIcon = useCallback(
     ({ focused }: { focused: boolean }) => (
-      <IconHome size={24} color={focused ? 'black' : colors.background[100]} />
+      <IconHome size={24} color={focused ? colors.lime[300] : colors.background[400]} />
     ),
     []
   );
@@ -43,7 +43,7 @@ export default function TabsLayout() {
 
   const profileIcon = useCallback(
     ({ focused }: { focused: boolean }) => (
-      <IconUser size={24} color={focused ? 'black' : colors.background[100]} />
+      <IconUser size={24} color={focused ? colors.lime[300] : colors.background[400]} />
     ),
     []
   );
@@ -62,18 +62,24 @@ export default function TabsLayout() {
         },
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: colors.background[900], // רקע כהה שמתאים לאפליקציה שלך
+          backgroundColor: colors.background[900],
           borderTopWidth: 0,
-          elevation: 0,
-          height: insets.bottom > 0 ? 60 + insets.bottom : 70,
-          paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
-
-          position: 'absolute', // הופך את הטאב-בר לשכבה צפה שלא נדחפת
-          bottom: 0, // מצמיד לתחתית
-          left: 0,
-          right: 0,
-          zIndex: 1000, // מבטיח שהוא תמיד מעל התוכן
+          elevation: 16,
+          height: 74,
+          paddingBottom: 0,
+          borderRadius: 32,
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.07)',
+          position: 'absolute',
+          bottom: insets.bottom,
+          left: 16,
+          right: 16,
+          zIndex: 1000,
           overflow: 'visible',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.45,
+          shadowRadius: 20,
         },
         tabBarActiveTintColor: colors.lime[500], // הצבע הליים שלך כשטאב פעיל
         tabBarInactiveTintColor: colors.background[100], // אפור כשלא פעיל
