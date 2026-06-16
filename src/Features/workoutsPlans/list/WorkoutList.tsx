@@ -95,7 +95,7 @@ const WorkoutList = () => {
 
         {/* כפתור הוספה צף (רק כשיש אימונים) */}
         {plansData && plansData.length > 0 && (
-          <View className="absolute bottom-28 right-10">
+          <View className="absolute bottom-32 left-10">
             <AppButton
               haptic="medium"
               animationType="opacity"

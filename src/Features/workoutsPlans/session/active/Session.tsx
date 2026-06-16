@@ -3,15 +3,12 @@ import { useSessionCreateExerciseLog, useSessionCreateWorkout } from '@/src/hook
 import { ExerciseLogDBType, SessionFormData } from '@/src/types/session';
 import { WorkoutPlan } from '@/src/types/workout';
 import CustomCarousel from '@/src/ui/CustomCarousel';
-import Loading from '@/src/ui/Loading';
-import AppButton from '@/src/ui/PressableOpacity';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import ActionButton from '@/src/ui/ActionButton';
 import * as Crypto from 'expo-crypto';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Text, View } from 'react-native';
 import Card from './Card';
-import { colors } from '@/colors';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
@@ -163,23 +160,16 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                     {/* <MyInput control={control} name="note" label="הערה לאימון" /> */}
                 </View>
 
-                <AppButton
+                <ActionButton
                     onPress={handleSubmit(onSubmit, (errors) => console.log('Validation Errors:', errors))}
-                    className={`bg-lime-500 w-full py-4 rounded-2xl flex-row justify-center items-center shadow-2xl shadow-lime-500/40 ${isPendingCreateSession || isPendingCreateExerciseLog ? 'opacity-50' : ''}`}
-                    haptic="medium"
-                    animationType="both"
+                    label="סיים אימון"
+                    variant="outline"
+                    size="lg"
+                    fullWidth
                     disabled={isPendingCreateSession || isPendingCreateExerciseLog}
+                    loading={isPendingCreateSession || isPendingCreateExerciseLog}
                     accessibilityLabel="סיים אימון"
-                >
-                    {isPendingCreateSession || isPendingCreateExerciseLog ? (
-                        <Loading size="small" color={colors.background[900]}/>
-                    ) : (
-                        <>
-                            <Text className="typo-btn-cta text-black mr-2">סיים אימון</Text>
-                            <MaterialCommunityIcons name="flag-checkered" size={24} color="black" />
-                        </>
-                    )}
-                </AppButton>
+                />
             </View>
         </Animated.View>
     );

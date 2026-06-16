@@ -7,11 +7,11 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { WorkoutPlan } from '@/src/types/workout';
 import FormInput from '@/src/ui/FormInput';
 import AppButton from '@/src/ui/PressableOpacity';
+import ActionButton from '@/src/ui/ActionButton';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
-  ActivityIndicator,
   Dimensions,
   KeyboardAvoidingView,
   Platform,
@@ -201,30 +201,16 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       </ScrollView>
 
       <View className="absolute bottom-0 left-0 right-0 p-5 bg-background-950/95 border-t border-background-800">
-        <AppButton
-          disabled={isPendingCreate}
-          animationType="scale"
-          haptic="medium"
+        <ActionButton
           onPress={handleSubmit(onSubmit)}
-          activeOpacity={0.8}
-          className="bg-lime-500 p-4 rounded-2xl items-center flex-row justify-center shadow-lg shadow-lime-500/20"
+          label={mode === 'create' ? 'צור אימון חדש' : 'עדכן את האימון'}
+          variant="outline"
+          size="lg"
+          fullWidth
+          disabled={isPendingCreate}
+          loading={isPendingCreate}
           accessibilityLabel={mode === 'create' ? 'צור אימון חדש' : 'עדכן את האימון'}
-        >
-          <Text className="typo-h3 text-background-950 tracking-wide">
-            {isPendingCreate ? (
-              <View className="flex-row items-center gap-2">
-                <ActivityIndicator color={colors.background[950]} />
-                <Text className="text-background-950">
-                  {mode === 'create' ? 'יוצר עבורך את האימון...' : 'מעדכן את האימון...'}
-                </Text>
-              </View>
-            ) : mode === 'create' ? (
-              'צור אימון חדש'
-            ) : (
-              'עדכן את האימון'
-            )}
-          </Text>
-        </AppButton>
+        />
       </View>
     </KeyboardAvoidingView>
   );
