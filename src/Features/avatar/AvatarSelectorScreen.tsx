@@ -58,15 +58,15 @@ const AvatarSelectorScreen = () => {
         </View>
 
         {/* --- Content: אזור האווטאר --- */}
-        <View className="flex-1 justify-center items-center relative pt-10 mb-12">
+        <View className="flex-1 items-center relative pt-10">
           {/* אפקט הילה - גודל דינמי, חייב style */}
           <View
             className="absolute rounded-full bg-lime-500 opacity-[0.08] z-[1]"
-            style={{ width: width * 0.6, height: width * 0.6 }}
+            style={{ width: width * 0.6, height: width * 0.6, top: height * 0.04 }}
           />
 
           {/* גובה דינמי, חייב style */}
-          <View className="justify-center items-center z-[5]" style={{ height: height * 0.5 }}>
+          <View className="justify-center items-center z-[5]" style={{ height: height * 0.46 }}>
             {!isProfileLoading && (
               profile?.gender === 'female' ? (
                 <AvatarFemale
@@ -83,6 +83,11 @@ const AvatarSelectorScreen = () => {
               )
             )}
           </View>
+
+          {/* טקסט הדרכה מתחת לאווטאר */}
+          <Text className="typo-caption text-zinc-600 text-center leading-[18px] px-10 mt-24 z-[5]">
+            לחץ על חלקי הגוף במודל כדי לראות תרגילים רלוונטיים
+          </Text>
         </View>
         {/* כפתור סיבוב + חיווי צד */}
         <View
@@ -121,13 +126,8 @@ const AvatarSelectorScreen = () => {
           </Text>
         </View>
 
-        {/* --- Footer --- */}
-        <View className="h-[100px] justify-end items-center px-10 mb-5 z-10">
-          <Text className="typo-caption text-zinc-600 text-center leading-[18px]">
-            לחץ על חלקי הגוף במודל כדי לראות תרגילים רלוונטיים
-          </Text>
-        </View>
       </View>
+      
 
       {/* בר בחירה צף */}
       {selectedParts.length > 0 && (
