@@ -127,6 +127,7 @@ const NutritionScreen = () => {
 
   const [showCarbsBar, setShowCarbsBar] = useState(true);
   const [showFatBar, setShowFatBar] = useState(true);
+  const [showFieldOptions, setShowFieldOptions] = useState(false);
   const profileSynced = useRef(false);
 
   useEffect(() => {
@@ -136,6 +137,10 @@ const NutritionScreen = () => {
       setShowFatBar(profile.show_fat_bar ?? true);
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (showCarbsBar && showFatBar) setShowFieldOptions(false);
+  }, [showCarbsBar, showFatBar]);
 
   const toggleCarbsBar = useCallback(() => {
     setShowCarbsBar((prev) => {
@@ -308,56 +313,125 @@ const NutritionScreen = () => {
             />
 
             {showCarbsBar && (
-              <ProgressStats
-                label="פחמימות"
-                consumed={Math.round(dailyConsumed.carbs_consumed)}
-                goal={goals.carbs}
-                unit="ג׳"
-                color={colors.orange[400]}
-                iconName="nutrition-outline"
-                onHide={toggleCarbsBar}
-              />
+              <View className="flex-row items-center gap-2">
+                <Pressable
+                  onPress={toggleCarbsBar}
+                  className="w-8 h-8 rounded-full items-center justify-center"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.06)',
+                    borderWidth: 1,
+                    borderColor: 'rgba(255,255,255,0.10)',
+                  }}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  accessibilityRole="button"
+                  accessibilityLabel="הסתר פחמימות"
+                >
+                  <Ionicons name="eye-outline" size={15} color={colors.background[400]} />
+                </Pressable>
+                <View className="flex-1">
+                  <ProgressStats
+                    label="פחמימות"
+                    consumed={Math.round(dailyConsumed.carbs_consumed)}
+                    goal={goals.carbs}
+                    unit="ג׳"
+                    color={colors.orange[400]}
+                    iconName="nutrition-outline"
+                  />
+                </View>
+              </View>
             )}
 
             {showFatBar && (
-              <ProgressStats
-                label="שומנים"
-                consumed={Math.round(dailyConsumed.fat_consumed)}
-                goal={goals.fat}
-                unit="ג׳"
-                color={'rgb(234, 179, 8)'}
-                iconName="water-outline"
-                onHide={toggleFatBar}
-              />
+              <View className="flex-row items-center gap-2">
+                <Pressable
+                  onPress={toggleFatBar}
+                  className="w-8 h-8 rounded-full items-center justify-center"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.06)',
+                    borderWidth: 1,
+                    borderColor: 'rgba(255,255,255,0.10)',
+                  }}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  accessibilityRole="button"
+                  accessibilityLabel="הסתר שומנים"
+                >
+                  <Ionicons name="eye-outline" size={15} color={colors.background[400]} />
+                </Pressable>
+                <View className="flex-1">
+                  <ProgressStats
+                    label="שומנים"
+                    consumed={Math.round(dailyConsumed.fat_consumed)}
+                    goal={goals.fat}
+                    unit="ג׳"
+                    color={'rgb(234, 179, 8)'}
+                    iconName="water-outline"
+                  />
+                </View>
+              </View>
             )}
 
             {(!showCarbsBar || !showFatBar) && (
-              <View className="flex-row items-center gap-2 py-2.5 px-4 mb-3 rounded-2xl border border-background-600 bg-background-800">
-                <Ionicons name="eye-off-outline" size={14} color={colors.background[400]} />
-                <Text className="typo-caption text-background-400 flex-1">ערכים מוסתרים:</Text>
-                {!showCarbsBar && (
+              <View className="mb-3">
+                {!showFieldOptions ? (
                   <Pressable
-                    onPress={toggleCarbsBar}
-                    className="flex-row items-center gap-1 px-3 py-1.5 rounded-full"
-                    style={{ backgroundColor: toRgba(colors.orange[400], 0.12), borderWidth: 1, borderColor: toRgba(colors.orange[400], 0.3) }}
+                    onPress={() => setShowFieldOptions(true)}
+                    className="flex-row items-center self-start gap-1.5 px-3 py-1.5 rounded-full"
+                    style={{
+                      backgroundColor: 'rgba(255,255,255,0.05)',
+                      borderWidth: 1,
+                      borderColor: 'rgba(255,255,255,0.10)',
+                    }}
                     accessibilityRole="button"
-                    accessibilityLabel="הצג פחמימות"
+                    accessibilityLabel="הצג עוד"
                   >
-                    <Ionicons name="eye-outline" size={13} color={colors.orange[400]} />
-                    <Text className="typo-caption" style={{ color: colors.orange[400] }}>פחמימות</Text>
+                    <Ionicons name="eye-outline" size={13} color={colors.background[400]} />
+                    <Text className="typo-caption text-background-400">הצג עוד</Text>
+                    <Ionicons name="chevron-down-outline" size={11} color={colors.background[400]} />
                   </Pressable>
-                )}
-                {!showFatBar && (
-                  <Pressable
-                    onPress={toggleFatBar}
-                    className="flex-row items-center gap-1 px-3 py-1.5 rounded-full"
-                    style={{ backgroundColor: 'rgba(234,179,8,0.12)', borderWidth: 1, borderColor: 'rgba(234,179,8,0.3)' }}
-                    accessibilityRole="button"
-                    accessibilityLabel="הצג שומנים"
-                  >
-                    <Ionicons name="eye-outline" size={13} color={'rgb(234, 179, 8)'} />
-                    <Text className="typo-caption" style={{ color: 'rgb(234, 179, 8)' }}>שומנים</Text>
-                  </Pressable>
+                ) : (
+                  <View className="flex-row items-center gap-2">
+                    {!showCarbsBar && (
+                      <Pressable
+                        onPress={() => { toggleCarbsBar(); setShowFieldOptions(false); }}
+                        className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full"
+                        style={{
+                          backgroundColor: toRgba(colors.orange[400], 0.12),
+                          borderWidth: 1,
+                          borderColor: toRgba(colors.orange[400], 0.3),
+                        }}
+                        accessibilityRole="button"
+                        accessibilityLabel="הצג פחמימות"
+                      >
+                        <Ionicons name="nutrition-outline" size={13} color={colors.orange[400]} />
+                        <Text className="typo-caption" style={{ color: colors.orange[400] }}>פחמימות</Text>
+                      </Pressable>
+                    )}
+                    {!showFatBar && (
+                      <Pressable
+                        onPress={() => { toggleFatBar(); setShowFieldOptions(false); }}
+                        className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full"
+                        style={{
+                          backgroundColor: 'rgba(234,179,8,0.12)',
+                          borderWidth: 1,
+                          borderColor: 'rgba(234,179,8,0.3)',
+                        }}
+                        accessibilityRole="button"
+                        accessibilityLabel="הצג שומנים"
+                      >
+                        <Ionicons name="water-outline" size={13} color={'rgb(234,179,8)'} />
+                        <Text className="typo-caption" style={{ color: 'rgb(234,179,8)' }}>שומנים</Text>
+                      </Pressable>
+                    )}
+                    <Pressable
+                      onPress={() => setShowFieldOptions(false)}
+                      className="w-7 h-7 rounded-full items-center justify-center"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                      accessibilityRole="button"
+                      accessibilityLabel="סגור"
+                    >
+                      <Ionicons name="close-outline" size={14} color={colors.background[400]} />
+                    </Pressable>
+                  </View>
                 )}
               </View>
             )}
