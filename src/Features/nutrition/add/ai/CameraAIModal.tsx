@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Linking, Modal, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   visible: boolean;
@@ -20,11 +21,11 @@ type ModalState = 'idle' | 'loading' | 'error';
 
 const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
   const { triggerSuccess } = useUIStore();
+  const insets = useSafeAreaInsets();
   const [state, setState] = useState<ModalState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AIAnalysisResult | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-
   useEffect(() => {
     if (visible) {
       setState('idle');
@@ -32,7 +33,6 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
       setAnalysisResult(null);
     }
   }, [visible]);
-
   const handleAnalyze = useCallback(async (base64: string) => {
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -97,7 +97,12 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
   // ── When AI result is ready — show AIResults full screen ──
   if (analysisResult) {
     return (
-      <Modal visible={visible} transparent={false} animationType="slide" onRequestClose={() => setAnalysisResult(null)}>
+      <Modal
+        visible={visible}
+        transparent={false}
+        animationType="slide"
+        onRequestClose={() => setAnalysisResult(null)}
+      >
         <View className="flex-1 bg-background-900">
           <AIResults
             aiResult={analysisResult}
@@ -118,7 +123,10 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
         onPress={state === 'loading' ? undefined : handleClose}
       >
         <Pressable onPress={(e) => e.stopPropagation()}>
-          <View className="bg-background-900 rounded-t-3xl px-6 pt-6 pb-10">
+          <View
+            className="bg-background-900 rounded-t-3xl px-6 pt-6"
+            style={{ paddingBottom: insets.bottom + 16 }}
+          >
             {/* Handle */}
             <View className="items-center mb-5">
               <View className="w-12 h-1.5 bg-white/10 rounded-full" />
@@ -199,10 +207,17 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
                 </Pressable>
 
                 <View className="mt-4 bg-white/[0.03] border border-white/[0.07] rounded-2xl px-4 py-3 flex-row items-start gap-3">
-                  <Ionicons name="information-circle-outline" size={18} color="#6b7280" style={{ marginTop: 1 }} />
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={18}
+                    color="#6b7280"
+                    style={{ marginTop: 1 }}
+                  />
                   <View className="flex-1 gap-1 items-start">
                     <Text className="typo-caption text-background-400 text-left">
-                      {'הניתוח מבוצע על ידי AI ועלול להכיל שגיאות. השימוש בו הינו על אחריות המשתמש בלבד.'}
+                      {
+                        'הניתוח מבוצע על ידי AI ועלול להכיל שגיאות. השימוש בו הינו על אחריות המשתמש בלבד.'
+                      }
                     </Text>
                     <Text className="typo-caption text-background-400">
                       {'זיהוי שגוי? '}
