@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Text, View } from 'react-native';
-import AppButton from './PressableOpacity';
+import ActionButton from './ActionButton';
 
 interface EmptyStateProps {
   icon: ReactNode;
@@ -15,7 +15,7 @@ interface EmptyStateProps {
 
 const EmptyState = ({ icon, title, description, action }: EmptyStateProps) => {
   return (
-    <View className="flex-1 items-center justify-center px-8">
+    <View className="flex-1 items-center pt-20 px-8">
       {/* Icon with layered glow rings */}
       <View className="items-center justify-center mb-8" style={{ width: 160, height: 160 }}>
         <View className="absolute w-40 h-40 bg-lime-500/5 rounded-full" />
@@ -30,24 +30,20 @@ const EmptyState = ({ icon, title, description, action }: EmptyStateProps) => {
       </Text>
 
       {description && (
-        <Text className="typo-body-small text-gray-400 text-center mb-10 leading-5">
+        <Text className="typo-body-small text-gray-400 text-left mb-10 leading-5">
           {description}
         </Text>
       )}
 
       {action && (
-        <AppButton
-          haptic="medium"
-          animationType="opacity"
+        <ActionButton
           onPress={action.onPress}
-          className="bg-lime-500 flex-col items-center px-10 py-4 rounded-2xl"
-          accessibilityLabel={action.label}
+          label={action.label}
+          variant="outline"
+          size="lg"
         >
-          {action.icon && <View className="mb-2">{action.icon}</View>}
-          <Text className="typo-btn-cta text-background-900 text-center">
-            {action.label}
-          </Text>
-        </AppButton>
+          {action.icon}
+        </ActionButton>
       )}
     </View>
   );
