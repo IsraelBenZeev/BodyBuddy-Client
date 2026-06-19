@@ -240,21 +240,42 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
             )}
 
             {state === 'loading' && (
-              <View className="items-center py-4">
-                <ScanAnimation />
-                <Text className="typo-label text-lime-400 text-center mt-4">
-                  AI מנתח את התמונה...
-                </Text>
-                <View className="mt-4">
-                  <ActionButton
-                    onPress={handleCancel}
-                    label="ביטול"
-                    iconName="close-circle-outline"
-                    variant="secondary"
-                    size="md"
-                    fullWidth
-                  />
+              <View className="items-center py-6">
+                {/* AI Agent badge */}
+                <View className="flex-row items-center gap-1.5 bg-lime-500/15 border border-lime-500/30 rounded-full px-3 py-1.5 mb-5">
+                  <Ionicons name="hardware-chip-outline" size={13} color="rgb(163,230,53)" />
+                  <Text className="typo-caption-bold text-lime-400">AI AGENT</Text>
                 </View>
+
+                {/* Scan animation */}
+                <View className="mb-6">
+                  <ScanAnimation />
+                </View>
+
+                {/* Title */}
+                <Text className="typo-h3 text-white text-center mb-2">מנתח את הארוחה...</Text>
+
+                {/* Subtitle */}
+                <Text className="typo-label text-gray-400 text-center px-4">
+                  הסוכן שלנו מזהה מרכיבים, קלוריות וערכים תזונתיים.{'\n'}זה עלול לקחת מספר שניות.
+                </Text>
+
+                {/* Progress dots */}
+                <View className="flex-row gap-1.5 mt-5 mb-6">
+                  {[0, 1, 2].map((i) => (
+                    <View key={i} className="w-1.5 h-1.5 rounded-full bg-lime-500/60" />
+                  ))}
+                </View>
+
+                {/* Cancel button — full width */}
+                <ActionButton
+                  onPress={handleCancel}
+                  label="ביטול"
+                  iconName="close-circle-outline"
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                />
               </View>
             )}
 

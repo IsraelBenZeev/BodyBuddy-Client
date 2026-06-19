@@ -1,6 +1,6 @@
 import LottieView from 'lottie-react-native';
 import { useEffect, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 export default function ScanAnimation() {
     const animRef = useRef<LottieView>(null);
@@ -11,22 +11,17 @@ export default function ScanAnimation() {
     }, []);
 
     return (
-        <View className="items-center py-4">
+        <View
+            className="rounded-3xl items-center justify-center overflow-hidden bg-background-800 border border-lime-500/25"
+            style={{ width: 160, height: 160 }}
+        >
             <LottieView
                 ref={animRef}
-                source={require('@/assets/animations/Circle.json')}
+                source={require('@/assets/animations/Restaurant Food Loading.json')}
                 autoPlay={false}
                 loop={true}
-                style={{ width: 220, height: 220 }}
-                colorFilters={[
-                    {
-                        keypath: '**',
-                        color: '#96C828',
-                    },
-                ]}
+                style={{ width: 160, height: 160 }}
             />
-            <Text className="typo-h4 text-white -mt-2">מנתח את הארוחה...</Text>
-            <Text className="text-xs font-medium text-gray-400 mt-2">ממתינים לתוצאות...</Text>
         </View>
     );
 }
