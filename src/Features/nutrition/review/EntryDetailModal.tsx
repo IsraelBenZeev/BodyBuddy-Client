@@ -3,6 +3,7 @@ import type { NutritionEntry } from '@/src/types/nutrition';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function formatPortion(entry: NutritionEntry): string {
   if (entry.portion_unit === 'unit') return `× ${entry.portion_size}`;
@@ -159,6 +160,7 @@ interface Props {
 }
 
 const EntryDetailModal = ({ visible, onClose, entry, groupEntries, groupName }: Props) => {
+  const insets = useSafeAreaInsets();
   return (
     <Modal
       visible={visible}
@@ -178,7 +180,7 @@ const EntryDetailModal = ({ visible, onClose, entry, groupEntries, groupName }: 
           accessibilityRole="button"
           accessibilityLabel="סגור פרטים"
         />
-        <View className="bg-background-900 rounded-t-3xl px-5 pt-4 pb-10 max-h-[85%]">
+        <View className="bg-background-900 rounded-t-3xl px-5 pt-4 max-h-[85%]" style={{ paddingBottom: insets.bottom + 16 }}>
           <View className="flex-row justify-between items-center mb-5">
             <Text className="typo-h3 text-white">פרטים</Text>
             <Pressable

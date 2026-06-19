@@ -8,6 +8,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ActionButton from '@/src/ui/ActionButton';
 import AddNewFoodSelection from './AddNewFoodSelection';
 
@@ -24,6 +25,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [foodToDelete, setFoodToDelete] = useState<FoodItem | null>(null);
   const router = useRouter();
+  const { bottom } = useSafeAreaInsets();
 
   const { data: foodItems = [], isLoading } = useFoodItems(userId);
   const { mutate: createEntry, isPending: isCreatingEntry } = useCreateNutritionEntry(userId, date);
@@ -157,7 +159,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
       {/* כפתור הוספה צף בתחתית — מוצג רק כשיש מאכלים */}
       {foodItems.length > 0 && (
-        <View className="absolute bottom-8 left-6 right-6 ">
+        <View style={{ position: 'absolute', bottom: bottom + 32, left: 24, right: 24 }}>
           <ActionButton
             onPress={handleAddNewFood}
             label="הוסף מאכל חדש"
