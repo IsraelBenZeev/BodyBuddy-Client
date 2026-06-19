@@ -127,6 +127,7 @@ export const useCreateFoodItem = (userId: string) => {
       name: string;
       category?: string;
       measurement_type: MeasurementType;
+      is_ai_generated?: boolean;
       // grams path
       calories_per_100?: number | null;
       protein_per_100?: number | null;
