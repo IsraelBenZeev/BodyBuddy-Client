@@ -379,7 +379,7 @@ const AIResults = ({ aiResult, userId, date, onClose, onBack }: Props) => {
       <View className="flex-row items-center mb-6 justify-center">
         <Pressable
           onPress={onBack ?? onClose}
-          className="absolute right-0 w-11 h-11 bg-background-700 rounded-xl items-center justify-center border border-background-600 active:scale-95"
+          className="absolute left-0 w-11 h-11 bg-background-700 rounded-xl items-center justify-center border border-background-600 active:scale-95"
           accessibilityRole="button"
           accessibilityLabel="חזרה"
         >
