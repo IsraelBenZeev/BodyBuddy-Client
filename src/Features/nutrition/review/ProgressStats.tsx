@@ -50,16 +50,16 @@ const ProgressStats = ({ label, consumed, goal, unit, color, iconName, onHide }:
               onPress={onHide}
               className="flex-row items-center gap-1 rounded-full px-3 py-1.5"
               style={{
-                backgroundColor: toRgba(color, 0.13),
+                backgroundColor: 'rgba(255,255,255,0.06)',
                 borderWidth: 1,
-                borderColor: toRgba(color, 0.4),
+                borderColor: 'rgba(255,255,255,0.10)',
               }}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               accessibilityRole="button"
               accessibilityLabel={`הסתר ${label}`}
             >
-              <Ionicons name="eye-outline" size={13} color={color} />
-              <Text className="typo-caption" style={{ color }}>הסתר</Text>
+              <Ionicons name="eye-outline" size={13} color={colors.background[400]} />
+              <Text className="typo-caption text-background-400">הסתר</Text>
             </Pressable>
           )}
           <View className="flex-row items-center">

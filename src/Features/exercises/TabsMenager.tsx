@@ -180,7 +180,7 @@ const TabsManager = ({ tabs, initialTab = 0, flex = false }: TabsManagerProps) =
               width: capsuleWidth,
               height: 40,
             }}
-            className="bg-lime-500 rounded-full"
+            className="bg-background-700 rounded-3xl border-lime-500 border"
           />
 
           {renderTabs.map((tab, index) => (
@@ -197,7 +197,7 @@ const TabsManager = ({ tabs, initialTab = 0, flex = false }: TabsManagerProps) =
               }}
             >
               <Text
-                className={`typo-body-primary ${activeTab === index ? 'text-background-950' : 'text-gray-500'}`}
+                className={`typo-body-primary ${activeTab === index ? 'text-lime-500' : 'text-gray-500'}`}
               >
                 {tab.title}
               </Text>

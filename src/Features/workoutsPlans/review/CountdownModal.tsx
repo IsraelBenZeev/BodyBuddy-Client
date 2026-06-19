@@ -1,7 +1,8 @@
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
+import ActionButton from '../../../ui/ActionButton';
 
 interface CountdownModalProps {
   visible: boolean;
@@ -95,19 +96,26 @@ const CountdownModal = ({ visible, onCancel, onStart }: CountdownModalProps) => 
 
         {/* כפתורים */}
         <View className="flex-row gap-4 w-full">
-          <Pressable
-            onPress={handleCancel}
-            className="flex-1 py-4 rounded-2xl border border-zinc-600 items-center"
-          >
-            <Text className="typo-btn-secondary text-zinc-300">ביטול</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={handleStart}
-            className="flex-1 py-4 rounded-2xl bg-lime-500 items-center"
-          >
-            <Text className="typo-btn-cta text-black">התחל עכשיו</Text>
-          </Pressable>
+          <View className="flex-1">
+            <ActionButton
+              onPress={handleCancel}
+              label="ביטול"
+              variant="secondary"
+              size="lg"
+              fullWidth
+              accessibilityLabel="בטל את ספירת לאחור"
+            />
+          </View>
+          <View className="flex-1">
+            <ActionButton
+              onPress={handleStart}
+              label="התחל עכשיו"
+              variant="outline"
+              size="lg"
+              fullWidth
+              accessibilityLabel="התחל אימון עכשיו"
+            />
+          </View>
         </View>
       </Animated.View>
     </View>
