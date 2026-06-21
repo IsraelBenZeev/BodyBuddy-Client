@@ -16,7 +16,6 @@ import AppButton from '@/src/ui/PressableOpacity';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 
-
 const WorkoutList = () => {
   const user = useAuthStore((state) => state.user);
   const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(user?.id as string);
@@ -56,7 +55,15 @@ const WorkoutList = () => {
         <View className="w-full px-6 mt-5 flex-row items-start justify-between">
           <View className="">
             <Text className="typo-h1 text-white tracking-tight">האימונים שלי</Text>
-            <View style={{ height: 5, width: 60, backgroundColor: colors.lime[500], borderRadius: 10, marginTop: 8 }} />
+            <View
+              style={{
+                height: 5,
+                width: 60,
+                backgroundColor: colors.lime[500],
+                borderRadius: 10,
+                marginTop: 8,
+              }}
+            />
           </View>
           <AppButton
             animationType="opacity"
@@ -68,34 +75,40 @@ const WorkoutList = () => {
             <Ionicons name="star-outline" size={22} color={colors.lime[500]} />
           </AppButton>
         </View>
-        {plansData && plansData.length > 0 ? (
+        {/* {false? ( */}
+          {plansData && plansData.length > 0 ? (
           <View className="w-full flex-1 justify-center">
             <CustomCarousel
               data={plansData.slice().reverse()}
               initialIndex={plansData.length - 1}
-              variant='center'
-              renderItem={(item: any, isActive: boolean, isSwiped: boolean, activeId: string, translateY: SharedValue<number>) => (
-                <CardPlan plan={item} isActive={isActive} isSwiped={isSwiped} />
-              )}
+              variant="center"
+              renderItem={(
+                item: any,
+                isActive: boolean,
+                isSwiped: boolean,
+                activeId: string,
+                translateY: SharedValue<number>
+              ) => <CardPlan plan={item} isActive={isActive} isSwiped={isSwiped} />}
               widthCard={280}
             />
           </View>
         ) : (
+          
           <EmptyState
             icon={<IconsFitnessTools size={80} color={colors.lime[500]} />}
             title="עדיין אין לך תוכניות אימון"
             description="זה הזמן ליצור את האימון הראשון שלך ולהתחיל להתקדם למטרה!"
             action={{
-              label: "צור אימון חדש",
+              label: 'צור אימון חדש',
               onPress: handleCreateNew,
-              icon: <IconAddToList color={colors.background[900]} size={24} />,
+              icon: <IconAddToList color={colors.lime[300]} size={24} />,
             }}
           />
         )}
 
         {/* כפתור הוספה צף (רק כשיש אימונים) */}
         {plansData && plansData.length > 0 && (
-          <View className="absolute bottom-32 left-10">
+          <View className="absolute bottom-36 right-10">
             <AppButton
               haptic="medium"
               animationType="opacity"

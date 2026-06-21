@@ -463,7 +463,7 @@ const NutritionScreen = () => {
             position: 'absolute',
             left: 16,
             right: 16,
-            bottom: 112,
+            bottom: 128,
             opacity: buttonOpacity,
             transform: [{ translateY: buttonTranslateY }],
           }}

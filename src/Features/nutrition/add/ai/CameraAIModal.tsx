@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Linking, Modal, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   visible: boolean;
@@ -20,11 +21,11 @@ type ModalState = 'idle' | 'loading' | 'error';
 
 const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
   const { triggerSuccess } = useUIStore();
+  const insets = useSafeAreaInsets();
   const [state, setState] = useState<ModalState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AIAnalysisResult | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-
   useEffect(() => {
     if (visible) {
       setState('idle');
@@ -32,7 +33,6 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
       setAnalysisResult(null);
     }
   }, [visible]);
-
   const handleAnalyze = useCallback(async (base64: string) => {
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -97,7 +97,12 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
   // ── When AI result is ready — show AIResults full screen ──
   if (analysisResult) {
     return (
-      <Modal visible={visible} transparent={false} animationType="slide" onRequestClose={() => setAnalysisResult(null)}>
+      <Modal
+        visible={visible}
+        transparent={false}
+        animationType="slide"
+        onRequestClose={() => setAnalysisResult(null)}
+      >
         <View className="flex-1 bg-background-900">
           <AIResults
             aiResult={analysisResult}
@@ -118,7 +123,10 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
         onPress={state === 'loading' ? undefined : handleClose}
       >
         <Pressable onPress={(e) => e.stopPropagation()}>
-          <View className="bg-background-900 rounded-t-3xl px-6 pt-6 pb-10">
+          <View
+            className="bg-background-900 rounded-t-3xl px-6 pt-6"
+            style={{ paddingBottom: insets.bottom + 16 }}
+          >
             {/* Handle */}
             <View className="items-center mb-5">
               <View className="w-12 h-1.5 bg-white/10 rounded-full" />
@@ -199,10 +207,17 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
                 </Pressable>
 
                 <View className="mt-4 bg-white/[0.03] border border-white/[0.07] rounded-2xl px-4 py-3 flex-row items-start gap-3">
-                  <Ionicons name="information-circle-outline" size={18} color="#6b7280" style={{ marginTop: 1 }} />
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={18}
+                    color="#6b7280"
+                    style={{ marginTop: 1 }}
+                  />
                   <View className="flex-1 gap-1 items-start">
                     <Text className="typo-caption text-background-400 text-left">
-                      {'הניתוח מבוצע על ידי AI ועלול להכיל שגיאות. השימוש בו הינו על אחריות המשתמש בלבד.'}
+                      {
+                        'הניתוח מבוצע על ידי AI ועלול להכיל שגיאות. השימוש בו הינו על אחריות המשתמש בלבד.'
+                      }
                     </Text>
                     <Text className="typo-caption text-background-400">
                       {'זיהוי שגוי? '}
@@ -240,21 +255,42 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
             )}
 
             {state === 'loading' && (
-              <View className="items-center py-4">
-                <ScanAnimation />
-                <Text className="typo-label text-lime-400 text-center mt-4">
-                  AI מנתח את התמונה...
-                </Text>
-                <View className="mt-4">
-                  <ActionButton
-                    onPress={handleCancel}
-                    label="ביטול"
-                    iconName="close-circle-outline"
-                    variant="secondary"
-                    size="md"
-                    fullWidth
-                  />
+              <View className="items-center py-6">
+                {/* AI Agent badge */}
+                <View className="flex-row items-center gap-1.5 bg-lime-500/15 border border-lime-500/30 rounded-full px-3 py-1.5 mb-5">
+                  <Ionicons name="hardware-chip-outline" size={13} color="rgb(163,230,53)" />
+                  <Text className="typo-caption-bold text-lime-400">AI AGENT</Text>
                 </View>
+
+                {/* Scan animation */}
+                <View className="mb-6">
+                  <ScanAnimation />
+                </View>
+
+                {/* Title */}
+                <Text className="typo-h3 text-white text-center mb-2">מנתח את הארוחה...</Text>
+
+                {/* Subtitle */}
+                <Text className="typo-label text-gray-400 text-center px-4">
+                  הסוכן שלנו מזהה מרכיבים, קלוריות וערכים תזונתיים.{'\n'}זה עלול לקחת מספר שניות.
+                </Text>
+
+                {/* Progress dots */}
+                <View className="flex-row gap-1.5 mt-5 mb-6">
+                  {[0, 1, 2].map((i) => (
+                    <View key={i} className="w-1.5 h-1.5 rounded-full bg-lime-500/60" />
+                  ))}
+                </View>
+
+                {/* Cancel button — full width */}
+                <ActionButton
+                  onPress={handleCancel}
+                  label="ביטול"
+                  iconName="close-circle-outline"
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                />
               </View>
             )}
 

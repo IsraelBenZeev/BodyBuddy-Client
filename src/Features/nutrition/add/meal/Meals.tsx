@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MealReviewModal from './MealReviewModal';
 
 interface Props {
@@ -19,6 +20,7 @@ interface Props {
 
 export default function Meals({ userId, date, onClose }: Props) {
   const router = useRouter();
+  const { bottom } = useSafeAreaInsets();
   const { data: meals = [], isLoading } = useMealsWithItems(userId);
   const [reviewMeal, setReviewMeal] = useState<MealWithItems | null>(null);
   const [mealToDelete, setMealToDelete] = useState<MealWithItems | null>(null);
@@ -124,7 +126,7 @@ export default function Meals({ userId, date, onClose }: Props) {
       />
 
       {/* כפתור יצירת ארוחה - צף בתחתית */}
-      <View className="absolute bottom-8 left-6 right-6 shadow-2xl ">
+      <View style={{ position: 'absolute', bottom: bottom + 32, left: 24, right: 24 }} className="shadow-2xl">
         <ActionButton
           onPress={handleCreateFirstMeal}
           label="צור ארוחה חדשה"

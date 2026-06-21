@@ -4,6 +4,7 @@ import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface ModalAddFoodsProps {
   visible: boolean;
@@ -29,6 +30,7 @@ const sheetStyles = StyleSheet.create({
 });
 
 const ModalAddFoods = ({ visible, onClose, userId, date }: ModalAddFoodsProps) => {
+  const insets = useSafeAreaInsets();
   return (
     <Modal
       visible={visible}
@@ -36,7 +38,7 @@ const ModalAddFoods = ({ visible, onClose, userId, date }: ModalAddFoodsProps) =
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <View style={{ flex: 1, backgroundColor: colors.background[900] }} className='vu'>
+      <View style={{ flex: 1, backgroundColor: colors.background[900], paddingTop: insets.top }}>
         <View style={sheetStyles.handleContainer}>
           <Pressable
             onPress={onClose}

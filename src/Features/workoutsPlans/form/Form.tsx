@@ -20,6 +20,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Days from './Days';
 import HeaderForm from './HeaderForm';
 import ListExercise from './ListExercises';
@@ -45,6 +46,7 @@ interface FormProps {
 const Form = ({ mode, workout_plan_id }: FormProps) => {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { height: SCREEN_HEIGHT } = Dimensions.get('window');
   const { data: workoutPlanData, isLoading: isLoadingWorkoutPlan } = useGetWorkoutFromCache(
     workout_plan_id,
@@ -200,15 +202,23 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 p-5 bg-background-950/95 border-t border-background-800">
+      <View
+        className="absolute bottom-0 left-0 right-0 px-5 pt-4 bg-background-950/95 border-t border-background-800"
+        style={{ paddingBottom: insets.bottom + 12 }}
+      >
         <ActionButton
           onPress={handleSubmit(onSubmit)}
-          label={mode === 'create' ? 'צור אימון חדש' : 'עדכן את האימון'}
-          variant="outline"
+          label={
+            isPendingCreate
+              ? mode === 'create' ? 'יוצר עבורך את האימון...' : 'מעדכן את האימון...'
+              : mode === 'create' ? 'צור אימון חדש' : 'עדכן את האימון'
+          }
+          variant="primary"
           size="lg"
           fullWidth
-          disabled={isPendingCreate}
           loading={isPendingCreate}
+          disabled={isPendingCreate}
+          iconName={mode === 'create' ? 'add-circle' : 'checkmark-circle'}
           accessibilityLabel={mode === 'create' ? 'צור אימון חדש' : 'עדכן את האימון'}
         />
       </View>
