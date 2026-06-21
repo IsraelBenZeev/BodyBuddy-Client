@@ -1,14 +1,11 @@
 import { colors } from '@/colors';
 import { signInWithGoogle, signUpWithEmail } from '@/src/service/authService';
-// import { signInWithGoogle, signUpWithEmail } from '@/src/service/authService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
+import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
-import ButtonPrimary from '@/src/ui/ButtonPrimary';
 import FormInput from '@/src/ui/FormInput';
-import AppButton from '@/src/ui/PressableOpacity';
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -23,6 +20,7 @@ interface RegisterFormData {
 export default function RegisterScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
   const [shouldNavigateToTabs, setShouldNavigateToTabs] = useState(false);
 
@@ -206,12 +204,19 @@ export default function RegisterScreen() {
             />
 
             {/* Register Button */}
-            <ButtonPrimary
-              title={loading ? 'נרשם...' : 'הירשם'}
-              onPress={handleSubmit(onSubmit)}
-              classNameButton="mb-3"
-              disabled={loading}
-            />
+            <View className="mb-3">
+              <ActionButton
+                onPress={handleSubmit(onSubmit)}
+                label="הירשם"
+                iconName="person-add-outline"
+                variant="primary"
+                size="md"
+                fullWidth
+                loading={loading}
+                accessibilityLabel="הירשם"
+                accessibilityHint="לחץ כדי להירשם עם האימייל והסיסמה"
+              />
+            </View>
 
             {/* Privacy Policy */}
             <View className="mb-4 px-2">
@@ -228,18 +233,24 @@ export default function RegisterScreen() {
             </View>
 
             {/* Google Button */}
-            <AppButton
-              onPress={signInWithGoogle}
-              className="w-full bg-background-800 border border-background-600 py-4 rounded-2xl"
-              animationType="opacity"
-              haptic="light"
+            <ActionButton
+              onPress={async () => {
+                setGoogleLoading(true);
+                try {
+                  await signInWithGoogle();
+                } finally {
+                  setGoogleLoading(false);
+                }
+              }}
+              label="הירשם באמצעות Google"
+              iconName="logo-google"
+              variant="secondary"
+              size="md"
+              fullWidth
+              loading={googleLoading}
               accessibilityLabel="הירשם באמצעות Google"
-            >
-              <View className="flex-row items-center justify-center gap-3">
-                <Ionicons name="logo-google" size={24} color={colors.lime[500]} />
-                <Text className="typo-body-primary text-white">הירשם באמצעות Google</Text>
-              </View>
-            </AppButton>
+              accessibilityHint="לחץ כדי להירשם עם חשבון Google"
+            />
 
             {/* Login Link */}
             <View className="mt-8">

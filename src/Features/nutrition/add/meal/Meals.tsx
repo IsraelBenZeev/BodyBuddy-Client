@@ -126,12 +126,13 @@ export default function Meals({ userId, date, onClose }: Props) {
       />
 
       {/* כפתור יצירת ארוחה - צף בתחתית */}
-      <View style={{ position: 'absolute', bottom: bottom + 32, left: 24, right: 24 }} className="shadow-2xl">
+      <View style={{ position: 'absolute', bottom: bottom + 32, left: 24, right: 24 }}>
         <ActionButton
           onPress={handleCreateFirstMeal}
           label="צור ארוחה חדשה"
           iconName="add"
           accessibilityLabel="צור ארוחה חדשה לשמירה"
+          variant="primary"
         />
       </View>
 

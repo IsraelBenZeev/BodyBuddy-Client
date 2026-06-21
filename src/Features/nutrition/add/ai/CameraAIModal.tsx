@@ -231,7 +231,8 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
                   </View>
                 </View>
 
-                {__DEV__ && (
+                {false && (
+                // {__DEV__ && (
                   <View className="mt-4 pt-4 border-t border-white/10 flex-row gap-2">
                     <Pressable
                       onPress={() => setAnalysisResult(MOCK_AI_MEAL)}
@@ -254,6 +255,7 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
               </>
             )}
 
+            {/* {true && ( */}
             {state === 'loading' && (
               <View className="items-center py-6">
                 {/* AI Agent badge */}

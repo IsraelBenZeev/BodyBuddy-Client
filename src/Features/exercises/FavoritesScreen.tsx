@@ -6,6 +6,7 @@ import { FlashList } from '@shopify/flash-list';
 import Entypo from '@expo/vector-icons/Entypo';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
+import ActionButton from '@/src/ui/ActionButton';
 import { Pressable, Text, View } from 'react-native';
 import CardExercise from './CardExercise';
 
@@ -56,14 +57,14 @@ const FavoritesScreen = () => {
           <Text className="typo-label text-zinc-600 text-center">
             גלה תרגילים לפי אזור גוף והוסף אותם למועדפים
           </Text>
-          <Pressable
+          <ActionButton
             onPress={handleNavigateHome}
-            className="mt-2 bg-lime-500 px-6 py-3 rounded-2xl"
-            accessibilityRole="button"
+            label="בחר אזור גוף"
+            iconName="body-outline"
+            variant="outline"
+            size="md"
             accessibilityLabel="בחר אזור גוף"
-          >
-            <Text className="typo-btn-cta text-background-900">בחר אזור גוף</Text>
-          </Pressable>
+          />
         </View>
       ) : (
         <View className="flex-1 px-6">

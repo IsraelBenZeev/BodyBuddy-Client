@@ -10,6 +10,7 @@ import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import ModalBottom from '@/src/ui/ModalButtom';
+import ActionButton from '@/src/ui/ActionButton';
 import AppButton from '@/src/ui/PressableOpacity';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
@@ -282,15 +283,15 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
           </View>
           {mode === 'picker' && (
             <View className="absolute bottom-10 left-0 right-0 items-center px-10">
-              <AppButton
-                animationType="scale"
-                haptic="success"
+              <ActionButton
                 onPress={() => router.back()}
-                className="bg-lime-500 w-full h-16 rounded-2xl items-center justify-center shadow-lime-500 shadow-offset-[0/10] shadow-opacity-30 shadow-radius-[20px] elevation-10"
+                label="שמור וסיים"
+                iconName="checkmark"
+                variant="primary"
+                size="md"
+                fullWidth
                 accessibilityLabel="שמור וסיים"
-              >
-                <Text className="typo-h4 text-zinc-950">שמור וסיים</Text>
-              </AppButton>
+              />
             </View>
           )}
         </View>

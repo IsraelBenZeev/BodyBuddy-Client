@@ -13,14 +13,14 @@ export default function ScanAnimation() {
     return (
         <View
             className="rounded-3xl items-center justify-center overflow-hidden bg-background-800 border border-lime-500/25"
-            style={{ width: 160, height: 160 }}
+            style={{ width: 120, height: 120 }}
         >
             <LottieView
                 ref={animRef}
                 source={require('@/assets/animations/Restaurant Food Loading.json')}
                 autoPlay={false}
                 loop={true}
-                style={{ width: 160, height: 160 }}
+                style={{ width: 120, height: 120 }}
             />
         </View>
     );
