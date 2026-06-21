@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
 interface LoginFormData {
   email: string;
@@ -20,6 +20,7 @@ interface LoginFormData {
 export default function LoginScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [shouldNavigateToTabs, setShouldNavigateToTabs] = useState(false);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
 
@@ -64,6 +65,18 @@ export default function LoginScreen() {
 
   return (
     <BackGround>
+      {googleLoading && (
+        <View
+          style={{ position: 'absolute', inset: 0, zIndex: 99 }}
+          className="flex-1 bg-background-1200/80 items-center justify-center gap-4"
+          accessible
+          accessibilityLabel="מתחבר עם Google, אנא המתן"
+          accessibilityLiveRegion="polite"
+        >
+          <ActivityIndicator size="large" color={colors.lime[300]} />
+          <Text className="typo-body text-background-400">מתחבר עם Google...</Text>
+        </View>
+      )}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -192,11 +205,20 @@ export default function LoginScreen() {
 
             {/* Google Button */}
             <AppButton
-              onPress={signInWithGoogle}
+              onPress={async () => {
+                setGoogleLoading(true);
+                try {
+                  await signInWithGoogle();
+                } finally {
+                  setGoogleLoading(false);
+                }
+              }}
+              disabled={googleLoading}
               className="w-full bg-background-800 border border-background-600 py-4 rounded-2xl"
               animationType="opacity"
               haptic="light"
               accessibilityLabel="התחבר באמצעות Google"
+              accessibilityState={{ busy: googleLoading }}
             >
               <View className="flex-row items-center justify-center gap-3">
                 <Ionicons name="logo-google" size={24} color={colors.lime[500]} />

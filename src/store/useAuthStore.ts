@@ -65,6 +65,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         supabase.auth.signOut();
         return;
       }
+      if (event === 'SIGNED_OUT') {
+        set({ user: null, session: null });
+        return;
+      }
       set({
         user: session?.user ?? null,
         session: session ?? null,
