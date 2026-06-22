@@ -13,6 +13,13 @@ import AvatarMale from './male/AvatarMale';
 
 const { width, height } = Dimensions.get('window');
 
+// Avatar SVG aspect ratio: FIGMA_HEIGHT / FIGMA_WIDTH = 1726 / 871
+// SVG rendered height = svgWidth * ASPECT_RATIO * 0.9
+// Cap svgWidth so the rendered height fits within the allocated container (height * 0.55)
+const AVATAR_ASPECT_RATIO = 1726 / 871;
+const AVATAR_CONTAINER_HEIGHT = Math.min(height * 0.55, height - 284);
+const AVATAR_SVG_WIDTH = Math.min(width * 0.75, AVATAR_CONTAINER_HEIGHT / (AVATAR_ASPECT_RATIO * 0.9));
+
 const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
   const [selectedParts, setSelectedParts] = useState<BodyPart[]>([]);
@@ -66,19 +73,21 @@ const AvatarSelectorScreen = () => {
           />
 
           {/* גובה דינמי, חייב style */}
-          <View className="justify-center items-center z-[5]" style={{ height: height * 0.46 }}>
+          <View className="justify-center items-center z-[5]" style={{ height: AVATAR_CONTAINER_HEIGHT }}>
             {!isProfileLoading && (
               profile?.gender === 'female' ? (
                 <AvatarFemale
                   avatarSide={sideAvatar}
                   isSelected={isSelected}
                   handleTogglePart={handleTogglePart}
+                  svgWidthOverride={AVATAR_SVG_WIDTH}
                 />
               ) : (
                 <AvatarMale
                   avatarSide={sideAvatar}
                   isSelected={isSelected}
                   handleTogglePart={handleTogglePart}
+                  svgWidthOverride={AVATAR_SVG_WIDTH}
                 />
               )
             )}
