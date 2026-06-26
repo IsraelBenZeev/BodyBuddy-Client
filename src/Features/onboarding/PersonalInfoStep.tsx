@@ -166,7 +166,7 @@ const PersonalInfoStep = ({
           label="הבא"
           iconName="arrow-back"
           variant="outline"
-          size="md"
+          size="sm"
           fullWidth
           disabled={isPending}
           loading={isPending}
@@ -177,7 +177,7 @@ const PersonalInfoStep = ({
             label="סיום ושמירה"
             iconName="checkmark-circle"
             variant="primary"
-            size="md"
+            size="sm"
             fullWidth
             disabled={isPending}
             loading={isPending}

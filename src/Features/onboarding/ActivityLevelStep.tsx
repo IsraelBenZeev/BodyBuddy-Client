@@ -196,7 +196,7 @@ const ActivityLevelStep = ({
               label="חזרה"
               iconName="arrow-forward"
               variant="secondary"
-              size="md"
+              size="sm"
               fullWidth
               disabled={isPending}
             />
@@ -207,7 +207,7 @@ const ActivityLevelStep = ({
               label="הבא"
               iconName="arrow-back"
               variant="outline"
-              size="md"
+              size="sm"
               fullWidth
               disabled={isPending}
               loading={isPending}
@@ -220,7 +220,7 @@ const ActivityLevelStep = ({
             label="סיום ושמירה"
             iconName="checkmark-circle"
             variant="primary"
-            size="md"
+            size="sm"
             fullWidth
             disabled={isPending}
             loading={isPending}
