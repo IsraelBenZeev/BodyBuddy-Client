@@ -71,7 +71,7 @@ export default function TabsLayout() {
           borderWidth: 1,
           borderColor: 'rgba(255,255,255,0.07)',
           position: 'absolute',
-          bottom: insets.bottom,
+          bottom: 0,
           marginHorizontal: 16,
           zIndex: 1000,
           overflow: 'visible',
