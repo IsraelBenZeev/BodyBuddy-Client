@@ -1,3 +1,4 @@
+import { logError } from '@/src/lib/logger';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { getProfile } from '@/src/service/profileService';
 import { supabase } from '@/supabase_client';
@@ -27,7 +28,7 @@ export const signUpWithEmail = async (email: string, password: string): Promise<
     if (error) throw error;
     return { data, error: null };
   } catch (error) {
-    if (__DEV__) console.error('Sign up error:', error);
+    logError(error, 'signUpWithEmail');
     return { data: null, error: error as Error };
   }
 };
@@ -41,7 +42,7 @@ export const signInWithEmail = async (email: string, password: string): Promise<
     if (error) throw error;
     return { data, error: null };
   } catch (error) {
-    if (__DEV__) console.error('Sign in error:', error);
+    logError(error, 'signInWithEmail');
     return { data: null, error: error as Error };
   }
 };
@@ -52,7 +53,7 @@ export const signOut = async (): Promise<ErrorResponse> => {
     if (error) throw error;
     return { error: null };
   } catch (error) {
-    if (__DEV__) console.error('Sign out error:', error);
+    logError(error, 'signOut');
     return { error: error as Error };
   }
 };
@@ -70,7 +71,7 @@ export const getCurrentUser = async (): Promise<{
     if (error) throw error;
     return { user, error: null };
   } catch (error) {
-    if (__DEV__) console.error('Get user error:', error);
+    logError(error, 'getCurrentUser');
     return { user: null, error: error as Error };
   }
 };
@@ -87,7 +88,7 @@ export const getCurrentSession = async (): Promise<{
     if (error) throw error;
     return { session, error: null };
   } catch (error) {
-    if (__DEV__) console.error('Get session error:', error);
+    logError(error, 'getCurrentSession');
     return { session: null, error: error as Error };
   }
 };
@@ -163,7 +164,7 @@ export const signInWithGoogle = async () => {
   });
 
   if (error) {
-    if (__DEV__) console.error('Auth error:', error.message);
+    logError(error, 'signInWithGoogle/oauth');
     return;
   }
 
@@ -193,7 +194,7 @@ export const signInWithGoogle = async () => {
       if (isPKCE) {
         const { data, error: sessionError } = await supabase.auth.exchangeCodeForSession(authUrl);
         if (sessionError) {
-          if (__DEV__) console.error('exchangeCodeForSession error:', sessionError.message);
+          logError(sessionError, 'exchangeCodeForSession');
           return;
         }
         sessionData = data;
@@ -205,7 +206,7 @@ export const signInWithGoogle = async () => {
           refresh_token: tokens.refresh_token,
         });
         if (sessionError) {
-          if (__DEV__) console.error('setSession error:', sessionError.message);
+          logError(sessionError, 'setSession');
           return;
         }
         sessionData = data;
@@ -227,7 +228,7 @@ export const signInWithGoogle = async () => {
       }
     } catch (err) {
       cleanup();
-      if (__DEV__) console.error('signInWithGoogle error:', err);
+      logError(err, 'signInWithGoogle');
     }
   }
 };

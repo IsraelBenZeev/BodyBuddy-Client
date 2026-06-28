@@ -1,3 +1,4 @@
+import { logError } from '@/src/lib/logger';
 import { supabase } from '../../supabase_client';
 import { Exercise } from '../types/exercise';
 
@@ -41,7 +42,7 @@ export const getExercisesByBodyParts = async (bodyPart: string[], page: number, 
     if (error) throw error;
     return { exercises: data as Exercise[], totalCount: count || 0 };
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'exercisesService');
     throw error;
   }
 };
@@ -55,7 +56,7 @@ export const getExerciseById = async (exerciseId: string) => {
     if (error) throw error;
     return data as Exercise;
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'exercisesService');
     throw error;
   }
 };
@@ -68,7 +69,7 @@ export const getExerciseByIds = async (exerciseId: string[]) => {
     if (error) throw error;
     return data as Exercise[];
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'exercisesService');
     throw error;
   }
 };

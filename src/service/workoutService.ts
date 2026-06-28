@@ -1,3 +1,4 @@
+import { logError } from '@/src/lib/logger';
 import { supabase } from '@/supabase_client';
 import { WorkoutPlan } from '../types/workout';
 import { ExerciseLogDBType } from '../types/session';
@@ -12,7 +13,7 @@ export const getWorkoutsByUserUserId = async (user_id: string) => {
     if (error) throw error;
     return data as WorkoutPlan[];
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'workoutService');
     throw error;
   }
 };
@@ -23,7 +24,7 @@ export const getWorkoutPlanById = async (id: string) => {
     if (error) throw error;
     return data as WorkoutPlan;
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'workoutService');
     throw error;
   }
 };
@@ -33,7 +34,7 @@ export const createNewWorkoutPlan = async (newPlan: WorkoutPlan) => {
     if (error) throw error;
     return data;
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'workoutService');
     throw error;
   }
 };
@@ -46,7 +47,7 @@ export const addExerciseToPlan = async (idExercise: string, planIds: string[]) =
     if (error) throw error;
     return data;
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'workoutService');
     throw error;
   }
 };
@@ -55,7 +56,7 @@ export const deleteWorkoutPlan = async (id: string, userId: string) => {
     const { error } = await supabase.from('workouts_plans').delete().eq('id', id).eq('user_id', userId);
     if (error) throw error;
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'workoutService');
     throw error;
   }
 };
@@ -68,7 +69,7 @@ export const getExercisesIdsByWorkoutPlanId = async (workoutPlanId: string) => {
     if (error) throw error;
     return data as ExerciseLogDBType[];
   } catch (error) {
-    if (__DEV__) console.error(error);
+    logError(error, 'workoutService');
     throw error;
   }
 };

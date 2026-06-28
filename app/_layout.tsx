@@ -3,6 +3,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import * as Sentry from '@sentry/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
@@ -15,11 +16,16 @@ import { QueryClientManager } from 'reactotron-react-query';
 import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tailwind)
 import Reactotron from '../ReactotronConfig';
 
+Sentry.init({
+  dsn: 'https://2bd1282812732a315590b73db46ff5de@o4511642048659456.ingest.de.sentry.io/4511642094862416',
+  enabled: true,
+  tracesSampleRate: 1.0,
+});
+
 if (Platform.OS !== 'web') {
   I18nManager.allowRTL(true);
   I18nManager.forceRTL(true);
 }
-
 SplashScreen.preventAutoHideAsync();
 
 // בתוך RootLayout
@@ -40,7 +46,7 @@ if (__DEV__) {
   });
 }
 
-export default function RootLayout() {
+function RootLayout() {
   const insets = useSafeAreaInsets();
   const url = Linking.useURL();
   // רישום listener ל-Supabase auth + טעינת session קיים – בלי זה ה-store לא מתעדכן אחרי התחברות
@@ -163,6 +169,8 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+export default Sentry.wrap(RootLayout);
 
 // הרכיב Stack אומר: "כאן אני אציג את הדפים של האפליקציה"
 // הוא לא מציג שום דבר ויזואלי בעצמו, הוא רק מנהל את התצוגה.

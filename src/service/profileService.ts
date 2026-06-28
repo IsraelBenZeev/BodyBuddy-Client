@@ -1,3 +1,4 @@
+import { logError } from '@/src/lib/logger';
 import { supabase } from '@/supabase_client';
 import { CreateProfilePayload, Profile } from '../types/profile';
 
@@ -18,7 +19,7 @@ export const getProfile = async (userId: string): Promise<Profile | null> => {
     if (error) throw error;
     return data as Profile | null;
   } catch (error) {
-    console.error('Get profile error:', error);
+    logError(error, 'getProfile');
     throw error;
   }
 };
@@ -65,7 +66,7 @@ export const createOrUpdateProfile = async (
 
     throw updateError;
   } catch (error) {
-    console.error('Create/update profile error:', error);
+    logError(error, 'createOrUpdateProfile');
     throw error;
   }
 };

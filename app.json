@@ -31,6 +31,14 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "bodybuddy-yn"
+        }
+      ],
       "./plugins/withAndroidRTL",
       "./plugins/withIosRTL",
       ["expo-localization", { "supportsRTL": true, "forcesRTL": true }],

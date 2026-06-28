@@ -1,3 +1,4 @@
+import { logError } from '@/src/lib/logger';
 import type { Meal, MealItemFoodInfo, MealWithItems } from '@/src/types/meal';
 import type {
     AIAnalysisResult,
@@ -26,7 +27,7 @@ export const getNutritionEntries = async (
     if (error) throw error;
     return (data ?? []).map(normalizeNutritionEntry);
   } catch (error) {
-    if (__DEV__) console.error('Get nutrition entries error:', error);
+    logError(error, 'getNutritionEntries');
     throw error;
   }
 };
@@ -82,7 +83,7 @@ export const createNutritionEntry = async (
     if (error) throw error;
     return normalizeNutritionEntry(data as Record<string, unknown>);
   } catch (error) {
-    if (__DEV__) console.error('Create nutrition entry error:', error);
+    logError(error, 'createNutritionEntry');
     throw error;
   }
 };
@@ -119,7 +120,7 @@ export const createNutritionEntriesBulk = async (
       normalizeNutritionEntry(row as Record<string, unknown>)
     );
   } catch (error) {
-    if (__DEV__) console.error('Create nutrition entries bulk error:', error);
+    logError(error, 'createNutritionEntriesBulk');
     throw error;
   }
 };
@@ -140,7 +141,7 @@ export const deleteNutritionEntry = async (
 
     if (error) throw error;
   } catch (error) {
-    if (__DEV__) console.error('Delete nutrition entry error:', error);
+    logError(error, 'deleteNutritionEntry');
     throw error;
   }
 };
@@ -161,7 +162,7 @@ export const deleteNutritionEntriesByGroupId = async (
 
     if (error) throw error;
   } catch (error) {
-    if (__DEV__) console.error('Delete nutrition entries by group error:', error);
+    logError(error, 'deleteNutritionEntriesByGroupId');
     throw error;
   }
 };
@@ -207,7 +208,7 @@ export const searchFoodItems = async (query: string, userId: string): Promise<Fo
 
     return [...userFoods, ...globalFoods].slice(0, 10);
   } catch (error) {
-    if (__DEV__) console.error('Search food items error:', error);
+    logError(error, 'searchFoodItems');
     throw error;
   }
 };
@@ -234,7 +235,7 @@ export const getFoodItems = async (userId: string): Promise<FoodItem[]> => {
     if (error) throw error;
     return (data ?? []).map(normalizeFoodItem);
   } catch (error) {
-    if (__DEV__) console.error('Get food items error:', error);
+    logError(error, 'getFoodItems');
     throw error;
   }
 };
@@ -350,7 +351,7 @@ export const createFoodItem = async (
     if (error) throw error;
     return normalizeFoodItem(data as Record<string, unknown>);
   } catch (error) {
-    if (__DEV__) console.error('Create food item error:', error);
+    logError(error, 'createFoodItem');
     throw error;
   }
 };
@@ -368,7 +369,7 @@ export const deleteFoodItem = async (foodItemId: string, userId: string): Promis
 
     if (error) throw error;
   } catch (error) {
-    if (__DEV__) console.error('Delete food item error:', error);
+    logError(error, 'deleteFoodItem');
     throw error;
   }
 };
@@ -393,7 +394,7 @@ export const deleteMeal = async (mealId: string, userId: string): Promise<void> 
 
     if (itemsError) throw itemsError;
   } catch (error) {
-    if (__DEV__) console.error('Delete meal error:', error);
+    logError(error, 'deleteMeal');
     throw error;
   }
 };
@@ -424,7 +425,7 @@ export const getMeals = async (userId: string): Promise<Meal[]> => {
     if (error) throw error;
     return (data ?? []).map(normalizeMeal);
   } catch (error) {
-    if (__DEV__) console.error('Get meals error:', error);
+    logError(error, 'getMeals');
     throw error;
   }
 };
@@ -550,7 +551,7 @@ export const getMealsWithItems = async (
       return { ...meal, meal_items };
     });
   } catch (error) {
-    if (__DEV__) console.error('Get meals with items error:', error);
+    logError(error, 'getMealsWithItems');
     throw error;
   }
 };
@@ -588,7 +589,7 @@ export const createMealWithItems = async (
 
     return normalizeMeal(mealRow as Record<string, unknown>);
   } catch (error) {
-    if (__DEV__) console.error('Create meal with items error:', error);
+    logError(error, 'createMealWithItems');
     throw error;
   }
 };
@@ -635,7 +636,7 @@ export const getRecentFoods = async (userId: string): Promise<FoodItem[]> => {
       })
       .filter((item): item is FoodItem => item !== null);
   } catch (error) {
-    if (__DEV__) console.error('Get recent foods error:', error);
+    logError(error, 'getRecentFoods');
     return [];
   }
 };
@@ -660,7 +661,7 @@ export const trackFoodUsage = async (userId: string, food: FoodItem): Promise<vo
       );
     }
   } catch (error) {
-    if (__DEV__) console.error('Track food usage error:', error);
+    logError(error, 'trackFoodUsage');
   }
 };
 
@@ -684,7 +685,7 @@ export const analyzeNutritionImage = async (imageBase64: string, signal?: AbortS
   });
   if (!response.ok) {
     const body = await response.text().catch(() => '(no body)');
-    console.error('[analyzeNutritionImage] status:', response.status, 'body:', body);
+    logError(new Error(`analyzeNutritionImage ${response.status}: ${body}`), 'analyzeNutritionImage');
     throw new Error('שגיאה בניתוח התמונה');
   }
   const result = await response.json() as AIAnalysisResult;

@@ -1,3 +1,4 @@
+import { logError } from '@/src/lib/logger';
 import { supabase } from '../../supabase_client';
 import { ExerciseLogDBType, SessionDBType } from '../types/session';
 export const getSessions = async (userId: string, workoutPlanId: string) => {
@@ -11,7 +12,7 @@ export const getSessions = async (userId: string, workoutPlanId: string) => {
         if (error) throw error;
         return data;
     } catch (error) {
-        if (__DEV__) console.error("Error getting sessions:", error);
+        logError(error, 'getSessions');
         throw error;
     }
 }
@@ -26,7 +27,7 @@ export const getSessionExerciseLogs = async (sessionId: string) => {
         if (error) throw error;
         return data as ExerciseLogDBType[];
     } catch (error) {
-        if (__DEV__) console.error("Error getting session exercise logs:", error);
+        logError(error, 'getSessionExerciseLogs');
         throw error;
     }
 }
@@ -44,7 +45,7 @@ export const createSession = async (session: SessionDBType) => {
         if (error) throw error;
         return data;
     } catch (error) {
-        if (__DEV__) console.error("Error creating workout log:", error);
+        logError(error, 'createSession');
         throw error;
     }
 };
@@ -60,7 +61,7 @@ export const getExerciseLogsByExerciseId = async (userId: string, exerciseId: st
         if (error) throw error;
         return data as ExerciseLogDBType[];
     } catch (error) {
-        if (__DEV__) console.error("Error getting exercise logs by exercise id:", error);
+        logError(error, 'getExerciseLogsByExerciseId');
         throw error;
     }
 };
@@ -75,7 +76,7 @@ export const getAllUserSessions = async (userId: string): Promise<SessionDBType[
         if (error) throw error;
         return data as SessionDBType[];
     } catch (error) {
-        if (__DEV__) console.error("Error getting all user sessions:", error);
+        logError(error, 'getAllUserSessions');
         throw error;
     }
 };
@@ -90,7 +91,7 @@ export const createSessionExerciseLogs = async (exerciseLogs: ExerciseLogDBType[
         if (error) throw error;
         return data;
     } catch (error) {
-        if (__DEV__) console.error("Error creating exercise logs:", error);
+        logError(error, 'createSessionExerciseLogs');
         throw error;
     }
 };
