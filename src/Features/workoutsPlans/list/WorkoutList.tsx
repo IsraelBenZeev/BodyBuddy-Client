@@ -93,7 +93,7 @@ const WorkoutList = () => {
             />
           </View>
         ) : (
-          
+
           <EmptyState
             icon={<IconsFitnessTools size={80} color={colors.lime[500]} />}
             title="עדיין אין לך תוכניות אימון"
@@ -105,22 +105,22 @@ const WorkoutList = () => {
             }}
           />
         )}
-
-        {/* כפתור הוספה צף (רק כשיש אימונים) */}
-        {plansData && plansData.length > 0 && (
-          <View className="absolute bottom-36 right-10">
-            <AppButton
-              haptic="medium"
-              animationType="opacity"
-              onPress={handleCreateNew}
-              className="bg-lime-500/20 border border-lime-500/50 items-center justify-center rounded-full w-16 h-16 shadow-md shadow-black"
-              accessibilityLabel="צור אימון חדש"
-            >
-              <IconAddToList color={colors.lime[300]} size={36} />
-            </AppButton>
-          </View>
-        )}
       </View>
+
+      {/* כפתור הוספה צף (רק כשיש אימונים) */}
+      {plansData && plansData.length > 0 && (
+        <View style={{ position: 'absolute', bottom: 144, right: 40 }}>
+          <AppButton
+            haptic="medium"
+            animationType="opacity"
+            onPress={handleCreateNew}
+            className="bg-lime-500/20 border border-lime-500/50 items-center justify-center rounded-full w-16 h-16 shadow-md shadow-black"
+            accessibilityLabel="צור אימון חדש"
+          >
+            <IconAddToList color={colors.lime[300]} size={36} />
+          </AppButton>
+        </View>
+      )}
     </BackGround>
   );
 };

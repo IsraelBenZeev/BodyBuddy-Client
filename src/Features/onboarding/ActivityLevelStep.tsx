@@ -210,7 +210,6 @@ const ActivityLevelStep = ({
               size="md"
               fullWidth
               disabled={isPending}
-              loading={isPending}
             />
           </View>
         </View>

@@ -74,7 +74,7 @@ const FormInput = <T extends FieldValues>({
               style={inputStyle}
             />
             {error && (
-              <Text style={[{ color: 'red', marginTop: 4 }, errorStyle]}>
+              <Text className='' style={[{ color: 'red', marginTop: 4 }, errorStyle]}>
                 {error.message || 'שדה חובה'}
               </Text>
             )}

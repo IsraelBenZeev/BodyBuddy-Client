@@ -9,7 +9,16 @@ import FormInput from '@/src/ui/FormInput';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Linking,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 
 interface LoginFormData {
   email: string;
@@ -40,9 +49,14 @@ export default function LoginScreen() {
     },
   });
 
-  const handleNavigateToRegister = useCallback(() =>
-    router.replace({ pathname: '/auth/signup/[params]', params: { params: 'AUTH_PARAM' } } as never),
-  [router]);
+  const handleNavigateToRegister = useCallback(
+    () =>
+      router.replace({
+        pathname: '/auth/signup/[params]',
+        params: { params: 'AUTH_PARAM' },
+      } as never),
+    [router]
+  );
 
   const onSubmit = async (formData: LoginFormData) => {
     setLoading(true);
@@ -60,7 +74,6 @@ export default function LoginScreen() {
       }
     }
   };
-
 
   return (
     <BackGround>
@@ -84,7 +97,7 @@ export default function LoginScreen() {
           <View className="flex-1 px-5 py-12 justify-center">
             {/* Logo/Title */}
             <View className="mb-12 items-center">
-              <BodyBuddyLogo width={220} height={120} />
+              <BodyBuddyLogo width={150} height={174} />
               <Text className="typo-body text-background-400 text-center mt-4">התחבר למערכת</Text>
             </View>
 
@@ -126,7 +139,7 @@ export default function LoginScreen() {
               errorStyle={{
                 color: colors.red[400],
                 fontSize: 14,
-                textAlign: 'right',
+                textAlign: 'left',
                 marginTop: 4,
               }}
             />
@@ -169,7 +182,7 @@ export default function LoginScreen() {
               errorStyle={{
                 color: colors.red[400],
                 fontSize: 14,
-                textAlign: 'right',
+                textAlign: 'left',
                 marginTop: 4,
               }}
             />
@@ -187,20 +200,6 @@ export default function LoginScreen() {
                 accessibilityLabel="התחבר"
                 accessibilityHint="לחץ כדי להתחבר עם האימייל והסיסמה"
               />
-            </View>
-
-            {/* Privacy Policy */}
-            <View className="mb-4 px-2">
-              <Text className="typo-label text-background-400 text-center">
-                {'בהתחברות הינך מסכים ל'}
-                <Text
-                  onPress={() => Linking.openURL('https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/')}
-                  accessibilityRole="link"
-                  accessibilityLabel="פתח מדיניות פרטיות"
-                  className="typo-label text-lime-400 font-semibold"
-                >{'מדיניות הפרטיות'}</Text>
-                {' שלנו'}
-              </Text>
             </View>
 
             {/* Google Button */}
@@ -225,6 +224,23 @@ export default function LoginScreen() {
 
             {/* Register Link */}
             <View className="mt-8">
+              {/* Privacy Policy */}
+              <View className="mb-4 px-2">
+                <Text className="typo-label text-background-400 text-center">
+                  {'בהתחברות הינך מסכים ל'}
+                  <Text
+                    onPress={() =>
+                      Linking.openURL('https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/')
+                    }
+                    accessibilityRole="link"
+                    accessibilityLabel="פתח מדיניות פרטיות"
+                    className="typo-label text-lime-400 font-semibold"
+                  >
+                    {'מדיניות הפרטיות'}
+                  </Text>
+                  {' שלנו'}
+                </Text>
+              </View>
               <Pressable
                 onPress={handleNavigateToRegister}
                 accessibilityRole="button"

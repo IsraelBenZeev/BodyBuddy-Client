@@ -169,7 +169,6 @@ const PersonalInfoStep = ({
           size="md"
           fullWidth
           disabled={isPending}
-          loading={isPending}
         />
         {onSubmit && (
           <ActionButton

@@ -138,7 +138,6 @@ const BodyActivityStep = ({
               size="md"
               fullWidth
               disabled={isPending}
-              loading={isPending}
             />
           </View>
         </View>

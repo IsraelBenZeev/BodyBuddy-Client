@@ -9,7 +9,15 @@ import FormInput from '@/src/ui/FormInput';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Linking,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 
 interface RegisterFormData {
   email: string;
@@ -45,9 +53,11 @@ export default function RegisterScreen() {
 
   const password = watch('password');
 
-  const handleNavigateToLogin = useCallback(() =>
-    router.replace({ pathname: '/auth/login/[params]', params: { params: 'entry' } } as never),
-  [router]);
+  const handleNavigateToLogin = useCallback(
+    () =>
+      router.replace({ pathname: '/auth/login/[params]', params: { params: 'entry' } } as never),
+    [router]
+  );
 
   const onSubmit = async (formData: RegisterFormData) => {
     setLoading(true);
@@ -74,7 +84,7 @@ export default function RegisterScreen() {
           <View className="flex-1 px-5 py-12 justify-center">
             {/* Logo/Title */}
             <View className="mb-12 items-center">
-              <BodyBuddyLogo width={220} height={120} />
+              <BodyBuddyLogo width={150} height={174} />
               <Text className="typo-body text-background-400 text-center mt-4">התחבר למערכת</Text>
             </View>
             {/* Email Input */}
@@ -218,20 +228,6 @@ export default function RegisterScreen() {
               />
             </View>
 
-            {/* Privacy Policy */}
-            <View className="mb-4 px-2">
-              <Text className="typo-label text-background-400 text-center">
-                {'בהרשמה הינך מסכים ל'}
-                <Text
-                  onPress={() => Linking.openURL('https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/')}
-                  accessibilityRole="link"
-                  accessibilityLabel="פתח מדיניות פרטיות"
-                  className="typo-label text-lime-400 font-semibold"
-                >{'מדיניות הפרטיות'}</Text>
-                {' שלנו'}
-              </Text>
-            </View>
-
             {/* Google Button */}
             <ActionButton
               onPress={async () => {
@@ -254,6 +250,23 @@ export default function RegisterScreen() {
 
             {/* Login Link */}
             <View className="mt-8">
+              {/* Privacy Policy */}
+              <View className="mb-4 px-2">
+                <Text className="typo-label text-background-400 text-center">
+                  {'בהרשמה הינך מסכים ל'}
+                  <Text
+                    onPress={() =>
+                      Linking.openURL('https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/')
+                    }
+                    accessibilityRole="link"
+                    accessibilityLabel="פתח מדיניות פרטיות"
+                    className="typo-label text-lime-400 font-semibold"
+                  >
+                    {'מדיניות הפרטיות'}
+                  </Text>
+                  {' שלנו'}
+                </Text>
+              </View>
               <Pressable
                 onPress={handleNavigateToLogin}
                 accessibilityRole="button"

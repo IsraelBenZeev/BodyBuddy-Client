@@ -21,7 +21,7 @@ const animationDone = useRef(false);
     const timer = setTimeout(() => {
       animationDone.current = true;
       if (authDone.current) navigate();
-    }, 1400);
+    }, 2800);
     return () => clearTimeout(timer);
   }, []);
 
@@ -55,7 +55,7 @@ const animationDone = useRef(false);
         justifyContent: 'center',
       }}
     >
-      <BodyBuddyLogo width={260} height={182} />
+      <BodyBuddyLogo width={220} height={255} />
     </View>
   );
 }
