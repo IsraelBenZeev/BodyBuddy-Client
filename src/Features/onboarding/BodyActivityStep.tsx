@@ -116,7 +116,7 @@ const BodyActivityStep = ({
       </View>
 
       {/* כפתורי פעולה – חזרה, הבא, סיום ושמירה */}
-      <View className="mt-auto pt-1 pb-3 gap-2">
+      <View className="mt-auto pt-1 pb-3 gap-2 ">
         <View className="flex-row gap-3">
           <View className="flex-1">
             <ActionButton
@@ -124,7 +124,7 @@ const BodyActivityStep = ({
               label="חזרה"
               iconName="arrow-forward"
               variant="secondary"
-              size="md"
+              size="sm"
               fullWidth
               disabled={isPending}
             />
@@ -135,7 +135,7 @@ const BodyActivityStep = ({
               label="הבא"
               iconName="arrow-back"
               variant="outline"
-              size="md"
+              size="sm"
               fullWidth
               disabled={isPending}
             />
@@ -147,7 +147,7 @@ const BodyActivityStep = ({
             label="סיום ושמירה"
             iconName="checkmark-circle"
             variant="primary"
-            size="md"
+            size="sm"
             fullWidth
             disabled={isPending}
             loading={isPending}

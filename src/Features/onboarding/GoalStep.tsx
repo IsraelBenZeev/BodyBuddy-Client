@@ -315,7 +315,7 @@ const GoalStep = ({ control, trigger, setValue, onBack, onSubmit, isPending }: G
             label="חזרה"
             iconName="arrow-forward"
             variant="secondary"
-            size="md"
+            size="sm"
             fullWidth
             disabled={isPending}
           />
@@ -326,7 +326,7 @@ const GoalStep = ({ control, trigger, setValue, onBack, onSubmit, isPending }: G
             label="סיום ושמירה"
             iconName="checkmark-circle"
             variant="outline"
-            size="md"
+            size="sm"
             fullWidth
             disabled={isPending}
             loading={isPending}

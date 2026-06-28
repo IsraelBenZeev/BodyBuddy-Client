@@ -1,7 +1,7 @@
 import { colors } from '@/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ReactNode } from 'react';
-import { ImageBackground } from 'react-native';
+
 interface BackGroundProps {
   children: ReactNode;
   colorA?: string;

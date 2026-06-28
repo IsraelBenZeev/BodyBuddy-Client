@@ -17,8 +17,8 @@ const { width, height } = Dimensions.get('window');
 // SVG rendered height = svgWidth * ASPECT_RATIO * 0.9
 // Cap svgWidth so the rendered height fits within the allocated container (height * 0.55)
 const AVATAR_ASPECT_RATIO = 1726 / 871;
-const AVATAR_CONTAINER_HEIGHT = Math.min(height * 0.55, height - 284);
-const AVATAR_SVG_WIDTH = Math.min(width * 0.75, AVATAR_CONTAINER_HEIGHT / (AVATAR_ASPECT_RATIO * 0.9));
+const AVATAR_CONTAINER_HEIGHT = Math.min(height * 0.6, height - 260);
+const AVATAR_SVG_WIDTH = Math.min(width * 0.82, AVATAR_CONTAINER_HEIGHT / (AVATAR_ASPECT_RATIO * 0.9));
 
 const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
@@ -69,7 +69,7 @@ const AvatarSelectorScreen = () => {
           {/* אפקט הילה - גודל דינמי, חייב style */}
           <View
             className="absolute rounded-full bg-lime-500 opacity-[0.08] z-[1]"
-            style={{ width: width * 0.6, height: width * 0.6, top: height * 0.04 }}
+            style={{ width: width * 0.6, height: width * 0.6, top: height * 0.09 }}
           />
 
           {/* גובה דינמי, חייב style */}
@@ -94,7 +94,7 @@ const AvatarSelectorScreen = () => {
           </View>
 
           {/* טקסט הדרכה מתחת לאווטאר */}
-          <Text className="typo-caption text-zinc-600 text-center leading-[18px] px-10 mt-24 z-[5]">
+          <Text className="typo-caption text-zinc-600 text-center leading-[18px] px-10 mt-4 z-[5]">
             לחץ על חלקי הגוף במודל כדי לראות תרגילים רלוונטיים
           </Text>
         </View>
