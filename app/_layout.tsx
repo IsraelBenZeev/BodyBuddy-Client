@@ -1,4 +1,5 @@
 import { colors } from '@/colors';
+import Constants from 'expo-constants';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
@@ -18,8 +19,9 @@ import Reactotron from '../ReactotronConfig';
 
 Sentry.init({
   dsn: 'https://2bd1282812732a315590b73db46ff5de@o4511642048659456.ingest.de.sentry.io/4511642094862416',
-  enabled: true,
+  enabled: !__DEV__,
   tracesSampleRate: 1.0,
+  release: Constants.expoConfig?.version,
 });
 
 if (Platform.OS !== 'web') {
