@@ -8,6 +8,7 @@ import ActionButton from '@/src/ui/ActionButton';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   foodItem: FoodItem;
@@ -24,6 +25,7 @@ const AddNewFoodSelection = ({
   onBack,
   submitLabel = 'הוסף ליומן אכילה',
 }: Props) => {
+  const { bottom } = useSafeAreaInsets();
   const isUnits = foodItem.measurement_type === 'units';
   const unitLabel = getAmountLabel(foodItem);
 
@@ -152,7 +154,7 @@ const AddNewFoodSelection = ({
       </View>
 
       {/* Submit Button Only */}
-      <View className="mt-auto pb-4">
+      <View className="mt-auto" style={{ paddingBottom: bottom + 16 }}>
         <ActionButton
           onPress={handleSubmit}
           label={isPending ? 'מעדכן...' : submitLabel}

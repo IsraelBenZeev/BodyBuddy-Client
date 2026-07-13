@@ -119,7 +119,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
           <ActivityIndicator color="#84cc16" size="large" />
         </View>
       ) : foodItems.length === 0 ? (
-        <View className="flex-1 items-center  px-6 gap-8">
+        <View className="flex-1 items-center justify-center px-6 gap-8">
           <View className="items-center gap-4 mb-10">
             <View className="items-center justify-center" style={{ width: 160, height: 160 }}>
               <View className="absolute w-40 h-40 bg-lime-500/5 rounded-full" />
@@ -159,7 +159,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
       {/* כפתור הוספה צף בתחתית — מוצג רק כשיש מאכלים */}
       {foodItems.length > 0 && (
-        <View style={{ position: 'absolute', bottom: bottom + 32, left: 24, right: 24 }}>
+        <View style={{ position: 'absolute', bottom: bottom, left: 24, right: 24 }}>
           <ActionButton
             onPress={handleAddNewFood}
             label="הוסף מאכל חדש"

@@ -6,6 +6,7 @@ import ActionButton from '@/src/ui/ActionButton';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   visible: boolean;
@@ -28,6 +29,7 @@ export default function MealReviewModal({
   onClose,
   onSuccess,
 }: Props) {
+  const { bottom } = useSafeAreaInsets();
   const [rowState, setRowState] = useState<Record<string, ItemRowState>>({});
   const createUuid = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -226,7 +228,10 @@ export default function MealReviewModal({
           </View>
         </ScrollView>
 
-        <View className="px-5 py-4 border-t border-white/[0.05]">
+        <View
+          className="px-5 pt-4 border-t border-white/[0.05]"
+          style={{ paddingBottom: bottom + 16 }}
+        >
           {/* <Pressable
             onPress={handleConfirm}
             disabled={isPending || items.length === 0}

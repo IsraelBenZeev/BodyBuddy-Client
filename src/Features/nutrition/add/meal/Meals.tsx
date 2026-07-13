@@ -63,7 +63,7 @@ export default function Meals({ userId, date, onClose }: Props) {
     return (
       <View className="flex-1 bg-background-900 px-5 pt-6">
         <ScreenHeader title="הארוחות שלי" subtitle="בחר ארוחה מוכנה כדי להוסיף ליום שלך" />
-        <View className="flex-1 items-center px-6 gap-8">
+        <View className="flex-1 items-center justify-center px-6 gap-8">
           <View className="items-center gap-4 mb-10">
             <View className="items-center justify-center" style={{ width: 160, height: 160 }}>
               <View className="absolute w-40 h-40 bg-lime-500/5 rounded-full" />
@@ -126,7 +126,7 @@ export default function Meals({ userId, date, onClose }: Props) {
       />
 
       {/* כפתור יצירת ארוחה - צף בתחתית */}
-      <View style={{ position: 'absolute', bottom: bottom + 32, left: 24, right: 24 }}>
+      <View style={{ position: 'absolute', bottom: bottom, left: 24, right: 24 }}>
         <ActionButton
           onPress={handleCreateFirstMeal}
           label="צור ארוחה חדשה"
