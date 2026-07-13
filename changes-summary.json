@@ -1,0 +1,54 @@
+{
+  "changes": [
+    {
+      "file": "src/Features/nutrition/add/meal/MealBuilderScreen.tsx",
+      "what": "Added a red-border + error text under the meal name field, shown on blur or on a failed save attempt. Removed the name check from the save buttons' `disabled` condition and validate inside the handlers instead.",
+      "why": "The save buttons were disabled whenever the name was empty, so the button's onPress never fired and the user got no feedback on why they couldn't save."
+    },
+    {
+      "file": "src/Features/nutrition/add/food/AddNewFoodSelection.tsx",
+      "what": "Replaced the fixed `pb-4` on the submit button with `paddingBottom: insets.bottom + 16` using useSafeAreaInsets.",
+      "why": "The portion-selection screen (opened from Foods.tsx) had no safe-area handling, so the submit button sat under the home indicator."
+    },
+    {
+      "file": "src/Features/nutrition/add/meal/MealReviewModal.tsx",
+      "what": "Replaced the fixed `py-4` on the bottom action bar with `paddingBottom: insets.bottom + 16` using useSafeAreaInsets.",
+      "why": "This is a full-screen Modal (opened from Meals.tsx) with its own safe-area context, and its confirm button sat under the home indicator."
+    },
+    {
+      "file": "src/Features/nutrition/add/food/Foods.tsx",
+      "what": "Added `justify-center` to the empty-state container.",
+      "why": "The container was `flex-1 items-center` with no `justify-content`, so the empty-state content (icon, text, 'צור מאכל חדש' button) was pinned to the top instead of centered."
+    },
+    {
+      "file": "src/Features/nutrition/add/meal/Meals.tsx",
+      "what": "Added `justify-center` to the empty-state container, and changed the floating 'צור ארוחה חדשה' button offset from `bottom: bottom + 32` to `bottom: bottom` to match the equivalent fix in Foods.tsx.",
+      "why": "Same top-alignment bug as Foods.tsx, plus keeping the floating button offset consistent between the two tabs."
+    },
+    {
+      "file": "src/Features/onboarding/PersonalInfoStep.tsx",
+      "what": "Removed the redundant `pb-3` from the bottom button container.",
+      "why": "First pass at fixing an oversized gap under the onboarding step buttons; turned out to only be part of the cause (see UserDetails.tsx)."
+    },
+    {
+      "file": "src/Features/onboarding/BodyActivityStep.tsx",
+      "what": "Removed the redundant `pb-3` from the bottom button container.",
+      "why": "Same as PersonalInfoStep.tsx."
+    },
+    {
+      "file": "src/Features/onboarding/ActivityLevelStep.tsx",
+      "what": "Removed the redundant `pb-3` from the bottom button container.",
+      "why": "Same as PersonalInfoStep.tsx."
+    },
+    {
+      "file": "src/Features/onboarding/GoalStep.tsx",
+      "what": "Removed the redundant `pb-3` from the bottom button row.",
+      "why": "Same as PersonalInfoStep.tsx."
+    },
+    {
+      "file": "src/Features/onboarding/UserDetails.tsx",
+      "what": "Removed `paddingBottom: insets.bottom` from the KeyboardAvoidingView, and removed the now-unused `useSafeAreaInsets` import/variable.",
+      "why": "app/_layout.tsx already wraps the whole app in a GestureHandlerRootView with `paddingBottom: insets.bottom`, applied globally to every screen. UserDetails.tsx was adding the same inset a second time, which was the real cause of the oversized gap under the onboarding buttons."
+    }
+  ]
+}
