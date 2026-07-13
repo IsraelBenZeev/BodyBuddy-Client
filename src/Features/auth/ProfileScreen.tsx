@@ -5,7 +5,9 @@ import { signOut } from '@/src/service/authService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import { activityLevelOptions, genderOptions } from '@/src/types/profile';
+import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
+import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import HoldButton from '@/src/ui/HoldButton';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 import { Ionicons } from '@expo/vector-icons';
@@ -62,6 +64,8 @@ export default function ProfileScreen() {
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
   const [animKey, setAnimKey] = useState(0);
   const [isPressingLogout, setIsPressingLogout] = useState(false);
+  const [showLogoPreview, setShowLogoPreview] = useState(false);
+  const [logoPreviewKey, setLogoPreviewKey] = useState(0);
   const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
 
   useFocusEffect(
@@ -77,6 +81,15 @@ export default function ProfileScreen() {
     const { error } = await signOut();
     error ? triggerSuccess('שגיאה', 'failed') : triggerSuccess('התנתקת בהצלחה', 'success');
   }, [triggerSuccess]);
+
+  const handleShowLogoPreview = useCallback(() => {
+    setLogoPreviewKey((k) => k + 1);
+    setShowLogoPreview(true);
+  }, []);
+
+  const handleCloseLogoPreview = useCallback(() => {
+    setShowLogoPreview(false);
+  }, []);
 
   if (!user)
     return (
@@ -180,6 +193,19 @@ export default function ProfileScreen() {
                 </View>
               </Animated.View>
             </View>
+          </View>
+
+          {/* כפתור זמני לבדיקת הלוגו — Preview בלי לצאת/לרענן את המסך */}
+          <View className="mt-4 items-start">
+            <ActionButton
+              onPress={handleShowLogoPreview}
+              label="בדיקת לוגו"
+              iconName="shapes-outline"
+              variant="secondary"
+              size="sm"
+              accessibilityLabel="הצג תצוגה מקדימה של הלוגו"
+              accessibilityHint="פותח מסך שקוף עם אנימציית הלוגו של BodyBuddy"
+            />
           </View>
         </View>
 
@@ -303,6 +329,19 @@ export default function ProfileScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      {showLogoPreview && (
+        <Pressable
+          className="absolute inset-0 items-center justify-center bg-black/85"
+          onPress={handleCloseLogoPreview}
+          accessibilityRole="button"
+          accessibilityLabel="סגור תצוגת לוגו"
+          accessibilityHint="לחץ בכל מקום כדי לסגור"
+        >
+          <BodyBuddyLogo key={logoPreviewKey} width={220} height={255} />
+          <Text className="typo-label text-background-400 mt-8">לחץ בכל מקום כדי לסגור</Text>
+        </Pressable>
+      )}
     </BackGround>
   );
 }

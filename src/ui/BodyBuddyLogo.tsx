@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedProps,
   withTiming,
   withDelay,
+  runOnJS,
 } from 'react-native-reanimated';
 import Svg, { Path, Defs, ClipPath } from 'react-native-svg';
 
@@ -65,10 +66,15 @@ function AnimatedPart({ children, delay, translateX = 0, translateY = 0, scale =
 
 export default function BodyBuddyLogo({ width = 180, height = 209 }: BodyBuddyLogoProps) {
   const strokeOffset = useSharedValue(DASH_LENGTH);
+  const [hasFinishedDrawing, setHasFinishedDrawing] = useState(false);
 
   useEffect(() => {
     // הסטרוק מצייר בתוך ה-clip של הגבול — אין מעבר, אין כיווץ
-    strokeOffset.value = withTiming(0, { duration: 1500 });
+    strokeOffset.value = withTiming(0, { duration: 1500 }, (finished) => {
+      // ה-path סגור (Z), אז ה-dash pattern משאיר תפר קטן בנקודת ההתחלה/סיום.
+      // ברגע שהציור הסתיים מסירים strokeDasharray לגמרי — סטרוק רציף, בלי תפר.
+      if (finished) runOnJS(setHasFinishedDrawing)(true);
+    });
   }, []);
 
   const strokeAnimatedProps = useAnimatedProps(() => ({
@@ -92,8 +98,8 @@ export default function BodyBuddyLogo({ width = 180, height = 209 }: BodyBuddyLo
             strokeLinecap="butt"
             strokeLinejoin="miter"
             fill="none"
-            strokeDasharray={DASH_LENGTH}
-            animatedProps={strokeAnimatedProps}
+            strokeDasharray={hasFinishedDrawing ? undefined : DASH_LENGTH}
+            animatedProps={hasFinishedDrawing ? undefined : strokeAnimatedProps}
             clipPath="url(#hex-border-clip)"
           />
         </Svg>
