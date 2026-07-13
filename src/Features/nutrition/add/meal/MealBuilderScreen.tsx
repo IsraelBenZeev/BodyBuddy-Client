@@ -174,6 +174,7 @@ const MealBuilderScreen = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
 
   const [savingMode, setSavingMode] = useState<'list' | 'list-and-journal' | null>(null);
+  const [nameTouched, setNameTouched] = useState(false);
   const [editDraft, setEditDraft] = useState<{
     index: number;
     name: string;
@@ -407,7 +408,10 @@ const MealBuilderScreen = () => {
 
   const handleSaveListOnly = useCallback(async () => {
     const trimmed = nameMeal.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setNameTouched(true);
+      return;
+    }
     setSavingMode('list');
     try {
       const resolvedItems = await resolvePendingItems();
@@ -433,7 +437,10 @@ const MealBuilderScreen = () => {
 
   const handleSaveListAndJournal = useCallback(async () => {
     const trimmed = nameMeal.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setNameTouched(true);
+      return;
+    }
     setSavingMode('list-and-journal');
     let resolvedItems: MealItemState[];
     try {
@@ -502,7 +509,7 @@ const MealBuilderScreen = () => {
     );
   }, [nameMeal, resolvePendingItems, userId, today, createMeal, addToJournal, router]);
 
-  const canSave = nameMeal.trim().length > 0 && items.length > 0 && !isSaving && !isAddingToJournal;
+  const canSave = items.length > 0 && !isSaving && !isAddingToJournal;
 
   return (
     <BackGround>
@@ -531,10 +538,20 @@ const MealBuilderScreen = () => {
           <TextInput
             value={nameMeal}
             onChangeText={setNameMeal}
+            onBlur={() => setNameTouched(true)}
             placeholder="למשל: שייק חלבון בוקר..."
             placeholderTextColor="#525252"
-            className="typo-input bg-background-800 border border-white/5 rounded-2xl px-5 py-4 text-right text-white shadow-sm"
+            className={`typo-input bg-background-800 border rounded-2xl px-5 py-4 text-right text-white shadow-sm ${
+              nameTouched && !nameMeal.trim() ? 'border-red-400' : 'border-white/5'
+            }`}
+            accessibilityLabel="שם הארוחה"
+            accessibilityHint="שדה חובה"
           />
+          {nameTouched && !nameMeal.trim() && (
+            <Text className="typo-caption text-red-400 mt-1.5 px-1 text-left">
+              שם הארוחה הוא שדה חובה
+            </Text>
+          )}
         </View>
 
         {/* כותרת רשימת הפריטים */}
@@ -582,7 +599,7 @@ const MealBuilderScreen = () => {
               label="הוסף לרשימה בלבד"
               iconName="list"
               variant="secondary"
-              size="lg"
+              size="md"
               fullWidth
               disabled={!canSave}
               loading={savingMode === 'list' && isSaving}
@@ -592,7 +609,7 @@ const MealBuilderScreen = () => {
               label="הוסף לרשימה וליומן"
               iconName="checkmark-circle"
               variant="primary"
-              size="lg"
+              size="md"
               fullWidth
               disabled={!canSave}
               loading={savingMode === 'list-and-journal' && (isSaving || isAddingToJournal)}
