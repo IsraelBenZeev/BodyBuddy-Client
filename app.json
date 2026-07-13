@@ -14,7 +14,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#E6F4FE"
+        "backgroundColor": "#14161A"
       },
       "package": "com.ibz1330.bodybuddy",
       "versionCode": 16,
