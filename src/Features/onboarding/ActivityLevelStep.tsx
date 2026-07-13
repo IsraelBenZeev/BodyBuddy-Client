@@ -188,7 +188,7 @@ const ActivityLevelStep = ({
       </ScrollView>
 
       {/* כפתורי פעולה */}
-      <View className="pt-1 pb-3 gap-2">
+      <View className="pt-1 gap-2">
         <View className="flex-row gap-3">
           <View className="flex-1">
             <ActionButton

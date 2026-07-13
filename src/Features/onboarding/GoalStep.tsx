@@ -308,7 +308,7 @@ const GoalStep = ({ control, trigger, setValue, onBack, onSubmit, isPending }: G
       </ScrollView>
 
       {/* כפתורי פעולה – חזרה, סיום ושמירה */}
-      <View className="flex-row gap-3 pt-1 pb-3">
+      <View className="flex-row gap-3 pt-1 ">
         <View className="flex-1">
           <ActionButton
             onPress={onBack}

@@ -160,7 +160,7 @@ const PersonalInfoStep = ({
       </ScrollView>
 
       {/* כפתורי פעולה – קבועים בתחתית */}
-      <View className="pt-1 pb-3 gap-2">
+      <View className="pt-1 gap-2">
         <ActionButton
           onPress={handleNext}
           label="הבא"
