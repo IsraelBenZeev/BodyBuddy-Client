@@ -35,7 +35,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
   }
   return (
     <BackGround>
-      <View className="flex-row items-center px-8 mt-3">
+      <View className="flex-row items-center px-8 mt-3 ">
         <View className="flex-1 items-center">
           <Handle />
         </View>

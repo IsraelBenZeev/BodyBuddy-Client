@@ -23,7 +23,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
       entering={FadeInDown.duration(220)}
       exiting={FadeOutDown.duration(180)}
       className="absolute left-4 right-4"
-      style={{ bottom: TAB_BAR_HEIGHT + bottomInset + 12, zIndex: 50 }}
+      style={{ bottom: TAB_BAR_HEIGHT + bottomInset-10, zIndex: 50 }}
       pointerEvents="box-none"
     >
       {/* כרטיס עם lime neon border glow */}
@@ -91,7 +91,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
           className="w-full h-14 bg-lime-500/20 border border-lime-500/50 rounded-full items-center justify-center"
           accessibilityLabel="צפה בתרגילים לאזורים הנבחרים"
         >
-          <Text className="typo-btn-cta text-lime-300">
+          <Text className="typo-btn-cta text-lime-300 ">
             צפה בתרגילים
           </Text>
         </AppButton>

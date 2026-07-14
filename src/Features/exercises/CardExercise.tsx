@@ -131,9 +131,9 @@ const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerci
           {item.equipments_he.slice(0, 2).map((eq, i) => (
             <View
               key={i}
-              className={`px-2 py-1 rounded-md border ${isSelected ? 'bg-lime-600 border-lime-500' : 'bg-zinc-800 border-zinc-700'}`}
+              className={`px-2 py-1 rounded-md border ${isSelected ? 'bg-lime-500/10 border-lime-500/50' : 'bg-zinc-800 border-zinc-700'}`}
             >
-              <Text className={`typo-caption ${isSelected ? 'text-white' : 'text-zinc-400'}`}>
+              <Text className={`typo-caption ${isSelected ? 'text-lime-300' : 'text-zinc-400'}`}>
                 {eq}
               </Text>
             </View>

@@ -223,10 +223,10 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                   disabled={exerciseSelectedIds.size === 0}
                 >
                   <View
-                    className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 ${exerciseSelectedIds.size > 0 ? 'bg-lime-500' : 'bg-zinc-800'}`}
+                    className={`rounded-full h-8 min-w-[32px] px-2 flex-row items-center justify-center ml-3 border ${exerciseSelectedIds.size > 0 ? 'bg-lime-500/20 border-lime-500/50' : 'bg-transparent border-zinc-700'}`}
                   >
                     <Text
-                      className={`typo-btn-secondary ${exerciseSelectedIds.size > 0 ? 'text-zinc-950' : 'text-zinc-400'}`}
+                      className={`typo-btn-secondary ${exerciseSelectedIds.size > 0 ? 'text-lime-300' : 'text-zinc-400'}`}
                     >
                       {exerciseSelectedIds.size}
                     </Text>

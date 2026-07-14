@@ -1,4 +1,4 @@
-import { useMutation, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addFavorite, getFavoriteIds, getExerciseByIds, getExercisesByBodyParts, removeFavorite } from '../service/exercisesService';
 import { BodyPart } from '../types/bodtPart';
 import { Exercise } from '../types/exercise';
@@ -32,6 +32,7 @@ export const useGetExercisesByIds = (ids: string[]) => {
       // מחזירים נתונים מהמטמון רק אם מצאנו את הכל
       return filtered.length === ids.length ? filtered : undefined;
     },
+    placeholderData: keepPreviousData,
     staleTime: Infinity,
     enabled: ids.length > 0,
   });
