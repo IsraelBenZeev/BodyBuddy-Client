@@ -10,9 +10,6 @@ import React, { useCallback } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 
-// הפיכת ה-Pressable לרכיב אנימטיבי
-const AnimatedPressable = Animated.createAnimatedComponent(AppButton);
-
 interface CardExerciseProps {
   mode: 'edit' | 'preview';
   toggleExercise?: (id: string) => void;
@@ -25,7 +22,6 @@ const ListExercise = ({
   toggleExercise,
   navigateToPicker,
   isPendingCreate,
-  mode,
   selectExercisesIds,
 }: CardExerciseProps) => {
   const router = useRouter();
@@ -60,7 +56,6 @@ const ListExercise = ({
             key={exercise.exerciseId}
             exercise={exercise}
             index={index}
-            mode={mode}
             toggleExercise={toggleExercise}
           />
         ))
@@ -74,12 +69,10 @@ export default ListExercise;
 const ExerciseItem = React.memo(function ExerciseItem({
   exercise,
   index,
-  mode,
   toggleExercise,
 }: {
   exercise: any;
   index: number;
-  mode: 'edit' | 'preview';
   toggleExercise?: (id: string) => void;
 }) {
   const router = useRouter();
@@ -94,17 +87,13 @@ const ExerciseItem = React.memo(function ExerciseItem({
   }, [toggleExercise, exercise.exerciseId]);
 
   return (
-    <AnimatedPressable
-      animationType="scale"
-      haptic="medium"
+    <Animated.View
       entering={FadeInDown.delay(index * 100).springify()}
       exiting={FadeOutLeft.duration(400)}
       layout={LinearTransition.springify()}
-      onPress={handlePress}
       className="flex-row items-center bg-zinc-900/50 p-3 mb-3 rounded-2xl border border-zinc-800 gap-3"
-      accessibilityLabel={`${exercise.name_he || exercise.name} - הצג פרטי תרגיל`}
     >
-      {mode === 'edit' && (
+      {!!toggleExercise && (
         <AppButton
           animationType="scale"
           haptic="medium"
@@ -115,29 +104,37 @@ const ExerciseItem = React.memo(function ExerciseItem({
           <MaterialCommunityIcons name="close" size={20} color="#f87171" />
         </AppButton>
       )}
-      <View className="bg-white/5 rounded-xl overflow-hidden">
-        {exercise.gif_available === false ? (
-          <DumbbellAnimation size={56} />
-        ) : (
-          <Image
-            source={{ uri: exercise.gifUrl }}
-            style={{ width: 56, height: 56 }}
-            contentFit="cover"
-            cachePolicy="disk"
-          />
-        )}
-      </View>
-      <View className="flex-1 mr-4 items-start">
-        <Text className="typo-body-primary text-white" numberOfLines={1}>
-          {exercise.name_he || exercise.name}
-        </Text>
-        <View className="flex-row items-center mt-1">
-          <Text className="typo-caption text-zinc-400 mr-1 text-right">
-            {exercise.targetMuscles_he?.[0] || exercise.targetMuscles?.[0]}
-          </Text>
-          <MaterialCommunityIcons name="arm-flex" size={12} color="#a1a1aa" />
+      <AppButton
+        animationType="scale"
+        haptic="medium"
+        onPress={handlePress}
+        className="flex-1 flex-row items-center gap-3"
+        accessibilityLabel={`${exercise.name_he || exercise.name} - הצג פרטי תרגיל`}
+      >
+        <View className="bg-white/5 rounded-xl overflow-hidden">
+          {exercise.gif_available === false ? (
+            <DumbbellAnimation size={56} />
+          ) : (
+            <Image
+              source={{ uri: exercise.gifUrl }}
+              style={{ width: 56, height: 56 }}
+              contentFit="cover"
+              cachePolicy="disk"
+            />
+          )}
         </View>
-      </View>
-    </AnimatedPressable>
+        <View className="flex-1 mr-4 items-start">
+          <Text className="typo-body-primary text-white" numberOfLines={1}>
+            {exercise.name_he || exercise.name}
+          </Text>
+          <View className="flex-row items-center mt-1">
+            <Text className="typo-caption text-zinc-400 mr-1 text-right">
+              {exercise.targetMuscles_he?.[0] || exercise.targetMuscles?.[0]}
+            </Text>
+            <MaterialCommunityIcons name="arm-flex" size={12} color="#a1a1aa" />
+          </View>
+        </View>
+      </AppButton>
+    </Animated.View>
   );
 });

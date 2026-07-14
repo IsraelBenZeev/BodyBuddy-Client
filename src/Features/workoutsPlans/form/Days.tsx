@@ -1,4 +1,3 @@
-import { colors } from "@/colors";
 import AppButton from "@/src/ui/PressableOpacity";
 import { Control, Controller } from 'react-hook-form';
 import { Text, View } from "react-native";
@@ -38,10 +37,6 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
                         <View className="flex-row justify-between items-center bg-background-900/50 p-2 rounded-2xl border border-background-800">
                             {days.map((day, index) => {
                                 const isSelected = value.includes(day);
-                                const textStyle = {
-                                    color: isSelected ? colors.background[950] : colors.background[400],
-                                    fontWeight: 'bold' as 'bold',
-                                };
                                 return (
                                     <AppButton
                                         disabled={isPendingCreate}
@@ -51,20 +46,16 @@ const Days = ({ control, name, isPendingCreate }: Props) => {
                                         activeOpacity={0.7}
                                         onPress={() => handleToggle(day)}
                                         accessibilityLabel={`יום ${day}`}
-                                        accessibilityState={{ selected: isSelected }}
-                                        className={`
-                                        w-10 h-10 items-center justify-center rounded-full
-                                        ${isSelected ? "bg-lime-500" : "bg-transparent"}
-                                    `}
-                                        style={isSelected ? {
-                                            shadowColor: "#bef264",
-                                            shadowOffset: { width: 0, height: 0 },
-                                            shadowOpacity: 0.5,
-                                            shadowRadius: 4,
-                                            elevation: 4
-                                        } : {}}
+                                        accessibilityRole="checkbox"
+                                        accessibilityState={{ checked: isSelected }}
+                                        className="w-10 h-10 items-center justify-center rounded-full"
+                                        style={{
+                                            backgroundColor: isSelected ? 'rgba(150, 200, 40, 0.18)' : 'transparent',
+                                            borderWidth: 1,
+                                            borderColor: isSelected ? 'rgba(150, 200, 40, 0.5)' : 'transparent',
+                                        }}
                                     >
-                                        <Text className={`typo-body-primary ${isSelected ? "text-zinc-950" : "text-zinc-400"}`}>
+                                        <Text className={`typo-body-primary ${isSelected ? "text-lime-300" : "text-background-400"}`}>
                                             {day}
                                         </Text>
                                     </AppButton>

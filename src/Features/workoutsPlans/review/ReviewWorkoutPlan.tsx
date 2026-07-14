@@ -22,7 +22,6 @@ import ModalBottom from '@/src/ui/ModalButtom';
 // import TabsManager from '../../exercises/TabsMenager';
 // import ListExercise from '../form/ListExercises';
 import CardWorkouPlan from './CardWorkouPlan';
-import CountdownModal from './CountdownModal';
 import ExercisesProgress from './ExercisesProgress';
 import History from './History';
 import SessionInformation from './SessionInformation';
@@ -37,11 +36,8 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
 
   const { height } = useWindowDimensions();
   const [selectedSession, setSelectedSession] = useState<SessionDBType | null>(null);
-  const [showCountdown, setShowCountdown] = useState(false);
   const [isPressing, setIsPressing] = useState(false);
-  const handleStartWorkout = useCallback(() => setShowCountdown(true), []);
-  const handleCountdownStart = useCallback(() => { setShowCountdown(false); setIsStart(true); }, [setIsStart]);
-  const handleCountdownCancel = useCallback(() => setShowCountdown(false), []);
+  const handleStartWorkout = useCallback(() => setIsStart(true), [setIsStart]);
   const handleCloseSession = useCallback(() => setSelectedSession(null), []);
 
   // Pulsing rings — מופיעים רק בזמן לחיצה
@@ -192,11 +188,6 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
           </View>
         </View>
       </View>
-      <CountdownModal
-        visible={showCountdown}
-        onCancel={handleCountdownCancel}
-        onStart={handleCountdownStart}
-      />
       <ModalBottom
         key={selectedSession?.id || ''}
         ref={sheetRef}

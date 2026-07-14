@@ -4,12 +4,14 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { WorkoutPlan } from '@/src/types/workout';
 import Success from '@/src/ui/Animations/Success';
 import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
+import ActionButton from '@/src/ui/ActionButton';
 import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
 import { Check, X } from 'lucide-react-native';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Card from './Card';
 
 interface PlansSelectorProps {
@@ -19,16 +21,26 @@ interface PlansSelectorProps {
 
 const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorProps) => {
     const router = useRouter();
+    const { bottom } = useSafeAreaInsets();
     const user = useAuthStore((state) => state.user);
     const userId = user?.id as string;
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(userId);
     const { mutateAsync: addExerciseToPlan, isPending: isPendingAddExerciseToPlan, isSuccess: isSuccessAddExerciseToPlan } = useAddExerciseToPlan(userId);
 
+    const isAddedToAllPlans = !!plansData?.length &&
+        (plansData as WorkoutPlan[]).every((plan) => plan.exercise_ids?.includes(idExercise));
+
     const handleAnimationFinish = useCallback(() => {
         setIsShowListWorkoutsPlans(false);
         setSelectedIds([]);
     }, [setIsShowListWorkoutsPlans]);
+
+    useEffect(() => {
+        if (isSuccessAddExerciseToPlan) {
+            handleAnimationFinish();
+        }
+    }, [isSuccessAddExerciseToPlan, handleAnimationFinish]);
 
     const toggleSelection = useCallback((id: string) => {
         setSelectedIds(prev =>
@@ -67,6 +79,19 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
 
             {/* Header */}
             <View className="flex-row items-center justify-between px-6 pb-4 pt-2">
+                
+
+
+                {!!plansData?.length && (
+                    <View className="items-start">
+                        <Text className="typo-caption-bold text-zinc-500 tracking-[2px] uppercase">
+                            Add to plan
+                        </Text>
+                        <Text className="typo-h3 text-white">
+                            בחר תוכנית
+                        </Text>
+                    </View>
+                )}
                 <AppButton
                     onPress={handleClose}
                     haptic="light"
@@ -76,17 +101,6 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                 >
                     <X color={colors.background[300]} strokeWidth={2.5} size={16} />
                 </AppButton>
-
-                {!!plansData?.length && (
-                    <View className="items-end">
-                        <Text className="typo-caption-bold text-zinc-500 tracking-[2px] uppercase">
-                            Add to plan
-                        </Text>
-                        <Text className="typo-h3 text-white">
-                            בחר תוכנית
-                        </Text>
-                    </View>
-                )}
             </View>
 
             {/* Divider */}
@@ -100,7 +114,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                         contentContainerStyle={{
                             paddingHorizontal: 16,
                             paddingTop: 12,
-                            paddingBottom: 100,
+                            paddingBottom: 100 + bottom,
                             gap: 10,
                         }}
                         className="flex-1"
@@ -129,28 +143,25 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                                 : `זה הזמן ליצור את האימון הראשון שלך\nולהתחיל להתקדם למטרה!`}
                         </Text>
                         {!plansData?.length && (
-                            <AppButton
-                                animationType="both"
-                                haptic="light"
+                            <ActionButton
                                 onPress={handleGoToCreate}
-                                className="bg-lime-500 flex-row items-center px-7 py-3.5 rounded-2xl"
+                                label="עבור ליצירת תוכנית"
+                                variant="primary"
+                                size="sm"
                                 accessibilityLabel="עבור ליצירת תוכנית אימון"
                             >
-                                <Text className="typo-btn-cta text-background-900 mr-2">
-                                    עבור ליצירת תוכנית
-                                </Text>
-                                <IconAddToList color={colors.background[900]} size={20} />
-                            </AppButton>
+                                <IconAddToList color={colors.lime[300]} size={18} />
+                            </ActionButton>
                         )}
                     </View>
                 )}
             </View>
 
             {/* Floating Save Button */}
-            {!!plansData?.length && (
+            {!!plansData?.length && !isAddedToAllPlans && (
                 <View
-                    className="absolute bottom-6 self-center"
-                    style={{ elevation: 10 }}
+                    className="absolute self-center"
+                    style={{ elevation: 10, bottom: 24 + bottom }}
                 >
                     <View className="flex-row items-center gap-3">
                         {selectedIds.length > 0 && (
@@ -163,8 +174,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                         <Success
                             onPress={handleSave}
                             isLoading={isPendingAddExerciseToPlan}
-                            isSuccess={isSuccessAddExerciseToPlan}
-                            onDone={handleAnimationFinish}
+                            isSuccess={false}
                             size={44}
                             icon={<Check size={22} color={colors.background[850]} strokeWidth={3} />}
                         />

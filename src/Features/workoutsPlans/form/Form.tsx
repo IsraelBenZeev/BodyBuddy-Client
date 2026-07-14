@@ -6,7 +6,6 @@ import { modeAddWorkoutPlan } from '@/src/types/mode';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { WorkoutPlan } from '@/src/types/workout';
 import FormInput from '@/src/ui/FormInput';
-import AppButton from '@/src/ui/PressableOpacity';
 import ActionButton from '@/src/ui/ActionButton';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -17,7 +16,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -150,19 +148,18 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
 
         {/* כפתור הוספה תרגילים */}
         <View className="items-center mb-8">
-          <AppButton
-            animationType="scale"
-            haptic="medium"
+          <ActionButton
             onPress={navigateToPicker}
-            className="bg-zinc-900 py-3 px-8 rounded-xl border border-zinc-800 min-w-fit"
+            label="הוסף תרגילים"
+            iconName="add"
+            variant="secondary"
+            size="sm"
             disabled={isPendingCreate}
             accessibilityLabel="הוסף תרגילים נוספים"
-          >
-            <Text className="text-lime-400 text-center font-bold">הוסף תרגילים</Text>
-          </AppButton>
+          />
         </View>
 
-        <View className="gap-6">
+        <View className="gap-6 ">
           <View>
             <FormInput
               control={control}
@@ -203,8 +200,8 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       </ScrollView>
 
       <View
-        className="absolute bottom-0 left-0 right-0 px-5 pt-4 bg-background-950/95 border-t border-background-800"
-        style={{ paddingBottom: insets.bottom + 12 }}
+        className="absolute bottom-0 left-0 right-0 px-5 pt-4  "
+        style={{ paddingBottom: insets.bottom  }}
       >
         <ActionButton
           onPress={handleSubmit(onSubmit)}
@@ -214,7 +211,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
               : mode === 'create' ? 'צור אימון חדש' : 'עדכן את האימון'
           }
           variant="primary"
-          size="lg"
+          size="md"
           fullWidth
           loading={isPendingCreate}
           disabled={isPendingCreate}
