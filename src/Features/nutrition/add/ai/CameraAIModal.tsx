@@ -125,7 +125,7 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
         <Pressable onPress={(e) => e.stopPropagation()}>
           <View
             className="bg-background-900 rounded-t-3xl px-6 pt-6"
-            style={{ paddingBottom: insets.bottom + 16 }}
+            style={{ paddingBottom: insets.bottom  }}
           >
             {/* Handle */}
             <View className="items-center mb-5">

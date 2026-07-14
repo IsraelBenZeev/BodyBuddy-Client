@@ -26,6 +26,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type MealItemState = MealItemForm & { isPendingCreate?: boolean };
 
@@ -140,6 +141,7 @@ const MealBuilderScreen = () => {
   }>();
   const router = useRouter();
   const userId = useAuthStore((s) => s.user?.id) ?? '';
+  const { bottom } = useSafeAreaInsets();
 
   const mode = params.paramse ?? 'create';
   const initialName = params.initialName ?? '';
@@ -513,7 +515,7 @@ const MealBuilderScreen = () => {
 
   return (
     <BackGround>
-      <View className="flex-1 px-5 pb-6">
+      <View className="flex-1 px-5" style={{ paddingBottom: bottom + 24 }}>
         {/* Handle + כפתור סגירה */}
         <View className="items-center pt-3 pb-2">
           <Handle />
@@ -833,7 +835,7 @@ const MealBuilderScreen = () => {
               </ScrollView>
 
               {/* כפתור שמור — תמיד בתחתית */}
-              <View className="px-6 pt-3 pb-10 border-t border-white/5">
+              <View className="px-6 pt-3 border-t border-white/5" style={{ paddingBottom: bottom + 16 }}>
                 <Pressable
                   onPress={confirmEditItem}
                   className="bg-lime-500 rounded-2xl h-14 items-center justify-center"

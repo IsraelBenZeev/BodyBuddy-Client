@@ -228,10 +228,10 @@ export default function MealReviewModal({
           </View>
         </ScrollView>
 
-        <View
-          className="px-5 pt-4 border-t border-white/[0.05]"
-          style={{ paddingBottom: bottom + 16 }}
-        >
+        {/* <View
+          className="px-5 pt-4 bg-none border-none"
+          style={{ paddingBottom: bottom }}
+        > */}
           {/* <Pressable
             onPress={handleConfirm}
             disabled={isPending || items.length === 0}
@@ -250,9 +250,11 @@ export default function MealReviewModal({
             disabled={isPending || items.length === 0}
             label="הוסף ליומן"
             iconName="checkmark-circle"
-            variant="primary"
+            variant="outline"
+            fullWidth
+            
           />
-        </View>
+        {/* </View> */}
       </View>
     </Modal>
   );

@@ -723,7 +723,7 @@ const AddNewFood = ({
           label={mode === 'meal-builder' ? 'הוסף לארוחה' : 'הוסף ליומן'}
           iconName="add-circle"
           variant="primary"
-          size="lg"
+          size="md"
           fullWidth
         />
       );
@@ -739,7 +739,7 @@ const AddNewFood = ({
           label="שמור והוסף לארוחה"
           iconName="add-circle"
           variant="primary"
-          size="lg"
+          size="md"
           fullWidth
         />
       );
@@ -827,7 +827,7 @@ const AddNewFood = ({
           <View
             style={{
               paddingHorizontal: 20,
-              paddingBottom: insets.bottom + 16,
+              paddingBottom: insets.bottom ,
               paddingTop: 12,
             }}
           >

@@ -18,7 +18,6 @@ import { router, useFocusEffect } from 'expo-router';
 import { ReactNode, useCallback, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /** --- פונקציות עזר --- **/
 const getGenderLabel = (gender: string | null) =>
@@ -66,7 +65,6 @@ export default function ProfileScreen() {
   const [isPressingLogout, setIsPressingLogout] = useState(false);
   const [showLogoPreview, setShowLogoPreview] = useState(false);
   const [logoPreviewKey, setLogoPreviewKey] = useState(0);
-  const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
@@ -104,10 +102,10 @@ export default function ProfileScreen() {
         key={animKey}
         className="flex-1 mb-10 "
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: bottomInset + 40 }}
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
         {/* Header Section */}
-        <View className="px-7" style={{ paddingTop: topInset + 20 }}>
+        <View className="px-7" style={{ paddingTop: 20 }}>
           <View className="flex-row items-center gap-4">
             <Animated.View
               entering={FadeInDown.duration(300)}
@@ -196,7 +194,7 @@ export default function ProfileScreen() {
           </View>
 
           {/* כפתור זמני לבדיקת הלוגו — Preview בלי לצאת/לרענן את המסך */}
-          <View className="mt-4 items-start">
+          {/* <View className="mt-4 items-start">
             <ActionButton
               onPress={handleShowLogoPreview}
               label="בדיקת לוגו"
@@ -206,7 +204,7 @@ export default function ProfileScreen() {
               accessibilityLabel="הצג תצוגה מקדימה של הלוגו"
               accessibilityHint="פותח מסך שקוף עם אנימציית הלוגו של BodyBuddy"
             />
-          </View>
+          </View> */}
         </View>
 
         {isProfileLoading ? (
@@ -249,8 +247,18 @@ export default function ProfileScreen() {
             {/* Quick Stats Grid */}
             <View className="flex-row flex-wrap justify-between">
               {[
-                { label: 'משקל', value: `${profile?.weight ?? '--'} ק״ג`, icon: 'speedometer' },
-                { label: 'גובה', value: `${profile?.height ?? '--'} ס״מ`, icon: 'resize' },
+                {
+                  label: 'משקל',
+                  value: `${profile?.weight ?? '--'} ק״ג`,
+                  icon: 'speedometer',
+                  lib: 'ion' as const,
+                },
+                {
+                  label: 'גובה',
+                  value: `${profile?.height ?? '--'} ס״מ`,
+                  icon: 'human-male-height',
+                  lib: 'mci' as const,
+                },
                 {
                   label: 'גיל',
                   value: (() => {
@@ -261,8 +269,14 @@ export default function ProfileScreen() {
                     return profile?.age ?? '--';
                   })(),
                   icon: 'calendar',
+                  lib: 'ion' as const,
                 },
-                { label: 'מגדר', value: getGenderLabel(profile?.gender ?? null), icon: 'person' },
+                {
+                  label: 'מגדר',
+                  value: getGenderLabel(profile?.gender ?? null),
+                  icon: 'person',
+                  lib: 'ion' as const,
+                },
               ].map((item, index) => (
                 <AnimatedCard
                   key={index}
@@ -270,7 +284,15 @@ export default function ProfileScreen() {
                   className="w-[48%] bg-background-800 border border-white/5 rounded-[28px] p-5 mb-4 items-start"
                 >
                   <View className="bg-lime-500/10 self-start p-2 rounded-xl mb-3">
-                    <Ionicons name={item.icon as any} size={16} color={colors.lime[500]} />
+                    {item.lib === 'mci' ? (
+                      <MaterialCommunityIcons
+                        name={item.icon as any}
+                        size={16}
+                        color={colors.lime[500]}
+                      />
+                    ) : (
+                      <Ionicons name={item.icon as any} size={16} color={colors.lime[500]} />
+                    )}
                   </View>
                   <Text className="typo-caption-bold text-white/30 uppercase tracking-tighter text-right">
                     {item.label}

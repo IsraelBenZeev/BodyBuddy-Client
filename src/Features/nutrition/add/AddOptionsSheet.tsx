@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useMemo } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ActionButton from '../../../ui/ActionButton';
 
 interface Props {
   visible: boolean;
@@ -72,6 +74,7 @@ const SECONDARY_OPTIONS: SecondaryOption[] = [
 ];
 
 const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onAddMeal, onCameraAI }: Props) => {
+  const { bottom } = useSafeAreaInsets();
   const handlers = useMemo<Record<SecondaryOption['key'] | 'camera', () => void>>(
     () => ({ list: onSelectFromList, food: onAddNewFood, meal: onAddMeal, camera: onCameraAI }),
     [onSelectFromList, onAddNewFood, onAddMeal, onCameraAI]
@@ -81,7 +84,7 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable className="flex-1 bg-black/60 justify-end" onPress={onClose}>
         <Pressable onPress={(e) => e.stopPropagation()}>
-          <View className="bg-background-900 rounded-t-3xl px-5 pt-5 pb-10">
+          <View className="bg-background-900 rounded-t-3xl px-5 pt-5   flex flex-col" style={{ paddingBottom: bottom}}>
 
             {/* Handle */}
             <View className="items-center mb-6">
@@ -204,20 +207,16 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
             </View>
 
             {/* ─── Cancel ─── */}
-            <Pressable
-              onPress={onClose}
-              style={({ pressed }) => [{
-                opacity: pressed ? 0.6 : 1,
-                backgroundColor: 'rgba(255,255,255,0.07)',
-                borderWidth: 1,
-                borderColor: 'rgba(255,255,255,0.14)',
-              }]}
-              className="mt-5 h-12 items-center justify-center rounded-full"
-              accessibilityRole="button"
-              accessibilityLabel="ביטול"
-            >
-              <Text className="typo-body-primary text-white/40">ביטול</Text>
-            </Pressable>
+            <View className="mt-5">
+              <ActionButton
+                onPress={onClose}
+                label="ביטול"
+                variant="secondary"
+                size="sm"
+                fullWidth
+                accessibilityLabel="ביטול"
+              />
+            </View>
 
           </View>
         </Pressable>

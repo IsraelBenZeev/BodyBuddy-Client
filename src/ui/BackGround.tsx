@@ -12,7 +12,7 @@ interface BackGroundProps {
 const BackGround = ({ children, colorA, colorB, colorC, colorD }: BackGroundProps) => {
   return (
     <LinearGradient
-      style={{ flex: 1, width: '100%', paddingBottom: 10 }}
+      style={{ flex: 1, width: '100%',}}
       colors={[
         colorA || colors.background[900],
         colorB || colors.background[950],

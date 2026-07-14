@@ -52,7 +52,7 @@ const AddNewFoodSelection = ({
   }, [portionAmount, foodItem, onSubmit]);
 
   return (
-    <View className="flex-1 px-4 w-full mt-10">
+    <View className="flex-1 px-4 w-full mt-10" >
       {/* Header Section with Back Button */}
       <View className="flex-row items-center mb-6 justify-center">
              {/* כפתור חזרה בצד ימין */}
@@ -154,13 +154,14 @@ const AddNewFoodSelection = ({
       </View>
 
       {/* Submit Button Only */}
-      <View className="mt-auto" style={{ paddingBottom: bottom + 16 }}>
+      <View className="mt-auto" style={{ paddingBottom: bottom }}>
         <ActionButton
           onPress={handleSubmit}
           label={isPending ? 'מעדכן...' : submitLabel}
           iconName={isPending ? 'hourglass-outline' : 'add'}
           disabled={isPending}
           fullWidth
+          variant='outline'
         />
       </View>
     </View>

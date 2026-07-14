@@ -180,7 +180,7 @@ const EntryDetailModal = ({ visible, onClose, entry, groupEntries, groupName }: 
           accessibilityRole="button"
           accessibilityLabel="סגור פרטים"
         />
-        <View className="bg-background-900 rounded-t-3xl px-5 pt-4 max-h-[85%]" style={{ paddingBottom: insets.bottom + 16 }}>
+        <View className="bg-background-900 rounded-t-3xl px-5 pt-4 max-h-[85%]" style={{ paddingBottom: insets.bottom  }}>
           <View className="flex-row justify-between items-center mb-5">
             <Text className="typo-h3 text-white">פרטים</Text>
             <Pressable
