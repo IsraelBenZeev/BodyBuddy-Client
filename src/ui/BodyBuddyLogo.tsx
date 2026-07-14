@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
+import MaskedView from '@react-native-masked-view/masked-view';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,7 +9,7 @@ import Animated, {
   withDelay,
   runOnJS,
 } from 'react-native-reanimated';
-import Svg, { Path, Defs, ClipPath } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -39,6 +40,13 @@ const FULL_HEX_BORDER_PATH =
 const STROKE_WIDTH = 320;
 const DASH_LENGTH = 3500;
 
+// ב-Android, סטרוק עבה (320 יח') עם strokeDasharray מונפש משאיר תפר/קו רפאים
+// לאורך כל משך האנימציה בכל react-native-svg (Skia) — לא משנה אם החיתוך נעשה
+// ב-clipPath או ב-MaskedView, כי הבעיה היא ברינדור הסטרוק המקווקו עצמו, לא
+// במנגנון החיתוך. לכן ב-Android מוותרים על אפקט "הציור" ומציגים fade+scale
+// של אותה צורת גבול שטוחה שכבר הוכחה כתקינה (המצב הסופי, ללא stroke בכלל).
+const IS_ANDROID = Platform.OS === 'android';
+
 function AnimatedPart({ children, delay, translateX = 0, translateY = 0, scale = false }: AnimatedPartProps) {
   const opacity = useSharedValue(0);
   const tx = useSharedValue(translateX);
@@ -66,9 +74,16 @@ function AnimatedPart({ children, delay, translateX = 0, translateY = 0, scale =
 
 export default function BodyBuddyLogo({ width = 180, height = 209 }: BodyBuddyLogoProps) {
   const strokeOffset = useSharedValue(DASH_LENGTH);
-  const [hasFinishedDrawing, setHasFinishedDrawing] = useState(false);
+  const [hasFinishedDrawing, setHasFinishedDrawing] = useState(IS_ANDROID);
+  const borderOpacity = useSharedValue(IS_ANDROID ? 0 : 1);
+  const borderScale = useSharedValue(IS_ANDROID ? 0.85 : 1);
 
   useEffect(() => {
+    if (IS_ANDROID) {
+      borderOpacity.value = withTiming(1, { duration: 450 });
+      borderScale.value = withTiming(1, { duration: 450 });
+      return;
+    }
     // הסטרוק מצייר בתוך ה-clip של הגבול — אין מעבר, אין כיווץ
     strokeOffset.value = withTiming(0, { duration: 1500 }, (finished) => {
       // ה-path סגור (Z), אז ה-dash pattern משאיר תפר קטן בנקודת ההתחלה/סיום.
@@ -81,28 +96,47 @@ export default function BodyBuddyLogo({ width = 180, height = 209 }: BodyBuddyLo
     strokeDashoffset: strokeOffset.value,
   }));
 
+  const borderAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: borderOpacity.value,
+    transform: [{ scale: borderScale.value }],
+  }));
+
   return (
     <View style={{ width, height }}>
-      {/* הקסגון: סטרוק עבה חתוך בדיוק לצורת הגבול — מצייר מבלי לחרוג */}
+      {/* הקסגון: סטרוק עבה "נחתך" בדיוק לצורת הגבול — מצייר מבלי לחרוג */}
       <View style={{ position: 'absolute', top: 0, left: 0 }}>
-        <Svg width={width} height={height} viewBox={VIEWBOX} fill="none">
-          <Defs>
-            <ClipPath id="hex-border-clip">
-              <Path fillRule="evenodd" d={FULL_HEX_BORDER_PATH} />
-            </ClipPath>
-          </Defs>
-          <AnimatedPath
-            d={OUTER_HEX_PATH}
-            stroke="#516070"
-            strokeWidth={STROKE_WIDTH}
-            strokeLinecap="butt"
-            strokeLinejoin="miter"
-            fill="none"
-            strokeDasharray={hasFinishedDrawing ? undefined : DASH_LENGTH}
-            animatedProps={hasFinishedDrawing ? undefined : strokeAnimatedProps}
-            clipPath="url(#hex-border-clip)"
-          />
-        </Svg>
+        {hasFinishedDrawing ? (
+          // מצב סופי (וגם Android תמיד): מילוי ישיר של צורת הגבול, בלי סטרוק/מיסוך בכלל.
+          <Animated.View style={IS_ANDROID ? [{ width, height }, borderAnimatedStyle] : undefined}>
+            <Svg width={width} height={height} viewBox={VIEWBOX} fill="none">
+              <Path d={FULL_HEX_BORDER_PATH} fill="#516070" fillRule="evenodd" />
+            </Svg>
+          </Animated.View>
+        ) : (
+          // בזמן הציור (iOS בלבד — ב-Android הסטרוק העבה המקווקו עצמו,
+          // ללא קשר למנגנון החיתוך, משאיר תפר קבוע לאורך כל האנימציה):
+          <MaskedView
+            style={{ width, height }}
+            maskElement={
+              <Svg width={width} height={height} viewBox={VIEWBOX} fill="none">
+                <AnimatedPath
+                  d={OUTER_HEX_PATH}
+                  stroke="white"
+                  strokeWidth={STROKE_WIDTH}
+                  strokeLinecap="butt"
+                  strokeLinejoin="miter"
+                  fill="none"
+                  strokeDasharray={DASH_LENGTH}
+                  animatedProps={strokeAnimatedProps}
+                />
+              </Svg>
+            }
+          >
+            <Svg width={width} height={height} viewBox={VIEWBOX} fill="none">
+              <Path d={FULL_HEX_BORDER_PATH} fill="#516070" fillRule="evenodd" />
+            </Svg>
+          </MaskedView>
+        )}
       </View>
 
       {/* H ירוק - scale in */}
