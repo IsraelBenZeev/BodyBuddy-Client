@@ -27,7 +27,8 @@
       "PowerShell(Get-ChildItem *)",
       "PowerShell(Get-Process *)",
       "PowerShell(Test-NetConnection *)",
-      "Skill(build-aab)"
+      "Skill(build-aab)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "enableAllProjectMcpServers": true,
