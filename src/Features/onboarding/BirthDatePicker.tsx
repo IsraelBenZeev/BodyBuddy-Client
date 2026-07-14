@@ -2,15 +2,21 @@ import { colors } from '@/colors';
 import { getDaysInMonth, isValid, parseISO } from 'date-fns';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
-import {
-  Animated,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  Text,
-  View,
-} from 'react-native';
+import { ScrollView as GestureScrollView } from 'react-native-gesture-handler';
+import { Text, View } from 'react-native';
+import Animated, {
+  interpolate,
+  interpolateColor,
+  runOnJS,
+  scrollTo,
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  type SharedValue,
+} from 'react-native-reanimated';
 
+const AnimatedScrollView = Animated.createAnimatedComponent(GestureScrollView);
 
 const ITEM_HEIGHT = 40;
 const VISIBLE_ITEMS = 3;
@@ -40,17 +46,21 @@ const MAX_BIRTH_MONTH = TODAY.getMonth(); // 0-indexed
 const MAX_BIRTH_DAY = TODAY.getDate();
 const YEARS = Array.from({ length: MAX_BIRTH_YEAR - MIN_YEAR + 1 }, (_, i) => MIN_YEAR + i);
 
+const triggerSelectionHaptic = () => {
+  Haptics.selectionAsync().catch(() => {});
+};
+
 // ─── PickerItem ───────────────────────────────────────────────
 interface PickerItemProps {
   item: string | number;
   index: number;
-  scrollY: Animated.Value;
+  scrollY: SharedValue<number>;
 }
 
-const PickerItem: React.FC<PickerItemProps> = React.memo(
-  ({ item, index, scrollY }) => {
-    const realIndex = index - PADDING;
+const PickerItem: React.FC<PickerItemProps> = React.memo(({ item, index, scrollY }) => {
+  const realIndex = index - PADDING;
 
+  const animatedStyle = useAnimatedStyle(() => {
     const inputRange = [
       (realIndex - 2) * ITEM_HEIGHT,
       (realIndex - 1) * ITEM_HEIGHT,
@@ -59,57 +69,45 @@ const PickerItem: React.FC<PickerItemProps> = React.memo(
       (realIndex + 2) * ITEM_HEIGHT,
     ];
 
-    const scale = scrollY.interpolate({
+    const scale = interpolate(
+      scrollY.value,
       inputRange,
-      outputRange: [0.65, 0.82, 1.18, 0.82, 0.65],
-      extrapolate: 'clamp',
-    });
-
-    const opacity = scrollY.interpolate({
-      inputRange,
-      outputRange: [0.15, 0.45, 1, 0.45, 0.15],
-      extrapolate: 'clamp',
-    });
-
-    const color = scrollY.interpolate({
-      inputRange,
-      outputRange: [
-        'rgba(113,113,122,1)',
-        'rgba(161,161,170,1)',
-        'rgba(213,255,95,1)',
-        'rgba(161,161,170,1)',
-        'rgba(113,113,122,1)',
-      ],
-      extrapolate: 'clamp',
-    });
-
-    if (item === '') {
-      return <View style={{ height: ITEM_HEIGHT }} />;
-    }
-
-    return (
-      <Animated.View
-        style={{
-          height: ITEM_HEIGHT,
-          alignItems: 'center',
-          justifyContent: 'center',
-          transform: [{ scale }],
-          opacity,
-        }}
-      >
-        <Animated.Text
-          style={{
-            fontSize: 14,
-            fontWeight: '500',
-            color,
-          }}
-        >
-          {String(item)}
-        </Animated.Text>
-      </Animated.View>
+      [0.65, 0.82, 1.18, 0.82, 0.65],
+      'clamp'
     );
+    const opacity = interpolate(
+      scrollY.value,
+      inputRange,
+      [0.15, 0.45, 1, 0.45, 0.15],
+      'clamp'
+    );
+    const color = interpolateColor(scrollY.value, inputRange, [
+      'rgba(113,113,122,1)',
+      'rgba(161,161,170,1)',
+      'rgba(213,255,95,1)',
+      'rgba(161,161,170,1)',
+      'rgba(113,113,122,1)',
+    ]);
+
+    return {
+      transform: [{ scale }],
+      opacity,
+      color,
+    };
+  });
+
+  if (item === '') {
+    return <View style={{ height: ITEM_HEIGHT }} />;
   }
-);
+
+  return (
+    <View style={{ height: ITEM_HEIGHT, alignItems: 'center', justifyContent: 'center' }}>
+      <Animated.Text style={[{ fontSize: 14, fontWeight: '500' }, animatedStyle]}>
+        {String(item)}
+      </Animated.Text>
+    </View>
+  );
+});
 PickerItem.displayName = 'PickerItem';
 
 // ─── PickerColumn ─────────────────────────────────────────────
@@ -128,9 +126,9 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
   flex,
   label,
 }) => {
-  const scrollViewRef = useRef<ScrollView>(null);
-  const scrollY = useRef(new Animated.Value(selectedIndex * ITEM_HEIGHT)).current;
-  const lastHapticIndex = useRef(selectedIndex);
+  const scrollViewRef = useAnimatedRef<Animated.ScrollView>();
+  const scrollY = useSharedValue(selectedIndex * ITEM_HEIGHT);
+  const lastHapticIndex = useSharedValue(selectedIndex);
   const lastScrolledIndex = useRef<number | null>(null);
 
   const paddedData = useMemo(
@@ -145,34 +143,31 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
     }
     if (lastScrolledIndex.current !== selectedIndex) {
       const timer = setTimeout(() => {
-        scrollViewRef.current?.scrollTo({ y: selectedIndex * ITEM_HEIGHT, animated: true });
+        scrollTo(scrollViewRef, 0, selectedIndex * ITEM_HEIGHT, true);
         lastScrolledIndex.current = selectedIndex;
       }, 0);
       return () => clearTimeout(timer);
     }
-  }, [selectedIndex]);
+  }, [selectedIndex, scrollViewRef]);
 
-  const handleScroll = Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-    useNativeDriver: false,
-    listener: (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const index = Math.round(e.nativeEvent.contentOffset.y / ITEM_HEIGHT);
-      const clamped = Math.max(0, Math.min(index, data.length - 1));
-      if (clamped !== lastHapticIndex.current) {
-        lastHapticIndex.current = clamped;
-        Haptics.selectionAsync().catch(() => {});
+  const maxIndex = data.length - 1;
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+      const index = Math.round(event.contentOffset.y / ITEM_HEIGHT);
+      const clamped = Math.min(Math.max(index, 0), maxIndex);
+      if (clamped !== lastHapticIndex.value) {
+        lastHapticIndex.value = clamped;
+        runOnJS(triggerSelectionHaptic)();
       }
     },
-  });
-
-  const handleMomentumEnd = useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const index = Math.round(e.nativeEvent.contentOffset.y / ITEM_HEIGHT);
-      const clamped = Math.max(0, Math.min(index, data.length - 1));
-      lastScrolledIndex.current = clamped;
-      onSelect(clamped);
+    onMomentumEnd: (event) => {
+      const index = Math.round(event.contentOffset.y / ITEM_HEIGHT);
+      const clamped = Math.min(Math.max(index, 0), maxIndex);
+      runOnJS(onSelect)(clamped);
     },
-    [data.length, onSelect]
-  );
+  });
 
   return (
     <View style={{ flex }}>
@@ -205,14 +200,13 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
             zIndex: 0,
           }}
         />
-        <ScrollView
+        <AnimatedScrollView
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
           snapToInterval={ITEM_HEIGHT}
           decelerationRate="fast"
           scrollEventThrottle={16}
-          onScroll={handleScroll}
-          onMomentumScrollEnd={handleMomentumEnd}
+          onScroll={scrollHandler}
           contentOffset={{ x: 0, y: selectedIndex * ITEM_HEIGHT }}
           nestedScrollEnabled
           style={{ zIndex: 1 }}
@@ -220,7 +214,7 @@ const PickerColumn: React.FC<PickerColumnProps> = ({
           {paddedData.map((item, index) => (
             <PickerItem key={String(index)} item={item} index={index} scrollY={scrollY} />
           ))}
-        </ScrollView>
+        </AnimatedScrollView>
       </View>
     </View>
   );
