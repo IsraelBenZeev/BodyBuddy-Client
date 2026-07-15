@@ -13,7 +13,7 @@ export const LowerArms = ({ isSelected, handleTogglePart }: LowerArmProps) => {
     <G
       id="lower arms"
       accessible={true}
-      accessibilityLabel={`יד תחתונה - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`}
+      accessibilityLabel={`אמות - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`}
       accessibilityState={{ selected: isSelected(bodyPart) }}
     >
       <Path

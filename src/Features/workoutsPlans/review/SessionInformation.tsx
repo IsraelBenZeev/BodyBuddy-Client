@@ -298,16 +298,14 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
                 <View className="bg-white/10 rounded-lg overflow-hidden border border-gray-700">
                   {isLoadingExercises ? (
                     <Loading size="small" />
-                  ) : exerciseInfo?.gif_available === false ? (
-                    <DumbbellAnimation size={48} />
-                  ) : exerciseInfo?.gifUrl ? (
+                  ) : exerciseInfo?.imageUrls?.[0] ? (
                     <Image
-                      source={{ uri: exerciseInfo.gifUrl }}
+                      source={{ uri: exerciseInfo.imageUrls[0] }}
                       style={{ width: 48, height: 48 }}
                       resizeMode="cover"
                     />
                   ) : (
-                    <View style={{ width: 48, height: 48 }} className="bg-gray-800" />
+                    <DumbbellAnimation size={48} />
                   )}
                 </View>
                 <View className="flex-1 pr-3">

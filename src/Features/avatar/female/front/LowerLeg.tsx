@@ -13,7 +13,7 @@ const LowerLeg = ({ isSelected, handleTogglePart }: LowerLegProps) => {
     <G
       id="lower legs"
       accessible={true}
-      accessibilityLabel={`רגל תחתונה - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`}
+      accessibilityLabel={`שוק - ${isSelected(bodyPart) ? 'נבחר' : 'לחץ לבחירה'}`}
       accessibilityState={{ selected: isSelected(bodyPart) }}
     >
       <Path

@@ -32,12 +32,10 @@ export const getExercisesByBodyParts = async (bodyPart: string[], page: number, 
   const to = from + limit - 1;
   try {
     const { data, error, count } = await supabase
-      .from('exercises')
+      .from('exercises_v2')
       .select('*', { count: 'exact' })
       .overlaps('bodyParts', bodyPart)
-      .eq('gif_available', true)
       .order('sort_order', { ascending: true })
-      // .in('bodyParts', bodyPart)
       .range(from, to);
     if (error) throw error;
     return { exercises: data as Exercise[], totalCount: count || 0 };
@@ -49,7 +47,7 @@ export const getExercisesByBodyParts = async (bodyPart: string[], page: number, 
 export const getExerciseById = async (exerciseId: string) => {
   try {
     const { data, error } = await supabase
-      .from('exercises')
+      .from('exercises_v2')
       .select('*')
       .eq('exerciseId', exerciseId)
       .single();
@@ -63,7 +61,7 @@ export const getExerciseById = async (exerciseId: string) => {
 export const getExerciseByIds = async (exerciseId: string[]) => {
   try {
     const { data, error } = await supabase
-      .from('exercises')
+      .from('exercises_v2')
       .select('*')
       .in('exerciseId', exerciseId);
     if (error) throw error;

@@ -16,15 +16,14 @@ interface ExerciseChipProps {
   exerciseId: string;
   label: string;
   fullName: string;
-  gifUrl?: string;
-  gifAvailable?: boolean;
+  imageUrl?: string;
   isActive: boolean;
   hasData: boolean;
   onPress: (id: string) => void;
 }
 
 const ExerciseChip = React.memo(
-  ({ exerciseId, label, fullName, gifUrl, gifAvailable, isActive, hasData, onPress }: ExerciseChipProps) => (
+  ({ exerciseId, label, fullName, imageUrl, isActive, hasData, onPress }: ExerciseChipProps) => (
     <Pressable
       onPress={() => onPress(exerciseId)}
       accessibilityRole="tab"
@@ -40,10 +39,8 @@ const ExerciseChip = React.memo(
       style={{ width: 72, minHeight: 80 }}
     >
       <View className="w-9 h-9 rounded-lg overflow-hidden bg-zinc-700/60 mb-1.5">
-        {gifAvailable === false ? (
-          <DumbbellAnimation size={36} />
-        ) : gifUrl ? (
-          <Image source={gifUrl} style={{ width: 36, height: 36 }} contentFit="cover" cachePolicy="disk" transition={200} />
+        {imageUrl ? (
+          <Image source={imageUrl} style={{ width: 36, height: 36 }} contentFit="cover" cachePolicy="disk" transition={200} />
         ) : (
           <DumbbellAnimation size={36} />
         )}
@@ -137,8 +134,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
                 exerciseId={exercise.id}
                 label={label}
                 fullName={name}
-                gifUrl={details?.gifUrl}
-                gifAvailable={details?.gif_available}
+                imageUrl={details?.imageUrls?.[0]}
                 isActive={exercise.id === activeId}
                 hasData={exercise.maxReps > 0}
                 onPress={handleSelectChip}
@@ -154,16 +150,16 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
           {/* Exercise header */}
           <View className="flex-row items-center gap-3 mb-5">
             <View className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-800 border border-zinc-700">
-              {selectedDetails?.gif_available === false ? (
-                <DumbbellAnimation size={48} />
-              ) : (
+              {selectedDetails?.imageUrls?.[0] ? (
                 <Image
-                  source={selectedDetails?.gifUrl}
+                  source={selectedDetails.imageUrls[0]}
                   style={{ width: 48, height: 48 }}
                   contentFit="cover"
                   cachePolicy="disk"
                   transition={200}
                 />
+              ) : (
+                <DumbbellAnimation size={48} />
               )}
             </View>
             <View className="flex-1 items-start">

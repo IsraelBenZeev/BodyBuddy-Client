@@ -112,15 +112,15 @@ const ExerciseItem = React.memo(function ExerciseItem({
         accessibilityLabel={`${exercise.name_he || exercise.name} - הצג פרטי תרגיל`}
       >
         <View className="bg-white/5 rounded-xl overflow-hidden">
-          {exercise.gif_available === false ? (
-            <DumbbellAnimation size={56} />
-          ) : (
+          {exercise.imageUrls?.[0] ? (
             <Image
-              source={{ uri: exercise.gifUrl }}
+              source={{ uri: exercise.imageUrls[0] }}
               style={{ width: 56, height: 56 }}
               contentFit="cover"
               cachePolicy="disk"
             />
+          ) : (
+            <DumbbellAnimation size={56} />
           )}
         </View>
         <View className="flex-1 mr-4 items-start">

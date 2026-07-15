@@ -1,20 +1,24 @@
-import { targetMusclesHebrew } from '@/src/types/bodtPart';
 import AppButton from '@/src/ui/PressableOpacity';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-interface MuscleFiltersProps {
-  uniqueMuscles: string[];
-  selectedMuscle: string | 'all';
-  setSelectedMuscle: (muscle: string | 'all') => void;
+export interface FilterChipItem {
+  key: string;
+  label: string;
+}
+
+interface SubBodyPartFiltersProps {
+  items: FilterChipItem[];
+  selected: string | 'all';
+  onSelect: (key: string | 'all') => void;
   onBack?: () => void;
   breadcrumb?: string;
 }
 
-const MuscleFilters = ({ uniqueMuscles, selectedMuscle, setSelectedMuscle, onBack, breadcrumb }: MuscleFiltersProps) => {
-  const handleSelectAll = useCallback(() => setSelectedMuscle('all'), [setSelectedMuscle]);
-  const handleSelect = useCallback((muscle: string) => setSelectedMuscle(muscle), [setSelectedMuscle]);
+const SubBodyPartFilters = ({ items, selected, onSelect, onBack, breadcrumb }: SubBodyPartFiltersProps) => {
+  const handleSelectAll = useCallback(() => onSelect('all'), [onSelect]);
+  const handleSelect = useCallback((key: string) => onSelect(key), [onSelect]);
 
   return (
     <View className="pb-3">
@@ -44,32 +48,32 @@ const MuscleFilters = ({ uniqueMuscles, selectedMuscle, setSelectedMuscle, onBac
           haptic="medium"
           onPress={handleSelectAll}
           className={`px-4 py-1.5 rounded-full border ${
-            selectedMuscle === 'all' ? 'bg-lime-500/20 border-lime-500' : 'bg-transparent border-zinc-700'
+            selected === 'all' ? 'bg-lime-500/20 border-lime-500' : 'bg-transparent border-zinc-700'
           }`}
           accessibilityLabel="הצג הכל"
-          accessibilityState={{ selected: selectedMuscle === 'all' }}
+          accessibilityState={{ selected: selected === 'all' }}
         >
-          <Text className={`typo-label ${selectedMuscle === 'all' ? 'text-lime-400' : 'text-zinc-400'}`}>
+          <Text className={`typo-label ${selected === 'all' ? 'text-lime-400' : 'text-zinc-400'}`}>
             הכל
           </Text>
         </AppButton>
 
-        {uniqueMuscles.map((muscle) => (
+        {items.map((item) => (
           <AppButton
-            key={muscle}
+            key={item.key}
             animationType="opacity"
             haptic="medium"
-            onPress={() => handleSelect(muscle)}
+            onPress={() => handleSelect(item.key)}
             className={`px-4 py-1.5 rounded-full border ${
-              selectedMuscle === muscle
+              selected === item.key
                 ? 'bg-lime-500/20 border-lime-500'
                 : 'bg-transparent border-zinc-700'
             }`}
-            accessibilityLabel={targetMusclesHebrew[muscle] ?? muscle}
-            accessibilityState={{ selected: selectedMuscle === muscle }}
+            accessibilityLabel={item.label}
+            accessibilityState={{ selected: selected === item.key }}
           >
-            <Text className={`typo-label ${selectedMuscle === muscle ? 'text-lime-400' : 'text-zinc-400'}`}>
-              {targetMusclesHebrew[muscle] ?? muscle}
+            <Text className={`typo-label ${selected === item.key ? 'text-lime-400' : 'text-zinc-400'}`}>
+              {item.label}
             </Text>
           </AppButton>
         ))}
@@ -78,4 +82,4 @@ const MuscleFilters = ({ uniqueMuscles, selectedMuscle, setSelectedMuscle, onBac
   );
 };
 
-export default MuscleFilters;
+export default SubBodyPartFilters;

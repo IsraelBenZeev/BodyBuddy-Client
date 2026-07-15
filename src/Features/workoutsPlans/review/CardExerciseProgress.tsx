@@ -25,16 +25,16 @@ const Title = React.memo(({ exerciseDetails }: TitleProps) => {
         </Text>
       </View>
       <View className="shrink-0 h-12 w-12 rounded-lg bg-zinc-800 border border-zinc-700 overflow-hidden">
-        {exerciseDetails?.gif_available === false ? (
-          <DumbbellAnimation size={48} />
-        ) : (
+        {exerciseDetails?.imageUrls?.[0] ? (
           <Image
-            source={exerciseDetails?.gifUrl}
+            source={{ uri: exerciseDetails.imageUrls[0] }}
             style={{ width: 48, height: 48 }}
             contentFit="cover"
             cachePolicy={'disk'}
             transition={200}
           />
+        ) : (
+          <DumbbellAnimation size={48} />
         )}
       </View>
     </View>
@@ -60,21 +60,19 @@ const CardEmptyExercise = React.memo(({ exerciseDetails }: CardEmptyExerciseProp
       className="mb-4 bg-zinc-800/50 border border-zinc-700/50 rounded-2xl p-4 shadow-lg"
     >
       <View className="flex-row justify-between items-center mb-4 gap-3">
-        {(exerciseDetails?.gifUrl || exerciseDetails?.gif_available === false) && (
-          <View className="shrink-0 h-12 w-12 rounded-lg bg-zinc-800 border border-zinc-700 overflow-hidden">
-            {exerciseDetails?.gif_available === false ? (
-              <DumbbellAnimation size={48} />
-            ) : (
-              <Image
-                source={exerciseDetails.gifUrl}
-                style={{ width: 48, height: 48 }}
-                contentFit="cover"
-                cachePolicy={'disk'}
-                transition={200}
-              />
-            )}
-          </View>
-        )}
+        <View className="shrink-0 h-12 w-12 rounded-lg bg-zinc-800 border border-zinc-700 overflow-hidden">
+          {exerciseDetails?.imageUrls?.[0] ? (
+            <Image
+              source={{ uri: exerciseDetails.imageUrls[0] }}
+              style={{ width: 48, height: 48 }}
+              contentFit="cover"
+              cachePolicy={'disk'}
+              transition={200}
+            />
+          ) : (
+            <DumbbellAnimation size={48} />
+          )}
+        </View>
         <View className="flex-1 mr-4">
           <Text className="typo-h4 text-white" numberOfLines={1} ellipsizeMode="tail">
             {exerciseDetails?.name_he}

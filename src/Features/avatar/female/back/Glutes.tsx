@@ -8,7 +8,7 @@ interface GlutesProps {
 }
 
 export const Glutes = ({ isSelected, handleTogglePart }: GlutesProps) => {
-  const bodyPart: BodyPart = 'upper legs';
+  const bodyPart: BodyPart = 'glutes';
   const fill = isSelected(bodyPart) ? colors.lime[600] : '#3F3F3F';
   return (
     <G

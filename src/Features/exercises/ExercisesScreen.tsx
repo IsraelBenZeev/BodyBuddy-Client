@@ -7,6 +7,7 @@ import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
+import EmptyState from '@/src/ui/EmptyState';
 import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import ModalBottom from '@/src/ui/ModalButtom';
@@ -20,8 +21,9 @@ import { useCallback, useDeferredValue, useMemo, useRef, useState } from 'react'
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
+import LocationFilter, { LocationFilterValue } from './LocationFilter';
 import MiniAvatar from './MiniAvatar';
-import MuscleFilters from './MuscleFilters';
+import SubBodyPartFilters, { FilterChipItem } from './SubBodyPartFilters';
 
 interface ExercisesScreenProps {
   bodyParts: string | string[] | undefined;
@@ -45,7 +47,8 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
-  const [selectedMuscle, setSelectedMuscle] = useState<string | 'all'>('all');
+  const [selectedSubBodyPart, setSelectedSubBodyPart] = useState<string | 'all'>('all');
+  const [selectedLocation, setSelectedLocation] = useState<LocationFilterValue>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const { data: favorites = [] } = useFavoriteIds(user?.id);
   const { mutate: toggleFavMutate } = useToggleFavorite(user?.id);
@@ -57,6 +60,8 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     () => selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', '),
     [selectedPartsArray]
   );
+
+  const isCardioOnly = selectedPartsArray.length === 1 && selectedPartsArray[0] === 'cardio';
 
   // if(mode === 'picker')
   // בונה אינדקס פעם אחת בטעינת עמוד — פילטור O(1) במקום O(n)
@@ -78,7 +83,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
 
   const handleSetSelectedFilter = useCallback((filter: string | 'all') => {
     setSelectedFilter(filter);
-    setSelectedMuscle('all');
+    setSelectedSubBodyPart('all');
   }, []);
 
   const toggleFavorite = useCallback(
@@ -89,51 +94,99 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   );
 
   const deferredFilter = useDeferredValue(selectedFilter);
-  const deferredMuscle = useDeferredValue(selectedMuscle);
+  const deferredSubBodyPart = useDeferredValue(selectedSubBodyPart);
   const deferredSearch = useDeferredValue(searchQuery);
 
-  const muscleIndex = useMemo(() => {
+  // אינדוקס לפי התווית העברית (subBodyParts_he) ולא לפי המפתח האנגלי — כי ב-DB יש כמה
+  // ערכים אנגליים שונים (למשל "rear shoulders" ו-"rear delts") שמתורגמים לאותה תווית
+  // עברית ("כתף אחורית"), ואם מקבצים לפי המפתח האנגלי מקבלים שני צ'יפים כפולים במקום אחד
+  const subBodyPartIndex = useMemo(() => {
     const index = new Map<string, typeof allExercises>();
     const base = exerciseIndex.get(deferredFilter) ?? exerciseIndex.get('all') ?? [];
     index.set('all', base);
     for (const exercise of base) {
-      for (const muscle of exercise.targetMuscles) {
-        if (!index.has(muscle)) index.set(muscle, []);
-        index.get(muscle)!.push(exercise);
+      for (const label of exercise.subBodyParts_he) {
+        if (!label) continue;
+        if (!index.has(label)) index.set(label, []);
+        index.get(label)!.push(exercise);
       }
     }
     return index;
   }, [exerciseIndex, deferredFilter]);
 
-  const uniqueMuscles = useMemo(
-    () => Array.from(muscleIndex.keys()).filter((k) => k !== 'all'),
-    [muscleIndex]
+  const uniqueSubBodyParts = useMemo<FilterChipItem[]>(
+    () =>
+      Array.from(subBodyPartIndex.keys())
+        .filter((k) => k !== 'all')
+        .map((label) => ({ key: label, label })),
+    [subBodyPartIndex]
   );
 
   const filteredExercises = useMemo(() => {
-    const byMuscle = muscleIndex.get(deferredMuscle) ?? muscleIndex.get('all') ?? [];
-    if (!deferredSearch.trim()) return byMuscle;
+    const bySubBodyPart =
+      subBodyPartIndex.get(deferredSubBodyPart) ?? subBodyPartIndex.get('all') ?? [];
+    const byLocation =
+      selectedLocation === 'all'
+        ? bySubBodyPart
+        : bySubBodyPart.filter((ex) => (selectedLocation === 'home' ? ex.homeFriendly : !ex.homeFriendly));
+    if (!deferredSearch.trim()) return byLocation;
     const q = deferredSearch.toLowerCase();
-    return byMuscle.filter(
+    return byLocation.filter(
       (ex) => ex.name.toLowerCase().includes(q) || ex.name_he.includes(deferredSearch)
     );
-  }, [muscleIndex, deferredMuscle, deferredSearch]);
+  }, [subBodyPartIndex, deferredSubBodyPart, selectedLocation, deferredSearch]);
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const listEmptyComponent = useMemo(() => {
+    if (allExercises.length === 0) {
+      return (
+        <EmptyState
+          icon={<Ionicons name="construct-outline" size={64} color={colors.lime[500]} />}
+          title="עדיין לא נוצרו תרגילים לאזור זה"
+          description="הצוות שלנו עובד על זה, בקרוב יתווספו כאן תרגילים חדשים."
+          action={{
+            label: 'חזרה לבחירת אזור',
+            onPress: () => router.back(),
+          }}
+        />
+      );
+    }
+    return (
+      <EmptyState
+        icon={<Ionicons name="search-outline" size={64} color={colors.lime[500]} />}
+        title="לא נמצאו תרגילים"
+        description="נסה לשנות את מילות החיפוש או להסיר חלק מהסינונים."
+      />
+    );
+  }, [allExercises.length, router]);
+
   return (
     <BackGround>
       {mode === 'view' && (
         <View className="pt-4">
           <View className="px-6 mb-6 flex-row items-center gap-4">
-            {profile?.gender && (
-              <MiniAvatar
-                selectedParts={selectedPartsArray}
-                gender={profile.gender as 'male' | 'female'}
-              />
+            {isCardioOnly ? (
+              <View
+                className="items-center justify-center bg-lime-500/15 border border-lime-500/40 rounded-full"
+                style={{ width: 50, height: 50 }}
+                accessible
+                accessibilityLabel="אירובי"
+                importantForAccessibility="no"
+              >
+                <Ionicons name="walk-outline" size={26} color="#a3e635" />
+              </View>
+            ) : (
+              profile?.gender && (
+                <MiniAvatar
+                  selectedParts={selectedPartsArray}
+                  gender={profile.gender as 'male' | 'female'}
+                />
+              )
             )}
             <View className="flex-1 items-start">
               <Text className="typo-label text-lime-50 text-right uppercase tracking-widest">
@@ -174,20 +227,23 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                   mode={mode as modeListExercises}
                 />
               ) : (
-                <MuscleFilters
-                  uniqueMuscles={uniqueMuscles}
-                  selectedMuscle={selectedMuscle}
-                  setSelectedMuscle={setSelectedMuscle}
+                <SubBodyPartFilters
+                  items={uniqueSubBodyParts}
+                  selected={selectedSubBodyPart}
+                  onSelect={setSelectedSubBodyPart}
                   onBack={() => handleSetSelectedFilter('all')}
                   breadcrumb={partsBodyHebrew[selectedFilter as BodyPart]}
                 />
               ))}
-            {selectedPartsArray.length === 1 && uniqueMuscles.length > 0 && (
-              <MuscleFilters
-                uniqueMuscles={uniqueMuscles}
-                selectedMuscle={selectedMuscle}
-                setSelectedMuscle={setSelectedMuscle}
+            {selectedPartsArray.length === 1 && uniqueSubBodyParts.length > 0 && (
+              <SubBodyPartFilters
+                items={uniqueSubBodyParts}
+                selected={selectedSubBodyPart}
+                onSelect={setSelectedSubBodyPart}
               />
+            )}
+            {allExercises.length > 0 && (
+              <LocationFilter selected={selectedLocation} onSelect={setSelectedLocation} />
             )}
             <View className="flex-row items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-4 mx-2 mb-3 mt-2">
               <Ionicons name="search" size={18} color="#a3a3a3" />
@@ -269,6 +325,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 // estimatedItemSize={110}
                 onEndReached={handleEndReached}
                 onEndReachedThreshold={0.5}
+                ListEmptyComponent={listEmptyComponent}
                 ListFooterComponent={
                   isFetchingNextPage ? (
                     <View className="py-6 items-center">

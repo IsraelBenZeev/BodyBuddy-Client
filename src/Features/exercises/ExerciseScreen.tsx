@@ -7,6 +7,7 @@ import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View, Linking } from 'react-native';
@@ -24,6 +25,11 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
   const { data: profile } = useProfile(user?.id);
   const { data: exercises, isLoading: isExerciseLoading } = useGetExercisesByIds([exerciseId]);
   const exerciseData = exercises?.[0];
+  const player = useVideoPlayer(exerciseData?.videoUrl ?? null, (player) => {
+    player.loop = true;
+    player.muted = true;
+    player.play();
+  });
   if (isExerciseLoading || !exerciseData) {
     return (
       <BackGround>
@@ -76,20 +82,27 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
           <View className="h-1 w-20 bg-lime-500 rounded-full mt-2" />
         </View>
         <View style={styles.imageWrapper} className="self-center">
-          {exerciseData?.gif_available === false || imgError ? (
-            <>
-              <DumbbellAnimation size={200} />
-              <Text className="typo-label text-zinc-400 mt-1">תרגיל זה אינו זמין כרגע</Text>
-            </>
-          ) : (
+          {exerciseData?.videoUrl ? (
+            <VideoView
+              style={styles.mainImage}
+              player={player}
+              contentFit="contain"
+              nativeControls={false}
+            />
+          ) : exerciseData?.imageUrls?.[0] && !imgError ? (
             <Image
               style={styles.mainImage}
-              source={exerciseData?.gifUrl}
+              source={exerciseData.imageUrls[0]}
               contentFit="contain"
               transition={500}
               cachePolicy={'disk'}
               onError={() => setImgError(true)}
             />
+          ) : (
+            <>
+              <DumbbellAnimation size={200} />
+              <Text className="typo-label text-zinc-400 mt-1">תרגיל זה אינו זמין כרגע</Text>
+            </>
           )}
         </View>
         <View className="w-full mt-3 " style={{ minHeight: 600 }}>
@@ -173,7 +186,7 @@ const styles = StyleSheet.create({
   imageWrapper: {
     width: '90%',
     height: 280,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     borderRadius: 32,
     padding: 15,
     alignItems: 'center',

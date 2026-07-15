@@ -41,7 +41,13 @@
       ],
       "./plugins/withAndroidRTL",
       "./plugins/withIosRTL",
-      ["expo-localization", { "supportsRTL": true, "forcesRTL": true }],
+      [
+        "expo-localization",
+        {
+          "supportsRTL": true,
+          "forcesRTL": true
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -55,7 +61,8 @@
       ],
       "expo-secure-store",
       "expo-web-browser",
-      "react-native-edge-to-edge"
+      "react-native-edge-to-edge",
+      "expo-video"
     ],
     "updates": {
       "enabled": false

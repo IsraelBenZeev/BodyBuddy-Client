@@ -26,7 +26,7 @@ const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerci
   const isSelected = mode === 'picker' && isSelectedId;
 
   // Memoize image source כדי למנוע re-renders של Image component
-  const imageSource = useMemo(() => item.gifUrl, [item.gifUrl]);
+  const imageSource = useMemo(() => item.imageUrls?.[0], [item.imageUrls]);
 
   // פונקציית ניווט/בחירה מרכזית
   const handleMainPress = useCallback(() => {
@@ -73,7 +73,7 @@ const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerci
     >
       {/* תמונה / GIF */}
       <View style={styles.imageContainer}>
-        {item.gif_available === false || imgError ? (
+        {!imageSource || imgError ? (
           <DumbbellAnimation size={85} />
         ) : (
           <Image

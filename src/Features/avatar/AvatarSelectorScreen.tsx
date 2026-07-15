@@ -3,13 +3,16 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { BodyPart } from '@/src/types/bodtPart';
 import BackGround from '@/src/ui/BackGround';
 import { IconSwithBody } from '@/src/ui/IconsSVG';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useState } from 'react';
 import { Dimensions, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import FloatingSelectionBar from './FloatingSelectionBar';
 import AvatarFemale from './female/AvatarFemale';
 import AvatarMale from './male/AvatarMale';
+import { colors } from '@/colors';
 
 const { width, height } = Dimensions.get('window');
 
@@ -19,6 +22,7 @@ const { width, height } = Dimensions.get('window');
 const AVATAR_ASPECT_RATIO = 1726 / 871;
 const AVATAR_CONTAINER_HEIGHT = Math.min(height * 0.6, height - 260);
 const AVATAR_SVG_WIDTH = Math.min(width * 0.82, AVATAR_CONTAINER_HEIGHT / (AVATAR_ASPECT_RATIO * 0.9));
+const TAB_BAR_HEIGHT = 60;
 
 const AvatarSelectorScreen = () => {
   const [sideAvatar, setSideAvatar] = useState<'front' | 'back'>('front');
@@ -26,6 +30,7 @@ const AvatarSelectorScreen = () => {
   const { user } = useAuthStore();
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
   const router = useRouter();
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const handleTogglePart = useCallback((partName: BodyPart) => {
     setSelectedParts((prev) => {
@@ -49,6 +54,16 @@ const AvatarSelectorScreen = () => {
       },
     });
   }, [selectedParts, router]);
+
+  const handleNavigateCardio = useCallback(() => {
+    router.navigate({
+      pathname: '/exercises/[parts]',
+      params: {
+        parts: JSON.stringify(['cardio']),
+        mode: 'view',
+      },
+    });
+  }, [router]);
 
   const isSelected = (partName: BodyPart) => selectedParts.includes(partName);
 
@@ -137,6 +152,37 @@ const AvatarSelectorScreen = () => {
 
       </View>
       
+
+      {/* כפתור אירובי - מוצג רק כשלא נבחרו חלקי גוף, כדי לא להתנגש עם בר הבחירה */}
+      {selectedParts.length === 0 && (
+        <View
+          className="absolute left-6  flex flex-col  top-20 items-center"
+          style={{ bottom: TAB_BAR_HEIGHT + bottomInset - 10, zIndex: 40 }}
+          pointerEvents="box-none"
+        >
+          <Pressable
+            className="items-center active:opacity-70 active:scale-95"
+            onPress={handleNavigateCardio}
+            accessibilityRole="button"
+            accessibilityLabel="עבור לתרגילי אירובי"
+            accessibilityHint="פותח רשימת תרגילי אירובי כמו הליכון ואופניים"
+          >
+            <View
+              className="items-center justify-center rounded-full"
+              style={{
+                width: 52,
+                height: 52,
+                backgroundColor: colors.background[700],
+                borderWidth: 1,
+                borderColor: 'rgba(150, 200, 40, 0.5)',
+              }}
+            >
+              <Ionicons name="walk-outline" size={24} color="#bef264" />
+            </View>
+            <Text className="typo-caption-bold text-lime-300 mt-1.5">תרגילי אירובי</Text>
+          </Pressable>
+        </View>
+      )}
 
       {/* בר בחירה צף */}
       {selectedParts.length > 0 && (

@@ -52,14 +52,14 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
       >
         <View className="items-center bg-background-850 border border-white/10 rounded-2xl px-4 py-2 gap-3">
           <View className="bg-white items-center justify-center rounded-2xl overflow-hidden w-full">
-            {item.gif_available === false ? (
-              <DumbbellAnimation size={200} />
-            ) : (
+            {item.imageUrls?.[0] ? (
               <Image
-                source={{ uri: item.gifUrl }}
+                source={{ uri: item.imageUrls[0] }}
                 style={{ width: 200, height: 200 }}
                 contentFit="cover"
               />
+            ) : (
+              <DumbbellAnimation size={200} />
             )}
           </View>
           <View className="w-full">
