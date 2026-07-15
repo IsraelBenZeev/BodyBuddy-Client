@@ -6,18 +6,11 @@ import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import FormInput from '@/src/ui/FormInput';
+import PolicyConsentCheckbox from '@/src/ui/PolicyConsentCheckbox';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  KeyboardAvoidingView,
-  Linking,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
 interface RegisterFormData {
   email: string;
@@ -29,6 +22,7 @@ export default function RegisterScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
   const [shouldNavigateToTabs, setShouldNavigateToTabs] = useState(false);
 
@@ -213,6 +207,13 @@ export default function RegisterScreen() {
               }}
             />
 
+            {/* Privacy Policy */}
+            <PolicyConsentCheckbox
+              checked={agreedToPolicy}
+              onToggle={() => setAgreedToPolicy((prev) => !prev)}
+              promptText="בהרשמה "
+            />
+
             {/* Register Button */}
             <View className="mb-3">
               <ActionButton
@@ -223,6 +224,7 @@ export default function RegisterScreen() {
                 size="md"
                 fullWidth
                 loading={loading}
+                disabled={!agreedToPolicy}
                 accessibilityLabel="הירשם"
                 accessibilityHint="לחץ כדי להירשם עם האימייל והסיסמה"
               />
@@ -244,29 +246,13 @@ export default function RegisterScreen() {
               size="md"
               fullWidth
               loading={googleLoading}
+              disabled={!agreedToPolicy}
               accessibilityLabel="הירשם באמצעות Google"
               accessibilityHint="לחץ כדי להירשם עם חשבון Google"
             />
 
             {/* Login Link */}
             <View className="mt-8">
-              {/* Privacy Policy */}
-              <View className="mb-4 px-2">
-                <Text className="typo-label text-background-400 text-center">
-                  {'בהרשמה הינך מסכים ל'}
-                  <Text
-                    onPress={() =>
-                      Linking.openURL('https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/')
-                    }
-                    accessibilityRole="link"
-                    accessibilityLabel="פתח מדיניות פרטיות"
-                    className="typo-label text-lime-400 font-semibold"
-                  >
-                    {'מדיניות הפרטיות'}
-                  </Text>
-                  {' שלנו'}
-                </Text>
-              </View>
               <Pressable
                 onPress={handleNavigateToLogin}
                 accessibilityRole="button"
