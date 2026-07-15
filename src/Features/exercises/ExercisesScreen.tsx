@@ -1,6 +1,6 @@
 import { colors } from '@/colors';
 import ListExercise from '@/src/Features/workoutsPlans/form/ListExercises';
-import { useExercises, useFavoriteIds, useToggleFavorite } from '@/src/hooks/useEcercises';
+import { useExercises, useFavoriteIds, useToggleFavorite, useUserCustomExercises } from '@/src/hooks/useEcercises';
 import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
@@ -19,10 +19,12 @@ import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { useCallback, useDeferredValue, useMemo, useRef, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
+import AddCustomExerciseModal from './AddCustomExerciseModal';
 import CardExercise from './CardExercise';
 import Filters from './Filters';
 import LocationFilter, { LocationFilterValue } from './LocationFilter';
 import MiniAvatar from './MiniAvatar';
+import ReportMissingExerciseModal from './ReportMissingExerciseModal';
 import SubBodyPartFilters, { FilterChipItem } from './SubBodyPartFilters';
 
 interface ExercisesScreenProps {
@@ -50,11 +52,15 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const [selectedSubBodyPart, setSelectedSubBodyPart] = useState<string | 'all'>('all');
   const [selectedLocation, setSelectedLocation] = useState<LocationFilterValue>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAddCustomExercise, setShowAddCustomExercise] = useState(false);
+  const [showReportMissing, setShowReportMissing] = useState(false);
   const { data: favorites = [] } = useFavoriteIds(user?.id);
   const { mutate: toggleFavMutate } = useToggleFavorite(user?.id);
+  const { data: customExercises = [] } = useUserCustomExercises(user?.id);
   const allExercises = useMemo(() => {
-    return data?.pages.flatMap((page) => page.exercises) ?? [];
-  }, [data]);
+    const catalog = data?.pages.flatMap((page) => page.exercises) ?? [];
+    return [...catalog, ...customExercises];
+  }, [data, customExercises]);
 
   const selectedPartsText = useMemo(
     () => selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', '),
@@ -157,11 +163,33 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       );
     }
     return (
-      <EmptyState
-        icon={<Ionicons name="search-outline" size={64} color={colors.lime[500]} />}
-        title="לא נמצאו תרגילים"
-        description="נסה לשנות את מילות החיפוש או להסיר חלק מהסינונים."
-      />
+      <View className="flex-1">
+        <EmptyState
+          icon={<Ionicons name="search-outline" size={64} color={colors.lime[500]} />}
+          title="לא נמצאו תרגילים"
+          description="נסה לשנות את מילות החיפוש או להסיר חלק מהסינונים. לא מוצא/ת את התרגיל שלך?"
+        />
+        <View className="items-center gap-3 px-8 -mt-4 pb-6">
+          <ActionButton
+            onPress={() => setShowAddCustomExercise(true)}
+            label="הוסף ידנית"
+            iconName="add-circle-outline"
+            variant="outline"
+            size="md"
+            fullWidth
+            accessibilityLabel="הוסף תרגיל חדש באופן ידני"
+          />
+          <ActionButton
+            onPress={() => setShowReportMissing(true)}
+            label="דווח שהתרגיל חסר"
+            iconName="flag-outline"
+            variant="secondary"
+            size="md"
+            fullWidth
+            accessibilityLabel="דווח שהתרגיל חסר מהמאגר"
+          />
+        </View>
+      </View>
     );
   }, [allExercises.length, router]);
 
@@ -344,7 +372,27 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                       <Text className="typo-body text-lime-400">טוען תרגילים נוספים...</Text>
                     </View>
                   ) : (
-                    <View className="h-20 " />
+                    <View className="items-center gap-3 pt-4 pb-8">
+                      <Text className="typo-caption text-background-500">לא מוצא/ת את התרגיל שלך?</Text>
+                      <View className="flex-row gap-2">
+                        <ActionButton
+                          onPress={() => setShowAddCustomExercise(true)}
+                          label="הוסף ידנית"
+                          iconName="add-circle-outline"
+                          variant="outline"
+                          size="sm"
+                          accessibilityLabel="הוסף תרגיל חדש באופן ידני"
+                        />
+                        <ActionButton
+                          onPress={() => setShowReportMissing(true)}
+                          label="דווח"
+                          iconName="flag-outline"
+                          variant="secondary"
+                          size="sm"
+                          accessibilityLabel="דווח שהתרגיל חסר מהמאגר"
+                        />
+                      </View>
+                    </View>
                   )
                 }
               />
@@ -411,6 +459,16 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
           />
         </ModalBottom>
       )}
+      <AddCustomExerciseModal
+        visible={showAddCustomExercise}
+        onClose={() => setShowAddCustomExercise(false)}
+        initialName={deferredSearch}
+      />
+      <ReportMissingExerciseModal
+        visible={showReportMissing}
+        onClose={() => setShowReportMissing(false)}
+        initialQuery={deferredSearch}
+      />
     </BackGround>
   );
 };

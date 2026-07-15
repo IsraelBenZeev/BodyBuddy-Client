@@ -1,5 +1,7 @@
 import { logError } from '@/src/lib/logger';
 import { supabase } from '../../supabase_client';
+import { getCustomExercisesByIds } from './customExercisesService';
+import { isCustomExerciseId, toRawCustomExerciseId } from '../types/customExercise';
 import { Exercise } from '../types/exercise';
 
 export const getFavoriteIds = async (userId: string): Promise<string[]> => {
@@ -46,6 +48,10 @@ export const getExercisesByBodyParts = async (bodyPart: string[], page: number, 
 };
 export const getExerciseById = async (exerciseId: string) => {
   try {
+    if (isCustomExerciseId(exerciseId)) {
+      const [customExercise] = await getCustomExercisesByIds([toRawCustomExerciseId(exerciseId)]);
+      return customExercise;
+    }
     const { data, error } = await supabase
       .from('exercises_v2')
       .select('*')
@@ -60,12 +66,24 @@ export const getExerciseById = async (exerciseId: string) => {
 };
 export const getExerciseByIds = async (exerciseId: string[]) => {
   try {
-    const { data, error } = await supabase
-      .from('exercises_v2')
-      .select('*')
-      .in('exerciseId', exerciseId);
-    if (error) throw error;
-    return data as Exercise[];
+    const catalogIds = exerciseId.filter((id) => !isCustomExerciseId(id));
+    const customRawIds = exerciseId.filter(isCustomExerciseId).map(toRawCustomExerciseId);
+
+    const [catalogExercises, customExercises] = await Promise.all([
+      catalogIds.length
+        ? supabase
+            .from('exercises_v2')
+            .select('*')
+            .in('exerciseId', catalogIds)
+            .then(({ data, error }) => {
+              if (error) throw error;
+              return data as Exercise[];
+            })
+        : Promise.resolve([] as Exercise[]),
+      customRawIds.length ? getCustomExercisesByIds(customRawIds) : Promise.resolve([] as Exercise[]),
+    ]);
+
+    return [...catalogExercises, ...customExercises];
   } catch (error) {
     logError(error, 'exercisesService');
     throw error;

@@ -1,6 +1,9 @@
 import { keepPreviousData, useMutation, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addFavorite, getFavoriteIds, getExerciseByIds, getExercisesByBodyParts, removeFavorite } from '../service/exercisesService';
+import { createCustomExercise, getUserCustomExercises } from '../service/customExercisesService';
+import { useUIStore } from '../store/useUIStore';
 import { BodyPart } from '../types/bodtPart';
+import { CreateCustomExercisePayload } from '../types/customExercise';
 import { Exercise } from '../types/exercise';
 const limit = 30;
 export const useExercises = (user_id: string, bodyParts: BodyPart[]) => {
@@ -65,6 +68,31 @@ export const useToggleFavorite = (userId: string | undefined) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['favorites', userId] });
+    },
+  });
+};
+
+export const useUserCustomExercises = (userId: string | undefined) => {
+  return useQuery({
+    queryKey: ['custom-exercises', userId],
+    queryFn: () => getUserCustomExercises(userId!),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!userId,
+  });
+};
+
+export const useCreateCustomExercise = (userId: string | undefined) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+
+  return useMutation({
+    mutationFn: (payload: CreateCustomExercisePayload) => createCustomExercise(userId!, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId] });
+      triggerSuccess('התרגיל נוסף בהצלחה', 'success');
+    },
+    onError: () => {
+      triggerSuccess('שגיאה בהוספת התרגיל', 'failed');
     },
   });
 };
