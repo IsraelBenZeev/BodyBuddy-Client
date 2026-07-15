@@ -169,7 +169,19 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     <BackGround>
       {mode === 'view' && (
         <View className="pt-4">
-          <View className="px-6 mb-6 flex-row items-center gap-4">
+          <View className="px-6 mb-6 flex-row items-center gap-4 ">
+            <AppButton
+              onPress={() => router.back()}
+              haptic="light"
+              animationType="scale"
+              className="items-center justify-center bg-lime-500/15 border border-lime-500/40 rounded-full p-1"
+              style={{ width: 60, height: 60 }}
+              accessibilityLabel="חזור"
+              accessibilityRole="button"
+              accessibilityHint="חזרה למסך הקודם"
+            >
+              <Ionicons name="chevron-forward" size={40} color={colors.lime[300]} />
+            </AppButton>
             {isCardioOnly ? (
               <View
                 className="items-center justify-center bg-lime-500/15 border border-lime-500/40 rounded-full"
