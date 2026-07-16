@@ -1,18 +1,16 @@
 import { logError } from '@/src/lib/logger';
 import { supabase } from '../../supabase_client';
-import { CreateExerciseReportPayload, ExerciseReport } from '../types/exerciseReport';
+import { CreateExerciseReportPayload } from '../types/exerciseReport';
 
+// No .select() after insert: exercise_reports intentionally has no SELECT RLS policy
+// (the developer reviews reports via the Supabase dashboard, not the client) — asking
+// PostgREST to return the inserted row would be blocked by RLS and fail the whole insert.
 export const createExerciseReport = async (
   userId: string,
   payload: CreateExerciseReportPayload
-): Promise<ExerciseReport> => {
-  const { data, error } = await supabase
-    .from('exercise_reports')
-    .insert({ ...payload, user_id: userId })
-    .select()
-    .single();
+): Promise<void> => {
+  const { error } = await supabase.from('exercise_reports').insert({ ...payload, user_id: userId });
   if (error) throw error;
-  return data as ExerciseReport;
 };
 
 const REPORT_EXERCISE_URL = process.env.EXPO_PUBLIC_REPORT_EXERCISE_URL ?? '';

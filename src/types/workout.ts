@@ -8,6 +8,7 @@ export interface WorkoutPlan {
   difficulty: number; // רמת קושי מ-1 עד 5
   days_per_week: dayType[]; // מספר ימים בשבוע
   id?: string;
+  created_at?: string;
 }
 export const daysInHebrew = {
   "א": 'ראשון',

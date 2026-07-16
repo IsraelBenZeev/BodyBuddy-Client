@@ -8,9 +8,8 @@ export const useReportMissingExercise = (userId: string | undefined) => {
 
   return useMutation({
     mutationFn: async (payload: CreateExerciseReportPayload) => {
-      const report = await createExerciseReport(userId!, payload);
+      await createExerciseReport(userId!, payload);
       await notifyExerciseReportServer(payload);
-      return report;
     },
     onSuccess: () => {
       triggerSuccess('תודה! קיבלנו את הדיווח', 'success');
