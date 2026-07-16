@@ -1,11 +1,13 @@
 import { colors } from '@/colors';
 import { signInWithEmail, signInWithGoogle } from '@/src/service/authService';
+import { recordPrivacyConsent } from '@/src/service/consentService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import FormInput from '@/src/ui/FormInput';
+import { PRIVACY_POLICY_VERSION } from '@/src/types/consent';
 import PolicyConsentCheckbox from '@/src/ui/PolicyConsentCheckbox';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -70,6 +72,7 @@ export default function LoginScreen() {
       if (data?.user && data?.session) {
         useAuthStore.getState().setUser(data.user);
         useAuthStore.getState().setSession(data.session);
+        recordPrivacyConsent(data.user.id, PRIVACY_POLICY_VERSION);
         triggerSuccess('התחברת בהצלחה', 'success');
         setShouldNavigateToTabs(true);
       }
@@ -191,7 +194,7 @@ export default function LoginScreen() {
             <PolicyConsentCheckbox
               checked={agreedToPolicy}
               onToggle={() => setAgreedToPolicy((prev) => !prev)}
-              promptText="בהרשמה או התחברות עם Google "
+              promptText="בהתחברת הינך מסכים ל"
             />
             {/* Login Button */}
             <View className="mb-4">
@@ -203,6 +206,7 @@ export default function LoginScreen() {
                 size="md"
                 fullWidth
                 loading={loading}
+                disabled={!agreedToPolicy}
                 accessibilityLabel="התחבר"
                 accessibilityHint="לחץ כדי להתחבר עם האימייל והסיסמה"
               />

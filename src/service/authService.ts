@@ -1,6 +1,8 @@
 import { logError } from '@/src/lib/logger';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import { recordPrivacyConsent } from '@/src/service/consentService';
 import { getProfile } from '@/src/service/profileService';
+import { PRIVACY_POLICY_VERSION } from '@/src/types/consent';
 import { supabase } from '@/supabase_client';
 import { Session, User } from '@supabase/supabase-js';
 import { makeRedirectUri } from 'expo-auth-session';
@@ -215,6 +217,7 @@ export const signInWithGoogle = async () => {
       if (sessionData?.session) {
         useAuthStore.getState().setUser(sessionData.session.user);
         useAuthStore.getState().setSession(sessionData.session);
+        recordPrivacyConsent(sessionData.session.user.id, PRIVACY_POLICY_VERSION);
         try {
           const profile = await getProfile(sessionData.session.user.id);
           if (profile?.full_name && (profile.date_of_birth != null || profile.age != null)) {

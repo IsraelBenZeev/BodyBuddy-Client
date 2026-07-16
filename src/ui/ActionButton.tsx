@@ -60,6 +60,14 @@ const VARIANT_CONFIG: Record<
   },
 };
 
+const DISABLED_CONFIG = {
+  button: 'bg-background-800 border border-background-600 rounded-full',
+  iconWrapper: 'bg-background-700 border border-background-600 rounded-full',
+  textClass: 'typo-btn-cta text-background-400',
+  iconColor: '#71717a',
+  activityColor: '#71717a',
+};
+
 export default function ActionButton({
   onPress,
   label,
@@ -74,21 +82,15 @@ export default function ActionButton({
   accessibilityHint,
 }: ActionButtonProps) {
   const sizeConfig = SIZE_CONFIG[size];
-  const variantConfig = VARIANT_CONFIG[variant];
   const isDisabled = disabled || loading;
+  const variantConfig = disabled ? DISABLED_CONFIG : VARIANT_CONFIG[variant];
   const showIconWrapper = !!(iconName || children || loading);
 
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      style={({ pressed }) => [
-        {
-          transform: [{ scale: pressed && !isDisabled ? 0.96 : 1 }],
-          opacity: isDisabled ? 0.45 : pressed ? 0.9 : 1,
-        },
-      ]}
-      className={`${variantConfig.button} flex-row items-center justify-center ${sizeConfig.button}${fullWidth ? ' w-full' : ''}`}
+      className={`${variantConfig.button} flex-row items-center justify-center active:scale-95 active:opacity-90${loading ? ' opacity-70' : ''} ${sizeConfig.button}${fullWidth ? ' w-full' : ''}`}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityHint={accessibilityHint}

@@ -1,11 +1,13 @@
 import { colors } from '@/colors';
 import { signInWithGoogle, signUpWithEmail } from '@/src/service/authService';
+import { recordPrivacyConsent } from '@/src/service/consentService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import FormInput from '@/src/ui/FormInput';
+import { PRIVACY_POLICY_VERSION } from '@/src/types/consent';
 import PolicyConsentCheckbox from '@/src/ui/PolicyConsentCheckbox';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -62,7 +64,10 @@ export default function RegisterScreen() {
       triggerSuccess('שגיאה בהרשמה - נסה שוב', 'failed');
     } else {
       triggerSuccess('נרשמת בהצלחה!', 'success');
-      if (data?.user) useAuthStore.getState().setUser(data.user);
+      if (data?.user) {
+        useAuthStore.getState().setUser(data.user);
+        recordPrivacyConsent(data.user.id, PRIVACY_POLICY_VERSION);
+      }
       if (data?.session) useAuthStore.getState().setSession(data.session);
       setShouldNavigateToTabs(true); // ניווט אחרי הרשמה מוצלחת (בלוגין יש session תמיד; בהרשמה לפעמים רק אחרי אימות אימייל)
     }
