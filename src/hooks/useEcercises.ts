@@ -1,6 +1,12 @@
 import { keepPreviousData, useMutation, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addFavorite, getFavoriteIds, getExerciseByIds, getExercisesByBodyParts, removeFavorite } from '../service/exercisesService';
-import { createCustomExercise, getUserCustomExercises } from '../service/customExercisesService';
+import {
+  createCustomExercise,
+  deleteCustomExercise,
+  getUserCustomExercises,
+  getUserCustomExercisesRaw,
+  updateCustomExercise,
+} from '../service/customExercisesService';
 import { useUIStore } from '../store/useUIStore';
 import { BodyPart } from '../types/bodtPart';
 import { CreateCustomExercisePayload } from '../types/customExercise';
@@ -81,6 +87,18 @@ export const useUserCustomExercises = (userId: string | undefined) => {
   });
 };
 
+// Raw (unmapped) rows — used by the "manage my exercises" screen, which needs the real
+// body_part/equipment/notes fields to prefill an edit form (the Exercise-mapped shape
+// above loses that fidelity by flattening everything into string[] fields).
+export const useUserCustomExercisesRaw = (userId: string | undefined) => {
+  return useQuery({
+    queryKey: ['custom-exercises', userId, 'raw'],
+    queryFn: () => getUserCustomExercisesRaw(userId!),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!userId,
+  });
+};
+
 export const useCreateCustomExercise = (userId: string | undefined) => {
   const queryClient = useQueryClient();
   const { triggerSuccess } = useUIStore();
@@ -93,6 +111,39 @@ export const useCreateCustomExercise = (userId: string | undefined) => {
     },
     onError: () => {
       triggerSuccess('שגיאה בהוספת התרגיל', 'failed');
+    },
+  });
+};
+
+export const useUpdateCustomExercise = (userId: string | undefined) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+
+  return useMutation({
+    mutationFn: ({ rawId, payload }: { rawId: string; payload: CreateCustomExercisePayload }) =>
+      updateCustomExercise(rawId, userId!, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId] });
+      triggerSuccess('התרגיל עודכן בהצלחה', 'success');
+    },
+    onError: () => {
+      triggerSuccess('שגיאה בעדכון התרגיל', 'failed');
+    },
+  });
+};
+
+export const useDeleteCustomExercise = (userId: string | undefined) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+
+  return useMutation({
+    mutationFn: (rawId: string) => deleteCustomExercise(rawId, userId!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId] });
+      triggerSuccess('התרגיל נמחק', 'success');
+    },
+    onError: () => {
+      triggerSuccess('שגיאה במחיקת התרגיל', 'failed');
     },
   });
 };

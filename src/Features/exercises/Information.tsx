@@ -38,7 +38,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
                 <View className="flex-1 ml-4 items-start">
                     <Text className="typo-caption-bold text-zinc-500  mb-1 uppercase tracking-tighter">שריר עיקרי</Text>
                     <Text className="typo-h4 text-white">
-                        {exercise?.targetMuscles_he}
+                        {exercise?.targetMuscles_he.length > 0 ? exercise.targetMuscles_he.join(', ') : 'לא צויין'}
                     </Text>
                 </View>
             </View>
@@ -53,7 +53,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
                     </View>
                     <Text className="typo-caption-bold text-zinc-500 uppercase mb-1">ציוד</Text>
                     <Text className="typo-label text-white " numberOfLines={1}>
-                        {exercise?.equipments_he}
+                        {exercise?.equipments_he.length > 0 ? exercise.equipments_he.join(', ') : 'לא צויין'}
                     </Text>
                 </View>
 
@@ -64,7 +64,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
                     </View>
                     <Text className="typo-caption-bold text-zinc-500 uppercase mb-1">מסייעים</Text>
                     <Text className="typo-label text-white " numberOfLines={1}>
-                        {exercise?.secondaryMuscles_he.join(', ')}
+                        {exercise?.secondaryMuscles_he.length > 0 ? exercise.secondaryMuscles_he.join(', ') : 'לא צויין'}
                     </Text>
                 </View>
 

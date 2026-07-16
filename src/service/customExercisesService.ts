@@ -28,9 +28,9 @@ export const mapCustomExerciseToExercise = (row: UserCustomExercise): Exercise =
     equipments: row.equipment ? [row.equipment] : [],
     equipments_he: equipmentLabelHe ? [equipmentLabelHe] : [],
     homeFriendly: row.home_friendly,
-    instructions: row.notes ? [row.notes] : [],
-    instructions_he: row.notes ? [row.notes] : [],
-    imageUrls: [],
+    instructions: row.instructions,
+    instructions_he: row.instructions,
+    imageUrls: row.image_urls ?? [],
     videoUrl: null,
     gifUrl: null,
     created_at: row.created_at,
@@ -85,6 +85,43 @@ export const createCustomExercise = async (
       .single();
     if (error) throw error;
     return mapCustomExerciseToExercise(data as UserCustomExercise);
+  } catch (error) {
+    logError(error, 'customExercisesService');
+    throw error;
+  }
+};
+
+export const getUserCustomExercisesRaw = async (userId: string): Promise<UserCustomExercise[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_custom_exercises')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data as UserCustomExercise[];
+  } catch (error) {
+    logError(error, 'customExercisesService');
+    throw error;
+  }
+};
+
+export const updateCustomExercise = async (
+  rawId: string,
+  userId: string,
+  payload: CreateCustomExercisePayload
+): Promise<UserCustomExercise> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_custom_exercises')
+      .update(payload)
+      .eq('id', rawId)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as UserCustomExercise;
   } catch (error) {
     logError(error, 'customExercisesService');
     throw error;

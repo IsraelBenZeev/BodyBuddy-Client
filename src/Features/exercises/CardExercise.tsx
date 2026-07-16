@@ -1,5 +1,6 @@
 import { colors } from '@/colors';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
+import { isCustomExerciseId } from '@/src/types/customExercise';
 import { Exercise } from '@/src/types/exercise';
 import { modeListExercises } from '@/src/types/mode';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
@@ -27,6 +28,7 @@ const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerci
 
   // Memoize image source כדי למנוע re-renders של Image component
   const imageSource = useMemo(() => item.imageUrls?.[0], [item.imageUrls]);
+  const isCustom = useMemo(() => isCustomExerciseId(item.exerciseId), [item.exerciseId]);
 
   // פונקציית ניווט/בחירה מרכזית
   const handleMainPress = useCallback(() => {
@@ -49,9 +51,7 @@ const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerci
       animationType="opacity"
       haptic="medium"
       onPress={handleMainPress}
-      accessibilityLabel={
-        mode === 'picker' ? `${item.name_he}${isSelected ? ', נבחר' : ''}` : item.name_he
-      }
+      accessibilityLabel={`${item.name_he}${isCustom ? ', תרגיל אישי' : ''}${mode === 'picker' && isSelected ? ', נבחר' : ''}`}
       accessibilityState={mode === 'picker' ? { selected: isSelected } : undefined}
       // הסרנו צלליות מורכבות מה-className כדי למנוע קריסת Navigation
       className={`

@@ -8,7 +8,8 @@ export interface UserCustomExercise {
   equipment: string | null;
   target_muscle: string | null;
   home_friendly: boolean;
-  notes: string | null;
+  instructions: string[];
+  image_urls: string[];
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -20,8 +21,11 @@ export interface CreateCustomExercisePayload {
   equipment?: string | null;
   target_muscle?: string | null;
   home_friendly?: boolean;
-  notes?: string | null;
+  instructions?: string[];
+  image_urls?: string[];
 }
+
+export const MAX_CUSTOM_EXERCISE_IMAGES = 3;
 
 export const CUSTOM_EXERCISE_ID_PREFIX = 'custom-';
 

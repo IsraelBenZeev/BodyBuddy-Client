@@ -5,6 +5,8 @@ import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
+import { isCustomExerciseId } from '@/src/types/customExercise';
+import { Exercise } from '@/src/types/exercise';
 import { modeListExercises } from '@/src/types/mode';
 import BackGround from '@/src/ui/BackGround';
 import EmptyState from '@/src/ui/EmptyState';
@@ -31,6 +33,10 @@ interface ExercisesScreenProps {
   bodyParts: string | string[] | undefined;
   mode: string | string[] | undefined;
 }
+
+type ExerciseListItem =
+  | { kind: 'exercise'; exercise: Exercise }
+  | { kind: 'section-header'; label: string };
 
 const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const user = useAuthStore((state) => state.user);
@@ -59,8 +65,13 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const { data: customExercises = [] } = useUserCustomExercises(user?.id);
   const allExercises = useMemo(() => {
     const catalog = data?.pages.flatMap((page) => page.exercises) ?? [];
-    return [...catalog, ...customExercises];
-  }, [data, customExercises]);
+    // Custom exercises aren't fetched per body part like the catalog is — filter here so a
+    // custom "chest" exercise doesn't leak into the "abs"/"back" screens too.
+    const matchingCustom = customExercises.filter((exercise) =>
+      exercise.bodyParts.some((part) => selectedPartsArray.includes(part as BodyPart))
+    );
+    return [...catalog, ...matchingCustom];
+  }, [data, customExercises, selectedPartsArray]);
 
   const selectedPartsText = useMemo(
     () => selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', '),
@@ -141,6 +152,19 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       (ex) => ex.name.toLowerCase().includes(q) || ex.name_he.includes(deferredSearch)
     );
   }, [subBodyPartIndex, deferredSubBodyPart, selectedLocation, deferredSearch]);
+
+  // תרגילים אישיים מוצגים כקבוצה נפרדת בסוף הרשימה, מתחת לכותרת "תרגילים אישיים",
+  // ולא מסומנים בנפרד בכל כרטיס.
+  const listItems = useMemo<ExerciseListItem[]>(() => {
+    const catalogItems = filteredExercises.filter((ex) => !isCustomExerciseId(ex.exerciseId));
+    const customItems = filteredExercises.filter((ex) => isCustomExerciseId(ex.exerciseId));
+    const items: ExerciseListItem[] = catalogItems.map((exercise) => ({ kind: 'exercise', exercise }));
+    if (customItems.length > 0) {
+      items.push({ kind: 'section-header', label: 'תרגילים אישיים' });
+      items.push(...customItems.map((exercise) => ({ kind: 'exercise' as const, exercise })));
+    }
+    return items;
+  }, [filteredExercises]);
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -352,16 +376,28 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             )}
             <View className="w-full flex-1 px-6">
               <FlashList
-                data={filteredExercises}
-                renderItem={({ item }) => (
-                  <CardExercise
-                    item={item}
-                    favorites={favorites}
-                    toggleFavorite={toggleFavorite}
-                    mode={mode as modeListExercises}
-                  />
-                )}
-                keyExtractor={(item) => item.exerciseId}
+                data={listItems}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) =>
+                  item.kind === 'section-header' ? (
+                    <View className="px-2 pt-2 pb-3">
+                      <Text className="typo-caption-bold text-lime-400 uppercase tracking-widest text-right">
+                        {item.label}
+                      </Text>
+                    </View>
+                  ) : (
+                    <CardExercise
+                      item={item.exercise}
+                      favorites={favorites}
+                      toggleFavorite={toggleFavorite}
+                      mode={mode as modeListExercises}
+                    />
+                  )
+                }
+                keyExtractor={(item, index) =>
+                  item.kind === 'section-header' ? `section-header-${index}` : item.exercise.exerciseId
+                }
+                getItemType={(item) => item.kind}
                 // estimatedItemSize={110}
                 onEndReached={handleEndReached}
                 onEndReachedThreshold={0.5}

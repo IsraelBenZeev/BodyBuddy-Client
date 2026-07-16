@@ -7,6 +7,7 @@ import { useUIStore } from '@/src/store/useUIStore';
 import { activityLevelOptions, genderOptions } from '@/src/types/profile';
 import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
+import { MyCustomExercisesSheet, MyCustomExercisesTrigger } from '@/src/Features/auth/MyCustomExercisesSection';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import HoldButton from '@/src/ui/HoldButton';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
@@ -65,6 +66,7 @@ export default function ProfileScreen() {
   const [isPressingLogout, setIsPressingLogout] = useState(false);
   const [showLogoPreview, setShowLogoPreview] = useState(false);
   const [logoPreviewKey, setLogoPreviewKey] = useState(0);
+  const [showCustomExercises, setShowCustomExercises] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -319,6 +321,11 @@ export default function ProfileScreen() {
                 </Text>
               </View>
             </AnimatedCard>
+
+            {/* Custom Exercises Trigger */}
+            <AnimatedCard delay={800}>
+              <MyCustomExercisesTrigger userId={user.id} onPress={() => setShowCustomExercises(true)} />
+            </AnimatedCard>
           </View>
         )}
         <View className="mb-8 px-6 space-y-4 items-start">
@@ -364,6 +371,12 @@ export default function ProfileScreen() {
           <Text className="typo-label text-background-400 mt-8">לחץ בכל מקום כדי לסגור</Text>
         </Pressable>
       )}
+
+      <MyCustomExercisesSheet
+        userId={user.id}
+        visible={showCustomExercises}
+        onClose={() => setShowCustomExercises(false)}
+      />
     </BackGround>
   );
 }

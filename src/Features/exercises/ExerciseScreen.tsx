@@ -2,17 +2,20 @@ import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import { useProfile } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import { isCustomExerciseId } from '@/src/types/customExercise';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { X } from 'lucide-react-native';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View, Linking } from 'react-native';
 import Buttons from './Buttons';
 import ExerciseHistory from './ExerciseHistory';
+import ExerciseImageCarousel from './ExerciseImageCarousel';
 import Information from './Information';
 import Instractions from './Instractions';
 import TabsManager from './TabsMenager';
@@ -25,6 +28,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
   const { data: profile } = useProfile(user?.id);
   const { data: exercises, isLoading: isExerciseLoading } = useGetExercisesByIds([exerciseId]);
   const exerciseData = exercises?.[0];
+  const isCustom = useMemo(() => isCustomExerciseId(exerciseId), [exerciseId]);
   const player = useVideoPlayer(exerciseData?.videoUrl ?? null, (player) => {
     player.loop = true;
     player.muted = true;
@@ -39,6 +43,14 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
       </BackGround>
     );
   }
+
+  const hasInstructions = exerciseData.instructions_he.length > 0;
+  const tabs = [
+    { title: 'היסטוריה', Component: <ExerciseHistory exerciseId={exerciseData.exerciseId} /> },
+    ...(hasInstructions
+      ? [{ title: 'הוראות', Component: <Instractions instructions={exerciseData.instructions_he} /> }]
+      : []),
+  ];
   return (
     <BackGround>
       <View className="flex-row items-center px-8 mt-3 ">
@@ -79,6 +91,12 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
               {exerciseData?.name_he}
             </Text>
           </Pressable>
+          {isCustom && (
+            <View className="flex-row items-center gap-1.5 bg-lime-500/10 border border-lime-500/30 rounded-full self-start px-3 py-1 mt-2">
+              <MaterialCommunityIcons name="account-edit-outline" size={12} color={colors.lime[400]} />
+              <Text className="typo-caption text-lime-400">תרגיל אישי שהוספת</Text>
+            </View>
+          )}
           <View className="h-1 w-20 bg-lime-500 rounded-full mt-2" />
         </View>
         <View style={styles.imageWrapper} className="self-center">
@@ -89,6 +107,8 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
               contentFit="contain"
               nativeControls={false}
             />
+          ) : exerciseData?.imageUrls && exerciseData.imageUrls.length > 1 ? (
+            <ExerciseImageCarousel imageUrls={exerciseData.imageUrls} />
           ) : exerciseData?.imageUrls?.[0] && !imgError ? (
             <Image
               style={styles.mainImage}
@@ -116,20 +136,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             gender={profile?.gender as 'male' | 'female' | undefined}
           />
 
-            {/* <TabsMenager instructions={exerciseData?.instructions_he} /> */}
-            <TabsManager
-              initialTab={1}
-              tabs={[
-                {
-                  title: 'היסטוריה',
-                  Component: <ExerciseHistory exerciseId={exerciseData.exerciseId} />,
-                },
-                {
-                  title: 'הוראות',
-                  Component: <Instractions instructions={exerciseData?.instructions_he} />,
-                },
-              ]}
-            />
+            <TabsManager initialTab={hasInstructions ? 1 : 0} tabs={tabs} />
         </View>
         {/* Support & Disclaimer under Instructions */}
         <View className="px-6 mt-4 mb-8">
@@ -143,11 +150,13 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
             </Text>
           </Text>
 
-          <Text className="typo-caption text-zinc-400 text-center mt-2">
-            {
-              'התרגילים נוצרו בסיוע בינה מלאכותית ועברו בקרה אנושית, אך עלולות להתרחש טעויות בתנועת התרגיל או בהוראות הביצוע. השימוש באפליקציה הוא באחריות המשתמש בלבד, ו-BodyBuddy אינה נושאת באחריות לכל נזק שייגרם כתוצאה מכך.'
-            }
-          </Text>
+          {!isCustom && (
+            <Text className="typo-caption text-zinc-400 text-center mt-2">
+              {
+                'התרגילים נוצרו באמצעות בינה מלאכותית והשימוש בהם על אחריות המשתמש בלבד.'
+              }
+            </Text>
+          )}
         </View>
       </ScrollView>
       <Modal

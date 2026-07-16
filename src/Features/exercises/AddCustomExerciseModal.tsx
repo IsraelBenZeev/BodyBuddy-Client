@@ -1,60 +1,160 @@
 import { colors } from '@/colors';
-import { useCreateCustomExercise } from '@/src/hooks/useEcercises';
+import { useCreateCustomExercise, useUpdateCustomExercise } from '@/src/hooks/useEcercises';
+import { uploadCustomExerciseImages } from '@/src/service/cloudinaryService';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import { useUIStore } from '@/src/store/useUIStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
-import { CUSTOM_EQUIPMENT_OPTIONS } from '@/src/types/customExercise';
+import {
+  CUSTOM_EQUIPMENT_OPTIONS,
+  MAX_CUSTOM_EXERCISE_IMAGES,
+  UserCustomExercise,
+} from '@/src/types/customExercise';
 import ActionButton from '@/src/ui/ActionButton';
 import ModalBottom from '@/src/ui/ModalButtom';
 import AppButton from '@/src/ui/PressableOpacity';
+import { Ionicons } from '@expo/vector-icons';
 import BottomSheet from '@gorhom/bottom-sheet';
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'expo-image';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 interface AddCustomExerciseModalProps {
   visible: boolean;
   onClose: () => void;
   initialName?: string;
+  exerciseToEdit?: UserCustomExercise | null;
 }
 
 const BODY_PART_OPTIONS = Object.keys(partsBodyHebrew) as BodyPart[];
 
-const AddCustomExerciseModal = ({ visible, onClose, initialName = '' }: AddCustomExerciseModalProps) => {
+const AddCustomExerciseModal = ({
+  visible,
+  onClose,
+  initialName = '',
+  exerciseToEdit = null,
+}: AddCustomExerciseModalProps) => {
   const sheetRef = useRef<BottomSheet>(null);
   const user = useAuthStore((state) => state.user);
-  const { mutate: createCustomExercise, isPending } = useCreateCustomExercise(user?.id);
+  const { mutate: createCustomExercise, isPending: isCreating } = useCreateCustomExercise(user?.id);
+  const { mutate: updateCustomExercise, isPending: isUpdating } = useUpdateCustomExercise(user?.id);
+  const { triggerSuccess } = useUIStore();
+  const isEditMode = !!exerciseToEdit;
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const isPending = isCreating || isUpdating || isUploadingImages;
 
   const [name, setName] = useState(initialName);
   const [bodyPart, setBodyPart] = useState<BodyPart | null>(null);
   const [equipment, setEquipment] = useState<string | null>(null);
   const [homeFriendly, setHomeFriendly] = useState(false);
-  const [notes, setNotes] = useState('');
+  const [instructionSteps, setInstructionSteps] = useState<string[]>(['']);
+  // מערך מעורב: כתובות https קיימות (כבר הועלו) ו-uri מקומיים חדשים שטרם הועלו.
+  const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (visible) {
-      setName(initialName);
-      setBodyPart(null);
-      setEquipment(null);
-      setHomeFriendly(false);
-      setNotes('');
+      if (exerciseToEdit) {
+        setName(exerciseToEdit.name);
+        setBodyPart(exerciseToEdit.body_part);
+        setEquipment(exerciseToEdit.equipment);
+        setHomeFriendly(exerciseToEdit.home_friendly);
+        setInstructionSteps(exerciseToEdit.instructions.length > 0 ? exerciseToEdit.instructions : ['']);
+        setImages(exerciseToEdit.image_urls ?? []);
+      } else {
+        setName(initialName);
+        setBodyPart(null);
+        setEquipment(null);
+        setHomeFriendly(false);
+        setInstructionSteps(['']);
+        setImages([]);
+      }
       sheetRef.current?.snapToIndex(0);
     } else {
       sheetRef.current?.close();
     }
-  }, [visible, initialName]);
+  }, [visible, initialName, exerciseToEdit]);
 
-  const handleSubmit = useCallback(() => {
+  const handleStepChange = useCallback((index: number, value: string) => {
+    setInstructionSteps((prev) => prev.map((step, i) => (i === index ? value : step)));
+  }, []);
+
+  const handleAddStep = useCallback(() => {
+    setInstructionSteps((prev) => [...prev, '']);
+  }, []);
+
+  const handleRemoveStep = useCallback((index: number) => {
+    setInstructionSteps((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const handlePickImages = useCallback(async () => {
+    const remainingSlots = MAX_CUSTOM_EXERCISE_IMAGES - images.length;
+    if (remainingSlots <= 0) return;
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      triggerSuccess('נדרשת הרשאת גישה לגלריה', 'failed');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: true,
+      selectionLimit: remainingSlots,
+      quality: 0.7,
+    });
+    if (result.canceled) return;
+    const pickedUris = result.assets.map((asset) => asset.uri).slice(0, remainingSlots);
+    setImages((prev) => [...prev, ...pickedUris]);
+  }, [images.length, triggerSuccess]);
+
+  const handleRemoveImage = useCallback((index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
     if (!name.trim() || !bodyPart) return;
-    createCustomExercise(
-      {
-        name: name.trim(),
-        body_part: bodyPart,
-        equipment,
-        home_friendly: homeFriendly,
-        notes: notes.trim() || null,
-      },
-      { onSuccess: onClose }
-    );
-  }, [name, bodyPart, equipment, homeFriendly, notes, createCustomExercise, onClose]);
+    const instructions = instructionSteps.map((step) => step.trim()).filter((step) => step.length > 0);
+
+    let finalImageUrls = images;
+    const localUris = images.filter((img) => !img.startsWith('http'));
+    if (localUris.length > 0) {
+      setIsUploadingImages(true);
+      try {
+        const uploadedUrls = await uploadCustomExerciseImages(localUris);
+        const uploadMap = new Map(localUris.map((uri, i) => [uri, uploadedUrls[i]]));
+        finalImageUrls = images.map((img) => uploadMap.get(img) ?? img);
+      } catch {
+        triggerSuccess('שגיאה בהעלאת התמונות, נסה שוב', 'failed');
+        setIsUploadingImages(false);
+        return;
+      }
+      setIsUploadingImages(false);
+    }
+
+    const payload = {
+      name: name.trim(),
+      body_part: bodyPart,
+      equipment,
+      home_friendly: homeFriendly,
+      instructions,
+      image_urls: finalImageUrls,
+    };
+    if (exerciseToEdit) {
+      updateCustomExercise({ rawId: exerciseToEdit.id, payload }, { onSuccess: onClose });
+    } else {
+      createCustomExercise(payload, { onSuccess: onClose });
+    }
+  }, [
+    name,
+    bodyPart,
+    equipment,
+    homeFriendly,
+    instructionSteps,
+    images,
+    exerciseToEdit,
+    createCustomExercise,
+    updateCustomExercise,
+    onClose,
+    triggerSuccess,
+  ]);
 
   const canSubmit = name.trim().length > 0 && !!bodyPart;
 
@@ -65,7 +165,7 @@ const AddCustomExerciseModal = ({ visible, onClose, initialName = '' }: AddCusto
       enablePanDownToClose
       minHeight="75%"
       maxHeight="90%"
-      title="הוספת תרגיל ידנית"
+      title={isEditMode ? 'עריכת תרגיל' : 'הוספת תרגיל ידנית'}
       onChange={(isOpen) => !isOpen && onClose()}
       onClosePress={() => sheetRef.current?.close()}
     >
@@ -82,6 +182,40 @@ const AddCustomExerciseModal = ({ visible, onClose, initialName = '' }: AddCusto
               accessibilityLabel="שם התרגיל"
             />
           </View>
+        </View>
+
+        <View>
+          <Text className="typo-label text-background-400 mb-2">
+            תמונות <Text className="text-background-600">(רשות, עד {MAX_CUSTOM_EXERCISE_IMAGES})</Text>
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {images.map((uri, index) => (
+              <View key={uri} className="w-20 h-20 rounded-2xl overflow-hidden">
+                <Image source={{ uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                <Pressable
+                  onPress={() => handleRemoveImage(index)}
+                  hitSlop={8}
+                  className="absolute top-1 left-1 bg-black/70 rounded-full p-1"
+                  accessibilityRole="button"
+                  accessibilityLabel={`מחק תמונה ${index + 1}`}
+                >
+                  <Ionicons name="close" size={12} color="white" />
+                </Pressable>
+              </View>
+            ))}
+            {images.length < MAX_CUSTOM_EXERCISE_IMAGES && (
+              <Pressable
+                onPress={handlePickImages}
+                className="w-20 h-20 rounded-2xl border border-dashed border-zinc-700 bg-zinc-900 items-center justify-center"
+                accessibilityRole="button"
+                accessibilityLabel="הוסף תמונה לתרגיל"
+                accessibilityHint="פותח את גלריית התמונות לבחירה"
+              >
+                <Ionicons name="camera-outline" size={22} color={colors.background[400]} />
+                <Text className="typo-caption text-background-400 mt-1">הוסף</Text>
+              </Pressable>
+            )}
+          </ScrollView>
         </View>
 
         <View>
@@ -163,32 +297,59 @@ const AddCustomExerciseModal = ({ visible, onClose, initialName = '' }: AddCusto
 
         <View>
           <Text className="typo-label text-background-400 mb-2">
-            הערות <Text className="text-background-600">(רשות)</Text>
+            הוראות ביצוע <Text className="text-background-600">(רשות)</Text>
           </Text>
-          <View className="bg-zinc-900 border border-zinc-800 rounded-2xl px-4">
-            <TextInput
-              value={notes}
-              onChangeText={setNotes}
-              placeholder="הוראות ביצוע, טיפים..."
-              placeholderTextColor="#525252"
-              className="typo-input text-white text-right py-3"
-              multiline
-              numberOfLines={3}
-              accessibilityLabel="הערות לתרגיל"
-            />
+          <View className="gap-2">
+            {instructionSteps.map((step, index) => (
+              <View key={index} className="flex-row items-center gap-2">
+                <View className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 items-center justify-center">
+                  <Text className="typo-caption-bold text-lime-500">{index + 1}</Text>
+                </View>
+                <View className="flex-1 bg-zinc-900 border border-zinc-800 rounded-2xl px-4">
+                  <TextInput
+                    value={step}
+                    onChangeText={(value) => handleStepChange(index, value)}
+                    placeholder={`שלב ${index + 1}...`}
+                    placeholderTextColor="#525252"
+                    className="typo-input text-white text-right py-3"
+                    accessibilityLabel={`שלב ${index + 1} בהוראות הביצוע`}
+                  />
+                </View>
+                {instructionSteps.length > 1 && (
+                  <Pressable
+                    onPress={() => handleRemoveStep(index)}
+                    hitSlop={8}
+                    className="bg-red-500/10 rounded-xl p-2"
+                    accessibilityRole="button"
+                    accessibilityLabel={`מחק שלב ${index + 1}`}
+                  >
+                    <Ionicons name="close" size={16} color="#ef4444" />
+                  </Pressable>
+                )}
+              </View>
+            ))}
           </View>
+          <Pressable
+            onPress={handleAddStep}
+            className="flex-row items-center gap-1 self-start mt-3 px-3 py-1.5 rounded-full border border-lime-500/30 bg-lime-500/10"
+            accessibilityRole="button"
+            accessibilityLabel="הוסף שלב נוסף להוראות"
+          >
+            <Ionicons name="add" size={14} color={colors.lime[400]} />
+            <Text className="typo-caption-bold text-lime-400">הוסף שלב</Text>
+          </Pressable>
         </View>
 
         <ActionButton
           onPress={handleSubmit}
-          label="שמור תרגיל"
+          label={isUploadingImages ? 'מעלה תמונות...' : isEditMode ? 'שמור שינויים' : 'שמור תרגיל'}
           iconName="checkmark"
           variant="primary"
           size="md"
           fullWidth
           loading={isPending}
           disabled={!canSubmit}
-          accessibilityLabel="שמור תרגיל חדש"
+          accessibilityLabel={isEditMode ? 'שמור שינויים בתרגיל' : 'שמור תרגיל חדש'}
         />
       </View>
     </ModalBottom>
