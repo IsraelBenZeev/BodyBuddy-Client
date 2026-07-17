@@ -15,7 +15,12 @@ interface FloatingSelectionBarProps {
   onNavigate: () => void;
 }
 
-const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNavigate }: FloatingSelectionBarProps) => {
+const FloatingSelectionBar = ({
+  selectedParts,
+  onDeselectPart,
+  onClearAll,
+  onNavigate,
+}: FloatingSelectionBarProps) => {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
@@ -23,7 +28,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
       entering={FadeInDown.duration(220)}
       exiting={FadeOutDown.duration(180)}
       className="absolute left-4 right-4"
-      style={{ bottom: TAB_BAR_HEIGHT + bottomInset-10, zIndex: 50 }}
+      style={{ bottom: TAB_BAR_HEIGHT + bottomInset + 20, zIndex: 50 }}
       pointerEvents="box-none"
     >
       {/* כרטיס עם lime neon border glow */}
@@ -47,7 +52,12 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
           <Text className="typo-caption-bold text-zinc-500 tracking-wide">
             {selectedParts.length} אזורים נבחרו
           </Text>
-          <AppButton animationType="scale" haptic="light" onPress={onClearAll} accessibilityLabel="נקה את כל הבחירות">
+          <AppButton
+            animationType="scale"
+            haptic="light"
+            onPress={onClearAll}
+            accessibilityLabel="נקה את כל הבחירות"
+          >
             <Text className="typo-caption-bold text-red-400">נקה הכל</Text>
           </AppButton>
         </View>
@@ -73,10 +83,13 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
                 gap: 5,
               }}
             >
-              <Text className="typo-caption-bold text-lime-200">
-                {partsBodyHebrew[part]}
-              </Text>
-              <AppButton animationType="scale" haptic="light" onPress={() => onDeselectPart(part)} accessibilityLabel={`הסר ${partsBodyHebrew[part]}`}>
+              <Text className="typo-caption-bold text-lime-200">{partsBodyHebrew[part]}</Text>
+              <AppButton
+                animationType="scale"
+                haptic="light"
+                onPress={() => onDeselectPart(part)}
+                accessibilityLabel={`הסר ${partsBodyHebrew[part]}`}
+              >
                 <Ionicons name="close-circle" size={14} color="rgba(132, 204, 22, 0.45)" />
               </AppButton>
             </View>
@@ -91,9 +104,7 @@ const FloatingSelectionBar = ({ selectedParts, onDeselectPart, onClearAll, onNav
           className="w-full h-14 bg-lime-500/20 border border-lime-500/50 rounded-full items-center justify-center"
           accessibilityLabel="צפה בתרגילים לאזורים הנבחרים"
         >
-          <Text className="typo-btn-cta text-lime-300 ">
-            צפה בתרגילים
-          </Text>
+          <Text className="typo-btn-cta text-lime-300 ">צפה בתרגילים</Text>
         </AppButton>
       </View>
     </Animated.View>

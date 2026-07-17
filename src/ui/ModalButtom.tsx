@@ -3,6 +3,7 @@ import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { X } from 'lucide-react-native';
 import { forwardRef, ReactNode, useCallback, useMemo } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ModalBottomProps {
   children?: ReactNode;
@@ -31,6 +32,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     onClosePress,
   } = props;
 
+  const { bottom } = useSafeAreaInsets();
   const snapPoints = useMemo(() => [minHeight, maxHeight], [minHeight, maxHeight]);
 
   const renderHandle = useCallback(
@@ -95,7 +97,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
     >
       {useScrollView ? (
         <BottomSheetScrollView
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 + bottom }}
           showsVerticalScrollIndicator={false}
         >
           {children}
