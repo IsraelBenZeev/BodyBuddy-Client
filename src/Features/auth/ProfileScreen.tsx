@@ -309,8 +309,8 @@ export default function ProfileScreen() {
               delay={700}
               className="bg-background-800 border border-white/5 rounded-[30px] px-2 py-4 mb-8 flex-row items-start gap-5"
             >
-              <View className="bg-lime-500 p-3 rounded-2xl ml-4 shadow-lg shadow-lime-500/20 ">
-                <Ionicons name="fitness" size={24} color="black" />
+              <View className="bg-lime-500/10 p-3 rounded-2xl ml-4">
+                <Ionicons name="fitness-outline" size={24} color={colors.lime[500]} />
               </View>
               <View className="flex-1 items-start">
                 <Text className="typo-caption-bold text-white/30 uppercase tracking-widest text-right">
