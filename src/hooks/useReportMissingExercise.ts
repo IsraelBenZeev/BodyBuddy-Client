@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { createExerciseReport, notifyExerciseReportServer } from '../service/reportService';
+import { createExerciseReport } from '../service/reportService';
 import { useUIStore } from '../store/useUIStore';
 import { CreateExerciseReportPayload } from '../types/exerciseReport';
 
@@ -9,7 +9,6 @@ export const useReportMissingExercise = (userId: string | undefined) => {
   return useMutation({
     mutationFn: async (payload: CreateExerciseReportPayload) => {
       await createExerciseReport(userId!, payload);
-      await notifyExerciseReportServer(payload);
     },
     onSuccess: () => {
       triggerSuccess('תודה! קיבלנו את הדיווח', 'success');
