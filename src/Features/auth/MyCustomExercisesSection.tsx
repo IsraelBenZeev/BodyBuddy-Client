@@ -108,7 +108,7 @@ export const MyCustomExercisesSheet = ({
         ref={sheetRef}
         initialIndex={-1}
         enablePanDownToClose
-        minHeight="68%"
+        minHeight="60%"
         maxHeight="85%"
         title="התרגילים שהוספתי"
         onChange={(isOpen) => !isOpen && onClose()}
