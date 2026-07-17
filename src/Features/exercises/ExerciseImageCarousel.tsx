@@ -1,12 +1,40 @@
 import { colors } from '@/colors';
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
 interface ExerciseImageCarouselProps {
   imageUrls: string[];
 }
+
+const CarouselImage = ({ uri }: { uri: string }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  return (
+    <View style={{ flex: 1 }}>
+      <Image
+        source={{ uri }}
+        style={{ width: '100%', height: '100%' }}
+        contentFit="contain"
+        transition={300}
+        cachePolicy="disk"
+        accessibilityLabel="תמונת התרגיל"
+        onLoadStart={() => setIsLoading(true)}
+        onLoad={() => setIsLoading(false)}
+        onError={() => setIsLoading(false)}
+      />
+      {isLoading && (
+        <View
+          className="absolute inset-0 items-center justify-center"
+          pointerEvents="none"
+          importantForAccessibility="no"
+        >
+          <ActivityIndicator size="large" color={colors.lime[500]} />
+        </View>
+      )}
+    </View>
+  );
+};
 
 const ExerciseImageCarousel = ({ imageUrls }: ExerciseImageCarouselProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -21,16 +49,7 @@ const ExerciseImageCarousel = ({ imageUrls }: ExerciseImageCarouselProps) => {
         accessibilityHint="החלק ימינה או שמאלה כדי לעבור בין התמונות"
       >
         {imageUrls.map((uri) => (
-          <View key={uri} style={{ flex: 1 }}>
-            <Image
-              source={{ uri }}
-              style={{ width: '100%', height: '100%' }}
-              contentFit="contain"
-              transition={300}
-              cachePolicy="disk"
-              accessibilityLabel="תמונת התרגיל"
-            />
-          </View>
+          <CarouselImage key={uri} uri={uri} />
         ))}
       </PagerView>
       <View

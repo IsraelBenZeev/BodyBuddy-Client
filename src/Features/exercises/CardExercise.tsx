@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 interface CardExerciseProps {
   item: Exercise;
@@ -21,6 +21,7 @@ interface CardExerciseProps {
 
 const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerciseProps) => {
   const [imgError, setImgError] = useState(false);
+  const [imgLoading, setImgLoading] = useState(true);
   const router = useRouter();
   const isSelectedId = useWorkoutStore((state) => state.selectedExerciseIds.has(item.exerciseId));
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
@@ -76,14 +77,30 @@ const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerci
         {!imageSource || imgError ? (
           <DumbbellAnimation size={85} />
         ) : (
-          <Image
-            source={imageSource}
-            style={styles.image}
-            contentFit="cover"
-            transition={400}
-            cachePolicy="memory"
-            onError={() => setImgError(true)}
-          />
+          <>
+            <Image
+              source={imageSource}
+              style={styles.image}
+              contentFit="cover"
+              transition={400}
+              cachePolicy="memory-disk"
+              onLoadStart={() => setImgLoading(true)}
+              onLoad={() => setImgLoading(false)}
+              onError={() => {
+                setImgError(true);
+                setImgLoading(false);
+              }}
+            />
+            {imgLoading && (
+              <View
+                className="absolute inset-0 items-center justify-center"
+                pointerEvents="none"
+                importantForAccessibility="no"
+              >
+                <ActivityIndicator size="small" color={colors.lime[500]} />
+              </View>
+            )}
+          </>
         )}
 
         {/* כפתור מועדפים - רק במצב VIEW */}

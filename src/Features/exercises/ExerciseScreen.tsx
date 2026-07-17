@@ -7,12 +7,22 @@ import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import BackGround from '@/src/ui/BackGround';
 import Handle from '@/src/ui/Handle';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useEvent } from 'expo';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { X } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View, Linking } from 'react-native';
+import {
+  ActivityIndicator,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Linking,
+} from 'react-native';
 import Buttons from './Buttons';
 import ExerciseHistory from './ExerciseHistory';
 import ExerciseImageCarousel from './ExerciseImageCarousel';
@@ -22,6 +32,8 @@ import TabsManager from './TabsMenager';
 
 const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
   const [imgError, setImgError] = useState(false);
+  const [imgLoading, setImgLoading] = useState(true);
+  const [hasFirstFrame, setHasFirstFrame] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
@@ -32,8 +44,11 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
   const player = useVideoPlayer(exerciseData?.videoUrl ?? null, (player) => {
     player.loop = true;
     player.muted = true;
+    player.audioMixingMode = 'mixWithOthers';
     player.play();
   });
+  const { status: videoStatus } = useEvent(player, 'statusChange', { status: player.status });
+  const isVideoLoading = videoStatus === 'loading' || videoStatus === 'idle';
   if (isExerciseLoading || !exerciseData) {
     return (
       <BackGround>
@@ -101,27 +116,69 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
         </View>
         <View style={styles.imageWrapper} className="self-center">
           {exerciseData?.videoUrl ? (
-            <VideoView
-              style={styles.mainImage}
-              player={player}
-              contentFit="contain"
-              nativeControls={false}
-            />
+            <>
+              <VideoView
+                style={styles.mainImage}
+                player={player}
+                contentFit="contain"
+                nativeControls={false}
+                onFirstFrameRender={() => setHasFirstFrame(true)}
+              />
+              {!hasFirstFrame && (
+                <View
+                  className="absolute inset-0 items-center justify-center"
+                  pointerEvents="none"
+                  importantForAccessibility="no"
+                >
+                  {exerciseData.imageUrls?.[0] && (
+                    <Image
+                      style={styles.mainImage}
+                      source={exerciseData.imageUrls[0]}
+                      contentFit="contain"
+                      cachePolicy="disk"
+                    />
+                  )}
+                  {isVideoLoading && (
+                    <View className="absolute inset-0 items-center justify-center">
+                      <ActivityIndicator size="large" color={colors.lime[500]} />
+                    </View>
+                  )}
+                </View>
+              )}
+            </>
           ) : exerciseData?.imageUrls && exerciseData.imageUrls.length > 1 ? (
             <ExerciseImageCarousel imageUrls={exerciseData.imageUrls} />
           ) : exerciseData?.imageUrls?.[0] && !imgError ? (
-            <Image
-              style={styles.mainImage}
-              source={exerciseData.imageUrls[0]}
-              contentFit="contain"
-              transition={500}
-              cachePolicy={'disk'}
-              onError={() => setImgError(true)}
-            />
+            <>
+              <Image
+                style={styles.mainImage}
+                source={exerciseData.imageUrls[0]}
+                contentFit="contain"
+                transition={500}
+                cachePolicy={'disk'}
+                onLoadStart={() => setImgLoading(true)}
+                onLoad={() => setImgLoading(false)}
+                onError={() => {
+                  setImgError(true);
+                  setImgLoading(false);
+                }}
+              />
+              {imgLoading && (
+                <View
+                  className="absolute inset-0 items-center justify-center"
+                  pointerEvents="none"
+                  importantForAccessibility="no"
+                >
+                  <ActivityIndicator size="large" color={colors.lime[500]} />
+                </View>
+              )}
+            </>
           ) : (
             <>
               <DumbbellAnimation size={200} />
-              <Text className="typo-label text-zinc-400 mt-1">תרגיל זה אינו זמין כרגע</Text>
+              <Text className="typo-label text-zinc-400 mt-1">
+                {isCustom ? 'לתרגיל זה לא נוספה עדיין תמונה' : 'תרגיל זה אינו זמין כרגע'}
+              </Text>
             </>
           )}
         </View>
