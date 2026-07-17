@@ -106,7 +106,8 @@ export const useCreateCustomExercise = (userId: string | undefined) => {
   return useMutation({
     mutationFn: (payload: CreateCustomExercisePayload) => createCustomExercise(userId!, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId] });
+      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['exercises', 'byIds'], refetchType: 'all' });
       triggerSuccess('התרגיל נוסף בהצלחה', 'success');
     },
     onError: () => {
@@ -123,7 +124,8 @@ export const useUpdateCustomExercise = (userId: string | undefined) => {
     mutationFn: ({ rawId, payload }: { rawId: string; payload: CreateCustomExercisePayload }) =>
       updateCustomExercise(rawId, userId!, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId] });
+      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['exercises', 'byIds'], refetchType: 'all' });
       triggerSuccess('התרגיל עודכן בהצלחה', 'success');
     },
     onError: () => {
@@ -139,7 +141,8 @@ export const useDeleteCustomExercise = (userId: string | undefined) => {
   return useMutation({
     mutationFn: (rawId: string) => deleteCustomExercise(rawId, userId!),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId] });
+      queryClient.invalidateQueries({ queryKey: ['custom-exercises', userId], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['exercises', 'byIds'], refetchType: 'all' });
       triggerSuccess('התרגיל נמחק', 'success');
     },
     onError: () => {

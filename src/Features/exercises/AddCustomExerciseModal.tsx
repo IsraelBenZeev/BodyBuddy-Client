@@ -169,7 +169,7 @@ const AddCustomExerciseModal = ({
       onChange={(isOpen) => !isOpen && onClose()}
       onClosePress={() => sheetRef.current?.close()}
     >
-      <View className="gap-6 pb-6">
+      <View className="gap-6 pb-14">
         <View>
           <Text className="typo-label text-background-400 mb-2">שם התרגיל</Text>
           <View className="bg-zinc-900 border border-zinc-800 rounded-2xl px-4">

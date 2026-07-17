@@ -1,13 +1,15 @@
+import { colors } from '@/colors';
 import AddCustomExerciseModal from '@/src/Features/exercises/AddCustomExerciseModal';
 import { useDeleteCustomExercise, useUserCustomExercisesRaw } from '@/src/hooks/useEcercises';
 import { partsBodyHebrew } from '@/src/types/bodtPart';
-import { UserCustomExercise } from '@/src/types/customExercise';
+import { toCustomExerciseId, UserCustomExercise } from '@/src/types/customExercise';
 import ActionButton from '@/src/ui/ActionButton';
 import DeleteConfirmModal from '@/src/ui/DeleteConfirmModal';
 import ModalBottom from '@/src/ui/ModalButtom';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { format } from 'date-fns';
+import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
@@ -28,15 +30,17 @@ export const MyCustomExercisesTrigger = ({ userId, onPress }: MyCustomExercisesT
       accessibilityLabel="פתח את רשימת התרגילים שהוספתי"
       accessibilityHint="פותח כרטיסייה עם התרגילים המותאמים אישית שלך"
     >
-      <View className="bg-lime-500 p-3 rounded-2xl ml-4 shadow-lg shadow-lime-500/20">
-        <Ionicons name="barbell" size={24} color="black" />
+      <View className="bg-lime-500/10 p-3 rounded-2xl ml-4">
+        <Ionicons name="barbell-outline" size={24} color={colors.lime[500]} />
       </View>
       <View className="flex-1 items-start">
-        <Text className="typo-caption-bold text-white/30 uppercase tracking-widest text-right">
+        <Text className="typo-caption-bold text-white/30 uppercase tracking-widest text-left">
           תרגילים אישיים
         </Text>
         <Text className="typo-h4 text-white text-right leading-tight">
-          {customExercises.length > 0 ? `${customExercises.length} תרגילים שהוספתי` : 'התרגילים שהוספתי'}
+          {customExercises.length > 0
+            ? `${customExercises.length} תרגילים שהוספתי`
+            : 'התרגילים שהוספתי'}
         </Text>
       </View>
       <Ionicons name="chevron-back" size={20} color="#71717a" />
@@ -53,7 +57,11 @@ interface MyCustomExercisesSheetProps {
   onClose: () => void;
 }
 
-export const MyCustomExercisesSheet = ({ userId, visible, onClose }: MyCustomExercisesSheetProps) => {
+export const MyCustomExercisesSheet = ({
+  userId,
+  visible,
+  onClose,
+}: MyCustomExercisesSheetProps) => {
   const sheetRef = useRef<BottomSheet>(null);
   const { data: customExercises = [] } = useUserCustomExercisesRaw(userId);
   const { mutate: deleteCustomExercise, isPending: isDeleting } = useDeleteCustomExercise(userId);
@@ -100,23 +108,13 @@ export const MyCustomExercisesSheet = ({ userId, visible, onClose }: MyCustomExe
         ref={sheetRef}
         initialIndex={-1}
         enablePanDownToClose
-        minHeight="60%"
+        minHeight="68%"
         maxHeight="85%"
         title="התרגילים שהוספתי"
         onChange={(isOpen) => !isOpen && onClose()}
         onClosePress={() => sheetRef.current?.close()}
       >
         <View className="gap-3 pb-6">
-          <ActionButton
-            onPress={handleAddNew}
-            label="הוסף תרגיל חדש"
-            iconName="add-circle-outline"
-            variant="secondary"
-            size="sm"
-            fullWidth
-            accessibilityLabel="הוסף תרגיל מותאם אישית חדש"
-          />
-
           {customExercises.length === 0 ? (
             <View className="bg-background-900 border border-white/5 rounded-3xl p-5 items-center mt-2">
               <Text className="typo-label text-background-400 text-center">
@@ -133,6 +131,15 @@ export const MyCustomExercisesSheet = ({ userId, visible, onClose }: MyCustomExe
               />
             ))
           )}
+          <ActionButton
+            onPress={handleAddNew}
+            label="הוסף תרגיל חדש"
+            iconName="add-circle-outline"
+            variant="secondary"
+            size="sm"
+            fullWidth
+            accessibilityLabel="הוסף תרגיל מותאם אישית חדש"
+          />
         </View>
       </ModalBottom>
 
@@ -166,9 +173,21 @@ const CustomExerciseRow = ({
 }) => {
   const handleEdit = useCallback(() => onEdit(exercise), [onEdit, exercise]);
   const handleDelete = useCallback(() => onDelete(exercise), [onDelete, exercise]);
+  const handlePress = useCallback(() => {
+    router.push({
+      pathname: '/exercise/[exerciseId]',
+      params: { exerciseId: toCustomExerciseId(exercise.id) },
+    });
+  }, [exercise.id]);
 
   return (
-    <View className="bg-background-900 border border-white/5 rounded-2xl px-4 py-3 flex-row items-center justify-between">
+    <Pressable
+      onPress={handlePress}
+      className="bg-background-900 border border-white/5 rounded-2xl px-4 py-3 flex-row items-center justify-between"
+      accessibilityRole="button"
+      accessibilityLabel={`צפה בתרגיל ${exercise.name}`}
+      accessibilityHint="פותח תצוגה מלאה של התרגיל עם תמונות והוראות ביצוע"
+    >
       <View className="flex-1 items-start">
         <Text className="typo-body-primary text-white text-right" numberOfLines={1}>
           {exercise.name}
@@ -199,7 +218,8 @@ const CustomExerciseRow = ({
         >
           <Ionicons name="trash-outline" size={16} color="#ef4444" />
         </Pressable>
+        <Ionicons name="chevron-back" size={16} color="#71717a" />
       </View>
-    </View>
+    </Pressable>
   );
 };
