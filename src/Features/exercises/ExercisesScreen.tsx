@@ -381,7 +381,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                 renderItem={({ item }) =>
                   item.kind === 'section-header' ? (
                     <View className="px-2 pt-2 pb-3">
-                      <Text className="typo-caption-bold text-lime-400 uppercase tracking-widest text-right">
+                      <Text className="typo-caption-bold text-lime-400 uppercase tracking-widest text-left">
                         {item.label}
                       </Text>
                     </View>

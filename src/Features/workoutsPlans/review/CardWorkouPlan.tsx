@@ -44,7 +44,7 @@ const CardWorkouPlan = ({workoutPlan}: Props) => {
 
                     {/* תאריך יצירה */}
                     {workoutPlan?.created_at && (
-                        <Text className="typo-caption text-zinc-500 mt-3 text-right">
+                        <Text className="typo-caption text-zinc-500 mt-3 text-left">
                             נוצר בתאריך {new Date(workoutPlan.created_at).toLocaleDateString('he-IL', {
                                 day: '2-digit',
                                 month: '2-digit',

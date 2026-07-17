@@ -109,9 +109,9 @@ const AvatarSelectorScreen = () => {
           </View>
 
           {/* טקסט הדרכה מתחת לאווטאר */}
-          <Text className="typo-caption text-zinc-600 text-center leading-[18px] px-10 mt-4 z-[5]">
+          {/* <Text className="typo-caption text-zinc-600 text-center leading-[18px] px-10 mt-4 z-[5]">
             לחץ על חלקי הגוף במודל כדי לראות תרגילים רלוונטיים
-          </Text>
+          </Text> */}
         </View>
         {/* כפתור סיבוב + חיווי צד */}
         <View
@@ -156,7 +156,7 @@ const AvatarSelectorScreen = () => {
       {/* כפתור אירובי - מוצג רק כשלא נבחרו חלקי גוף, כדי לא להתנגש עם בר הבחירה */}
       {selectedParts.length === 0 && (
         <View
-          className="absolute left-6  flex flex-col  top-20 items-center"
+          className="absolute right-6  flex flex-col  top-20 items-center"
           style={{ bottom: TAB_BAR_HEIGHT + bottomInset - 10, zIndex: 40 }}
           pointerEvents="box-none"
         >
