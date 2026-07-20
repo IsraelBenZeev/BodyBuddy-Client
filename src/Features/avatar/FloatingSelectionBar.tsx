@@ -4,9 +4,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { ScrollView, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const TAB_BAR_HEIGHT = 60;
+const TAB_BAR_HEIGHT = 74;
+const TAB_BAR_GAP = 12;
 
 interface FloatingSelectionBarProps {
   selectedParts: BodyPart[];
@@ -21,14 +21,12 @@ const FloatingSelectionBar = ({
   onClearAll,
   onNavigate,
 }: FloatingSelectionBarProps) => {
-  const { bottom: bottomInset } = useSafeAreaInsets();
-
   return (
     <Animated.View
       entering={FadeInDown.duration(220)}
       exiting={FadeOutDown.duration(180)}
       className="absolute left-4 right-4"
-      style={{ bottom: TAB_BAR_HEIGHT + bottomInset + 20, zIndex: 50 }}
+      style={{ bottom: TAB_BAR_HEIGHT + TAB_BAR_GAP, zIndex: 50 }}
       pointerEvents="box-none"
     >
       {/* כרטיס עם lime neon border glow */}
