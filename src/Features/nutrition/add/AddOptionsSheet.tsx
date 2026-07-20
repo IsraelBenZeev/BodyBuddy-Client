@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useMemo } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ActionButton from '../../../ui/ActionButton';
 
 interface Props {
   visible: boolean;
@@ -207,16 +206,14 @@ const AddOptionsSheet = ({ visible, onClose, onSelectFromList, onAddNewFood, onA
             </View>
 
             {/* ─── Cancel ─── */}
-            <View className="mt-5">
-              <ActionButton
-                onPress={onClose}
-                label="ביטול"
-                variant="secondary"
-                size="sm"
-                fullWidth
-                accessibilityLabel="ביטול"
-              />
-            </View>
+            <Pressable
+              onPress={onClose}
+              className="mt-5 min-h-[44px] items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="ביטול"
+            >
+              <Text className="typo-btn-secondary text-background-400">ביטול</Text>
+            </Pressable>
 
           </View>
         </Pressable>
