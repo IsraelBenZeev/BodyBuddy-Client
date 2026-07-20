@@ -1,12 +1,14 @@
-import { colors } from '@/colors';
-import { ActivityIndicator, View } from 'react-native';
+import BodyBuddyLoadingIcon, { BodyBuddyLoadingVariant } from '@/src/ui/BodyBuddyLoadingIcon';
+import { View } from 'react-native';
+
 interface LoadingProps {
-    size?: 'small' | 'large';
-    color?: string;
+    size?: number;
+    variant?: BodyBuddyLoadingVariant;
 }
-const Loading = ({ size = 'large', color = colors.lime[500] }: LoadingProps) => (
+
+const Loading = ({ size = 64, variant = 'elasticTrail' }: LoadingProps) => (
   <View className="flex-1 justify-center items-center">
-    <ActivityIndicator size={size} color={color} />
+    <BodyBuddyLoadingIcon size={size} variant={variant} />
   </View>
 );
 export default Loading;

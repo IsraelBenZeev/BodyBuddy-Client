@@ -11,7 +11,7 @@ import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-import { Share, Text, View } from 'react-native';
+import { ActivityIndicator, Share, Text, View } from 'react-native';
 import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 
 const Button = React.memo(
@@ -128,7 +128,7 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
               className={`flex-row items-center order  rounded-full p-3 ${deletePending ? 'opacity-50 ' : 'border border-lime-500'}`}
             >
               {deletePending ? (
-                <Loading size="small" />
+                <ActivityIndicator size="small" color={colors.lime[500]} />
               ) : (
                 <AntDesign name="check" size={16} color={colors.lime[500]} />
               )}
@@ -170,7 +170,7 @@ const Buttons = ({ plan }: { plan: WorkoutPlan }) => {
         accessibilityLabel={duplicatePending ? 'שכפול תוכנית מתבצע' : 'שכפל תוכנית'}
         icon={
           duplicatePending ? (
-            <Loading size="small" />
+            <Loading size={20} />
           ) : (
             <Ionicons name="duplicate-outline" size={26} color={colors.lime[500]} />
           )

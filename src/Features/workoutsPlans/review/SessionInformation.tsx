@@ -297,7 +297,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
               <View className="flex-row items-center justify-between bg-background-800 px-4 py-3 border-b border-gray-800 gap-2">
                 <View className="bg-white/10 rounded-lg overflow-hidden border border-gray-700">
                   {isLoadingExercises ? (
-                    <Loading size="small" />
+                    <Loading size={28} />
                   ) : exerciseInfo?.imageUrls?.[0] ? (
                     <Image
                       source={{ uri: exerciseInfo.imageUrls[0] }}

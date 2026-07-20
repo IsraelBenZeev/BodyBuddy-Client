@@ -23,7 +23,7 @@ const SessionManager = ({ id }: Props) => {
   if (workoutPlanLoading)
     return (
       <BackGround>
-        <Loading size="large" />
+        <Loading size={96} />
       </BackGround>
     );
 

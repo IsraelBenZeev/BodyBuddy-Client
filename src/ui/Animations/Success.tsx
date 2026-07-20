@@ -55,7 +55,7 @@ const Success = ({
         >
             {isLoading ? (
                 <View style={{ width: 24, height: 24 }}>
-                    <Loading size="small" color={colors.background[850]} />
+                    <Loading size={20} />
                 </View>
             ) : showSuccess ? (
                 <LottieView

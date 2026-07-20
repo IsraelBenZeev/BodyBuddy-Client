@@ -15,6 +15,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
 import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
+import Loading from '@/src/ui/Loading';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 import {
   calculateNutritionGoals,
@@ -26,7 +27,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   Animated,
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -167,9 +167,7 @@ const NutritionScreen = () => {
   if (isProfileLoading || isEntriesLoading) {
     return (
       <BackGround>
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color={colors.lime[500]} size="large" />
-        </View>
+        <Loading size={96} />
       </BackGround>
     );
   }

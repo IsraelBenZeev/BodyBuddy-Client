@@ -8,7 +8,7 @@ import { activityLevelOptions, genderOptions } from '@/src/types/profile';
 import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import { MyCustomExercisesSheet, MyCustomExercisesTrigger } from '@/src/Features/auth/MyCustomExercisesSection';
-import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
+import BodyBuddyLoadingIcon, { BodyBuddyLoadingVariant } from '@/src/ui/BodyBuddyLoadingIcon';
 import HoldButton from '@/src/ui/HoldButton';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
 import { Ionicons } from '@expo/vector-icons';
@@ -66,11 +66,13 @@ export default function ProfileScreen() {
   const [isPressingLogout, setIsPressingLogout] = useState(false);
   const [showLogoPreview, setShowLogoPreview] = useState(false);
   const [logoPreviewKey, setLogoPreviewKey] = useState(0);
+  const [logoPreviewVariant, setLogoPreviewVariant] = useState<BodyBuddyLoadingVariant>('elasticTrail');
   const [showCustomExercises, setShowCustomExercises] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       setAnimKey((k) => k + 1);
+      return () => setShowCustomExercises(false);
     }, [])
   );
 
@@ -82,7 +84,8 @@ export default function ProfileScreen() {
     error ? triggerSuccess('שגיאה', 'failed') : triggerSuccess('התנתקת בהצלחה', 'success');
   }, [triggerSuccess]);
 
-  const handleShowLogoPreview = useCallback(() => {
+  const handleShowLogoPreview = useCallback((variant: BodyBuddyLoadingVariant) => {
+    setLogoPreviewVariant(variant);
     setLogoPreviewKey((k) => k + 1);
     setShowLogoPreview(true);
   }, []);
@@ -195,16 +198,52 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          {/* כפתור זמני לבדיקת הלוגו — Preview בלי לצאת/לרענן את המסך */}
-          {/* <View className="mt-4 items-start">
+          {/* כפתורים זמניים להשוואת 3 אפשרויות אנימציית טעינה — Preview בלי לצאת/לרענן את המסך */}
+          {/* <View className="mt-4 flex-row flex-wrap gap-2 items-start">
             <ActionButton
-              onPress={handleShowLogoPreview}
-              label="בדיקת לוגו"
+              onPress={() => handleShowLogoPreview('flip3d')}
+              label="סיבוב תלת-מימדי"
               iconName="shapes-outline"
               variant="secondary"
               size="sm"
-              accessibilityLabel="הצג תצוגה מקדימה של הלוגו"
-              accessibilityHint="פותח מסך שקוף עם אנימציית הלוגו של BodyBuddy"
+              accessibilityLabel="הצג תצוגה מקדימה של אנימציית טעינה: סיבוב תלת-מימדי"
+              accessibilityHint="פותח מסך שקוף עם דיסקית המשקולת מסתובבת סביב ציר Y"
+            />
+            <ActionButton
+              onPress={() => handleShowLogoPreview('liftBounce')}
+              label="הרמה וקפיצה"
+              iconName="shapes-outline"
+              variant="secondary"
+              size="sm"
+              accessibilityLabel="הצג תצוגה מקדימה של אנימציית טעינה: הרמה וקפיצה"
+              accessibilityHint="פותח מסך שקוף עם הסמל מזנק ונוחת עם bounce"
+            />
+            <ActionButton
+              onPress={() => handleShowLogoPreview('elasticTrail')}
+              label="סיבוב אלסטי + זנב"
+              iconName="shapes-outline"
+              variant="secondary"
+              size="sm"
+              accessibilityLabel="הצג תצוגה מקדימה של אנימציית טעינה: סיבוב אלסטי עם זנב"
+              accessibilityHint="פותח מסך שקוף עם הסמל מסתובב עם קפיצה אלסטית וזנב זוהר"
+            />
+            <ActionButton
+              onPress={() => triggerSuccess('בדיקת הצלחה', 'success')}
+              label="הצג הצלחה"
+              iconName="checkmark-circle-outline"
+              variant="secondary"
+              size="sm"
+              accessibilityLabel="הצג בדיקה של אנימציית הצלחה"
+              accessibilityHint="מציג את ההודעה המצליחה על המסך"
+            />
+            <ActionButton
+              onPress={() => triggerSuccess('בדיקת כשלון', 'failed')}
+              label="הצג כשלון"
+              iconName="close-circle-outline"
+              variant="secondary"
+              size="sm"
+              accessibilityLabel="הצג בדיקה של אנימציית כשלון"
+              accessibilityHint="מציג את הודעת הכשלון על המסך"
             />
           </View> */}
         </View>
@@ -364,10 +403,10 @@ export default function ProfileScreen() {
           className="absolute inset-0 items-center justify-center bg-black/85"
           onPress={handleCloseLogoPreview}
           accessibilityRole="button"
-          accessibilityLabel="סגור תצוגת לוגו"
+          accessibilityLabel="סגור תצוגת טעינה"
           accessibilityHint="לחץ בכל מקום כדי לסגור"
         >
-          <BodyBuddyLogo key={logoPreviewKey} width={220} height={255} />
+          <BodyBuddyLoadingIcon key={logoPreviewKey} size={140} variant={logoPreviewVariant} />
           <Text className="typo-label text-background-400 mt-8">לחץ בכל מקום כדי לסגור</Text>
         </Pressable>
       )}
