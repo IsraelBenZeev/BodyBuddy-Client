@@ -1,10 +1,21 @@
+import { colors } from '@/colors';
 import { useReportMissingExercise } from '@/src/hooks/useReportMissingExercise';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import ActionButton from '@/src/ui/ActionButton';
 import ModalBottom from '@/src/ui/ModalButtom';
+import { Ionicons } from '@expo/vector-icons';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
+
+const isValidUrl = (value: string): boolean => {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
 
 interface ReportMissingExerciseModalProps {
   visible: boolean;
@@ -20,29 +31,38 @@ const ReportMissingExerciseModal = ({ visible, onClose, initialQuery }: ReportMi
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [suggestedName, setSuggestedName] = useState('');
   const [note, setNote] = useState('');
+  const [exampleUrl, setExampleUrl] = useState('');
 
   useEffect(() => {
     if (visible) {
       setSearchQuery(initialQuery);
       setSuggestedName('');
       setNote('');
+      setExampleUrl('');
       sheetRef.current?.snapToIndex(0);
     } else {
       sheetRef.current?.close();
     }
   }, [visible, initialQuery]);
 
+  const trimmedUrl = exampleUrl.trim();
+  const urlError = useMemo(
+    () => (trimmedUrl.length > 0 && !isValidUrl(trimmedUrl) ? 'הקישור לא תקין' : null),
+    [trimmedUrl]
+  );
+
   const handleSubmit = useCallback(() => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim() || urlError) return;
     reportMissingExercise(
       {
         search_query: searchQuery.trim(),
         suggested_name: suggestedName.trim() || null,
         note: note.trim() || null,
+        example_url: trimmedUrl || null,
       },
       { onSuccess: onClose }
     );
-  }, [searchQuery, suggestedName, note, reportMissingExercise, onClose]);
+  }, [searchQuery, suggestedName, note, trimmedUrl, urlError, reportMissingExercise, onClose]);
 
   return (
     <ModalBottom
@@ -104,6 +124,35 @@ const ReportMissingExerciseModal = ({ visible, onClose, initialQuery }: ReportMi
           </View>
         </View>
 
+        <View>
+          <Text className="typo-label text-background-400 mb-2">
+            קישור לדוגמה <Text className="text-background-600">(רשות)</Text>
+          </Text>
+          <View
+            className="flex-row items-center bg-zinc-900 border rounded-2xl px-4"
+            style={{ borderColor: urlError ? colors.red[400] : '#27272a' }}
+          >
+            <Ionicons
+              name="link-outline"
+              size={18}
+              color={colors.background[400]}
+              importantForAccessibility="no"
+            />
+            <TextInput
+              value={exampleUrl}
+              onChangeText={setExampleUrl}
+              placeholder="קישור לסרטון או תמונה שממחישים את התרגיל"
+              placeholderTextColor="#525252"
+              className="flex-1 typo-input text-white text-right py-3 px-2"
+              keyboardType="url"
+              autoCapitalize="none"
+              autoCorrect={false}
+              accessibilityLabel="קישור לדוגמה איך התרגיל נראה"
+            />
+          </View>
+          {urlError && <Text className="typo-caption text-red-400 mt-1 text-right">{urlError}</Text>}
+        </View>
+
         <ActionButton
           onPress={handleSubmit}
           label="שלח דיווח"
@@ -112,7 +161,7 @@ const ReportMissingExerciseModal = ({ visible, onClose, initialQuery }: ReportMi
           size="md"
           fullWidth
           loading={isPending}
-          disabled={!searchQuery.trim()}
+          disabled={!searchQuery.trim() || !!urlError}
           accessibilityLabel="שלח דיווח על תרגיל חסר"
         />
       </View>

@@ -6,6 +6,7 @@ export interface ExerciseReport {
   search_query: string;
   suggested_name: string | null;
   note: string | null;
+  example_url: string | null;
   status: ExerciseReportStatus;
   created_at: string;
 }
@@ -14,4 +15,5 @@ export interface CreateExerciseReportPayload {
   search_query: string;
   suggested_name?: string | null;
   note?: string | null;
+  example_url?: string | null;
 }
