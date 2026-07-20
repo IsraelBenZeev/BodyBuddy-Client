@@ -1,5 +1,6 @@
 import { colors } from '@/colors';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useMemo, useRef } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { GestureResponderEvent, PanResponder, Text, View } from 'react-native';
@@ -13,9 +14,18 @@ interface Props {
 
 const MIN = 1;
 const MAX = 10;
-const TRACK_HEIGHT = 6;
-const THUMB_SIZE = 24;
-const TOUCH_AREA_HEIGHT = 44;
+const TRACK_WIDTH = 18;
+const THUMB_SIZE = 26;
+const TOUCH_AREA_WIDTH = 48;
+const SLIDER_HEIGHT = 150;
+
+// צבע דגש דינמי לפי רמת הקושי - עקבי עם הפלטה הסמנטית של האפליקציה
+// (red לאזהרה/עוצמה, lime כצבע הדגש הראשי)
+const getAccent = (value: number) => {
+  if (value >= 8) return { color: colors.red[400] };
+  if (value >= 4) return { color: colors.lime[300] };
+  return { color: colors.background[300] };
+};
 
 interface SliderTrackProps {
   value: number;
@@ -23,23 +33,23 @@ interface SliderTrackProps {
   onChange: (value: number) => void;
 }
 
-// מגע ותצוגה ידניים במקום ספריית סליידר חיצונית: תחת RTL כפוי (I18nManager.forceRTL)
-// חישוב המגע וחישוב מיקום התצוגה של הספרייה יצאו לא עקביים זה עם זה (התצוגה התהפכה, המגע לא) -
-// לכן בונים כאן את שני החישובים באותה נקודה כדי שיהיו תמיד תואמים
+// סליידר אנכי (ציר Y) במקום אופקי: תנועה למעלה/למטה אינה מושפעת מ-RTL כפוי
+// (I18nManager.forceRTL הופך רק פריסה וקואורדינטות אופקיות - לא אנכיות),
+// כך שאין צורך בהתאמות ידניות בין מיקום המגע לבין מיקום התצוגה
 const SliderTrack = ({ value, disabled, onChange }: SliderTrackProps) => {
-  const widthRef = useRef(0);
-  const startLeftPxRef = useRef(0);
+  const heightRef = useRef(0);
+  const startTopPxRef = useRef(0);
   const lastValueRef = useRef(value);
 
   lastValueRef.current = value;
 
-  // ממיר מיקום פיזי (פיקסלים מהקצה השמאלי של הרצועה) לערך: מימין (leftPx=w) = קל מאוד, משמאל (leftPx=0) = אינטנסיבי
-  const applyLeftPx = useCallback(
-    (leftPx: number) => {
-      const w = widthRef.current;
-      if (w <= 0) return;
-      const clamped = Math.max(0, Math.min(w, leftPx));
-      const ratio = 1 - clamped / w;
+  // ממיר מיקום פיזי (פיקסלים מהקצה העליון של הרצועה) לערך: למעלה (topPx=0) = אינטנסיבי, למטה (topPx=h) = קל מאוד
+  const applyTopPx = useCallback(
+    (topPx: number) => {
+      const h = heightRef.current;
+      if (h <= 0) return;
+      const clamped = Math.max(0, Math.min(h, topPx));
+      const ratio = 1 - clamped / h;
       const raw = MIN + ratio * (MAX - MIN);
       const newValue = Math.min(MAX, Math.max(MIN, Math.round(raw)));
       if (newValue !== lastValueRef.current) {
@@ -57,26 +67,26 @@ const SliderTrack = ({ value, disabled, onChange }: SliderTrackProps) => {
         onStartShouldSetPanResponder: () => !disabled,
         onMoveShouldSetPanResponder: () => !disabled,
         onPanResponderGrant: (e: GestureResponderEvent) => {
-          const w = widthRef.current;
-          startLeftPxRef.current = Math.max(0, Math.min(w, e.nativeEvent.locationX));
-          applyLeftPx(startLeftPxRef.current);
+          const h = heightRef.current;
+          startTopPxRef.current = Math.max(0, Math.min(h, e.nativeEvent.locationY));
+          applyTopPx(startTopPxRef.current);
         },
-        // dx הוא ההפרש הפיזי המצטבר מנקודת ההתחלה - אמין תמיד, בניגוד למדידת מיקום מוחלט שיכולה
-        // להתבלבל תחת RTL כפוי
+        // dy הוא ההפרש הפיזי המצטבר מנקודת ההתחלה - אמין תמיד, ולא תלוי בכיווניות RTL/LTR
         onPanResponderMove: (_e, gestureState) => {
-          applyLeftPx(startLeftPxRef.current + gestureState.dx);
+          applyTopPx(startTopPxRef.current + gestureState.dy);
         },
       }),
-    [disabled, applyLeftPx]
+    [disabled, applyTopPx]
   );
 
   const ratio = (value - MIN) / (MAX - MIN);
+  const accent = getAccent(value);
 
   return (
     <View
-      style={{ height: TOUCH_AREA_HEIGHT, justifyContent: 'center' }}
+      style={{ width: TOUCH_AREA_WIDTH, height: SLIDER_HEIGHT, alignItems: 'center' }}
       onLayout={(e) => {
-        widthRef.current = e.nativeEvent.layout.width;
+        heightRef.current = e.nativeEvent.layout.height;
       }}
       {...panResponder.panHandlers}
       accessible
@@ -85,41 +95,55 @@ const SliderTrack = ({ value, disabled, onChange }: SliderTrackProps) => {
       accessibilityValue={{ min: MIN, max: MAX, now: value }}
       accessibilityState={{ disabled }}
     >
+      {/* מסלול עם קו מתאר, וגרדיאנט קבוע (קל→אינטנסיבי) שנחשף לפי הערך */}
       <View
         pointerEvents="none"
         style={{
-          height: TRACK_HEIGHT,
-          borderRadius: TRACK_HEIGHT / 2,
-          backgroundColor: colors.background[600],
+          width: TRACK_WIDTH,
+          height: '100%',
+          borderRadius: TRACK_WIDTH / 2,
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.1)',
+          backgroundColor: colors.background[800],
+          overflow: 'hidden',
         }}
-      />
+      >
+        <LinearGradient
+          colors={[colors.red[400], colors.lime[400], colors.lime[500]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: `${(1 - ratio) * 100}%`,
+            backgroundColor: colors.background[800],
+          }}
+        />
+      </View>
+
+      {/* ידית עם זוהר בצבע הדגש הדינמי */}
       <View
         pointerEvents="none"
         style={{
           position: 'absolute',
-          right: 0,
-          height: TRACK_HEIGHT,
-          borderRadius: TRACK_HEIGHT / 2,
-          backgroundColor: colors.lime[500],
-          width: `${ratio * 100}%`,
-        }}
-      />
-      <View
-        pointerEvents="none"
-        style={{
-          position: 'absolute',
-          left: `${(1 - ratio) * 100}%`,
-          marginLeft: -THUMB_SIZE / 2,
+          bottom: `${ratio * 100}%`,
+          marginBottom: -THUMB_SIZE / 2,
           width: THUMB_SIZE,
           height: THUMB_SIZE,
           borderRadius: THUMB_SIZE / 2,
-          backgroundColor: colors.lime[500],
+          backgroundColor: colors.background[900],
           borderWidth: 3,
-          borderColor: colors.background[800],
-          shadowColor: colors.lime[500],
+          borderColor: accent.color,
+          shadowColor: accent.color,
           shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.5,
-          shadowRadius: 5,
+          shadowOpacity: 0.7,
+          shadowRadius: 6,
+          elevation: 4,
         }}
       />
     </View>
@@ -136,25 +160,51 @@ const IntensitySlider = ({ control, name, isPendingCreate }: Props) => {
       rules={{
         required: 'חובה להזין רמת קושי',
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <View className="mb-6">
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="typo-label text-background-400">רמת קושי</Text>
-            <Text className="typo-h4 text-lime-500">{Math.round(value)}/10</Text>
-          </View>
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const accent = getAccent(value);
+        return (
+          <View className="mb-6">
+            <Text className="typo-label text-background-400 mb-3 text-left">רמת קושי</Text>
+            <View
+              className="p-5 rounded-3xl shadow-black shadow-md flex-row items-center justify-center gap-4"
+              style={{
+                backgroundColor: colors.background[900],
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.08)',
+              }}
+            >
+              <View className="items-center">
+                <Text className="typo-caption-bold text-red-400/70 mb-1">אינטנסיבי</Text>
+                <SliderTrack value={value} disabled={isPendingCreate} onChange={onChange} />
+                <Text className="typo-caption-bold text-background-500 mt-1">קל מאוד</Text>
+              </View>
 
-          <View className="p-4 bg-background-800 rounded-2xl border border-background-700/50">
-            <SliderTrack value={value} disabled={isPendingCreate} onChange={onChange} />
-
-            <View className="flex-row justify-between mt-2 px-1">
-              <Text className="typo-caption-bold text-background-500">קל מאוד</Text>
-              <Text className="typo-caption-bold text-lime-500/50">בינוני</Text>
-              <Text className="typo-caption-bold text-red-400/70">אינטנסיבי</Text>
+              <View className="items-center">
+                <View className="flex-row items-center">
+                  <Text style={{ fontSize: 48, fontWeight: '200', color: colors.background[400], lineHeight: 52 }}>
+                    10
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 48,
+                      fontWeight: '200',
+                      color: colors.background[400],
+                      lineHeight: 52,
+                      marginHorizontal: 2,
+                    }}
+                  >
+                    /
+                  </Text>
+                  <Text style={{ fontSize: 48, fontWeight: '200', color: accent.color, lineHeight: 52 }}>
+                    {Math.round(value)}
+                  </Text>
+                </View>
+              </View>
             </View>
+            {error && <Text className="text-red-500 text-right mt-1">{error.message}</Text>}
           </View>
-          {error && <Text className="text-red-500 text-right mt-1">{error.message}</Text>}
-        </View>
-      )}
+        );
+      }}
     />
   );
 };
