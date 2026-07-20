@@ -2,7 +2,7 @@
   "expo": {
     "name": "BodyBuddy",
     "slug": "BodyBuddy",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "bodybuddy",
@@ -17,7 +17,7 @@
         "backgroundColor": "#14161A"
       },
       "package": "com.ibz1330.bodybuddy",
-      "versionCode": 18,
+      "versionCode": 19,
       "privacyPolicy": "https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy",
       "permissions": [
         "android.permission.INTERNET",
