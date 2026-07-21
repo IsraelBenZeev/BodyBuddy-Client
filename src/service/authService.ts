@@ -1,8 +1,10 @@
 import { logError } from '@/src/lib/logger';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { recordPrivacyConsent } from '@/src/service/consentService';
+import { deletePushToken } from '@/src/service/pushTokenService';
 import { getProfile } from '@/src/service/profileService';
 import { PRIVACY_POLICY_VERSION } from '@/src/types/consent';
+import { getDeviceId } from '@/src/utils/deviceId';
 import { supabase } from '@/supabase_client';
 import { Session, User } from '@supabase/supabase-js';
 import { makeRedirectUri } from 'expo-auth-session';
@@ -51,6 +53,10 @@ export const signInWithEmail = async (email: string, password: string): Promise<
 
 export const signOut = async (): Promise<ErrorResponse> => {
   try {
+    // חייב לרוץ לפני signOut בפועל — אחרי זה auth.uid() כבר null וה-RLS יחסום את המחיקה
+    const deviceId = await getDeviceId();
+    await deletePushToken(deviceId);
+
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     return { error: null };
