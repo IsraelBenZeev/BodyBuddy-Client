@@ -19,11 +19,13 @@
       "package": "com.ibz1330.bodybuddy",
       "versionCode": 19,
       "privacyPolicy": "https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy",
+      "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.VIBRATE",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.POST_NOTIFICATIONS"
       ]
     },
     "web": {
@@ -62,7 +64,8 @@
       "expo-secure-store",
       "expo-web-browser",
       "react-native-edge-to-edge",
-      "expo-video"
+      "expo-video",
+      "expo-notifications"
     ],
     "updates": {
       "enabled": false

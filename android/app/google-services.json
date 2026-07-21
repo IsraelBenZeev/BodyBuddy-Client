@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "3692417443",
+    "project_id": "bodybuddy-29941",
+    "storage_bucket": "bodybuddy-29941.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3692417443:android:e50c1548f08fa32745ca16",
+        "android_client_info": {
+          "package_name": "com.ibz1330.bodybuddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPLSq6lw53nzr-hVkgeHwyAZURILv5qaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

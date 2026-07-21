@@ -1,5 +1,7 @@
 import { colors } from '@/colors';
 import Constants from 'expo-constants';
+import { useNotificationNavigation } from '@/src/hooks/useNotificationNavigation';
+import { usePushTokenSync } from '@/src/hooks/usePushTokenSync';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
@@ -51,6 +53,13 @@ if (__DEV__) {
 function RootLayout() {
   const insets = useSafeAreaInsets();
   const url = Linking.useURL();
+
+  // רישום/עדכון טוקן פוש למכשיר הנוכחי בכל פעם שיש משתמש מחובר
+  usePushTokenSync();
+
+  // ניווט אוטומטי בלחיצה על התראת פוש (לפי שדה ה-data שנשלח בהתראה)
+  useNotificationNavigation();
+
   // רישום listener ל-Supabase auth + טעינת session קיים – בלי זה ה-store לא מתעדכן אחרי התחברות
   useEffect(() => {
     useAuthStore.getState().initialize().finally(() => {
