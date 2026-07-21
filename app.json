@@ -65,7 +65,13 @@
       "expo-web-browser",
       "react-native-edge-to-edge",
       "expo-video",
-      "expo-notifications"
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "rgb(25, 25, 25)"
+        }
+      ]
     ],
     "updates": {
       "enabled": false
