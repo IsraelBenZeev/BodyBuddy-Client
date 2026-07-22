@@ -159,6 +159,13 @@ function RootLayout() {
               }}
             />
             <Stack.Screen
+              name="privacy-policy"
+              options={{
+                presentation: 'transparentModal',
+                animation: 'fade',
+              }}
+            />
+            <Stack.Screen
               name="workout_plan/[paramse]"
               options={{
                 animation: 'fade',
