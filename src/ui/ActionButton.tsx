@@ -19,6 +19,7 @@ interface ActionButtonProps {
   loading?: boolean;
   accessibilityLabel?: string;
   accessibilityHint?: string;
+  className?: string;
 }
 
 const SIZE_CONFIG: Record<ButtonSize, { button: string; icon: string; iconSize: number }> = {
@@ -80,6 +81,7 @@ export default function ActionButton({
   loading = false,
   accessibilityLabel,
   accessibilityHint,
+  className,
 }: ActionButtonProps) {
   const sizeConfig = SIZE_CONFIG[size];
   const isDisabled = disabled || loading;
@@ -90,7 +92,7 @@ export default function ActionButton({
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      className={`${variantConfig.button} flex-row items-center justify-center active:scale-95 active:opacity-90${loading ? ' opacity-70' : ''} ${sizeConfig.button}${fullWidth ? ' w-full' : ''}`}
+      className={`${variantConfig.button} flex-row items-center justify-center active:scale-95 active:opacity-90${loading ? ' opacity-70' : ''} ${sizeConfig.button}${fullWidth ? ' w-full' : ''}${className ? ` ${className}` : ''}`}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityHint={accessibilityHint}
