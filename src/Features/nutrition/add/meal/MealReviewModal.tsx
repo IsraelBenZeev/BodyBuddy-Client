@@ -224,23 +224,7 @@ export default function MealReviewModal({
           </View>
         </ScrollView>
 
-        {/* <View
-          className="px-5 pt-4 bg-none border-none"
-          style={{ paddingBottom: bottom }}
-        > */}
-          {/* <Pressable
-            onPress={handleConfirm}
-            disabled={isPending || items.length === 0}
-            className={`h-16 rounded-3xl flex-row items-center justify-center ${
-              isPending || items.length === 0 ? 'bg-background-800' : 'bg-lime-500'
-            }`}
-          >
-            {isPending ? (
-              <ActivityIndicator color="#000" size="small" />
-            ) : (
-              <Text className="text-background-900 font-black text-lg">הוסף ליומן</Text>
-            )}
-          </Pressable> */}
+        <View className="px-5 pt-4" style={{ paddingBottom: bottom+4 }}>
           <ActionButton
             onPress={handleConfirm}
             disabled={isPending || items.length === 0}
@@ -248,9 +232,8 @@ export default function MealReviewModal({
             iconName="checkmark-circle"
             variant="outline"
             fullWidth
-            
           />
-        {/* </View> */}
+        </View>
       </View>
     </Modal>
   );

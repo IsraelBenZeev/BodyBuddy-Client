@@ -160,7 +160,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
       {/* כפתור הוספה צף בתחתית — מוצג רק כשיש מאכלים */}
       {foodItems.length > 0 && (
-        <View style={{ position: 'absolute', bottom: bottom, left: 24, right: 24 }}>
+        <View style={{ position: 'absolute', bottom: bottom+4, left: 24, right: 24 }}>
           <ActionButton
             onPress={handleAddNewFood}
             label="הוסף מאכל חדש"
