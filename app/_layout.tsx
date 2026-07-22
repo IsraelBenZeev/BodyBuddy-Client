@@ -107,7 +107,7 @@ function RootLayout() {
   return (
     // GestureHandlerRootView חייב להיות בדרגה הכי גבוהה כדי שהגרירה תעבוד
     <GestureHandlerRootView
-      style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: colors.background[1200], direction: 'rtl' }}
+      style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom+4, backgroundColor: colors.background[1200], direction: 'rtl' }}
     >
       <QueryClientProvider client={queryClient}>
         <BottomSheetModalProvider>
