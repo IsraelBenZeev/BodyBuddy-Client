@@ -17,7 +17,7 @@ import { differenceInYears, isValid, parseISO } from 'date-fns';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { ReactNode, useCallback, useState } from 'react';
-import { ActivityIndicator, Linking, Pressable, ScrollView, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 
 /** --- פונקציות עזר --- **/
@@ -249,7 +249,9 @@ export default function ProfileScreen() {
         </View>
 
         {isProfileLoading ? (
-          <ActivityIndicator color={colors.lime[500]} style={{ marginTop: 100 }} />
+          <View className="items-center" style={{ marginTop: 100 }}>
+            <BodyBuddyLoadingIcon size={80} />
+          </View>
         ) : (
           <View className="px-6 mt-10">
             {/* Workout Performance Grid */}

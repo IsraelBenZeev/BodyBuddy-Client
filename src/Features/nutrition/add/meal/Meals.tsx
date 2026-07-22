@@ -1,4 +1,3 @@
-import { colors } from '@/colors';
 import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc';
 import { useDeleteMeal, useMealsWithItems } from '@/src/hooks/useNutrition';
 import type { MealWithItems } from '@/src/types/meal';
@@ -8,8 +7,9 @@ import ActionButton from '@/src/ui/ActionButton';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import BodyBuddyLoadingIcon from '@/src/ui/BodyBuddyLoadingIcon';
 import MealReviewModal from './MealReviewModal';
 
 interface Props {
@@ -54,7 +54,7 @@ export default function Meals({ userId, date, onClose }: Props) {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center py-12">
-        <ActivityIndicator color={colors.lime[500]} size="large" />
+        <BodyBuddyLoadingIcon size={96} />
       </View>
     );
   }

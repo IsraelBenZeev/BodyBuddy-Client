@@ -7,9 +7,10 @@ import ScreenHeader from '@/src/ui/ScreenHeader';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ActionButton from '@/src/ui/ActionButton';
+import BodyBuddyLoadingIcon from '@/src/ui/BodyBuddyLoadingIcon';
 import AddNewFoodSelection from './AddNewFoodSelection';
 
 interface Props {
@@ -116,7 +117,7 @@ const Foods = ({ userId, date, onClose }: Props) => {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#84cc16" size="large" />
+          <BodyBuddyLoadingIcon size={96} />
         </View>
       ) : foodItems.length === 0 ? (
         <View className="flex-1 items-center justify-center px-6 gap-8">
