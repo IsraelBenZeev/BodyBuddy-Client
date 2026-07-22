@@ -3,7 +3,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { recordPrivacyConsent } from '@/src/service/consentService';
 import { deletePushToken } from '@/src/service/pushTokenService';
 import { getProfile } from '@/src/service/profileService';
-import { PRIVACY_POLICY_VERSION } from '@/src/types/consent';
+import { getPrivacyPolicy } from '@/src/service/privacyPolicyService';
 import { getDeviceId } from '@/src/utils/deviceId';
 import { supabase } from '@/supabase_client';
 import { Session, User } from '@supabase/supabase-js';
@@ -223,7 +223,12 @@ export const signInWithGoogle = async () => {
       if (sessionData?.session) {
         useAuthStore.getState().setUser(sessionData.session.user);
         useAuthStore.getState().setSession(sessionData.session);
-        recordPrivacyConsent(sessionData.session.user.id, PRIVACY_POLICY_VERSION);
+        try {
+          const policy = await getPrivacyPolicy();
+          recordPrivacyConsent(sessionData.session.user.id, policy.version);
+        } catch {
+          // best effort - כבר נרשם ל-logger בתוך getPrivacyPolicy
+        }
         try {
           const profile = await getProfile(sessionData.session.user.id);
           if (profile?.full_name && (profile.date_of_birth != null || profile.age != null)) {

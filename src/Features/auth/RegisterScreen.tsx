@@ -7,7 +7,7 @@ import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import FormInput from '@/src/ui/FormInput';
-import { PRIVACY_POLICY_VERSION } from '@/src/types/consent';
+import { usePrivacyPolicy } from '@/src/hooks/usePrivacyPolicy';
 import PolicyConsentCheckbox from '@/src/ui/PolicyConsentCheckbox';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -27,6 +27,7 @@ export default function RegisterScreen() {
   const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
   const [shouldNavigateToTabs, setShouldNavigateToTabs] = useState(false);
+  const { data: privacyPolicy } = usePrivacyPolicy();
 
   const {
     control,
@@ -66,7 +67,9 @@ export default function RegisterScreen() {
       triggerSuccess('נרשמת בהצלחה!', 'success');
       if (data?.user) {
         useAuthStore.getState().setUser(data.user);
-        recordPrivacyConsent(data.user.id, PRIVACY_POLICY_VERSION);
+        if (privacyPolicy?.version) {
+          recordPrivacyConsent(data.user.id, privacyPolicy.version);
+        }
       }
       if (data?.session) useAuthStore.getState().setSession(data.session);
       setShouldNavigateToTabs(true); // ניווט אחרי הרשמה מוצלחת (בלוגין יש session תמיד; בהרשמה לפעמים רק אחרי אימות אימייל)

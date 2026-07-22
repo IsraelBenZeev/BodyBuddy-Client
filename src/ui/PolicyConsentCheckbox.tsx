@@ -1,12 +1,11 @@
-import { Linking, Pressable, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { Pressable, Text, View } from 'react-native';
 
 interface PolicyConsentCheckboxProps {
   checked: boolean;
   onToggle: () => void;
   promptText: string;
 }
-
-const PRIVACY_POLICY_URL = 'https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/';
 
 export default function PolicyConsentCheckbox({
   checked,
@@ -34,7 +33,7 @@ export default function PolicyConsentCheckbox({
       <Text className="typo-label text-background-400 flex-1 text-left">
         {`${promptText}הינך מסכים ל`}
         <Text
-          onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}
+          onPress={() => router.push('/privacy-policy')}
           accessibilityRole="link"
           accessibilityLabel="פתח מדיניות פרטיות"
           className="typo-label text-lime-400 font-semibold"
