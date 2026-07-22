@@ -14,6 +14,7 @@ import Handle from '@/src/ui/Handle';
 import Loading from '@/src/ui/Loading';
 import ModalBottom from '@/src/ui/ModalButtom';
 import ActionButton from '@/src/ui/ActionButton';
+import BackButton from '@/src/ui/BackButton';
 import AppButton from '@/src/ui/PressableOpacity';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
@@ -222,18 +223,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       {mode === 'view' && (
         <View className="pt-4">
           <View className="px-6 mb-6 flex-row items-center gap-4 ">
-            <AppButton
-              onPress={() => router.back()}
-              haptic="light"
-              animationType="scale"
-              className="items-center justify-center bg-lime-500/15 border border-lime-500/40 rounded-full p-1"
-              style={{ width: 60, height: 60 }}
-              accessibilityLabel="חזור"
-              accessibilityRole="button"
-              accessibilityHint="חזרה למסך הקודם"
-            >
-              <Ionicons name="chevron-forward" size={40} color={colors.lime[300]} />
-            </AppButton>
+            <BackButton onPress={() => router.back()} size={60} iconSize={40} />
             {isCardioOnly ? (
               <View
                 className="items-center justify-center bg-lime-500/15 border border-lime-500/40 rounded-full"

@@ -7,6 +7,7 @@ import type {
   MeasurementType,
 } from '@/src/types/nutrition';
 import ActionButton from '@/src/ui/ActionButton';
+import BackButton from '@/src/ui/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -377,14 +378,9 @@ const AIResults = ({ aiResult, userId, date, onClose, onBack }: Props) => {
     >
       {/* ── Header ── */}
       <View className="flex-row items-center mb-6 justify-center">
-        <Pressable
-          onPress={onBack ?? onClose}
-          className="absolute left-0 w-11 h-11 bg-background-700 rounded-xl items-center justify-center border border-background-600 active:scale-95"
-          accessibilityRole="button"
-          accessibilityLabel="חזרה"
-        >
-          <Ionicons name="chevron-forward" size={22} color="#fff" />
-        </Pressable>
+        <View className="absolute left-0">
+          <BackButton onPress={onBack ?? onClose} size={44} iconSize={22} />
+        </View>
         <View className="items-center">
           <View className="flex-row items-center gap-2 mb-2">
             <Text className="typo-caption text-lime-500">✦</Text>

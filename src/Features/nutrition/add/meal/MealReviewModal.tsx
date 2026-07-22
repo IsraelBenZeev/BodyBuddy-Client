@@ -3,6 +3,7 @@ import { calculateNutrients } from '@/src/Features/nutrition/utils/nutritionCalc
 import { useCreateNutritionEntriesBulk } from '@/src/hooks/useNutrition';
 import type { MealItem, MealItemFoodInfo, MealWithItems } from '@/src/types/meal';
 import ActionButton from '@/src/ui/ActionButton';
+import CloseButton from '@/src/ui/CloseButton';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
@@ -174,12 +175,7 @@ export default function MealReviewModal({
               {meal.name_meal || 'ארוחה חדשה'}
             </Text>
           </View>
-          <Pressable
-            onPress={onClose}
-            className="w-10 h-10 bg-white/[0.03] rounded-full items-center justify-center border border-white/[0.05]"
-          >
-            <Ionicons name="close" size={20} color="#fff" />
-          </Pressable>
+          <CloseButton onPress={onClose} variant="default" size={40} iconSize={20} />
         </View>
 
         <ScrollView

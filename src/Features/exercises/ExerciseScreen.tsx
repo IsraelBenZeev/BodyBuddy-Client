@@ -5,6 +5,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { isCustomExerciseId } from '@/src/types/customExercise';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import BackGround from '@/src/ui/BackGround';
+import CloseButton from '@/src/ui/CloseButton';
 import Handle from '@/src/ui/Handle';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEvent } from 'expo';
@@ -72,20 +73,7 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
         <View className="flex-1 items-center">
           <Handle />
         </View>
-        <Pressable
-          onPress={() => router.back()}
-          style={({ pressed }) => ({
-            opacity: pressed ? 0.7 : 1,
-            width: 44,
-            height: 44,
-            alignItems: 'center',
-            justifyContent: 'center',
-          })}
-          accessibilityLabel="סגור"
-          accessibilityRole="button"
-        >
-          <X size={24} color={colors.lime[500]} strokeWidth={2} />
-        </Pressable>
+        <CloseButton onPress={() => router.back()} variant="default" size={40} iconSize={20} />
       </View>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 0 }}

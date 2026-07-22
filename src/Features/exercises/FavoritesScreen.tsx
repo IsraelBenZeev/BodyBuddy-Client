@@ -1,13 +1,14 @@
 import { useFavoriteIds, useGetExercisesByIds, useToggleFavorite } from '@/src/hooks/useEcercises';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import ActionButton from '@/src/ui/ActionButton';
+import BackButton from '@/src/ui/BackButton';
 import BackGround from '@/src/ui/BackGround';
 import Loading from '@/src/ui/Loading';
 import { FlashList } from '@shopify/flash-list';
 import Entypo from '@expo/vector-icons/Entypo';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import ActionButton from '@/src/ui/ActionButton';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import CardExercise from './CardExercise';
 
 const FavoritesScreen = () => {
@@ -37,9 +38,7 @@ const FavoritesScreen = () => {
     <BackGround>
       {/* Header */}
       <View className="px-6 pt-12 pb-4 flex-row items-center gap-3">
-        <Pressable onPress={handleBack} className="bg-zinc-800 p-3 rounded-xl" accessibilityRole="button" accessibilityLabel="חזרה">
-          <Entypo name="chevron-right" size={22} color="white" />
-        </Pressable>
+        <BackButton onPress={handleBack} size={44} iconSize={36} />
         <View className="flex-1">
           <Text className="typo-h1 text-white">מועדפים</Text>
           <Text className="typo-label text-zinc-500 mt-0.5">

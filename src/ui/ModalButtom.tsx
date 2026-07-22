@@ -1,8 +1,8 @@
 import { colors } from '@/colors';
+import CloseButton from '@/src/ui/CloseButton';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { X } from 'lucide-react-native';
 import { forwardRef, ReactNode, useCallback, useMemo } from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ModalBottomProps {
@@ -43,23 +43,15 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
         </View>
         {(title || onClosePress) && (
           <View className="flex-row items-center justify-between px-4 mt-2.5">
-            <View className="w-7">
-              {onClosePress && (
-                <Pressable
-                  onPress={onClosePress}
-                  hitSlop={8}
-                  accessibilityLabel="סגור"
-                  accessibilityRole="button"
-                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
-                >
-                  <X size={20} color={colors.lime[400]} strokeWidth={2} />
-                </Pressable>
-              )}
-            </View>
+            <View className="w-9" />
             {title && (
               <Text className="typo-h4 text-lime-400 text-center flex-1">{title}</Text>
             )}
-            <View className="w-7" />
+            <View className="w-9">
+              {onClosePress && (
+                <CloseButton onPress={onClosePress} variant="default" size={36} iconSize={18} />
+              )}
+            </View>
           </View>
         )}
       </View>

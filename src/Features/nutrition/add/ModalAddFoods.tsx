@@ -2,8 +2,8 @@ import { colors } from '@/colors';
 import FoodSelectionTabs from '@/src/Features/nutrition/add/FoodSelectionTabs';
 import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
-import { Ionicons } from '@expo/vector-icons';
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import CloseButton from '@/src/ui/CloseButton';
+import { Modal, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface ModalAddFoodsProps {
@@ -16,6 +16,8 @@ export interface ModalAddFoodsProps {
 const sheetStyles = StyleSheet.create({
   handleContainer: {
     alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    minHeight: 56,
     paddingVertical: 12,
     backgroundColor: colors.background[900],
     borderTopLeftRadius: 20,
@@ -40,14 +42,9 @@ const ModalAddFoods = ({ visible, onClose, userId, date }: ModalAddFoodsProps) =
     >
       <View style={{ flex: 1, backgroundColor: colors.background[900], paddingTop: insets.top }}>
         <View style={sheetStyles.handleContainer}>
-          <Pressable
-            onPress={onClose}
-            style={{ position: 'absolute' as const, right: 16, top: 12 }}
-            accessibilityRole="button"
-            accessibilityLabel="סגור"
-          >
-            <Ionicons name="close" size={24} color={colors.white} />
-          </Pressable>
+          <View style={{ position: 'absolute' as const, right: 16, top: 1, zIndex: 10 }}>
+            <CloseButton onPress={onClose} variant="default" size={44} iconSize={24} />
+          </View>
           <View style={sheetStyles.indicator} />
         </View>
         <FoodSelectionTabs userId={userId} date={date} onClose={onClose} />

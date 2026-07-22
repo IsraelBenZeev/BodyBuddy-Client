@@ -1,11 +1,9 @@
-import { colors } from '@/colors';
 import { modeAddWorkoutPlan } from '@/src/types/mode';
-import { Ionicons } from '@expo/vector-icons';
+import CloseButton from '@/src/ui/CloseButton';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import { Text, View } from 'react-native';
 import Form from './Form';
-import AppButton from '@/src/ui/PressableOpacity';
 interface AddWorkoutPlanProps {
   mode: modeAddWorkoutPlan;
   workout_plan_id?: string;
@@ -21,14 +19,7 @@ const AddWorkoutPlan = ({ mode, workout_plan_id }: AddWorkoutPlanProps) => {
         </View>
         <View className="flex-row justify-between items-center px-5 pb-4">
           <Text className="typo-h3 text-lime-400">{mode === "edit" ? "עריכה" : "תוכנית חדשה"}</Text>
-          <AppButton
-            animationType='opacity'
-            haptic='medium'
-            onPress={handleBack}
-            className="bg-white/10 p-3 rounded-full"
-            accessibilityLabel="סגור">
-            <Ionicons name="close" size={20} color={colors.lime[400]} />
-          </AppButton>
+          <CloseButton onPress={handleBack} variant="default" size={40} iconSize={20} />
         </View>
       </View>
 

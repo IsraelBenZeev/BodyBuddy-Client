@@ -3,6 +3,8 @@ import { useRecentFoods, useSearchFoodItems, useTrackFoodUsage } from '@/src/hoo
 import { useAuthStore } from '@/src/store/useAuthStore';
 import type { CreateFoodFormData, FoodItem, MeasurementType } from '@/src/types/nutrition';
 import ActionButton from '@/src/ui/ActionButton';
+import BackButton from '@/src/ui/BackButton';
+import CloseButton from '@/src/ui/CloseButton';
 import ValueStepper from '@/src/ui/ValueStepper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -122,18 +124,23 @@ const AddNewFood = ({
   }, [phase, onPhaseChange]);
 
   const { data: searchResults = [], isLoading } = useSearchFoodItems(debouncedQuery, userId);
-  const { data: recentFoods = [], isLoading: isRecentLoading } = useRecentFoods(userId || undefined);
+  const { data: recentFoods = [], isLoading: isRecentLoading } = useRecentFoods(
+    userId || undefined
+  );
   const { mutate: trackUsage } = useTrackFoodUsage(userId);
 
   const isUnits = measurementType === 'units';
 
-  const handleSelectFromDB = useCallback((food: FoodItem) => {
-    Haptics.selectionAsync();
-    trackUsage(food);
-    setSelectedFood(food);
-    setDbAmount(food.measurement_type === 'units' ? 1 : 100);
-    setPhase('db-amount');
-  }, [trackUsage]);
+  const handleSelectFromDB = useCallback(
+    (food: FoodItem) => {
+      Haptics.selectionAsync();
+      trackUsage(food);
+      setSelectedFood(food);
+      setDbAmount(food.measurement_type === 'units' ? 1 : 100);
+      setPhase('db-amount');
+    },
+    [trackUsage]
+  );
 
   const handleStartCustom = useCallback(() => {
     Haptics.selectionAsync();
@@ -217,9 +224,7 @@ const AddNewFood = ({
           <View
             className="flex-row items-center bg-background-800 rounded-2xl border px-4"
             style={{
-              borderColor: query.trim()
-                ? colors.lime[500] + '80'
-                : 'rgba(255,255,255,0.08)',
+              borderColor: query.trim() ? colors.lime[500] + '80' : 'rgba(255,255,255,0.08)',
             }}
           >
             <Ionicons name="search" size={18} color={colors.background[400]} />
@@ -341,8 +346,7 @@ const AddNewFood = ({
                         food.measurement_type === 'units'
                           ? food.calories_per_unit
                           : food.calories_per_100;
-                      const calLabel =
-                        food.measurement_type === 'units' ? 'קק"ל/יח׳' : 'קק"ל/100g';
+                      const calLabel = food.measurement_type === 'units' ? 'קק"ל/יח׳' : 'קק"ל/100g';
                       const isLast = idx === Math.min(recentFoods.length, 5) - 1;
                       return (
                         <Pressable
@@ -448,18 +452,14 @@ const AddNewFood = ({
             <Text className="text-white font-black" style={{ fontSize: 20 }}>
               {totals.cal}
             </Text>
-            <Text className="typo-caption text-background-400 mt-1">
-              קלוריות
-            </Text>
+            <Text className="typo-caption text-background-400 mt-1">קלוריות</Text>
           </View>
         </View>
 
         {/* Amount Picker - Clean & Integrated */}
         <View className="mb-8">
           <View className="flex-row justify-between items-end mb-4 px-2">
-            <Text className="typo-label text-background-400">
-              כמות
-            </Text>
+            <Text className="typo-label text-background-400">כמות</Text>
             <View className="flex-row items-baseline">
               <Text className="typo-h3 text-white">{dbAmount}</Text>
               <Text className="typo-label text-background-500 ml-1">{unitLabel}</Text>
@@ -480,9 +480,7 @@ const AddNewFood = ({
         {/* Macros Grid - High-End Dashboard Style */}
         <View className="flex-row justify-between px-2">
           <View className="items-start">
-            <Text className="typo-caption text-background-500 mb-2">
-              חלבון
-            </Text>
+            <Text className="typo-caption text-background-500 mb-2">חלבון</Text>
             <View className="flex-row items-baseline">
               <Text className="typo-body-primary text-white">{totals.prot}</Text>
               <Text className="typo-caption text-background-600 ml-1">g</Text>
@@ -492,9 +490,7 @@ const AddNewFood = ({
           <View className="w-[1px] h-8 bg-white/10 self-end mb-1" />
 
           <View className="items-start">
-            <Text className="typo-caption text-background-500 mb-2">
-              פחמימות
-            </Text>
+            <Text className="typo-caption text-background-500 mb-2">פחמימות</Text>
             <View className="flex-row items-baseline">
               <Text className="typo-body-primary text-white">{totals.carb}</Text>
               <Text className="typo-caption text-background-600 ml-1">g</Text>
@@ -504,9 +500,7 @@ const AddNewFood = ({
           <View className="w-[1px] h-8 bg-white/10 self-end mb-1" />
 
           <View className="items-start">
-            <Text className="typo-caption text-background-500 mb-2">
-              שומן
-            </Text>
+            <Text className="typo-caption text-background-500 mb-2">שומן</Text>
             <View className="flex-row items-baseline">
               <Text className="typo-body-primary text-white">{totals.fat}</Text>
               <Text className="typo-caption text-background-600 ml-1">g</Text>
@@ -667,13 +661,7 @@ const AddNewFood = ({
           <Text className="typo-label text-background-400 mb-4 text-center">
             חלבון ל{unitLabel} <Text className="text-background-600">(אופציונלי)</Text>
           </Text>
-          <ValueStepper
-            value={proteinValue}
-            onChange={setProteinValue}
-            step={1}
-            min={0}
-            unit="g"
-          />
+          <ValueStepper value={proteinValue} onChange={setProteinValue} step={1} min={0} unit="g" />
         </View>
 
         {/* Carbs */}
@@ -681,13 +669,7 @@ const AddNewFood = ({
           <Text className="typo-label text-background-400 mb-4 text-center">
             פחמימות ל{unitLabel} <Text className="text-background-600">(אופציונלי)</Text>
           </Text>
-          <ValueStepper
-            value={carbsValue}
-            onChange={setCarbsValue}
-            step={1}
-            min={0}
-            unit="g"
-          />
+          <ValueStepper value={carbsValue} onChange={setCarbsValue} step={1} min={0} unit="g" />
         </View>
 
         {/* Consumed amount (optional) */}
@@ -749,7 +731,10 @@ const AddNewFood = ({
       <View className="flex-row gap-3">
         <View style={{ flex: 1 }}>
           <ActionButton
-            onPress={() => { setPendingAction('save'); handleCustomSave(false); }}
+            onPress={() => {
+              setPendingAction('save');
+              handleCustomSave(false);
+            }}
             disabled={isPending || !step3Valid}
             loading={isPending && pendingAction === 'save'}
             label="שמור"
@@ -761,7 +746,10 @@ const AddNewFood = ({
         </View>
         <View style={{ flex: 1 }}>
           <ActionButton
-            onPress={() => { setPendingAction('journal'); handleCustomSave(true); }}
+            onPress={() => {
+              setPendingAction('journal');
+              handleCustomSave(true);
+            }}
             disabled={isPending || !step3Valid}
             loading={isPending && pendingAction === 'journal'}
             label="שמור + יומן"
@@ -784,28 +772,22 @@ const AddNewFood = ({
         <View className="flex flex-row justify-between px-6 ">
           {phase !== 'search' && (
             <View className="">
-              <Pressable
+              <BackButton
                 onPress={handleBack}
-                className="bg-background-800 border border-white/10 h-11 w-11 rounded-xl items-center justify-center "
-                accessibilityRole="button"
-                accessibilityLabel="חזרה"
+                size={44}
+                iconSize={22}
                 accessibilityHint="חזרה לשלב הקודם"
-              >
-                <MaterialCommunityIcons name="chevron-right" size={22} color={colors.white} />
-              </Pressable>
+              />
             </View>
           )}
           {mode !== 'meal-builder' && (
-            <View className="">
-              <Pressable
+            <View className={`w-full flex items-end  pr-8`}>
+              <CloseButton
                 onPress={() => router.back()}
-                className="bg-background-800 w-11 h-11 rounded-xl items-center justify-center border border-white/10"
-                hitSlop={8}
-                accessibilityRole="button"
-                accessibilityLabel="סגור"
-              >
-                <Ionicons name="close" size={20} color="#fff" />
-              </Pressable>
+                variant="default"
+                size={44}
+                iconSize={20}
+              />
             </View>
           )}
         </View>
@@ -827,7 +809,7 @@ const AddNewFood = ({
           <View
             style={{
               paddingHorizontal: 20,
-              paddingBottom: insets.bottom ,
+              paddingBottom: insets.bottom,
               paddingTop: 12,
             }}
           >

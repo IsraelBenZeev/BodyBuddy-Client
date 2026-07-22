@@ -1,8 +1,6 @@
-import { colors } from "@/colors";
 import { WorkoutPlan } from "@/src/types/workout";
-import AppButton from "@/src/ui/PressableOpacity";
+import CloseButton from "@/src/ui/CloseButton";
 import { useRouter } from "expo-router";
-import { CircleX } from "lucide-react-native";
 import { useCallback } from "react";
 import { Alert } from "react-native";
 import { Text, View } from "react-native-animatable";
@@ -36,14 +34,7 @@ const Header = ({ workoutPlan, isStart = false }: Props) => {
                 </Text>
             </View>
             <View className="flex-1 items-end">
-                <AppButton
-                    haptic="light"
-                    animationType="opacity"
-                    onPress={handleClose}
-                    accessibilityLabel="סגור"
-                    className="p-2">
-                    <CircleX size={24} color={colors.lime[500]} strokeWidth={2} />
-                </AppButton>
+                <CloseButton onPress={handleClose} variant="default" size={40} iconSize={22} />
             </View>
 
         </View>

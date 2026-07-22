@@ -1,5 +1,6 @@
 import { colors } from '@/colors';
 import type { NutritionEntry } from '@/src/types/nutrition';
+import CloseButton from '@/src/ui/CloseButton';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
@@ -183,14 +184,7 @@ const EntryDetailModal = ({ visible, onClose, entry, groupEntries, groupName }: 
         <View className="bg-background-900 rounded-t-3xl px-5 pt-4 max-h-[85%]" style={{ paddingBottom: insets.bottom  }}>
           <View className="flex-row justify-between items-center mb-5">
             <Text className="typo-h3 text-white">פרטים</Text>
-            <Pressable
-              onPress={onClose}
-              className="bg-background-700 rounded-full w-9 h-9 items-center justify-center"
-              accessibilityRole="button"
-              accessibilityLabel="סגור פרטים"
-            >
-              <Ionicons name="close" size={20} color={colors.background[300]} />
-            </Pressable>
+            <CloseButton onPress={onClose} variant="default" size={36} iconSize={20} accessibilityLabel="סגור פרטים" />
           </View>
 
           <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
