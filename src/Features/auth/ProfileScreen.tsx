@@ -376,9 +376,7 @@ export default function ProfileScreen() {
           <Text className="typo-label text-background-400">
             {'בהמשך השימוש הינך מסכים ל'}
             <Text
-              onPress={() =>
-                Linking.openURL('https://israelbenzeev.github.io/BodyBuddu-Privacy-Policy/')
-              }
+              onPress={() => router.push('/privacy-policy')}
               className="text-lime-400 font-semibold"
             >
               {'מדיניות הפרטיות'}

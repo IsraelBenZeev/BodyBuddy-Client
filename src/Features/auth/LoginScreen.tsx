@@ -7,7 +7,7 @@ import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import FormInput from '@/src/ui/FormInput';
-import { PRIVACY_POLICY_VERSION } from '@/src/types/consent';
+import { usePrivacyPolicy } from '@/src/hooks/usePrivacyPolicy';
 import PolicyConsentCheckbox from '@/src/ui/PolicyConsentCheckbox';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -34,6 +34,7 @@ export default function LoginScreen() {
   const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const [shouldNavigateToTabs, setShouldNavigateToTabs] = useState(false);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
+  const { data: privacyPolicy } = usePrivacyPolicy();
 
   useEffect(() => {
     if (shouldNavigateToTabs) {
@@ -72,7 +73,9 @@ export default function LoginScreen() {
       if (data?.user && data?.session) {
         useAuthStore.getState().setUser(data.user);
         useAuthStore.getState().setSession(data.session);
-        recordPrivacyConsent(data.user.id, PRIVACY_POLICY_VERSION);
+        if (privacyPolicy?.version) {
+          recordPrivacyConsent(data.user.id, privacyPolicy.version);
+        }
         triggerSuccess('התחברת בהצלחה', 'success');
         setShouldNavigateToTabs(true);
       }

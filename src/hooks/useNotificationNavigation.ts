@@ -9,6 +9,7 @@ const SCREEN_ROUTES: Record<string, Href> = {
   nutrition: '/nutrition',
   profile: '/profile',
   home: '/',
+  privacy_policy: '/privacy-policy',
 };
 
 const navigateFromNotificationData = (data: unknown): void => {
