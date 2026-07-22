@@ -1,13 +1,17 @@
 import { logError } from '@/src/lib/logger';
 import type { PrivacyPolicyContent } from '@/src/types/privacyPolicy';
-
-const PRIVACY_POLICY_URL = process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL ?? '';
+import { supabase } from '@/supabase_client';
 
 export const getPrivacyPolicy = async (): Promise<PrivacyPolicyContent> => {
   try {
-    const response = await fetch(PRIVACY_POLICY_URL);
-    if (!response.ok) throw new Error(`getPrivacyPolicy ${response.status}`);
-    return (await response.json()) as PrivacyPolicyContent;
+    const { data, error } = await supabase
+      .from('privacy_policies')
+      .select('version, content_he, content_en, created_at')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+    if (error) throw error;
+    return data as PrivacyPolicyContent;
   } catch (error) {
     logError(error, 'getPrivacyPolicy');
     throw error;

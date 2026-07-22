@@ -5,6 +5,7 @@ import { usePushTokenSync } from '@/src/hooks/usePushTokenSync';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import GlobalFaild from '@/src/ui/Animations/GloabalFaild';
 import GlobalSuccess from '@/src/ui/Animations/GloabalSuccess';
+import PrivacyConsentGate from '@/src/ui/PrivacyConsentGate';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Sentry from '@sentry/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -181,6 +182,7 @@ function RootLayout() {
               }}
             />
           </Stack>
+          <PrivacyConsentGate />
           {/* </SafeAreaView> */}
         </BottomSheetModalProvider>
       </QueryClientProvider>

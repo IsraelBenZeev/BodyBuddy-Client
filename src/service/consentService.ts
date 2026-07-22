@@ -1,10 +1,9 @@
 import { logError } from '@/src/lib/logger';
 import { supabase } from '@/supabase_client';
 
-// Best-effort: consent was already gated client-side (the auth buttons are disabled
-// until the checkbox is checked) — this call just persists proof of it. ignoreDuplicates
-// means repeat logins at the same policy_version are silently no-ops (unique constraint
-// on user_id + policy_version), so errors here are logged, never thrown at the caller.
+// ignoreDuplicates means repeat consents at the same policy_version are silently
+// no-ops (unique constraint on user_id + policy_version), so errors here are logged,
+// never thrown at the caller.
 export const recordPrivacyConsent = async (userId: string, policyVersion: string): Promise<void> => {
   try {
     const { error } = await supabase
@@ -16,5 +15,21 @@ export const recordPrivacyConsent = async (userId: string, policyVersion: string
     if (error) throw error;
   } catch (error) {
     logError(error, 'recordPrivacyConsent');
+  }
+};
+
+export const hasUserConsented = async (userId: string, policyVersion: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_consents')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('policy_version', policyVersion)
+      .maybeSingle();
+    if (error) throw error;
+    return !!data;
+  } catch (error) {
+    logError(error, 'hasUserConsented');
+    return true; // fail-open: לא לחסום משתמש מהאפליקציה בגלל שגיאת רשת/שרת
   }
 };

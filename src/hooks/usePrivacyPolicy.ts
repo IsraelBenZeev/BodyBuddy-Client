@@ -1,9 +1,10 @@
 import { getPrivacyPolicy } from '@/src/service/privacyPolicyService';
 import { useQuery } from '@tanstack/react-query';
 
-export const usePrivacyPolicy = () => {
+export const usePrivacyPolicy = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ['privacyPolicy'],
     queryFn: getPrivacyPolicy,
+    enabled,
   });
 };

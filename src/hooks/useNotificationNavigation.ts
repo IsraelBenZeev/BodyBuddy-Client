@@ -4,12 +4,14 @@ import { router, Href } from 'expo-router';
 import { logError } from '../lib/logger';
 
 // allowlist בכוונה - לא סומכים על data חיצוני (payload של פוש) בתור נתיב ניווט חופשי
+// אין מיפוי ל-privacy_policy בכוונה: PrivacyConsentGate ב-app/_layout.tsx כבר
+// בודק ומציג חסימה בכל טעינת אפליקציה ללא תלות במסך, אז ניווט ייעודי מהפוש
+// רק ידחוף את מסך הקריאה-בלבד מתחת ל-Gate ויישאר פתוח אחרי האישור.
 const SCREEN_ROUTES: Record<string, Href> = {
   workouts: '/workouts',
   nutrition: '/nutrition',
   profile: '/profile',
   home: '/',
-  privacy_policy: '/privacy-policy',
 };
 
 const navigateFromNotificationData = (data: unknown): void => {

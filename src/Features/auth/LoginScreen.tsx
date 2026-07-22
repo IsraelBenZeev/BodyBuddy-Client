@@ -1,14 +1,11 @@
 import { colors } from '@/colors';
 import { signInWithEmail, signInWithGoogle } from '@/src/service/authService';
-import { recordPrivacyConsent } from '@/src/service/consentService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import FormInput from '@/src/ui/FormInput';
-import { usePrivacyPolicy } from '@/src/hooks/usePrivacyPolicy';
-import PolicyConsentCheckbox from '@/src/ui/PolicyConsentCheckbox';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -31,10 +28,8 @@ export default function LoginScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const [shouldNavigateToTabs, setShouldNavigateToTabs] = useState(false);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
-  const { data: privacyPolicy } = usePrivacyPolicy();
 
   useEffect(() => {
     if (shouldNavigateToTabs) {
@@ -73,9 +68,6 @@ export default function LoginScreen() {
       if (data?.user && data?.session) {
         useAuthStore.getState().setUser(data.user);
         useAuthStore.getState().setSession(data.session);
-        if (privacyPolicy?.version) {
-          recordPrivacyConsent(data.user.id, privacyPolicy.version);
-        }
         triggerSuccess('התחברת בהצלחה', 'success');
         setShouldNavigateToTabs(true);
       }
@@ -193,12 +185,6 @@ export default function LoginScreen() {
                 marginTop: 4,
               }}
             />
-            {/* Privacy Policy - required since Google sign-in may create a new account */}
-            <PolicyConsentCheckbox
-              checked={agreedToPolicy}
-              onToggle={() => setAgreedToPolicy((prev) => !prev)}
-              promptText="בהתחברת הינך מסכים ל"
-            />
             {/* Login Button */}
             <View className="mb-4">
               <ActionButton
@@ -209,7 +195,6 @@ export default function LoginScreen() {
                 size="md"
                 fullWidth
                 loading={loading}
-                disabled={!agreedToPolicy}
                 accessibilityLabel="התחבר"
                 accessibilityHint="לחץ כדי להתחבר עם האימייל והסיסמה"
               />
@@ -231,7 +216,6 @@ export default function LoginScreen() {
               size="md"
               fullWidth
               loading={googleLoading}
-              disabled={!agreedToPolicy}
               accessibilityLabel="התחבר באמצעות Google"
               accessibilityHint="לחץ כדי להתחבר עם חשבון Google"
             />

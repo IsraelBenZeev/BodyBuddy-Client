@@ -1,14 +1,11 @@
 import { colors } from '@/colors';
 import { signInWithGoogle, signUpWithEmail } from '@/src/service/authService';
-import { recordPrivacyConsent } from '@/src/service/consentService';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import BodyBuddyLogo from '@/src/ui/BodyBuddyLogo';
 import FormInput from '@/src/ui/FormInput';
-import { usePrivacyPolicy } from '@/src/hooks/usePrivacyPolicy';
-import PolicyConsentCheckbox from '@/src/ui/PolicyConsentCheckbox';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -24,10 +21,8 @@ export default function RegisterScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
   const [shouldNavigateToTabs, setShouldNavigateToTabs] = useState(false);
-  const { data: privacyPolicy } = usePrivacyPolicy();
 
   const {
     control,
@@ -67,9 +62,6 @@ export default function RegisterScreen() {
       triggerSuccess('נרשמת בהצלחה!', 'success');
       if (data?.user) {
         useAuthStore.getState().setUser(data.user);
-        if (privacyPolicy?.version) {
-          recordPrivacyConsent(data.user.id, privacyPolicy.version);
-        }
       }
       if (data?.session) useAuthStore.getState().setSession(data.session);
       setShouldNavigateToTabs(true); // ניווט אחרי הרשמה מוצלחת (בלוגין יש session תמיד; בהרשמה לפעמים רק אחרי אימות אימייל)
@@ -215,13 +207,6 @@ export default function RegisterScreen() {
               }}
             />
 
-            {/* Privacy Policy */}
-            <PolicyConsentCheckbox
-              checked={agreedToPolicy}
-              onToggle={() => setAgreedToPolicy((prev) => !prev)}
-              promptText="בהרשמה "
-            />
-
             {/* Register Button */}
             <View className="mb-3">
               <ActionButton
@@ -232,7 +217,6 @@ export default function RegisterScreen() {
                 size="md"
                 fullWidth
                 loading={loading}
-                disabled={!agreedToPolicy}
                 accessibilityLabel="הירשם"
                 accessibilityHint="לחץ כדי להירשם עם האימייל והסיסמה"
               />
@@ -254,7 +238,6 @@ export default function RegisterScreen() {
               size="md"
               fullWidth
               loading={googleLoading}
-              disabled={!agreedToPolicy}
               accessibilityLabel="הירשם באמצעות Google"
               accessibilityHint="לחץ כדי להירשם עם חשבון Google"
             />
