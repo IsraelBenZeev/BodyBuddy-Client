@@ -152,6 +152,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                     keyField="exerciseId"
                     onIndexChange={handleIndexChange}
                     renderItem={renderItem}
+                    showNavArrows
                 />
             </View>
 
