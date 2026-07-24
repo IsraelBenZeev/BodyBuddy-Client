@@ -15,13 +15,13 @@ import CardPlan from './CardPlan';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+const TAB_BAR_HEIGHT = 74;
+const TAB_BAR_GAP = 16;
 
 const WorkoutList = () => {
   const user = useAuthStore((state) => state.user);
   const { data: plansData, isLoading: isLoadingPlans } = useWorkoutsPlans(user?.id as string);
 
-  const { bottom: bottomInset } = useSafeAreaInsets();
   const clearAllExercises = useWorkoutStore((state) => state.clearAllExercises);
   const router = useRouter();
 
@@ -111,7 +111,7 @@ const WorkoutList = () => {
 
       {/* כפתור הוספה צף (רק כשיש אימונים) */}
       {plansData && plansData.length > 0 && (
-        <View style={{ position: 'absolute', bottom: bottomInset + 40, right: 40 }}>
+        <View style={{ position: 'absolute', bottom: TAB_BAR_HEIGHT + TAB_BAR_GAP, right: 40 }}>
           <AppButton
             haptic="medium"
             animationType="opacity"
