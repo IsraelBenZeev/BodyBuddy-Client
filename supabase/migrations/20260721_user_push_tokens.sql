@@ -22,8 +22,11 @@ CREATE POLICY "select_own_push_tokens" ON user_push_tokens
 CREATE POLICY "insert_own_push_tokens" ON user_push_tokens
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+-- USING (true) בכוונה: מכשיר יכול לעבור בין משתמשים (ראה קומנט למעלה) - צריך
+-- לאפשר UPDATE על שורה ששייכת ליוזר קודם. WITH CHECK מגן שהשורה תישאר שייכת
+-- למי שמעדכן אותה, כך שאף יוזר לא יכול לשייך מכשיר למישהו אחר.
 CREATE POLICY "update_own_push_tokens" ON user_push_tokens
-  FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  FOR UPDATE USING (true) WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "delete_own_push_tokens" ON user_push_tokens
   FOR DELETE USING (auth.uid() = user_id);
