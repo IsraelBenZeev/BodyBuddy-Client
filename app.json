@@ -43,6 +43,7 @@
       ],
       "./plugins/withAndroidRTL",
       "./plugins/withIosRTL",
+      "./plugins/withDevApplicationId",
       [
         "expo-localization",
         {
