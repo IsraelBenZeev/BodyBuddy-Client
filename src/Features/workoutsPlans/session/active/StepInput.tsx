@@ -81,16 +81,16 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
             <View className="flex-row items-center bg-zinc-900 rounded-2xl border border-white/5">
               <AppButton
                 disabled={disabled}
-                onPress={() => handlePress(value, -step, onChange)}
-                onLongPress={() => handleLongPressStart(value, -step, onChange)}
+                onPress={() => handlePress(value, step, onChange)}
+                onLongPress={() => handleLongPressStart(value, step, onChange)}
                 onPressOut={handleLongPressEnd}
                 delayLongPress={300}
-                className={'bg-background-800 rounded-full p-2'}
+                className={'bg-lime-500/20 border border-lime-500/45 rounded-full p-2'}
                 haptic="medium"
                 animationType="both"
-                accessibilityLabel={`הפחת ${label}`}
+                accessibilityLabel={`הגדל ${label}`}
               >
-                <MaterialCommunityIcons name="minus" size={24} color="white" />
+                <MaterialCommunityIcons name="plus" size={24} color="rgb(213,255,95)" />
               </AppButton>
 
               <View className="px-4 min-w-[30px] items-center justify-center">
@@ -108,16 +108,16 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
 
               <AppButton
                 disabled={disabled}
-                onPress={() => handlePress(value, step, onChange)}
-                onLongPress={() => handleLongPressStart(value, step, onChange)}
+                onPress={() => handlePress(value, -step, onChange)}
+                onLongPress={() => handleLongPressStart(value, -step, onChange)}
                 onPressOut={handleLongPressEnd}
                 delayLongPress={300}
-                className={'bg-lime-500 rounded-full p-2'}
+                className={'bg-background-800 border border-white/10 rounded-full p-2'}
                 haptic="medium"
                 animationType="both"
-                accessibilityLabel={`הגדל ${label}`}
+                accessibilityLabel={`הפחת ${label}`}
               >
-                <MaterialCommunityIcons name="plus" size={24} color="black" />
+                <MaterialCommunityIcons name="minus" size={24} color="white" />
               </AppButton>
             </View>
           )}
