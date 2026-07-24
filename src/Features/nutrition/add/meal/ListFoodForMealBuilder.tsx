@@ -3,6 +3,7 @@ import AddNewFoodSelection from '@/src/Features/nutrition/add/food/AddNewFoodSel
 import { getCategoryIconName } from '@/src/Features/nutrition/add/food/foodCategories';
 import type { CreateFoodFormData, FoodItem } from '@/src/types/nutrition';
 import ActionButton from '@/src/ui/ActionButton';
+import BackButton from '@/src/ui/BackButton';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
@@ -59,19 +60,11 @@ const ListFoodForMealBuilder = ({
         <View className="flex-row items-center justify-between px-6 py-4 border-b border-white/5">
           <View className="flex-1 flex-row gap-3 items-center">
             {!isCreateFormInProgress && (
-              <Pressable
+              <BackButton
                 onPress={handleBack}
-                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-background-800 w-11 h-11 rounded-2xl items-center justify-center border border-white/10 shadow-lg"
-                accessibilityRole="button"
-                accessibilityLabel={step !== 'list' ? 'חזרה לרשימה' : 'סגור'}
-              >
-                <Ionicons
-                  name={step !== 'list' ? 'arrow-forward' : 'close'}
-                  size={20}
-                  color="#fff"
-                />
-              </Pressable>
+                size={30}
+                accessibilityLabel={step !== 'list' ? 'חזרה לרשימה' : 'חזרה'}
+              />
             )}
             <View>
               <Text className="typo-h2 text-white tracking-tight">
@@ -167,7 +160,9 @@ const ListFoodForMealBuilder = ({
         <View className="flex-1">
           <AddNewFoodSelection
             foodItem={selectedFood}
-            onSubmit={(amount, portionUnit) => addItemFromPortion(selectedFood, amount, portionUnit)}
+            onSubmit={(amount, portionUnit) =>
+              addItemFromPortion(selectedFood, amount, portionUnit)
+            }
             isPending={false}
             onBack={() => setStep('list')}
             submitLabel="הוסף לארוחה"

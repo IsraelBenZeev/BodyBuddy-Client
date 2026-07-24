@@ -5,10 +5,10 @@ import { WorkoutPlan } from '@/src/types/workout';
 import Success from '@/src/ui/Animations/Success';
 import { IconAddToList, IconsFitnessTools } from '@/src/ui/IconsSVG';
 import ActionButton from '@/src/ui/ActionButton';
+import CloseButton from '@/src/ui/CloseButton';
 import Loading from '@/src/ui/Loading';
-import AppButton from '@/src/ui/PressableOpacity';
 import { useRouter } from 'expo-router';
-import { Check, X } from 'lucide-react-native';
+import { Check } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -92,15 +92,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                         </Text>
                     </View>
                 )}
-                <AppButton
-                    onPress={handleClose}
-                    haptic="light"
-                    animationType="both"
-                    className="w-11 h-11 rounded-full bg-background-800 items-center justify-center border border-zinc-800"
-                    accessibilityLabel="סגור"
-                >
-                    <X color={colors.background[300]} strokeWidth={2.5} size={16} />
-                </AppButton>
+                <CloseButton onPress={handleClose} variant="gray" size={44} iconSize={16} accessibilityLabel="סגור" />
             </View>
 
             {/* Divider */}

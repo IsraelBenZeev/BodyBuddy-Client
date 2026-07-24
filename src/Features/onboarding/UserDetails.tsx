@@ -4,8 +4,8 @@ import BackGround from '@/src/ui/BackGround';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, View } from 'react-native';
+import CloseButton from '@/src/ui/CloseButton';
 import {
   ActivityLevel,
   CreateProfilePayload,
@@ -135,9 +135,9 @@ const UserDetails = () => {
       >
         {/* Close Button – מוצג רק כשיש פרופיל קיים (מצב עריכה) */}
         {existingProfile && (
-          <Pressable onPress={() => router.replace('/(tabs)')} className="self-end px-6 pt-4 pb-2" accessibilityRole="button" accessibilityLabel="סגירה">
-            <Ionicons name="close" size={26} color="white" />
-          </Pressable>
+          <View className="self-end px-6 pt-4 pb-2">
+            <CloseButton onPress={() => router.replace('/(tabs)')} variant="default" size={40} iconSize={20} accessibilityLabel="סגירה" />
+          </View>
         )}
 
         {/* Progress Dots */}
