@@ -588,12 +588,24 @@ const MealBuilderScreen = () => {
           keyExtractor={(item, index) => `${item.food_item_id}-${index}`}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View className="h-3" />}
+          style={{ flex: 1 }}
+          contentContainerStyle={
+            items.length === 0 ? { flexGrow: 1, justifyContent: 'center' } : undefined
+          }
           ListEmptyComponent={
-            <View className="py-12 items-center bg-background-800/50 rounded-3xl border border-dashed border-white/10">
-              <Ionicons name="restaurant-outline" size={40} color="#404040" />
-              <Text className="typo-body-primary text-gray-500 mt-3 text-center">
-                הארוחה עדיין ריקה.{'\n'}לחץ על &quot;הוסף מאכל&quot; כדי להתחיל.
-              </Text>
+            <View className="gap-6">
+              <View className="py-12 items-center bg-background-800/50 rounded-3xl border border-dashed border-white/10">
+                <Ionicons name="restaurant-outline" size={40} color="#404040" />
+                <Text className="typo-body-primary text-gray-500 mt-3 text-center">
+                  הארוחה עדיין ריקה.{'\n'}לחץ על &quot;הוסף מאכל&quot; כדי להתחיל.
+                </Text>
+              </View>
+              <ActionButton
+                onPress={openAddModal}
+                label="הוסף מאכל לארוחה"
+                iconName="add-circle"
+                fullWidth
+              />
             </View>
           }
           renderItem={({ item, index }) => (
@@ -603,12 +615,14 @@ const MealBuilderScreen = () => {
 
         {/* כפתורי פעולה בתחתית הרשימה */}
         <View className="mt-6 gap-4">
-          <ActionButton
-            onPress={openAddModal}
-            label="הוסף מאכל לארוחה"
-            iconName="add-circle"
-            fullWidth
-          />
+          {items.length > 0 && (
+            <ActionButton
+              onPress={openAddModal}
+              label="הוסף מאכל לארוחה"
+              iconName="add-circle"
+              fullWidth
+            />
+          )}
 
           <View className="gap-3">
             <ActionButton
