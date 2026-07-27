@@ -1,8 +1,11 @@
+import ActionButton from '@/src/ui/ActionButton';
 import BodyBuddyLoadingIcon from '@/src/ui/BodyBuddyLoadingIcon';
 import type { PrivacyPolicyContent as PrivacyPolicyContentType } from '@/src/types/privacyPolicy';
 import { format, parseISO } from 'date-fns';
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
+
+const PRIVACY_POLICY_URL = 'https://bodybuddy.fitness/privecypolicy/';
 
 type PolicyLanguage = 'he' | 'en';
 
@@ -30,10 +33,18 @@ export default function PrivacyPolicyContent({
 
   if (isError || !data) {
     return (
-      <View className="py-12 items-center px-6">
+      <View className="py-12 items-center px-6 gap-4">
         <Text className="typo-body text-background-400 text-center">
           לא ניתן לטעון כרגע את מדיניות הפרטיות. נסה שוב מאוחר יותר.
         </Text>
+        <ActionButton
+          variant="outline"
+          size="sm"
+          iconName="open-outline"
+          label="צפה במדיניות הפרטיות באתר"
+          onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}
+          accessibilityHint="לחיצה תפתח את מדיניות הפרטיות בדפדפן"
+        />
       </View>
     );
   }
@@ -77,11 +88,15 @@ export default function PrivacyPolicyContent({
         </View>
       </View>
 
-      <ScrollView className="px-5 py-4" contentContainerStyle={{ gap: 14 }}>
+      <ScrollView
+        className="px-5 py-4"
+        contentContainerClassName="items-center"
+        contentContainerStyle={{ gap: 14 }}
+      >
         {sections?.map((section, sectionIndex) => (
           <View
             key={sectionIndex}
-            className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4"
+            className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4"
           >
             <View className="flex-row items-center gap-3 mb-3">
               {language === 'en' ? (
