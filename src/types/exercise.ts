@@ -22,6 +22,7 @@ export interface Exercise {
   gif_available: boolean; // מיושן, לא בשימוש ב-v2
   sort_order: number;
   idx: number | null;
+  status: string;
 }
 export interface FetchExercisesResponse {
   exercises: Exercise[];

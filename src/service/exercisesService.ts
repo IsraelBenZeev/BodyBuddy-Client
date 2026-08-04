@@ -37,6 +37,7 @@ export const getExercisesByBodyParts = async (bodyPart: string[], page: number, 
       .from('exercises_v2')
       .select('*', { count: 'exact' })
       .overlaps('bodyParts', bodyPart)
+      .eq('status', 'active')
       .order('sort_order', { ascending: true })
       .range(from, to);
     if (error) throw error;
@@ -56,6 +57,7 @@ export const getExerciseById = async (exerciseId: string) => {
       .from('exercises_v2')
       .select('*')
       .eq('exerciseId', exerciseId)
+      .eq('status', 'active')
       .single();
     if (error) throw error;
     return data as Exercise;
@@ -75,6 +77,7 @@ export const getExerciseByIds = async (exerciseId: string[]) => {
             .from('exercises_v2')
             .select('*')
             .in('exerciseId', catalogIds)
+            .eq('status', 'active')
             .then(({ data, error }) => {
               if (error) throw error;
               return data as Exercise[];
