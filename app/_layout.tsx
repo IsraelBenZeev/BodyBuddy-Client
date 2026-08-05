@@ -23,6 +23,7 @@ import Reactotron from '../ReactotronConfig';
 Sentry.init({
   dsn: 'https://2bd1282812732a315590b73db46ff5de@o4511642048659456.ingest.de.sentry.io/4511642094862416',
   enabled: true,
+  debug: true,
   tracesSampleRate: 1.0,
   release: Constants.expoConfig?.version,
 });
