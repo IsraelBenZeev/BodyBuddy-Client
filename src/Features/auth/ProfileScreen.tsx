@@ -121,6 +121,7 @@ export default function ProfileScreen() {
                   source={profile?.avatar_url ?? user.user_metadata.avatar_url}
                   style={{ width: 64, height: 64, borderRadius: 32 }}
                   contentFit="cover"
+                  accessibilityLabel="תמונת הפרופיל שלך"
                 />
               ) : (
                 <View className="w-16 h-16 rounded-full bg-lime-500/10 items-center justify-center">
@@ -380,6 +381,9 @@ export default function ProfileScreen() {
             <Text
               onPress={() => router.push('/privacy-policy')}
               className="text-lime-400 font-semibold"
+              accessibilityRole="link"
+              accessibilityLabel="מדיניות הפרטיות"
+              accessibilityHint="פותח את מסך מדיניות הפרטיות"
             >
               {'מדיניות הפרטיות'}
             </Text>
@@ -391,6 +395,9 @@ export default function ProfileScreen() {
             <Text
               onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
               className="text-lime-400 font-semibold"
+              accessibilityRole="link"
+              accessibilityLabel="צרו קשר עם התמיכה שלנו"
+              accessibilityHint="פותח את אפליקציית המייל לפנייה לתמיכה"
             >
               {'צרו קשר עם התמיכה שלנו'}
             </Text>

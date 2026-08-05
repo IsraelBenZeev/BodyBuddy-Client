@@ -14,9 +14,17 @@ interface AccordionProps {
   defaultOpen?: boolean;
   isOpen?: boolean; // controlled mode - אם מועבר, האקורדיון נשלט מבחוץ
   onToggle?: () => void; // callback לפתיחה/סגירה ב-controlled mode
+  accessibilityLabel?: string; // תיאור הסעיף עבור קורא מסך - title יכול להיות JSX ולא ניתן לגזור ממנו טקסט אוטומטית
 }
 
-const Accordion = ({ title, children, defaultOpen = false, isOpen: controlledIsOpen, onToggle }: AccordionProps) => {
+const Accordion = ({
+  title,
+  children,
+  defaultOpen = false,
+  isOpen: controlledIsOpen,
+  onToggle,
+  accessibilityLabel,
+}: AccordionProps) => {
   const [internalIsOpen, setInternalIsOpen] = useState(defaultOpen);
 
   // אם isOpen מועבר, זה controlled mode, אחרת uncontrolled
@@ -86,6 +94,7 @@ const Accordion = ({ title, children, defaultOpen = false, isOpen: controlledIsO
         onPress={toggleAccordion}
         className="flex-row items-center justify-between p-4"
         accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel ?? (isOpen ? 'כווץ סעיף' : 'הרחב סעיף')}
         accessibilityState={{ expanded: isOpen }}
       >
         {/* כותרת - יכולה להיות מורכבת מ-JSX */}

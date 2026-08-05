@@ -117,6 +117,8 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
             onPress={() => onEdit(index)}
             className="bg-background-700 p-2.5 rounded-xl"
             hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel={`ערוך ${item.name}`}
           >
             <Ionicons name="pencil" size={16} color="#a3a3a3" />
           </Pressable>
@@ -124,6 +126,8 @@ const MealItemRow = React.memo(({ item, index, onEdit, onRemove }: MealItemRowPr
             onPress={() => onRemove(index)}
             className="bg-red-500/10 p-2.5 rounded-xl"
             hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel={`מחק ${item.name}`}
           >
             <Ionicons name="trash-outline" size={16} color="#f87171" />
           </Pressable>

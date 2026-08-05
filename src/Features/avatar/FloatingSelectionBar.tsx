@@ -87,6 +87,7 @@ const FloatingSelectionBar = ({
                 haptic="light"
                 onPress={() => onDeselectPart(part)}
                 accessibilityLabel={`הסר ${partsBodyHebrew[part]}`}
+                hitSlop={15}
               >
                 <Ionicons name="close-circle" size={14} color="rgba(132, 204, 22, 0.45)" />
               </AppButton>

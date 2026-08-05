@@ -289,6 +289,9 @@ const MealCard = React.memo(function MealCard({
                 onDelete();
               }}
               className="bg-red-500/10 p-2.5 rounded-xl border border-red-500/5"
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={`מחק את ${meal.name_meal || 'הארוחה'}`}
             >
               <Ionicons name="trash-outline" size={18} color="#f87171" />
             </Pressable>
