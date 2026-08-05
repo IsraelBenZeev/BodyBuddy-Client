@@ -9,8 +9,8 @@ export const recordPrivacyConsent = async (userId: string, policyVersion: string
     const { error } = await supabase
       .from('user_consents')
       .upsert(
-        { user_id: userId, policy_version: policyVersion },
-        { onConflict: 'user_id,policy_version', ignoreDuplicates: true }
+        { user_id: userId, policy_type: 'privacy_policy', policy_version: policyVersion },
+        { onConflict: 'user_id,policy_type,policy_version', ignoreDuplicates: true }
       );
     if (error) throw error;
   } catch (error) {
@@ -24,6 +24,7 @@ export const hasUserConsented = async (userId: string, policyVersion: string): P
       .from('user_consents')
       .select('id')
       .eq('user_id', userId)
+      .eq('policy_type', 'privacy_policy')
       .eq('policy_version', policyVersion)
       .maybeSingle();
     if (error) throw error;
