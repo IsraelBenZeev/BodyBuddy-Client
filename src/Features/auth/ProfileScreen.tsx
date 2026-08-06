@@ -375,7 +375,7 @@ export default function ProfileScreen() {
           {/* הפרדה ויזואלית קטנה */}
           <View className="border-t border-background-800 my-2 w-1/4 self-center opacity-30" />
 
-          {/* מדיניות פרטיות */}
+          {/* מדיניות פרטיות ותנאי שימוש */}
           <Text className="typo-label text-background-400">
             {'בהמשך השימוש הינך מסכים ל'}
             <Text
@@ -387,6 +387,17 @@ export default function ProfileScreen() {
             >
               {'מדיניות הפרטיות'}
             </Text>
+            {' ול'}
+            <Text
+              onPress={() => router.push('/privacy-policy?tab=terms')}
+              className="text-lime-400 font-semibold"
+              accessibilityRole="link"
+              accessibilityLabel="תנאי השימוש"
+              accessibilityHint="פותח את מסך תנאי השימוש"
+            >
+              {'תנאי השימוש'}
+            </Text>
+            {' שלנו'}
           </Text>
 
           {/* תמיכה */}

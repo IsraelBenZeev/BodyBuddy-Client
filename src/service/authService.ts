@@ -1,9 +1,9 @@
 import { logError } from '@/src/lib/logger';
 import { useAuthStore } from '@/src/store/useAuthStore';
-import { recordPrivacyConsent } from '@/src/service/consentService';
+import { recordConsent } from '@/src/service/consentService';
 import { deletePushToken } from '@/src/service/pushTokenService';
 import { getProfile } from '@/src/service/profileService';
-import { getPrivacyPolicy } from '@/src/service/privacyPolicyService';
+import { getPrivacyPolicy, getTermsOfService } from '@/src/service/privacyPolicyService';
 import { getDeviceId } from '@/src/utils/deviceId';
 import { supabase } from '@/supabase_client';
 import { Session, User } from '@supabase/supabase-js';
@@ -225,9 +225,15 @@ export const signInWithGoogle = async () => {
         useAuthStore.getState().setSession(sessionData.session);
         try {
           const policy = await getPrivacyPolicy();
-          recordPrivacyConsent(sessionData.session.user.id, policy.version);
+          recordConsent(sessionData.session.user.id, 'privacy_policy', policy.version);
         } catch {
           // best effort - כבר נרשם ל-logger בתוך getPrivacyPolicy
+        }
+        try {
+          const terms = await getTermsOfService();
+          recordConsent(sessionData.session.user.id, 'terms_of_service', terms.version);
+        } catch {
+          // best effort - כבר נרשם ל-logger בתוך getTermsOfService
         }
         try {
           const profile = await getProfile(sessionData.session.user.id);
