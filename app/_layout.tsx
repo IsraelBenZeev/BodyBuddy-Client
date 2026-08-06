@@ -21,7 +21,7 @@ import '../global.css'; // כאן אנחנו "מחברים את החשמל" (Tai
 import Reactotron from '../ReactotronConfig';
 
 Sentry.init({
-  dsn: 'https://2bd1282812732a315590b73db46ff5de@o4511642048659456.ingest.de.sentry.io/4511642094862416',
+  dsn: 'https://7c2244bf6b795f6f821cc11f6b47870c@o4511642048659456.ingest.de.sentry.io/4511642234978384',
   enabled: true,
   debug: true,
   tracesSampleRate: 1.0,
