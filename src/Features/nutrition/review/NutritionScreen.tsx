@@ -1,5 +1,5 @@
 import { colors } from '@/colors';
-import AddOptionsSheet from '@/src/Features/nutrition/add/AddOptionsSheet';
+import AddOptionsFab from '@/src/Features/nutrition/add/AddOptionsFab';
 import CameraAIModal from '@/src/Features/nutrition/add/ai/CameraAIModal';
 import ModalAddFoods from '@/src/Features/nutrition/add/ModalAddFoods';
 import MacroPieChart from '@/src/Features/nutrition/review/MacroPieChart';
@@ -13,7 +13,6 @@ import {
 import { useProfile, useUpdateProfileDisplaySettings } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
-import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import Loading from '@/src/ui/Loading';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
@@ -43,26 +42,19 @@ const NutritionScreen = () => {
   const router = useRouter();
   const today = getTodayDate();
   const [isAddFoodOpen, setIsAddFoodOpen] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
 
   const closeAddFoodSheet = useCallback(() => setIsAddFoodOpen(false), []);
-  const handleShowOptions = useCallback(() => setShowOptions(true), []);
-  const handleCloseOptions = useCallback(() => setShowOptions(false), []);
   const handleSelectFromList = useCallback(() => {
-    setShowOptions(false);
     setIsAddFoodOpen(true);
   }, []);
   const handleAddNewFood = useCallback(() => {
-    setShowOptions(false);
     router.push('/add-food/create');
   }, [router]);
   const handleAddMeal = useCallback(() => {
-    setShowOptions(false);
     router.push('/MealBuilder/create');
   }, [router]);
   const handleCameraAI = useCallback(() => {
-    setShowOptions(false);
     setShowCameraModal(true);
   }, []);
   const handleCloseCameraModal = useCallback(() => setShowCameraModal(false), []);
@@ -459,34 +451,22 @@ const NutritionScreen = () => {
           pointerEvents={isButtonVisible ? 'auto' : 'none'}
           style={{
             position: 'absolute',
-            left: 16,
             right: 16,
             bottom: 90,
             opacity: buttonOpacity,
             transform: [{ translateY: buttonTranslateY }],
-
+            zIndex: 20,
+            elevation: 20,
           }}
         >
-
-          <ActionButton
-            onPress={handleShowOptions}
-            iconName="add-circle"
-            label="הוספת מאכל או ארוחה"
-            variant="primary"
-            fullWidth
+          <AddOptionsFab
+            onSelectFromList={handleSelectFromList}
+            onAddNewFood={handleAddNewFood}
+            onAddMeal={handleAddMeal}
+            onCameraAI={handleCameraAI}
           />
-            
         </Animated.View>
       </View>
-
-      <AddOptionsSheet
-        visible={showOptions}
-        onClose={handleCloseOptions}
-        onSelectFromList={handleSelectFromList}
-        onAddNewFood={handleAddNewFood}
-        onAddMeal={handleAddMeal}
-        onCameraAI={handleCameraAI}
-      />
 
       <CameraAIModal
         visible={showCameraModal}
