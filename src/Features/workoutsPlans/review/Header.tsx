@@ -2,8 +2,8 @@ import { WorkoutPlan } from "@/src/types/workout";
 import CloseButton from "@/src/ui/CloseButton";
 import { useRouter } from "expo-router";
 import { useCallback } from "react";
-import { Alert } from "react-native";
-import { Text, View } from "react-native-animatable";
+import { Alert, Text, View } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 interface Props {
     workoutPlan: WorkoutPlan;
     isStart?: boolean;
@@ -26,7 +26,10 @@ const Header = ({ workoutPlan, isStart = false }: Props) => {
         }
     }, [router, isStart]);
     return (
-        <View className="flex-row items-center px-4 py-4 bg-background border-b border-secondary border-b-background-1200">
+        <Animated.View
+            entering={FadeInDown.duration(300).damping(20)}
+            className="flex-row items-center px-4 py-4 bg-background border-b border-secondary border-b-background-1200"
+        >
             <View className="flex-1" />
             <View className="flex-[4] items-center justify-center">
                 <Text className="typo-h2 text-center text-lime-500" numberOfLines={1}>
@@ -37,7 +40,7 @@ const Header = ({ workoutPlan, isStart = false }: Props) => {
                 <CloseButton onPress={handleClose} variant="default" size={40} iconSize={22} />
             </View>
 
-        </View>
+        </Animated.View>
     );
 };
 

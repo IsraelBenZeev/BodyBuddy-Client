@@ -3,11 +3,11 @@ import { WorkoutPlan } from '@/src/types/workout';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
-import { View as AnimatedView } from 'react-native-animatable';
 import Animated, {
   cancelAnimation,
   Easing,
   FadeIn,
+  FadeInDown,
   FadeOut,
   useAnimatedStyle,
   useSharedValue,
@@ -99,9 +99,8 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
       exiting={FadeOut.duration(400)} // משך זמן היציאה
     >
       <ScrollView className="">
-        <AnimatedView
-          animation="fadeInUp"
-          duration={800}
+        <Animated.View
+          entering={FadeInDown.delay(100).duration(400).damping(20)}
           className="px-4 mt-4"
           style={{ maxHeight: height * 0.45 }}
         >
@@ -111,7 +110,7 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
             mode="preview"
             selectExercisesIds={workoutPlan?.exercise_ids}
           />
-        </AnimatedView>
+        </Animated.View>
         <CardWorkouPlan workoutPlan={workoutPlan} />
         <TabsManager
           tabs={[
