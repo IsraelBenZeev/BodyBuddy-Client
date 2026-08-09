@@ -1,14 +1,21 @@
 import { colors } from "@/colors"
 import { WorkoutPlan } from "@/src/types/workout";
 import { CalendarDays, Clock, Zap } from "lucide-react-native"
-import { Text } from "react-native"
-import { View } from "react-native-animatable"
+import { Text, View } from "react-native"
+import Animated, { FadeInDown } from "react-native-reanimated"
 interface Props {
     workoutPlan: WorkoutPlan;
 }
+
+const WEEK_ORDER = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
+
 const CardWorkouPlan = ({workoutPlan}: Props) => {
+    const sortedDays = [...(workoutPlan?.days_per_week ?? [])].sort(
+        (a, b) => WEEK_ORDER.indexOf(a) - WEEK_ORDER.indexOf(b)
+    );
+    const daysLabel = sortedDays.length ? `(${sortedDays.join(', ')})` : '';
     return(
-          <View animation="fadeInUp" delay={200} className="px-5 mt-6">
+          <Animated.View entering={FadeInDown.delay(200).duration(400).damping(20)} className="px-5 mt-6">
                     <View className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 flex-row justify-around">
                         
                         {/* ימים */}
@@ -16,6 +23,9 @@ const CardWorkouPlan = ({workoutPlan}: Props) => {
                             <CalendarDays size={24} color={colors.lime[400]} />
                             <Text className="typo-body-primary text-white mt-1">{workoutPlan?.days_per_week?.length}</Text>
                             <Text className="typo-caption text-zinc-500">ימים בשבוע</Text>
+                            {!!daysLabel && (
+                                <Text className="typo-caption text-zinc-600 mt-1 text-center">{daysLabel}</Text>
+                            )}
                         </View>
 
                         {/* קושי */}
@@ -52,7 +62,7 @@ const CardWorkouPlan = ({workoutPlan}: Props) => {
                             })}
                         </Text>
                     )}
-                </View>
+                </Animated.View>
     )
 }
 export default CardWorkouPlan
