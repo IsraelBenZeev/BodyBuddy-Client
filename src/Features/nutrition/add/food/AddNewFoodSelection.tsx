@@ -100,11 +100,11 @@ const AddNewFoodSelection = ({
 
           <Pressable
             onPress={() => handleQuantityChange(1)}
-            className="w-14 h-14 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
+            className="w-14 h-14 items-center justify-center bg-lime-500/10 rounded-xl border border-lime-500/40 active:scale-95"
             accessibilityRole="button"
             accessibilityLabel="הגדל כמות"
           >
-            <Ionicons name="add" size={24} color="#000" />
+            <Ionicons name="add" size={24} color="#a3e635" />
           </Pressable>
         </View>
 

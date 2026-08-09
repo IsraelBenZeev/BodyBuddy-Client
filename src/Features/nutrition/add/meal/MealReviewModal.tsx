@@ -166,7 +166,7 @@ export default function MealReviewModal({
       onRequestClose={onClose}
     >
       <View style={{ flex: 1, backgroundColor: colors.background[900] }}>
-        <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
+        <View className="flex-row items-center justify-between px-6 pt-[29px] pb-4">
           <View>
             <Text className="text-lime-400 text-[10px] font-bold uppercase tracking-[2px] mb-1">
               סקירת ארוחה
@@ -308,11 +308,11 @@ const MealReviewRow = React.memo(function MealReviewRow({
 
         <Pressable
           onPress={() => onQuantityChange(isUnits ? 0.5 : 10)}
-          className="w-12 h-12 items-center justify-center bg-lime-500 rounded-xl active:scale-95"
+          className="w-12 h-12 items-center justify-center bg-lime-500/10 rounded-xl border border-lime-500/40 active:scale-95"
           accessibilityRole="button"
           accessibilityLabel="הגדל כמות"
         >
-          <Ionicons name="add" size={22} color="#000" />
+          <Ionicons name="add" size={22} color="#a3e635" />
         </Pressable>
       </View>
 
