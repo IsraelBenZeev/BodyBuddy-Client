@@ -165,7 +165,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                     onPress={handleSubmit(onSubmit, (errors) => console.log('Validation Errors:', errors))}
                     label="סיים אימון"
                     variant="outline"
-                    size="lg"
+                    size="md"
                     fullWidth
                     disabled={isPendingCreateSession || isPendingCreateExerciseLog}
                     loading={isPendingCreateSession || isPendingCreateExerciseLog}
