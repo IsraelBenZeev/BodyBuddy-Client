@@ -89,6 +89,7 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
                 haptic="medium"
                 animationType="both"
                 accessibilityLabel={`הגדל ${label}`}
+                hitSlop={6}
               >
                 <MaterialCommunityIcons name="plus" size={24} color="rgb(213,255,95)" />
               </AppButton>
@@ -116,6 +117,7 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
                 haptic="medium"
                 animationType="both"
                 accessibilityLabel={`הפחת ${label}`}
+                hitSlop={6}
               >
                 <MaterialCommunityIcons name="minus" size={24} color="white" />
               </AppButton>

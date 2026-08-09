@@ -95,6 +95,7 @@ const PremiumCheck = ({ checked, onPress }: Props) => {
                     accessibilityRole="checkbox"
                     accessibilityLabel={checked ? 'סט הושלם' : 'סמן סט כהושלם'}
                     accessibilityState={{ checked }}
+                    hitSlop={4}
                 >
                     {checked && (
                         <Animated.View entering={ZoomIn.duration(200)}>

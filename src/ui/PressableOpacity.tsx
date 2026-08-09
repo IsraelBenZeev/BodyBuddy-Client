@@ -126,6 +126,12 @@ const AppButton = ({
         props.onPressOut?.(event);
     }, [pressedValue, props.onPressOut]);
 
+    if (__DEV__ && !props.accessibilityLabel) {
+        console.warn(
+            'AppButton (PressableOpacity) נוצר בלי accessibilityLabel - קורא מסך לא יידע לתאר את הכפתור הזה.'
+        );
+    }
+
     return (
         <AnimatedPressable
             accessibilityRole="button"

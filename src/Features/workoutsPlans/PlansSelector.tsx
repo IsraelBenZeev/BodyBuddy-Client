@@ -169,6 +169,7 @@ const PlanSelector = ({ idExercise, setIsShowListWorkoutsPlans }: PlansSelectorP
                             isSuccess={false}
                             size={44}
                             icon={<Check size={22} color={colors.background[850]} strokeWidth={3} />}
+                            accessibilityLabel="הוסף לתוכניות הנבחרות"
                         />
                     </View>
                 </View>

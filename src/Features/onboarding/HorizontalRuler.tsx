@@ -2,6 +2,7 @@ import { colors } from '@/colors';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  AccessibilityActionEvent,
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -16,11 +17,12 @@ interface HorizontalRulerProps {
   value: number;
   onChange: (value: number) => void;
   unit?: string;
+  label?: string;
 }
 
 const TICK_SPACING = 14;
 
-const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalRulerProps) => {
+const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg', label }: HorizontalRulerProps) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const [displayValue, setDisplayValue] = useState(value);
@@ -90,10 +92,39 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
     [min, max, onChange],
   );
 
+  // מפעיל קורא מסך (VoiceOver/TalkBack) עם swipe למעלה/למטה על רכיב מסוג
+  // "adjustable" - זו הדרך היחידה להזיז את הסרגל בלי מחוות גרירה חופשיות,
+  // שקורא המסך "בולע" לצורך הניווט שלו. משאירים ל-useEffect הקיים (שמאזין
+  // ל-value) לבצע את הגלילה החזותית בפועל, בדיוק כמו שינוי חיצוני רגיל.
+  const handleAccessibilityAction = useCallback(
+    (e: AccessibilityActionEvent) => {
+      const delta =
+        e.nativeEvent.actionName === 'increment'
+          ? 1
+          : e.nativeEvent.actionName === 'decrement'
+            ? -1
+            : 0;
+      if (delta === 0) return;
+      const newValue = Math.max(min, Math.min(max, displayValue + delta));
+      if (newValue === displayValue) return;
+      Haptics.selectionAsync();
+      onChange(newValue);
+    },
+    [displayValue, min, max, onChange],
+  );
+
   return (
-    <View className="items-center">
+    <View
+      className="items-center"
+      accessible
+      accessibilityRole="adjustable"
+      accessibilityLabel={label ?? `בורר ${unit}`}
+      accessibilityHint="החלק למעלה כדי להגדיל, למטה כדי להקטין"
+      accessibilityValue={{ min, max, now: displayValue, text: `${displayValue} ${unit}` }}
+      onAccessibilityAction={handleAccessibilityAction}
+    >
       {/* ערך נבחר */}
-      <View className="flex-row items-baseline justify-center mb-3">
+      <View className="flex-row items-baseline justify-center mb-3" importantForAccessibility="no">
         <Text className="typo-h4 text-background-400 mr-2">{unit}</Text>
         <Text className="typo-h3 text-white">{displayValue}</Text>
       </View>
@@ -103,6 +134,7 @@ const HorizontalRuler = ({ min, max, value, onChange, unit = 'kg' }: HorizontalR
         className="w-full overflow-hidden"
         style={{ height: 90, direction: 'ltr' }}
         onLayout={handleContainerLayout}
+        importantForAccessibility="no"
       >
         {/* נקודה עליונה */}
         <View

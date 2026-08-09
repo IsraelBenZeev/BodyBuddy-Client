@@ -121,6 +121,7 @@ export default function ProfileScreen() {
                   source={profile?.avatar_url ?? user.user_metadata.avatar_url}
                   style={{ width: 64, height: 64, borderRadius: 32 }}
                   contentFit="cover"
+                  accessibilityLabel="תמונת הפרופיל שלך"
                 />
               ) : (
                 <View className="w-16 h-16 rounded-full bg-lime-500/10 items-center justify-center">
@@ -374,15 +375,29 @@ export default function ProfileScreen() {
           {/* הפרדה ויזואלית קטנה */}
           <View className="border-t border-background-800 my-2 w-1/4 self-center opacity-30" />
 
-          {/* מדיניות פרטיות */}
+          {/* מדיניות פרטיות ותנאי שימוש */}
           <Text className="typo-label text-background-400">
             {'בהמשך השימוש הינך מסכים ל'}
             <Text
               onPress={() => router.push('/privacy-policy')}
               className="text-lime-400 font-semibold"
+              accessibilityRole="link"
+              accessibilityLabel="מדיניות הפרטיות"
+              accessibilityHint="פותח את מסך מדיניות הפרטיות"
             >
               {'מדיניות הפרטיות'}
             </Text>
+            {' ול'}
+            <Text
+              onPress={() => router.push('/privacy-policy?tab=terms')}
+              className="text-lime-400 font-semibold"
+              accessibilityRole="link"
+              accessibilityLabel="תנאי השימוש"
+              accessibilityHint="פותח את מסך תנאי השימוש"
+            >
+              {'תנאי השימוש'}
+            </Text>
+            {' שלנו'}
           </Text>
 
           {/* תמיכה */}
@@ -391,6 +406,9 @@ export default function ProfileScreen() {
             <Text
               onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
               className="text-lime-400 font-semibold"
+              accessibilityRole="link"
+              accessibilityLabel="צרו קשר עם התמיכה שלנו"
+              accessibilityHint="פותח את אפליקציית המייל לפנייה לתמיכה"
             >
               {'צרו קשר עם התמיכה שלנו'}
             </Text>

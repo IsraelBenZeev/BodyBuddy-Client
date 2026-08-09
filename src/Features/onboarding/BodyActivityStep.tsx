@@ -68,6 +68,7 @@ const BodyActivityStep = ({
                     value={value}
                     onChange={onChange}
                     unit="ס״מ"
+                    label="גובה"
                   />
                 </View>
                 {error && (
@@ -101,6 +102,7 @@ const BodyActivityStep = ({
                     value={value}
                     onChange={onChange}
                     unit="ק״ג"
+                    label="משקל"
                   />
                 </View>
                 {error && (

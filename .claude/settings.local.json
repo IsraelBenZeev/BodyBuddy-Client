@@ -28,7 +28,11 @@
       "PowerShell(Get-Process *)",
       "PowerShell(Test-NetConnection *)",
       "Skill(build-aab)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__claude_ai_Supabase__get_advisors",
+      "Bash(git -C \"c:\\\\Users\\\\user\\\\Documents\\\\projects\\\\BodyBuddy-Client\" log -p --follow -- app.json)",
+      "Bash(git -C \"c:\\\\Users\\\\user\\\\Documents\\\\projects\\\\BodyBuddy-Client\" log --oneline --all -- android/app/src/main/AndroidManifest.xml)",
+      "Bash(adb shell *)"
     ]
   },
   "enableAllProjectMcpServers": true,

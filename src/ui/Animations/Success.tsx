@@ -16,6 +16,7 @@ interface SuccessProps {
     label?: string;
     loadingLabel?: string;
     className?: string;
+    accessibilityLabel?: string;
 }
 
 const Success = ({
@@ -29,6 +30,7 @@ const Success = ({
     label,
     loadingLabel,
     className,
+    accessibilityLabel,
 }: SuccessProps) => {
     const [showSuccess, setShowSuccess] = useState(false);
 
@@ -52,6 +54,8 @@ const Success = ({
             animationType="opacity"
             disabled={isLoading || showSuccess}
             className={`${showSuccess ? 'bg-transparent' : `bg-${color}`} p-1 rounded-full items-center justify-center min-w-[40px] min-h-[40px] ${className}`}
+            accessibilityLabel={accessibilityLabel ?? label ?? loadingLabel}
+            accessibilityState={{ busy: isLoading || showSuccess, disabled: isLoading || showSuccess }}
         >
             {isLoading ? (
                 <View style={{ width: 24, height: 24 }}>

@@ -35,7 +35,7 @@ export const usePushTokenSync = (): void => {
         // בדיקה חוזרת: יתכן שהמשתמש התנתק בזמן שהמתנו להרשאות/לטוקן
         if (isCancelled || !useAuthStore.getState().user) return;
 
-        await upsertPushToken(user.id, deviceId, expoPushToken, platform);
+        await upsertPushToken(deviceId, expoPushToken, platform);
       } catch (error) {
         logError(error, 'usePushTokenSync');
       }

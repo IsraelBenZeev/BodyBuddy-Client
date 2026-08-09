@@ -224,6 +224,9 @@ const CameraAIModal = ({ visible, onClose, userId, date }: Props) => {
                       <Text
                         onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
                         className="text-lime-400 font-semibold"
+                        accessibilityRole="link"
+                        accessibilityLabel="דווח לנו על זיהוי שגוי"
+                        accessibilityHint="פותח את אפליקציית המייל לשליחת דיווח"
                       >
                         {'דווח לנו'}
                       </Text>
