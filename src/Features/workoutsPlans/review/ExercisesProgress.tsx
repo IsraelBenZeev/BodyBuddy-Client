@@ -77,10 +77,11 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
     exercisesLog.forEach((log) => {
       const id = log.exercise_id;
       if (!grouped[id]) {
-        grouped[id] = { id, maxWeight: 0, maxReps: 0, maxSetsInOneSession: {}, allLogs: [] };
+        grouped[id] = { id, maxima: {}, maxSetsInOneSession: {}, allLogs: [] };
       }
-      if (log.weight > grouped[id].maxWeight) grouped[id].maxWeight = log.weight;
-      if (log.reps > grouped[id].maxReps) grouped[id].maxReps = log.reps;
+      Object.entries(log.values).forEach(([key, value]) => {
+        if (!grouped[id].maxima[key] || value > grouped[id].maxima[key]) grouped[id].maxima[key] = value;
+      });
       grouped[id].maxSetsInOneSession[log.session_id] =
         (grouped[id].maxSetsInOneSession[log.session_id] || 0) + 1;
       grouped[id].allLogs.push(log);
@@ -92,7 +93,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
   }, [exercisesLog]);
 
   const firstWithDataId = useMemo(
-    () => processedExercises.find((ex) => ex.maxReps > 0)?.id ?? processedExercises[0]?.id ?? null,
+    () => processedExercises.find((ex) => ex.allLogs.length > 0)?.id ?? processedExercises[0]?.id ?? null,
     [processedExercises]
   );
 
@@ -136,7 +137,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
                 fullName={name}
                 imageUrl={details?.imageUrls?.[0]}
                 isActive={exercise.id === activeId}
-                hasData={exercise.maxReps > 0}
+                hasData={exercise.allLogs.length > 0}
                 onPress={handleSelectChip}
               />
             );
@@ -169,8 +170,8 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
             </View>
           </View>
 
-          {selectedExercise.maxReps > 0 ? (
-            <CardExerciseProgress exercise={selectedExercise} />
+          {selectedExercise.allLogs.length > 0 ? (
+            <CardExerciseProgress exercise={selectedExercise} fields={selectedDetails?.input_fields ?? []} />
           ) : (
             <View className="bg-zinc-700/30 border border-zinc-600/40 rounded-xl px-4 py-6 items-center">
               <Text className="typo-label text-zinc-400 text-center">

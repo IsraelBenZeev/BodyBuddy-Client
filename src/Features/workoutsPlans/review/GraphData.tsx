@@ -1,5 +1,7 @@
 import { colors } from '@/colors';
-import { ExerciseLogDBType } from '@/src/types/session';
+import { InputFieldDefinition } from '@/src/types/exercise';
+import { ExerciseSetDBType } from '@/src/types/session';
+import { formatFieldValue } from '@/src/utils/formatExerciseMetrics';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, Text, View } from 'react-native';
 import Svg, {
@@ -13,10 +15,12 @@ import Svg, {
 } from 'react-native-svg';
 
 interface Props {
-  logs: ExerciseLogDBType[];
+  logs: ExerciseSetDBType[];
+  fields: InputFieldDefinition[];
 }
 
-type GraphType = 'weight' | 'reps' | 'sets';
+const SETS_TAB_KEY = 'sets';
+const SETS_TAB_FIELD: InputFieldDefinition = { key: SETS_TAB_KEY, type: 'number', label: 'סטים', unit: null };
 
 interface DataPoint {
   index: number;
@@ -37,8 +41,10 @@ const buildCurvePath = (pts: { x: number; y: number }[]) => {
   return d;
 };
 
-const GraphData = ({ logs }: Props) => {
-  const [activeTab, setActiveTab] = useState<GraphType>('weight');
+const GraphData = ({ logs, fields }: Props) => {
+  const tabFields = useMemo(() => [...fields, SETS_TAB_FIELD], [fields]);
+  const [activeKey, setActiveKey] = useState<string>(tabFields[0]?.key ?? SETS_TAB_KEY);
+  const activeField = tabFields.find((f) => f.key === activeKey) ?? tabFields[0];
   const screenWidth = Dimensions.get('window').width;
 
   const sessionDateMap = useMemo(
@@ -53,56 +59,30 @@ const GraphData = ({ logs }: Props) => {
     return a[0].localeCompare(b[0]);
   };
 
-  const weightData = useMemo(() => {
-    if (!logs || logs.length === 0) return [];
-    const s: Record<string, number> = {};
-    logs.forEach((l) => {
-      if (!s[l.session_id] || l.weight > s[l.session_id]) s[l.session_id] = l.weight;
+  // מקסימום פר-session לכל שדה מספרי, פלוס ספירת סטים (טאב סינתטי)
+  const dataByKey = useMemo(() => {
+    const result: Record<string, DataPoint[]> = {};
+    tabFields.forEach((field) => {
+      const s: Record<string, number> = {};
+      logs.forEach((l) => {
+        if (field.key === SETS_TAB_KEY) {
+          s[l.session_id] = (s[l.session_id] || 0) + 1;
+        } else {
+          const v = l.values[field.key];
+          if (v === undefined) return;
+          if (!s[l.session_id] || v > s[l.session_id]) s[l.session_id] = v;
+        }
+      });
+      result[field.key] = Object.entries(s)
+        .sort(sortByDate)
+        .map(([, value], i) => ({ index: i + 1, value }));
     });
-    return Object.entries(s)
-      .sort(sortByDate)
-      .map(([, value], i) => ({ index: i + 1, value }));
-  }, [logs, sessionDateMap]);
+    return result;
+  }, [logs, sessionDateMap, tabFields]);
 
-  const repsData = useMemo(() => {
-    if (!logs || logs.length === 0) return [];
-    const s: Record<string, number> = {};
-    logs.forEach((l) => {
-      if (!s[l.session_id] || l.reps > s[l.session_id]) s[l.session_id] = l.reps;
-    });
-    return Object.entries(s)
-      .sort(sortByDate)
-      .map(([, value], i) => ({ index: i + 1, value }));
-  }, [logs, sessionDateMap]);
+  const handleTabPress = useCallback((key: string) => setActiveKey(key), []);
 
-  const setsData = useMemo(() => {
-    if (!logs || logs.length === 0) return [];
-    const s: Record<string, number> = {};
-    logs.forEach((l) => {
-      s[l.session_id] = (s[l.session_id] || 0) + 1;
-    });
-    return Object.entries(s)
-      .sort(sortByDate)
-      .map(([, value], i) => ({ index: i + 1, value }));
-  }, [logs, sessionDateMap]);
-
-  const handleTabPress = useCallback((type: GraphType) => setActiveTab(type), []);
-
-  const getTabLabel = (type: GraphType) => {
-    switch (type) {
-      case 'weight': return 'משקל';
-      case 'reps': return 'חזרות';
-      case 'sets': return 'סטים';
-    }
-  };
-
-  const currentData: DataPoint[] = useMemo(() => {
-    switch (activeTab) {
-      case 'weight': return weightData;
-      case 'reps': return repsData;
-      case 'sets': return setsData;
-    }
-  }, [activeTab, weightData, repsData, setsData]);
+  const currentData: DataPoint[] = dataByKey[activeKey] ?? [];
 
   if (!logs || logs.length === 0 || currentData.length === 0) return null;
 
@@ -131,25 +111,25 @@ const GraphData = ({ logs }: Props) => {
   return (
     <View className="mb-4">
       <View className="flex-row gap-2 mb-4">
-        {(['weight', 'reps', 'sets'] as GraphType[]).map((type) => (
+        {tabFields.map((field) => (
           <Pressable
-            key={type}
-            onPress={() => handleTabPress(type)}
+            key={field.key}
+            onPress={() => handleTabPress(field.key)}
             className={`flex-1 py-2 px-3 rounded-xl border ${
-              activeTab === type
+              activeKey === field.key
                 ? 'bg-lime-500/20 border-lime-500/50'
                 : 'bg-zinc-800/50 border-zinc-700/50'
             }`}
-            accessibilityLabel={`הצג גרף ${getTabLabel(type)}`}
+            accessibilityLabel={`הצג גרף ${field.label}`}
             accessibilityRole="tab"
-            accessibilityState={{ selected: activeTab === type }}
+            accessibilityState={{ selected: activeKey === field.key }}
           >
             <Text
               className={`typo-label text-center font-semibold ${
-                activeTab === type ? 'text-lime-500' : 'text-zinc-400'
+                activeKey === field.key ? 'text-lime-500' : 'text-zinc-400'
               }`}
             >
-              {getTabLabel(type)}
+              {field.label}
             </Text>
           </Pressable>
         ))}
@@ -198,7 +178,7 @@ const GraphData = ({ logs }: Props) => {
                   fill={colors.background[300]}
                   fontSize="11"
                 >
-                  {currentData[i].value}
+                  {activeField ? formatFieldValue(activeField, currentData[i].value) : currentData[i].value}
                 </SvgText>
               </React.Fragment>
             ))}

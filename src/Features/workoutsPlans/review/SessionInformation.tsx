@@ -2,10 +2,11 @@ import { colors } from '@/colors';
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import { useSessionExerciseLogs } from '@/src/hooks/useSession';
 import { Exercise } from '@/src/types/exercise';
-import { ExerciseLogDBType, SessionDBType } from '@/src/types/session';
+import { ExerciseSetDBType, SessionDBType } from '@/src/types/session';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import Loading from '@/src/ui/Loading';
 import AppButton from '@/src/ui/PressableOpacity';
+import { formatDurationHebrew, formatFieldValue } from '@/src/utils/formatExerciseMetrics';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -25,7 +26,7 @@ interface Props {
 
 interface GroupedExercise {
   exercise_id: string;
-  sets: ExerciseLogDBType[];
+  sets: ExerciseSetDBType[];
 }
 
 const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => {
@@ -59,9 +60,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
     ? format(new Date(session.started_at), 'dd-MM-yyyy')
     : 'אימון';
   const totalSeconds = session?.total_time ?? 0;
-  const durationMinutes = Math.floor(totalSeconds / 60);
-  const durationSeconds = totalSeconds % 60;
-  const durationDisplay = `${durationMinutes} דקות ${durationSeconds} שניות`;
+  const durationDisplay = formatDurationHebrew(totalSeconds);
   const fileName = `אימון_${dateForFilename}_${workoutPlanTitle}.pdf`;
 
   const LOGO_SVG = `<svg width="78" height="90" viewBox="0 0 717 830" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -84,7 +83,8 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
         const exerciseInfo = exercisesData?.find(
           (ex: Exercise) => ex.exerciseId === group.exercise_id
         );
-        const validSets = group.sets.filter((s) => !(s.weight === 0 && s.reps === 0));
+        const fields = exerciseInfo?.input_fields ?? [];
+        const validSets = group.sets.filter((s) => s.is_completed !== false);
         const setsHTML =
           validSets.length > 0
             ? validSets
@@ -92,12 +92,18 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
                   (s) => `
             <tr>
               <td class="set-num">${s.set_number}</td>
-              <td class="value">${s.weight} ק"ג</td>
-              <td class="value">${s.reps}</td>
+              ${fields
+                .map(
+                  (field) =>
+                    `<td class="value">${
+                      s.values[field.key] !== undefined ? formatFieldValue(field, s.values[field.key]) : '—'
+                    }</td>`
+                )
+                .join('')}
             </tr>`
                 )
                 .join('')
-            : `<tr><td colspan="3" style="color:#4b5563;padding:14px;">לא בוצעו חזרות</td></tr>`;
+            : `<tr><td colspan="${fields.length + 1}" style="color:#4b5563;padding:14px;">לא בוצעו חזרות</td></tr>`;
 
         return `
         <div class="exercise">
@@ -108,8 +114,7 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             <thead>
               <tr>
                 <th>סט</th>
-                <th>משקל</th>
-                <th>חזרות</th>
+                ${fields.map((field) => `<th>${field.label}</th>`).join('')}
               </tr>
             </thead>
             <tbody>${setsHTML}</tbody>
@@ -263,7 +268,8 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
         const exerciseInfo = exercisesData?.find(
           (ex: Exercise) => ex.exerciseId === group.exercise_id
         );
-        const validSets = group.sets.filter((set) => !(set.weight === 0 && set.reps === 0));
+        const fields = exerciseInfo?.input_fields ?? [];
+        const validSets = group.sets.filter((set) => set.is_completed !== false);
         const hasValidSets = validSets.length > 0;
         return (
           <View
@@ -303,25 +309,27 @@ const SessionInformation = ({ sessionId, session, workoutPlanTitle }: Props) => 
             {hasValidSets ? (
               <>
                 <View className="flex-row justify-between px-4 py-2 bg-background-900/50">
-                  <Text className="text-gray-500 w-1/3 text-center text-xs font-bold">חזרות</Text>
-                  <Text className="text-gray-500 w-1/3 text-center text-xs font-bold">משקל</Text>
-                  <Text className="text-gray-500 w-1/3 text-center text-xs font-bold">סט</Text>
+                  {fields.map((field) => (
+                    <Text key={field.key} className="typo-caption-bold text-gray-500 flex-1 text-center">
+                      {field.label}
+                    </Text>
+                  ))}
+                  <Text className="typo-caption-bold text-gray-500 flex-1 text-center">סט</Text>
                 </View>
                 <View className="px-2 pb-2">
-                  {group.sets.map((set, index) => (
+                  {validSets.map((set, index) => (
                     <View
                       key={set.id}
-                      className={`flex-row justify-between py-3 ${index !== group.sets.length - 1 ? 'border-b border-gray-800/50' : ''}`}
+                      className={`flex-row justify-between py-3 ${index !== validSets.length - 1 ? 'border-b border-gray-800/50' : ''}`}
                     >
-                      <Text className="text-white w-1/3 text-center font-black text-base">
-                        {set.reps}
-                      </Text>
-                      <Text className="text-white w-1/3 text-center font-black text-base">
-                        {set.weight}kg
-                      </Text>
-                      <Text className="text-gray-400 w-1/3 text-center text-sm">
-                        {set.set_number}
-                      </Text>
+                      {fields.map((field) => (
+                        <Text key={field.key} className="typo-body-primary text-white flex-1 text-center font-black">
+                          {set.values[field.key] !== undefined
+                            ? formatFieldValue(field, set.values[field.key])
+                            : '—'}
+                        </Text>
+                      ))}
+                      <Text className="typo-label text-gray-400 flex-1 text-center">{set.set_number}</Text>
                     </View>
                   ))}
                 </View>

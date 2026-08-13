@@ -1,10 +1,13 @@
+import { InputFieldDefinition } from '@/src/types/exercise';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
+import { formatFieldValue } from '@/src/utils/formatExerciseMetrics';
 import { Image } from 'expo-image';
 import React from 'react';
 import { Text, View } from 'react-native';
 import GraphData from './GraphData';
 interface CardExerciseProgressProps {
   exercise: any;
+  fields: InputFieldDefinition[];
 }
 interface TitleProps {
   exerciseDetails: any;
@@ -40,13 +43,18 @@ const Title = React.memo(({ exerciseDetails }: TitleProps) => {
     </View>
   );
 });
-const CardExerciseProgress = React.memo(({ exercise }: CardExerciseProgressProps) => {
+const CardExerciseProgress = React.memo(({ exercise, fields }: CardExerciseProgressProps) => {
   return (
     <View className="py-4">
-      <GraphData logs={exercise.allLogs} />
+      <GraphData logs={exercise.allLogs} fields={fields} />
       <View className="bg-zinc-800/50 rounded-2xl p-4 flex-row flex-wrap justify-between mt-6 border border-zinc-700/30">
-        <StatItem label="משקל שיא" value={`${exercise.maxWeight} ק"ג`} />
-        <StatItem label="חזרות שיא" value={exercise.maxReps.toString()} />
+        {fields.map((field) => (
+          <StatItem
+            key={field.key}
+            label={`${field.label} שיא`}
+            value={formatFieldValue(field, exercise.maxima[field.key] ?? 0)}
+          />
+        ))}
         <StatItem label="שיא סטים לאימון" value={exercise.maxSetsRecord.toString()} />
         <StatItem label="סהכ עבודה" value={`${exercise.allLogs.length} סטים בוצעו`} />
       </View>

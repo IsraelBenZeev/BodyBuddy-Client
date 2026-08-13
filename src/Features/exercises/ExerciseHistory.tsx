@@ -1,6 +1,8 @@
+import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import { useGetExerciseHistory } from '@/src/hooks/useSession';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import Loading from '@/src/ui/Loading';
+import { formatFieldValue } from '@/src/utils/formatExerciseMetrics';
 import { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import GraphData from '../workoutsPlans/review/GraphData';
@@ -11,37 +13,38 @@ interface Props {
 
 interface PRCardProps {
   label: string;
-  value: number;
-  unit: string;
+  value: string;
 }
 
-const PRCard = ({ label, value, unit }: PRCardProps) => (
+const PRCard = ({ label, value }: PRCardProps) => (
   <View className="flex-1 bg-zinc-800/60 border border-zinc-700/50 rounded-2xl p-4 items-center">
     <Text className="typo-caption text-zinc-400 mb-1">{label}</Text>
     <Text className="typo-h2 text-lime-500">{value}</Text>
-    <Text className="typo-caption text-zinc-500">{unit}</Text>
   </View>
 );
 
 const ExerciseHistory = ({ exerciseId }: Props) => {
   const user = useAuthStore((state) => state.user);
   const { data: logs, isPending } = useGetExerciseHistory(user?.id ?? '', exerciseId);
+  const { data: exercises } = useGetExercisesByIds([exerciseId]);
+  const exercise = exercises?.[0];
+  const fields = exercise?.input_fields ?? [];
 
   const pr = useMemo(() => {
     if (!logs || logs.length === 0) return null;
 
-    let maxWeight = 0;
-    let maxReps = 0;
+    const maxima: Record<string, number> = {};
     const setsPerSession: Record<string, number> = {};
 
     logs.forEach((log) => {
-      if (log.weight > maxWeight) maxWeight = log.weight;
-      if (log.reps > maxReps) maxReps = log.reps;
+      Object.entries(log.values).forEach(([key, value]) => {
+        if (!maxima[key] || value > maxima[key]) maxima[key] = value;
+      });
       setsPerSession[log.session_id] = (setsPerSession[log.session_id] || 0) + 1;
     });
 
     const maxSets = Math.max(...Object.values(setsPerSession));
-    return { maxWeight, maxReps, maxSets };
+    return { maxima, maxSets };
   }, [logs]);
 
   if (isPending) return <Loading />;
@@ -61,14 +64,15 @@ const ExerciseHistory = ({ exerciseId }: Props) => {
       {/* כרטיסי PR */}
       <Text className="typo-body-primary text-white text-right mb-3">שיאים אישיים</Text>
       <View className="flex-row gap-3 mb-6">
-        <PRCard label="משקל מקס'" value={pr!.maxWeight} unit="ק״ג" />
-        <PRCard label="חזרות מקס'" value={pr!.maxReps} unit="חזרות" />
-        <PRCard label="סטים מקס'" value={pr!.maxSets} unit="סטים" />
+        {fields.map((field) => (
+          <PRCard key={field.key} label={`${field.label} מקס'`} value={formatFieldValue(field, pr!.maxima[field.key] ?? 0)} />
+        ))}
+        <PRCard label="סטים מקס'" value={pr!.maxSets.toString()} />
       </View>
 
       {/* גרף התקדמות */}
       <Text className="typo-body-primary text-white text-right mb-3">התקדמות לאורך זמן</Text>
-      <GraphData logs={logs} />
+      <GraphData logs={logs} fields={fields} />
     </View>
   );
 };

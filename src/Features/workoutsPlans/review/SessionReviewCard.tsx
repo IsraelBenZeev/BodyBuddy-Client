@@ -1,6 +1,7 @@
 import { colors } from '@/colors';
 import { SessionDBType } from '@/src/types/session';
 import AppButton from '@/src/ui/PressableOpacity';
+import { formatDurationHebrew } from '@/src/utils/formatExerciseMetrics';
 import { format } from 'date-fns'; // ספרייה מומלצת לטיפול בתאריכים
 import { he } from 'date-fns/locale';
 import { Calendar, ChevronLeft, ChevronRight, Clock, NotepadText } from 'lucide-react-native';
@@ -14,12 +15,6 @@ interface SessionCardProps {
   setSelectedSession: Dispatch<SetStateAction<SessionDBType | null>>;
   sheetRef: any;
 }
-
-const formatDuration = (totalSeconds: number): string => {
-  const m = Math.floor(totalSeconds / 60);
-  const s = totalSeconds % 60;
-  return `${m} דקות ${s} שניות`;
-};
 
 const SessionReviewCard = ({
   session,
@@ -67,7 +62,7 @@ const SessionReviewCard = ({
           <View className="flex-row items-center">
             <Clock size={14} color={colors.background[400]} />
             <Text className="typo-caption text-gray-400 ml-1">
-              {formatDuration(session.total_time)}
+              {formatDurationHebrew(session.total_time)}
             </Text>
           </View>
 
