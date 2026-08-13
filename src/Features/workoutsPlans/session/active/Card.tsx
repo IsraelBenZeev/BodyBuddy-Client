@@ -1,8 +1,9 @@
 import { Exercise } from '@/src/types/exercise';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
+import { describeInputFields } from '@/src/utils/formatExerciseMetrics';
 import { Image } from 'expo-image';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Control } from 'react-hook-form';
 import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import Failds from './Failds';
@@ -18,6 +19,7 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
   const { width, height } = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typeLabel = useMemo(() => describeInputFields(item?.input_fields ?? []), [item?.input_fields]);
 
   const player = useVideoPlayer(item?.videoUrl ?? null, (player) => {
     player.loop = true;
@@ -54,9 +56,20 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
         <Text className="typo-caption-bold text-lime-500 uppercase tracking-widest mb-2">
           {item.bodyParts_he || ''}
         </Text>
-        <Text className="typo-h3 text-white mb-6">
+        <Text className="typo-h3 text-white mb-2">
           {item.name_he || ''}
         </Text>
+        <View className="mb-6">
+          {!!typeLabel && (
+            <View
+              className="bg-white/5 border border-white/10 rounded-full px-3 py-1"
+              accessible
+              accessibilityLabel={`סוג תרגיל: ${typeLabel}`}
+            >
+              <Text className="typo-caption text-zinc-400">{typeLabel}</Text>
+            </View>
+          )}
+        </View>
       </View>
 
       <ScrollView

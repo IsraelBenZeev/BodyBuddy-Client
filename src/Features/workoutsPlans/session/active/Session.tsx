@@ -1,6 +1,6 @@
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
 import { useSessionCreateExerciseLog, useSessionCreateWorkout } from '@/src/hooks/useSession';
-import { ExerciseLogDBType, SessionFormData } from '@/src/types/session';
+import { ExerciseSetDBType, SessionFormData } from '@/src/types/session';
 import { WorkoutPlan } from '@/src/types/workout';
 import CustomCarousel from '@/src/ui/CustomCarousel';
 import ActionButton from '@/src/ui/ActionButton';
@@ -74,23 +74,27 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
 
     const saveExerciseLog = async (data: SessionFormData, idSession: string) => {
         const exerciseCompletedTimes = useWorkoutStore.getState().completedTimes;
-        const allSets: ExerciseLogDBType[] = [];
-        Object.entries(data.exercises).forEach(([exerciseId, exerciseDetails]: [string, any]) => {
+        const allSets: ExerciseSetDBType[] = [];
+        Object.entries(data.exercises).forEach(([exerciseId, exerciseDetails]) => {
             const times = exerciseCompletedTimes[exerciseId] ?? [];
-            exerciseDetails.sets.forEach((set: any, index: number) => {
+            exerciseDetails.sets.forEach((set, index) => {
                 const prevTime = times[index - 1] ?? null;
                 const currTime = times[index] ?? null;
                 const rest_seconds =
                     index > 0 && prevTime != null && currTime != null
                         ? Math.round((currTime - prevTime) / 1000)
                         : null;
+                const values = Object.fromEntries(
+                    Object.entries(set)
+                        .filter(([, v]) => v !== undefined && v !== null)
+                        .map(([key, v]) => [key, Number(v)])
+                );
                 allSets.push({
                     user_id: user_id,
                     session_id: idSession,
                     exercise_id: exerciseId,
                     set_number: index + 1,
-                    reps: Number(set.reps),
-                    weight: Number(set.weight),
+                    values,
                     workout_plan_id: workoutPlan.id as string,
                     rest_seconds,
                 });

@@ -1,16 +1,31 @@
 import { useWorkoutStore } from '@/src/store/workoutsStore';
+import { Exercise, InputFieldDefinition } from '@/src/types/exercise';
 import AppButton from '@/src/ui/PressableOpacity';
 import { useEffect } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { Control, useFieldArray } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
+import DynamicSetFields from './DynamicSetFields';
 import PremiumCheck from './PremiumCheck';
 import RestTimer from './RestTimer';
-import StepInput from './StepInput';
 
 const EMPTY_TIMES: (number | null)[] = [];
 
-const Failds = ({ control, item, onScrollBottom }: any) => {
+const buildSetValues = (
+    fields: InputFieldDefinition[],
+    lastSet?: Record<string, number>
+): Record<string, number> =>
+    Object.fromEntries(
+        fields.filter((field) => !field.optional).map((field) => [field.key, lastSet?.[field.key] || 0])
+    );
+
+interface Props {
+    control: Control<any>;
+    item: Exercise;
+    onScrollBottom: () => void;
+}
+
+const Failds = ({ control, item, onScrollBottom }: Props) => {
     const completedTimes = useWorkoutStore((state) => state.completedTimes[item.exerciseId] ?? EMPTY_TIMES);
     const setSetDone = useWorkoutStore((state) => state.setSetDone);
     const addSetTime = useWorkoutStore((state) => state.addSetTime);
@@ -24,10 +39,7 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
     const handleAddSet = () => {
         const currentExercises = control._formValues.exercises?.[item.exerciseId]?.sets;
         const lastSetValues = currentExercises?.[fields.length - 1];
-        append({
-            weight: lastSetValues?.weight || 0,
-            reps: lastSetValues?.reps || 0,
-        });
+        append(buildSetValues(item.input_fields, lastSetValues));
         addSetTime(item.exerciseId);
     };
 
@@ -44,7 +56,7 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
 
     useEffect(() => {
         if (fields.length === 0) {
-            append({ weight: 0, reps: 0 });
+            append(buildSetValues(item.input_fields));
             addSetTime(item.exerciseId);
         }
     }, []);
@@ -78,26 +90,11 @@ const Failds = ({ control, item, onScrollBottom }: any) => {
                                 entering={SlideInUp.duration(300)}
                                 exiting={SlideOutUp.duration(300)}
                             >
-                                <View className="w-full flex-row gap-2">
-                                    <View className="flex-1 items-start">
-                                        <StepInput
-                                            control={control}
-                                            name={`exercises.${item.exerciseId}.sets.${index}.weight`}
-                                            label="משקל"
-                                            step={1}
-                                            disabled={false}
-                                        />
-                                    </View>
-                                    <View className="flex-1">
-                                        <StepInput
-                                            control={control}
-                                            name={`exercises.${item.exerciseId}.sets.${index}.reps`}
-                                            label="חזרות"
-                                            step={1}
-                                            disabled={false}
-                                        />
-                                    </View>
-                                </View>
+                                <DynamicSetFields
+                                    control={control}
+                                    basePath={`exercises.${item.exerciseId}.sets.${index}`}
+                                    fields={item.input_fields}
+                                />
                                 <View className="justify-end items-center">
                                     <AppButton
                                         onPress={() => handleRemoveSet(index)}
