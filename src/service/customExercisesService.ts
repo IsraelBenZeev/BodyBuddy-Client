@@ -37,6 +37,7 @@ export const mapCustomExerciseToExercise = (row: UserCustomExercise): Exercise =
     gif_available: false,
     sort_order: Number.MAX_SAFE_INTEGER,
     idx: null,
+    input_fields: row.input_fields,
   };
 };
 

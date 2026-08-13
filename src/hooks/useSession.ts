@@ -8,7 +8,7 @@ import {
     getSessions,
 } from '../service/sessionService';
 import { useUIStore } from '../store/useUIStore';
-import { ExerciseLogDBType, SessionDBType } from '../types/session';
+import { ExerciseSetDBType, SessionDBType } from '../types/session';
 const keyCashSessions = ['sessions'];
 export const useGetSessions = (user_id: string, workoutPlanId: string) => {
   return useQuery({
@@ -39,7 +39,7 @@ export const useSessionCreateExerciseLog = (user_id: string, workoutPlanId: stri
   const queryClient = useQueryClient();
   const { triggerSuccess } = useUIStore();
   return useMutation({
-    mutationFn: async ({ exerciseLog }: { exerciseLog: ExerciseLogDBType[] }) =>
+    mutationFn: async ({ exerciseLog }: { exerciseLog: ExerciseSetDBType[] }) =>
       await createSessionExerciseLogs(exerciseLog),
     onSuccess: (_data, variables) => {
       triggerSuccess('האימון נשמר בהצלחה', 'success');

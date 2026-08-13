@@ -1,7 +1,7 @@
 import { logError } from '@/src/lib/logger';
 import { supabase } from '@/supabase_client';
 import { WorkoutPlan } from '../types/workout';
-import { ExerciseLogDBType } from '../types/session';
+import { ExerciseSetDBType } from '../types/session';
 
 export const getWorkoutsByUserUserId = async (user_id: string) => {
   try {
@@ -63,11 +63,11 @@ export const deleteWorkoutPlan = async (id: string, userId: string) => {
 export const getExercisesIdsByWorkoutPlanId = async (workoutPlanId: string) => {
   try {
     const { data, error } = await supabase
-      .from('exercise_logs')
+      .from('exercise_sets')
       .select('*')
       .eq('workout_plan_id', workoutPlanId);
     if (error) throw error;
-    return data as ExerciseLogDBType[];
+    return data as ExerciseSetDBType[];
   } catch (error) {
     logError(error, 'workoutService');
     throw error;

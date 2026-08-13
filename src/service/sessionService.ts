@@ -1,6 +1,6 @@
 import { logError } from '@/src/lib/logger';
 import { supabase } from '../../supabase_client';
-import { ExerciseLogDBType, SessionDBType } from '../types/session';
+import { ExerciseSetDBType, SessionDBType } from '../types/session';
 export const getSessions = async (userId: string, workoutPlanId: string) => {
     try {
         const { data, error } = await supabase
@@ -20,12 +20,12 @@ export const getSessions = async (userId: string, workoutPlanId: string) => {
 export const getSessionExerciseLogs = async (sessionId: string) => {
     try {
         const { data, error } = await supabase
-            .from('exercise_logs')
+            .from('exercise_sets')
             .select()
             .eq('session_id', sessionId)
             .order('created_at', { ascending: false });
         if (error) throw error;
-        return data as ExerciseLogDBType[];
+        return data as ExerciseSetDBType[];
     } catch (error) {
         logError(error, 'getSessionExerciseLogs');
         throw error;
@@ -53,13 +53,13 @@ export const createSession = async (session: SessionDBType) => {
 export const getExerciseLogsByExerciseId = async (userId: string, exerciseId: string) => {
     try {
         const { data, error } = await supabase
-            .from('exercise_logs')
+            .from('exercise_sets')
             .select()
             .eq('user_id', userId)
             .eq('exercise_id', exerciseId)
             .order('created_at', { ascending: true });
         if (error) throw error;
-        return data as ExerciseLogDBType[];
+        return data as ExerciseSetDBType[];
     } catch (error) {
         logError(error, 'getExerciseLogsByExerciseId');
         throw error;
@@ -81,10 +81,10 @@ export const getAllUserSessions = async (userId: string): Promise<SessionDBType[
     }
 };
 
-export const createSessionExerciseLogs = async (exerciseLogs: ExerciseLogDBType[]) => {
+export const createSessionExerciseLogs = async (exerciseLogs: ExerciseSetDBType[]) => {
     try {
         const { data, error } = await supabase
-            .from('exercise_logs')
+            .from('exercise_sets')
             .insert(exerciseLogs)
             .select();
 
