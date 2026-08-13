@@ -1,4 +1,5 @@
 import { BodyPart } from './bodtPart';
+import { InputFieldDefinition } from './exercise';
 
 export interface UserCustomExercise {
   id: string; // raw uuid, DB primary key
@@ -13,6 +14,7 @@ export interface UserCustomExercise {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  input_fields: InputFieldDefinition[];
 }
 
 export interface CreateCustomExercisePayload {
@@ -23,7 +25,42 @@ export interface CreateCustomExercisePayload {
   home_friendly?: boolean;
   instructions?: string[];
   image_urls?: string[];
+  input_fields: InputFieldDefinition[];
 }
+
+export type CustomExerciseTemplate = 'strength' | 'bodyweight' | 'duration' | 'cardio';
+
+export const CUSTOM_EXERCISE_TEMPLATES: Record<
+  CustomExerciseTemplate,
+  { label_he: string; input_fields: InputFieldDefinition[] }
+> = {
+  strength: {
+    label_he: 'משקולות',
+    input_fields: [
+      { key: 'reps', type: 'number', label: 'חזרות', unit: null },
+      { key: 'weight', type: 'number', label: 'משקל', unit: 'kg' },
+    ],
+  },
+  bodyweight: {
+    label_he: 'משקל גוף',
+    input_fields: [
+      { key: 'reps', type: 'number', label: 'חזרות', unit: null },
+      { key: 'added_weight', type: 'number', label: 'משקל נוסף', unit: 'kg', optional: true },
+    ],
+  },
+  duration: {
+    label_he: 'זמן / החזקה',
+    input_fields: [{ key: 'duration', type: 'duration', label: 'משך זמן', unit: 'sec' }],
+  },
+  cardio: {
+    label_he: 'קרדיו (הליכון / אופניים)',
+    input_fields: [
+      { key: 'duration', type: 'duration', label: 'משך זמן', unit: 'sec' },
+      { key: 'speed', type: 'number', label: 'מהירות', unit: 'km/h' },
+      { key: 'incline', type: 'number', label: 'שיפוע', unit: '%' },
+    ],
+  },
+};
 
 export const MAX_CUSTOM_EXERCISE_IMAGES = 3;
 

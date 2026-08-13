@@ -6,9 +6,9 @@ export type SessionDBType = {
     completed_at: string;
     total_time: number;
     notes: string;
-    exercise?: ExerciseLogDBType[];
+    exercise?: ExerciseSetDBType[];
 }
-export type ExerciseLogDBType = {
+export type ExerciseSetDBType = {
     id?: string;
     user_id: string;
     session_id: string;
@@ -16,8 +16,8 @@ export type ExerciseLogDBType = {
     set_number: number;
     created_at?: string;
     workout_plan_id: string;
-    reps: number;
-    weight: number;
+    values: Record<string, number>;
+    is_completed?: boolean;
     rest_seconds?: number | null;
 }
 export type SessionFormData = {
@@ -25,7 +25,7 @@ export type SessionFormData = {
     notes: string;
     exercises: {
         [exerciseId: string]: {
-            sets: Array<{ weight: number; reps: number }>;
+            sets: Array<Record<string, number>>;
         };
     };
 };

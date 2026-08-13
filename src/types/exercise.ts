@@ -1,3 +1,13 @@
+export type InputFieldType = 'number' | 'duration';
+
+export interface InputFieldDefinition {
+  key: string; // 'reps' | 'weight' | 'added_weight' | 'duration' | 'speed' | 'incline' | ...
+  type: InputFieldType;
+  label: string; // תווית בעברית
+  unit: string | null; // 'kg' | 'km/h' | '%' | 'sec' | null
+  optional?: boolean; // true => מוצג מאחורי טוגל ב-UI (למשל added_weight)
+}
+
 export interface Exercise {
   exerciseId: string; // ה-ID הייחודי (למשל: "84RyJf8")
   name: string; // שם התרגיל באנגלית
@@ -23,6 +33,7 @@ export interface Exercise {
   sort_order: number;
   idx: number | null;
   status: string;
+  input_fields: InputFieldDefinition[]; // אילו שדות קלט התרגיל דורש
 }
 export interface FetchExercisesResponse {
   exercises: Exercise[];
