@@ -11,8 +11,18 @@ interface Props {
   label: string;
   step?: number; // בכמה להעלות/להוריד בכל לחיצה
   disabled?: boolean;
+  formatValue?: (n: number) => string; // תצוגה מותאמת (למשל mm:ss לשדות duration)
+  shouldUnregister?: boolean; // להסרת הערך מה-form כשהקומפוננטה יוצאת מהעץ (שדות אופציונליים)
 }
-const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) => {
+const StepInput = ({
+  control,
+  name,
+  label,
+  step = 1,
+  disabled = false,
+  formatValue,
+  shouldUnregister,
+}: Props) => {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isLongPressing = useRef(false); // דגל שמציין אם אנחנו בלחיצה ארוכה
 
@@ -77,6 +87,7 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
         <Controller
           control={control}
           name={name}
+          shouldUnregister={shouldUnregister}
           render={({ field: { onChange, value = 0 } }) => (
             <View className="flex-row items-center bg-zinc-900 rounded-2xl border border-white/5">
               <AppButton
@@ -95,16 +106,20 @@ const StepInput = ({ control, name, label, step = 1, disabled = false }: Props) 
               </AppButton>
 
               <View className="px-4 min-w-[30px] items-center justify-center">
-                <AnimatedNumbers
-                  includeComma={false}
-                  animateToNumber={Number(value)}
-                  fontStyle={{
-                    fontSize: 24,
-                    fontWeight: '900',
-                    color: 'white',
-                  }}
-                  animationDuration={300} // מהירות הגלילה (במילי-שניות)
-                />
+                {formatValue ? (
+                  <Text className="text-4xl font-black text-white">{formatValue(Number(value))}</Text>
+                ) : (
+                  <AnimatedNumbers
+                    includeComma={false}
+                    animateToNumber={Number(value)}
+                    fontStyle={{
+                      fontSize: 24,
+                      fontWeight: '900',
+                      color: 'white',
+                    }}
+                    animationDuration={300} // מהירות הגלילה (במילי-שניות)
+                  />
+                )}
               </View>
 
               <AppButton
