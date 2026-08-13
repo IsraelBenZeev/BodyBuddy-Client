@@ -6,6 +6,8 @@ import { useUIStore } from '@/src/store/useUIStore';
 import { BodyPart, partsBodyHebrew } from '@/src/types/bodtPart';
 import {
   CUSTOM_EQUIPMENT_OPTIONS,
+  CUSTOM_EXERCISE_TEMPLATES,
+  CustomExerciseTemplate,
   MAX_CUSTOM_EXERCISE_IMAGES,
   UserCustomExercise,
 } from '@/src/types/customExercise';
@@ -27,6 +29,19 @@ interface AddCustomExerciseModalProps {
 }
 
 const BODY_PART_OPTIONS = Object.keys(partsBodyHebrew) as BodyPart[];
+const TEMPLATE_OPTIONS = Object.entries(CUSTOM_EXERCISE_TEMPLATES) as [
+  CustomExerciseTemplate,
+  (typeof CUSTOM_EXERCISE_TEMPLATES)[CustomExerciseTemplate],
+][];
+
+const matchTemplate = (
+  inputFields: UserCustomExercise['input_fields']
+): CustomExerciseTemplate | null => {
+  const match = TEMPLATE_OPTIONS.find(
+    ([, preset]) => JSON.stringify(preset.input_fields) === JSON.stringify(inputFields)
+  );
+  return match?.[0] ?? null;
+};
 
 const AddCustomExerciseModal = ({
   visible,
@@ -45,6 +60,7 @@ const AddCustomExerciseModal = ({
 
   const [name, setName] = useState(initialName);
   const [bodyPart, setBodyPart] = useState<BodyPart | null>(null);
+  const [template, setTemplate] = useState<CustomExerciseTemplate | null>(null);
   const [equipment, setEquipment] = useState<string | null>(null);
   const [homeFriendly, setHomeFriendly] = useState(false);
   const [instructionSteps, setInstructionSteps] = useState<string[]>(['']);
@@ -56,6 +72,7 @@ const AddCustomExerciseModal = ({
       if (exerciseToEdit) {
         setName(exerciseToEdit.name);
         setBodyPart(exerciseToEdit.body_part);
+        setTemplate(matchTemplate(exerciseToEdit.input_fields));
         setEquipment(exerciseToEdit.equipment);
         setHomeFriendly(exerciseToEdit.home_friendly);
         setInstructionSteps(exerciseToEdit.instructions.length > 0 ? exerciseToEdit.instructions : ['']);
@@ -63,6 +80,7 @@ const AddCustomExerciseModal = ({
       } else {
         setName(initialName);
         setBodyPart(null);
+        setTemplate(null);
         setEquipment(null);
         setHomeFriendly(false);
         setInstructionSteps(['']);
@@ -110,7 +128,7 @@ const AddCustomExerciseModal = ({
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    if (!name.trim() || !bodyPart) return;
+    if (!name.trim() || !bodyPart || !template) return;
     const instructions = instructionSteps.map((step) => step.trim()).filter((step) => step.length > 0);
 
     let finalImageUrls = images;
@@ -136,6 +154,7 @@ const AddCustomExerciseModal = ({
       home_friendly: homeFriendly,
       instructions,
       image_urls: finalImageUrls,
+      input_fields: CUSTOM_EXERCISE_TEMPLATES[template].input_fields,
     };
     if (exerciseToEdit) {
       updateCustomExercise({ rawId: exerciseToEdit.id, payload }, { onSuccess: onClose });
@@ -145,6 +164,7 @@ const AddCustomExerciseModal = ({
   }, [
     name,
     bodyPart,
+    template,
     equipment,
     homeFriendly,
     instructionSteps,
@@ -156,7 +176,7 @@ const AddCustomExerciseModal = ({
     triggerSuccess,
   ]);
 
-  const canSubmit = name.trim().length > 0 && !!bodyPart;
+  const canSubmit = name.trim().length > 0 && !!bodyPart && !!template;
 
   return (
     <ModalBottom
@@ -236,6 +256,30 @@ const AddCustomExerciseModal = ({
               >
                 <Text className={bodyPart === part ? 'typo-btn-cta text-black' : 'typo-body text-white'}>
                   {partsBodyHebrew[part]}
+                </Text>
+              </AppButton>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View>
+          <Text className="typo-label text-background-400 mb-2">סוג מדידה</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {TEMPLATE_OPTIONS.map(([key, preset]) => (
+              <AppButton
+                key={key}
+                animationType="opacity"
+                haptic="light"
+                onPress={() => setTemplate(key)}
+                className={`px-4 py-2 rounded-full border ${
+                  template === key ? 'bg-lime-500 border-lime-500' : 'bg-transparent border-zinc-700'
+                }`}
+                accessibilityLabel={`בחר סוג מדידה: ${preset.label_he}`}
+                accessibilityRole="button"
+                accessibilityState={{ selected: template === key }}
+              >
+                <Text className={template === key ? 'typo-btn-cta text-black' : 'typo-body text-white'}>
+                  {preset.label_he}
                 </Text>
               </AppButton>
             ))}
