@@ -5,6 +5,14 @@
 ## Stack
 React Native + Expo v54, TypeScript strict, NativeWind (Tailwind), Expo Router, React Query, Zustand, Supabase, Reanimated/Lottie.
 
+## Backend Server (separate repo — actively used)
+There is a separate FastAPI backend that this app calls for operations that need a server-side secret (OpenAI/Google keys, Cloudinary, Supabase service role). Client calls use `Authorization: Bearer <supabase JWT>`; the server verifies it via `verify_supabase_token` (Supabase JWKS) in its own `dependencies.py`.
+- Local path: `C:\Users\user\Documents\projects\BodyBuddy-Server`
+- Deployed URL: `https://bodybuddy-server-eta.vercel.app/`
+- Called today (via `EXPO_PUBLIC_*_URL` env vars in `.env`): AI food-photo analysis (`nutritionService.ts` → `/nutrition/analyze-food`), custom exercise image uploads (`cloudinaryService.ts` → `/uploads/custom-exercise-images`), exercise-missing reports, privacy policy content
+- It also has an admin panel (`require_admin`, checks `profiles.is_admin`) with routes like `DELETE /admin/users/{id}` for admin-triggered user deletion, and existing `delete_user()` logic in `controllers/admin_controller.py` that already works around the `body_stats` FK not cascading
+- When adding a new privileged/server-side operation, prefer adding a route to this server (consistent with existing patterns) over a Supabase Edge Function, unless told otherwise
+
 ## Structure
 - `app/` - pages (Expo Router file-based)
 - `src/Features/` - domain modules
