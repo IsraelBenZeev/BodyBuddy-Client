@@ -1,4 +1,5 @@
 import { colors } from '@/colors';
+import { useDeleteAccount } from '@/src/hooks/useAccount';
 import { useProfile } from '@/src/hooks/useProfile';
 import { useUserWorkoutStats } from '@/src/hooks/useSession';
 import { signOut } from '@/src/service/authService';
@@ -17,7 +18,7 @@ import { differenceInYears, isValid, parseISO } from 'date-fns';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { ReactNode, useCallback, useState } from 'react';
-import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 
 /** --- פונקציות עזר --- **/
@@ -78,11 +79,31 @@ export default function ProfileScreen() {
 
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
   const { data: workoutStats } = useUserWorkoutStats(user?.id);
+  const deleteAccountMutation = useDeleteAccount();
 
   const handleLogout = useCallback(async () => {
     const { error } = await signOut();
     error ? triggerSuccess('שגיאה', 'failed') : triggerSuccess('התנתקת בהצלחה', 'success');
   }, [triggerSuccess]);
+
+  const handleDeleteAccount = useCallback(() => {
+    Alert.alert(
+      'מחיקת חשבון לצמיתות',
+      'פעולה זו תמחק לצמיתות את החשבון שלך וכל המידע המשויך אליו — כולל אימונים, ארוחות והיסטוריית תזונה. לא ניתן לשחזר לאחר מכן.',
+      [
+        { text: 'ביטול', style: 'cancel' },
+        {
+          text: 'מחק חשבון',
+          style: 'destructive',
+          onPress: () => {
+            deleteAccountMutation.mutate(undefined, {
+              onError: () => triggerSuccess('שגיאה במחיקת החשבון', 'failed'),
+            });
+          },
+        },
+      ]
+    );
+  }, [deleteAccountMutation, triggerSuccess]);
 
   const handleShowLogoPreview = useCallback((variant: BodyBuddyLoadingVariant) => {
     setLogoPreviewVariant(variant);
@@ -413,6 +434,24 @@ export default function ProfileScreen() {
               {'צרו קשר עם התמיכה שלנו'}
             </Text>
           </Text>
+
+          {/* מחיקת חשבון */}
+          <Pressable
+            onPress={handleDeleteAccount}
+            disabled={deleteAccountMutation.isPending}
+            className="min-h-[44px] py-2 justify-center"
+            accessibilityRole="button"
+            accessibilityLabel="מחיקת חשבון לצמיתות"
+            accessibilityHint="פותח חלון אישור למחיקת החשבון וכל המידע לצמיתות. הפעולה בלתי הפיכה"
+            accessibilityState={{
+              disabled: deleteAccountMutation.isPending,
+              busy: deleteAccountMutation.isPending,
+            }}
+          >
+            <Text className="typo-label text-red-400/70">
+              {deleteAccountMutation.isPending ? 'מוחק חשבון...' : 'מחיקת חשבון לצמיתות'}
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
 
