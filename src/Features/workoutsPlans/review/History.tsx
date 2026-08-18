@@ -2,7 +2,6 @@ import { useGetSessions } from "@/src/hooks/useSession";
 import { SessionDBType } from "@/src/types/session";
 import { Dispatch, SetStateAction, memo, useEffect, useRef } from "react";
 import { Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import SessionReviewCard from "./SessionReviewCard";
 import { useAuthStore } from '@/src/store/useAuthStore';
 interface Props {
@@ -28,13 +27,16 @@ const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef 
 
     if (isLoadingSessions) return <Text>Loading...</Text>;
     return (
-        <View className="pb-24 flex-1">
+        <View className="pb-24">
+            <Text className="typo-body-primary text-white text-left mb-3">
+                {`סה"כ ${sessionsCount} אימונים בוצעו`}
+            </Text>
             {sessionsCount > 0 ? (
-                <ScrollView className="">
+                <View>
                     {sessionsData?.map((session) => (
                         <SessionReviewCard key={session.id} session={session} setSelectedSession={setSelectedSession} sheetRef={sheetRef} />
                     ))}
-                </ScrollView>
+                </View>
             ) : (
                 <Text className="typo-h2 text-white text-left">אין אימונים עדיין</Text>
             )}

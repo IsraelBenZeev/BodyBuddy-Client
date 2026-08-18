@@ -64,8 +64,15 @@ const SliderTrack = ({ value, disabled, onChange }: SliderTrackProps) => {
   const panResponder = useMemo(
     () =>
       PanResponder.create({
+        // capture (ולא רק should-set) כדי לתפוס את המגע לפני שה-ScrollView החיצוני
+        // של הטופס מזהה אותו כגלילה אנכית ומנסה "לגנוב" אותו
+        onStartShouldSetPanResponderCapture: () => !disabled,
+        onMoveShouldSetPanResponderCapture: () => !disabled,
         onStartShouldSetPanResponder: () => !disabled,
         onMoveShouldSetPanResponder: () => !disabled,
+        // ברגע שהסליידר קיבל את המגע - לא לוותר עליו חזרה לגלילה עד לשחרור האצבע
+        onPanResponderTerminationRequest: () => false,
+        onShouldBlockNativeResponder: () => true,
         onPanResponderGrant: (e: GestureResponderEvent) => {
           const h = heightRef.current;
           startTopPxRef.current = Math.max(0, Math.min(h, e.nativeEvent.locationY));

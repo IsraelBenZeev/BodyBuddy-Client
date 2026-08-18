@@ -80,7 +80,7 @@ const ModalBottom = forwardRef<BottomSheet, ModalBottomProps>((props, ref) => {
       enablePanDownToClose={enablePanDownToClose}
       handleComponent={renderHandle}
       backgroundStyle={{ backgroundColor: colors.background[900] }}
-      activeOffsetY={[-1, 1]}
+      activeOffsetY={[-20, 20]}
       containerStyle={{
         pointerEvents: 'box-none',
         ...(Platform.OS === 'android' && { elevation: 999, zIndex: 999 }),

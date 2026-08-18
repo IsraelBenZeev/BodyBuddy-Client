@@ -482,6 +482,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
             mode="edit"
             toggleExercise={toggleExercise}
             selectExercisesIds={[...exerciseSelectedIds]}
+            scrollable={false}
           />
         </ModalBottom>
       )}

@@ -16,6 +16,10 @@ interface CardExerciseProps {
   navigateToPicker?: () => void;
   isPendingCreate?: boolean;
   selectExercisesIds?: string[];
+  // כשה-true, הרשימה כבר מוצגת בתוך scroll container חיצוני (כמו BottomSheetScrollView
+  // של ModalBottom) — עטיפה ב-ScrollView נוסף פה מתנגשת עם ה-gesture handler של ה-sheet
+  // וגורמת לכפתור המחיקה לא להגיב ללחיצות.
+  scrollable?: boolean;
 }
 
 const ListExercise = ({
@@ -23,6 +27,7 @@ const ListExercise = ({
   navigateToPicker,
   isPendingCreate,
   selectExercisesIds,
+  scrollable = true,
 }: CardExerciseProps) => {
   const router = useRouter();
   const { data: selectedExercisesData = [], isLoading: isLoadingExercises } = useGetExercisesByIds(
@@ -38,6 +43,27 @@ const ListExercise = ({
     );
   }
 
+  const content =
+    selectedExercisesData.length === 0 ? (
+      <View className="items-center py-10">
+        <MaterialCommunityIcons name="dumbbell" size={40} color={colors.background[50]} />
+        <Text className="text-zinc-500 mt-2">טרם נבחרו תרגילים</Text>
+      </View>
+    ) : (
+      selectedExercisesData.map((exercise, index) => (
+        <ExerciseItem
+          key={exercise.exerciseId}
+          exercise={exercise}
+          index={index}
+          toggleExercise={toggleExercise}
+        />
+      ))
+    );
+
+  if (!scrollable) {
+    return <View>{content}</View>;
+  }
+
   return (
     <ScrollView
       // ה-Key כאן מבטיח שהאנימציה תרוץ ברגע שהנתונים נטענים
@@ -45,21 +71,7 @@ const ListExercise = ({
       showsVerticalScrollIndicator={false}
       nestedScrollEnabled={true}
     >
-      {selectedExercisesData.length === 0 ? (
-        <View className="items-center py-10">
-          <MaterialCommunityIcons name="dumbbell" size={40} color={colors.background[50]} />
-          <Text className="text-zinc-500 mt-2">טרם נבחרו תרגילים</Text>
-        </View>
-      ) : (
-        selectedExercisesData.map((exercise, index) => (
-          <ExerciseItem
-            key={exercise.exerciseId}
-            exercise={exercise}
-            index={index}
-            toggleExercise={toggleExercise}
-          />
-        ))
-      )}
+      {content}
     </ScrollView>
   );
 };

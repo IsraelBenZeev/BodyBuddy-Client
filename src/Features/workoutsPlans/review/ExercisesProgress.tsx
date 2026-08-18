@@ -171,7 +171,7 @@ const ExercisesProgress = ({ workoutPlanId }: Props) => {
           </View>
 
           {selectedExercise.allLogs.length > 0 ? (
-            <CardExerciseProgress exercise={selectedExercise} fields={selectedDetails?.input_fields ?? []} />
+            <CardExerciseProgress key={activeId} exercise={selectedExercise} fields={selectedDetails?.input_fields ?? []} />
           ) : (
             <View className="bg-zinc-700/30 border border-zinc-600/40 rounded-xl px-4 py-6 items-center">
               <Text className="typo-label text-zinc-400 text-center">
