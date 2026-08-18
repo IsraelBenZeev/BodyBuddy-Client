@@ -2,7 +2,7 @@
 name: add-exercises
 description: הוספת תרגילים חדשים לקטלוג exercises_v2 - העלאת מדיה ל-Cloudinary והכנסת שורות ל-Supabase. Use when the user adds new exercise folders (images/video) under the exercises media drive and wants them added to the app catalog "like the rest".
 license: MIT
-version: 1.0.0
+version: 1.0.1
 ---
 
 # הוספת תרגילים לקטלוג (exercises_v2)
@@ -56,7 +56,9 @@ neck/צוואר, chest/חזה, shoulders/כתפיים, `upper arms`/ידיים, 
 
 1. **זיהוי תרגילים חדשים** - לבקש/לזהות אילו תיקיות/תת-תיקיות חדשות נוספו תחת `G:\האחסון שלי\תרגילים` (השוואה מול מה שכבר בטבלה, או לפי מה שהמשתמש מציין).
 2. **צפייה בתמונות רפרנס** - לכל תרגיל חדש, **חובה** לצפות בתמונה/ות עם כלי ה-Read (במיוחד בין וריאציות דומות - למשל כמה סוגי הרמות עקבים) כדי לזהות ציוד מדויק, לא לנחש לפי שם התיקייה בלבד.
-3. **כתיבת תוכן דו-לשוני** לכל תרגיל, לפי המבנה המדויק של `src/types/exercise.ts` (`Exercise` interface): `name`/`name_he` (= שם התיקייה בדיוק), `bodyParts`/`_he`, `subBodyParts`/`_he`, `targetMuscles`/`_he`, `secondaryMuscles`/`_he`, `equipments`/`_he`, `homeFriendly`, `instructions`/`instructions_he` (6 שלבים ממוספרים בפורמט `"Step:N ..."`), `input_fields`.
+3. **כתיבת תוכן דו-לשוני** לכל תרגיל, לפי המבנה המדויק של `src/types/exercise.ts` (`Exercise` interface): `name`/`name_he` (= שם התיקייה בדיוק), `bodyParts`/`_he`, `subBodyParts`/`_he`, `targetMuscles`/`_he`, `secondaryMuscles`/`_he`, `equipments`/`_he`, `homeFriendly`, `instructions`/`instructions_he`, `input_fields`.
+   - **`instructions` (אנגלית בלבד)**: 6 שלבים ממוספרים בפורמט `"Step:N ..."` (למשל `"Step:1 Kneel on the floor..."`).
+   - **`instructions_he` (עברית)**: **בלי** קידומת `Step:N` בכלל - טקסט נקי בלבד (למשל `"כרע על הרצפה..."`). הלקוח לוקח את מספר השלב לפי המיקום במערך (index), לא מפרסר את הטקסט - קידומת `Step:N` בעברית תוצג כטקסט מיותר במסך (`Step:2 ...` בתוך המשפט עצמו). **טעות שכבר קרתה פעם אחת** - חשוב לא לחזור עליה.
 4. **שמירת מניפסט** ל-JSON זמני ב-scratchpad (כולל נתיב התיקייה בדיסק לכל תרגיל, לשימוש בהעלאה).
 5. **דף בדיקה (Artifact)** - לבנות דף HTML (RTL, פלטת האפליקציה - background-950/900 כהה + lime-300/500 accent, `tailwind.config.js`) שמציג את כל התרגילים הממתינים לפי קטגוריה, ולבקש אישור מפורש מהמשתמש **לפני** העלאה/הכנסה בפועל. **לא לדלג על הצ'קפוינט הזה** גם בהוספה קטנה, אלא אם המשתמש מבקש במפורש להתקדם ישר.
 6. **הפקת exerciseId** ייחודי לכל תרגיל, מאומת מול הטבלה.
