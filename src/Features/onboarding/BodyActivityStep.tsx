@@ -1,5 +1,5 @@
 import { ProfileFormData } from '@/src/types/profile';
-import ActionButton from '@/src/ui/ActionButton';
+import IconCaptionButton from '@/src/ui/IconCaptionButton';
 import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
 import { Text, View } from 'react-native';
@@ -117,44 +117,38 @@ const BodyActivityStep = ({
 
       </View>
 
-      {/* כפתורי פעולה – חזרה, הבא, סיום ושמירה */}
-      <View className="mt-auto pt-1 gap-2">
-        <View className="flex-row gap-3">
-          <View className="flex-1">
-            <ActionButton
-              onPress={onBack}
-              label="חזרה"
-              iconName="arrow-forward"
-              variant="secondary"
-              size="sm"
-              fullWidth
-              disabled={isPending}
-            />
-          </View>
-          <View className="flex-1">
-            <ActionButton
-              onPress={handleNext}
-              label="הבא"
-              iconName="arrow-back"
-              variant="outline"
-              size="sm"
-              fullWidth
-              disabled={isPending}
-            />
-          </View>
-        </View>
+      {/* כפתורי פעולה – חזרה, סיום ושמירה, הבא */}
+      <View className="mt-auto pt-1 flex-row justify-between items-start">
+        <IconCaptionButton
+          onPress={onBack}
+          iconName="chevron-forward-circle-outline"
+          caption="הקודם"
+          variant="secondary"
+          disabled={isPending}
+          accessibilityLabel="חזרה"
+          accessibilityHint="חוזר לשלב הקודם"
+        />
         {onSubmit && (
-          <ActionButton
+          <IconCaptionButton
             onPress={handleFinishAndSave}
-            label="סיום ושמירה"
-            iconName="checkmark-circle"
+            iconName="checkmark-circle-outline"
+            caption="שמירה"
             variant="primary"
-            size="sm"
-            fullWidth
             disabled={isPending}
             loading={isPending}
+            accessibilityLabel="סיום ושמירה"
+            accessibilityHint="שומר את הפרופיל ומסיים את תהליך ההרשמה"
           />
         )}
+        <IconCaptionButton
+          onPress={handleNext}
+          iconName="chevron-back-circle-outline"
+          caption="הבא"
+          variant="outline"
+          disabled={isPending}
+          accessibilityLabel="הבא"
+          accessibilityHint="עובר לשלב הבא בתהליך ההרשמה"
+        />
       </View>
     </Animated.View>
   );

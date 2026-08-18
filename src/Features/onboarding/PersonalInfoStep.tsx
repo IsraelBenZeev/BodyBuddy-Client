@@ -3,7 +3,7 @@ import {
   genderOptions,
   ProfileFormData,
 } from '@/src/types/profile';
-import ActionButton from '@/src/ui/ActionButton';
+import IconCaptionButton from '@/src/ui/IconCaptionButton';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback } from 'react';
 import { Control, Controller, UseFormTrigger } from 'react-hook-form';
@@ -160,28 +160,28 @@ const PersonalInfoStep = ({
       </ScrollView>
 
       {/* כפתורי פעולה – קבועים בתחתית */}
-      <View className="pt-1 gap-2">
-        <ActionButton
-          onPress={handleNext}
-          label="הבא"
-          iconName="arrow-back"
-          variant="outline"
-          size="sm"
-          fullWidth
-          disabled={isPending}
-        />
+      <View className="pt-1 flex-row justify-between items-start">
         {onSubmit && (
-          <ActionButton
+          <IconCaptionButton
             onPress={handleFinishAndSave}
-            label="סיום ושמירה"
-            iconName="checkmark-circle"
+            iconName="checkmark-circle-outline"
+            caption="שמירה"
             variant="primary"
-            size="sm"
-            fullWidth
             disabled={isPending}
             loading={isPending}
+            accessibilityLabel="סיום ושמירה"
+            accessibilityHint="שומר את הפרופיל ומסיים את תהליך ההרשמה"
           />
         )}
+        <IconCaptionButton
+          onPress={handleNext}
+          iconName="chevron-back-circle-outline"
+          caption="הבא"
+          variant="outline"
+          disabled={isPending}
+          accessibilityLabel="הבא"
+          accessibilityHint="עובר לשלב הבא בתהליך ההרשמה"
+        />
       </View>
     </Animated.View>
   );
