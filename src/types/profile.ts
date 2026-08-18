@@ -18,6 +18,8 @@ export interface Profile {
   show_carbs_bar: boolean | null;
   /** הצגת פס שומנים במסך תזונה – null/true = מוצג, false = מוסתר */
   show_fat_bar: boolean | null;
+  /** יעד קלוריות יומי שהוזן ידנית ע"י היוזר – null = חישוב אוטומטי לפי TDEE */
+  manual_daily_calories: number | null;
 }
 
 export type Gender = 'male' | 'female';
@@ -41,6 +43,8 @@ export interface ProfileFormData {
   goal: Goal | '';
   calorie_offset: number;
   protein_per_kg: number;
+  /** יעד קלוריות יומי שהוזן ידנית – null = חישוב אוטומטי לפי TDEE */
+  manual_daily_calories: number | null;
 }
 
 export interface CreateProfilePayload {
@@ -54,6 +58,7 @@ export interface CreateProfilePayload {
   calorie_offset: number;
   protein_per_kg: number;
   avatar_url?: string;
+  manual_daily_calories?: number | null;
 }
 
 export interface GenderOption {

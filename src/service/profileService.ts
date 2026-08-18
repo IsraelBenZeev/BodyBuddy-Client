@@ -36,6 +36,18 @@ export const updateProfileDisplaySettings = async (
   if (error) throw error;
 };
 
+/** עדכון יעד קלוריות ידני – null מחזיר לחישוב אוטומטי */
+export const updateManualDailyCalories = async (
+  userId: string,
+  manualDailyCalories: number | null,
+): Promise<void> => {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ manual_daily_calories: manualDailyCalories })
+    .eq('user_id', userId);
+  if (error) throw error;
+};
+
 /** יצירה או עדכון פרופיל */
 export const createOrUpdateProfile = async (
   userId: string,

@@ -2,6 +2,7 @@ import { colors } from '@/colors';
 import AddOptionsFab from '@/src/Features/nutrition/add/AddOptionsFab';
 import CameraAIModal from '@/src/Features/nutrition/add/ai/CameraAIModal';
 import ModalAddFoods from '@/src/Features/nutrition/add/ModalAddFoods';
+import ManualCaloriesModal from '@/src/Features/nutrition/review/ManualCaloriesModal';
 import MacroPieChart from '@/src/Features/nutrition/review/MacroPieChart';
 import NutritionEntriesList from '@/src/Features/nutrition/review/NutritionEntriesList';
 import ProgressStats from '@/src/Features/nutrition/review/ProgressStats';
@@ -10,9 +11,14 @@ import {
   useDeleteNutritionEntry,
   useNutritionEntries,
 } from '@/src/hooks/useNutrition';
-import { useProfile, useUpdateProfileDisplaySettings } from '@/src/hooks/useProfile';
+import {
+  useProfile,
+  useUpdateManualDailyCalories,
+  useUpdateProfileDisplaySettings,
+} from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
+import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import Loading from '@/src/ui/Loading';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
@@ -90,6 +96,8 @@ const NutritionScreen = () => {
 
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
   const { mutate: updateDisplaySettings } = useUpdateProfileDisplaySettings(user?.id ?? '');
+  const { mutate: updateManualCalories, isPending: isSavingManualCalories } =
+    useUpdateManualDailyCalories(user?.id ?? '');
   const { data: entries = [], isLoading: isEntriesLoading } = useNutritionEntries(user?.id, today);
 
   const { mutate: deleteEntry, isPending: isDeleting } = useDeleteNutritionEntry(
@@ -147,6 +155,22 @@ const NutritionScreen = () => {
       return !prev;
     });
   }, [updateDisplaySettings]);
+
+  const [isManualCaloriesModalOpen, setIsManualCaloriesModalOpen] = useState(false);
+
+  const handleOpenManualCalories = useCallback(() => setIsManualCaloriesModalOpen(true), []);
+  const handleCloseManualCalories = useCallback(() => setIsManualCaloriesModalOpen(false), []);
+
+  const handleSaveManualCalories = useCallback(
+    (value: number) => {
+      updateManualCalories(value, { onSuccess: () => setIsManualCaloriesModalOpen(false) });
+    },
+    [updateManualCalories]
+  );
+
+  const handleResetManualCalories = useCallback(() => {
+    updateManualCalories(null, { onSuccess: () => setIsManualCaloriesModalOpen(false) });
+  }, [updateManualCalories]);
 
   if (!user) {
     return (
@@ -260,9 +284,21 @@ const NutritionScreen = () => {
                 backgroundColor: toRgba(remainingAccentColor, 0.07),
               }}
             >
-              <Text className="typo-label text-background-400 text-left">
-                {isOverCals ? 'חרגת מהיעד' : 'נותר להיום'}
-              </Text>
+              <View className="flex-row items-center justify-between">
+                <Text className="typo-label text-background-400 text-left">
+                  {isOverCals ? 'חרגת מהיעד' : 'נותר להיום'}
+                </Text>
+                <ActionButton
+                  onPress={handleOpenManualCalories}
+                  label={goals.isManualCalories ? 'יעד ידני' : 'עריכת יעד'}
+                  iconName="create-outline"
+                  variant="outline"
+                  size="sm"
+                  className=''
+                  accessibilityLabel="עריכת יעד קלוריות יומי"
+                  accessibilityHint="פותח חלון להזנת יעד קלוריות ידני או חזרה לחישוב אוטומטי"
+                />
+              </View>
 
               <View className="items-center mb-4">
                 <Text style={{ fontSize: 35, fontWeight: '700', color: remainingAccentColor, lineHeight: 40 }}>
@@ -434,7 +470,10 @@ const NutritionScreen = () => {
               <Text className="typo-label text-background-400 leading-6 text-left">
                 • חלבון: מחושב על פי{' '}
                 {(profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG).toFixed(1)} גרם/ק״ג × משקל (
-                {profile?.weight} ק״ג){'\n'}• קלוריות: מחושבות לפי BMR × פעילות גופנית ± יעד
+                {profile?.weight} ק״ג){'\n'}• קלוריות:{' '}
+                {goals.isManualCalories
+                  ? 'הוזנו ידנית על ידך, ולא מתעדכנות אוטומטית'
+                  : 'מחושבות לפי BMR × פעילות גופנית ± יעד'}
               </Text>
             </View>
 
@@ -480,6 +519,16 @@ const NutritionScreen = () => {
         onClose={closeAddFoodSheet}
         userId={user?.id ?? ''}
         date={today}
+      />
+
+      <ManualCaloriesModal
+        visible={isManualCaloriesModalOpen}
+        initialValue={goals.calories}
+        isManual={goals.isManualCalories}
+        onSave={handleSaveManualCalories}
+        onResetToAuto={handleResetManualCalories}
+        onCancel={handleCloseManualCalories}
+        isSaving={isSavingManualCalories}
       />
     </BackGround>
   );

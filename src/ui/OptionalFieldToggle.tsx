@@ -25,7 +25,7 @@ const OptionalFieldToggle = ({ label, defaultEnabled = false, onToggle, children
     <View className="w-full gap-3">
       <Pressable
         onPress={handleToggle}
-        className="flex-row items-center gap-2 self-start"
+        className="flex-row items-start gap-2"
         hitSlop={8}
         accessibilityRole="checkbox"
         accessibilityLabel={label}
@@ -38,7 +38,11 @@ const OptionalFieldToggle = ({ label, defaultEnabled = false, onToggle, children
         >
           {enabled && <MaterialCommunityIcons name="check-bold" size={16} color="black" />}
         </View>
-        <Text className={`typo-body-primary ${enabled ? 'text-lime-300' : 'text-zinc-400'}`}>{label}</Text>
+        <Text
+          className={`typo-body-primary flex-1 flex-shrink ${enabled ? 'text-lime-300' : 'text-zinc-400'}`}
+        >
+          {label}
+        </Text>
       </Pressable>
 
       {enabled && (

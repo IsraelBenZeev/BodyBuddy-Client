@@ -69,6 +69,8 @@ export interface NutritionGoals {
   carbs: number;
   fat: number;
   calories: number;
+  /** true אם יעד הקלוריות הוזן ידנית ע"י היוזר, false אם חושב אוטומטית לפי TDEE */
+  isManualCalories: boolean;
 }
 
 export interface ManualEntryFormData {

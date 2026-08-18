@@ -44,6 +44,7 @@ const UserDetails = () => {
       goal: '' as Goal | '',
       calorie_offset: 500,
       protein_per_kg: DEFAULT_PROTEIN_PER_KG,
+      manual_daily_calories: null,
     }),
     [user?.user_metadata?.full_name],
   );
@@ -73,6 +74,7 @@ const UserDetails = () => {
         goal: existingProfile.goal ?? '',
         calorie_offset: existingProfile.calorie_offset ?? 500,
         protein_per_kg: existingProfile.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG,
+        manual_daily_calories: existingProfile.manual_daily_calories ?? null,
       });
     }
   }, [existingProfile, reset, user?.user_metadata?.full_name]);
@@ -100,6 +102,7 @@ const UserDetails = () => {
         calorie_offset: data.calorie_offset,
         protein_per_kg: data.protein_per_kg,
         avatar_url: user?.user_metadata?.avatar_url ?? undefined,
+        manual_daily_calories: data.manual_daily_calories,
       };
 
       mutate(payload, {

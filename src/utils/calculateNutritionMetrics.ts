@@ -23,7 +23,7 @@ export const calculateNutritionGoals = (
       ? differenceInYears(new Date(), parsedDob)
       : profile.age; // fallback לפרופילים ישנים
 
-  const dailyCalories = calculateDailyCalories(
+  const computedCalories = calculateDailyCalories(
     profile.gender,
     profile.weight,
     profile.height,
@@ -32,6 +32,9 @@ export const calculateNutritionGoals = (
     profile.goal,
     profile.calorie_offset,
   );
+
+  const isManualCalories = profile.manual_daily_calories != null;
+  const dailyCalories = isManualCalories ? profile.manual_daily_calories : computedCalories;
 
   if (!dailyCalories) return null;
 
@@ -48,6 +51,7 @@ export const calculateNutritionGoals = (
     carbs,
     fat,
     calories: dailyCalories,
+    isManualCalories,
   };
 };
 

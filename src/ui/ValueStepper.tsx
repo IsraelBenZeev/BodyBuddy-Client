@@ -60,6 +60,13 @@ const ValueStepper = ({ value, onChange, step = 1, min = 0, label, unit }: Props
   const [prevValue, setPrevValue] = useState<number>(value);
   const displayValue = value % 1 === 0 ? String(value) : value.toFixed(1);
 
+  // רוחב/גודל גופן מסתגלים למספר הספרות הגדול ביותר בין הערך הישן לחדש, כדי שמספרים בני 4 ספרות (למשל יעד קלוריות) לא יגלשו
+  const getDigitCount = (v: number) => String(Math.trunc(v)).replace('-', '').length;
+  const maxDigits = Math.max(getDigitCount(value), getDigitCount(prevValue));
+  const numberFontSize = maxDigits >= 4 ? 28 : maxDigits === 3 ? 34 : 40;
+  const numberLineHeight = numberFontSize + 8;
+  const numberWidth = maxDigits >= 4 ? 116 : maxDigits === 3 ? 96 : 80;
+
   const oldOffset = useSharedValue(0);
   const newOffset = useSharedValue(20);
   const oldOpacity = useSharedValue(1);
@@ -115,24 +122,21 @@ const ValueStepper = ({ value, onChange, step = 1, min = 0, label, unit }: Props
           {/* number area */}
           <View
             style={{
-              width: 80,
-              height: 46,
+              width: numberWidth,
+              height: numberLineHeight,
               overflow: 'hidden',
               position: 'relative',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            {/* compute adaptive font size based on digits to avoid wrap */}
-            {/** fontSize smaller for 3+ digits */}
             <Animated.Text
               style={[
                 {
-                  fontSize:
-                    String(prevValue).replace('.', '').replace('-', '').length >= 3 ? 34 : 40,
+                  fontSize: numberFontSize,
                   fontWeight: '900',
                   color: 'white',
-                  lineHeight: 42,
+                  lineHeight: numberLineHeight,
                   position: 'absolute',
                   width: '100%',
                   textAlign: 'center',
@@ -145,10 +149,10 @@ const ValueStepper = ({ value, onChange, step = 1, min = 0, label, unit }: Props
             <Animated.Text
               style={[
                 {
-                  fontSize: displayValue.replace('.', '').replace('-', '').length >= 3 ? 34 : 40,
+                  fontSize: numberFontSize,
                   fontWeight: '900',
                   color: 'white',
-                  lineHeight: 42,
+                  lineHeight: numberLineHeight,
                   position: 'absolute',
                   width: '100%',
                   textAlign: 'center',

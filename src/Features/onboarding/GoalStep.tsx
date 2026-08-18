@@ -6,8 +6,10 @@ import {
   goalOptions,
   ProfileFormData,
 } from '@/src/types/profile';
-import ActionButton from '@/src/ui/ActionButton';
+import IconCaptionButton from '@/src/ui/IconCaptionButton';
 import LTRSlider from '@/src/ui/LTRSlider';
+import OptionalFieldToggle from '@/src/ui/OptionalFieldToggle';
+import ValueStepper from '@/src/ui/ValueStepper';
 import { calculateDailyCalories } from '@/src/utils/calculateMetrics';
 import { Ionicons } from '@expo/vector-icons';
 import { differenceInYears, isValid, parseISO } from 'date-fns';
@@ -260,6 +262,31 @@ const GoalStep = ({ control, trigger, setValue, onBack, onSubmit, isPending }: G
               </View>
             </View>
 
+            <View className="mt-4 pt-4 border-t border-background-600">
+              <OptionalFieldToggle
+                label="ברצוני להזין יעד קלוריות ידני במקום ההמלצה"
+                defaultEnabled={formValues.manual_daily_calories != null}
+                onToggle={(enabled) =>
+                  setValue(
+                    'manual_daily_calories',
+                    enabled ? (formValues.manual_daily_calories ?? dailyCalories) : null
+                  )
+                }
+              >
+                <ValueStepper
+                  value={formValues.manual_daily_calories ?? dailyCalories}
+                  onChange={(v) => setValue('manual_daily_calories', v)}
+                  step={50}
+                  min={800}
+                  unit="קק״ל ליום"
+                />
+                <Text className="typo-caption text-background-400 text-center mt-2">
+                  היעד הידני יחליף את ההמלצה האוטומטית ולא יתעדכן אם המשקל או רמת הפעילות שלך
+                  ישתנו
+                </Text>
+              </OptionalFieldToggle>
+            </View>
+
             <View className="mt-4 rounded-2xl border border-sky-500/20 bg-sky-500/10 p-4">
               <View className="flex-row items-start gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-sky-500/15">
@@ -308,30 +335,26 @@ const GoalStep = ({ control, trigger, setValue, onBack, onSubmit, isPending }: G
       </ScrollView>
 
       {/* כפתורי פעולה – חזרה, סיום ושמירה */}
-      <View className="flex-row gap-3 pt-1 ">
-        <View className="flex-1">
-          <ActionButton
-            onPress={onBack}
-            label="חזרה"
-            iconName="arrow-forward"
-            variant="secondary"
-            size="sm"
-            fullWidth
-            disabled={isPending}
-          />
-        </View>
-        <View className="flex-1">
-          <ActionButton
-            onPress={handleSubmit}
-            label="סיום ושמירה"
-            iconName="checkmark-circle"
-            variant="outline"
-            size="sm"
-            fullWidth
-            disabled={isPending}
-            loading={isPending}
-          />
-        </View>
+      <View className="flex-row justify-between items-start pt-1">
+        <IconCaptionButton
+          onPress={onBack}
+          iconName="chevron-forward-circle-outline"
+          caption="הקודם"
+          variant="secondary"
+          disabled={isPending}
+          accessibilityLabel="חזרה"
+          accessibilityHint="חוזר לשלב הקודם"
+        />
+        <IconCaptionButton
+          onPress={handleSubmit}
+          iconName="checkmark-circle-outline"
+          caption="שמירה"
+          variant="primary"
+          disabled={isPending}
+          loading={isPending}
+          accessibilityLabel="סיום ושמירה"
+          accessibilityHint="שומר את הפרופיל ומסיים את תהליך ההרשמה"
+        />
       </View>
     </Animated.View>
   );

@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createOrUpdateProfile, getProfile, updateProfileDisplaySettings } from '../service/profileService';
+import {
+  createOrUpdateProfile,
+  getProfile,
+  updateManualDailyCalories,
+  updateProfileDisplaySettings,
+} from '../service/profileService';
 import { useUIStore } from '../store/useUIStore';
 import { CreateProfilePayload, Profile } from '../types/profile';
 
@@ -24,6 +29,31 @@ export const useUpdateProfileDisplaySettings = (userId: string) => {
       const previous = queryClient.getQueryData<Profile | null>(['profile', userId]);
       queryClient.setQueryData<Profile | null>(['profile', userId], (old) =>
         old ? { ...old, ...settings } : old
+      );
+      return { previous };
+    },
+    onError: (_err, _settings, context) => {
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(['profile', userId], context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', userId] });
+    },
+  });
+};
+
+/** עדכון יעד קלוריות ידני עם optimistic update – null מחזיר לחישוב אוטומטי */
+export const useUpdateManualDailyCalories = (userId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (manualDailyCalories: number | null) =>
+      updateManualDailyCalories(userId, manualDailyCalories),
+    onMutate: async (manualDailyCalories) => {
+      await queryClient.cancelQueries({ queryKey: ['profile', userId] });
+      const previous = queryClient.getQueryData<Profile | null>(['profile', userId]);
+      queryClient.setQueryData<Profile | null>(['profile', userId], (old) =>
+        old ? { ...old, manual_daily_calories: manualDailyCalories } : old
       );
       return { previous };
     },
