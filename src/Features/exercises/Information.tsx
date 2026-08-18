@@ -64,7 +64,7 @@ const Information = ({ exercise, gender }: InformationProps) => {
                     </View>
                     <Text className="typo-caption-bold text-zinc-500 uppercase mb-1">מסייעים</Text>
                     <Text className="typo-label text-white " numberOfLines={1}>
-                        {exercise?.secondaryMuscles_he.length > 0 ? exercise.secondaryMuscles_he.join(', ') : 'לא צויין'}
+                        {exercise?.secondaryMuscles_he.length > 0 ? exercise.secondaryMuscles_he.join(', ') : 'ללא'}
                     </Text>
                 </View>
 
