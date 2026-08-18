@@ -3,12 +3,12 @@ import { createExerciseReport } from '../service/reportService';
 import { useUIStore } from '../store/useUIStore';
 import { CreateExerciseReportPayload } from '../types/exerciseReport';
 
-export const useReportMissingExercise = (userId: string | undefined) => {
+export const useReportMissingExercise = () => {
   const { triggerSuccess } = useUIStore();
 
   return useMutation({
     mutationFn: async (payload: CreateExerciseReportPayload) => {
-      await createExerciseReport(userId!, payload);
+      await createExerciseReport(payload);
     },
     onSuccess: () => {
       triggerSuccess('תודה! קיבלנו את הדיווח', 'success');

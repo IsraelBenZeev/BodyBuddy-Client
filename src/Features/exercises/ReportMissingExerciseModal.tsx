@@ -1,6 +1,5 @@
 import { colors } from '@/colors';
 import { useReportMissingExercise } from '@/src/hooks/useReportMissingExercise';
-import { useAuthStore } from '@/src/store/useAuthStore';
 import ActionButton from '@/src/ui/ActionButton';
 import ModalBottom from '@/src/ui/ModalButtom';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,8 +24,7 @@ interface ReportMissingExerciseModalProps {
 
 const ReportMissingExerciseModal = ({ visible, onClose, initialQuery }: ReportMissingExerciseModalProps) => {
   const sheetRef = useRef<BottomSheet>(null);
-  const user = useAuthStore((state) => state.user);
-  const { mutate: reportMissingExercise, isPending } = useReportMissingExercise(user?.id);
+  const { mutate: reportMissingExercise, isPending } = useReportMissingExercise();
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [suggestedName, setSuggestedName] = useState('');
