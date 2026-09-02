@@ -122,3 +122,6 @@ Every new component **must** meet these requirements — no exceptions:
 
 ## Dev Server
 **Always ask** before starting: regular (`npm start`) or tunnel (`npx expo start --tunnel`)?
+
+## TODO: R8 Minify (Android)
+`android.enableMinifyInReleaseBuilds` is currently off. When enabling it, first add proguard keep rules for `expo.modules.securestore.**` (session storage in `supabase_client.ts`) and `com.airbnb.lottie.**`, then manually test login in a release build — known crash risk (see [expo/expo#43567](https://github.com/expo/expo/discussions/43567)).
