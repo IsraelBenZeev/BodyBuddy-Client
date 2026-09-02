@@ -197,22 +197,33 @@ export default function ProfileScreen() {
                     fillVariant="darken"
                     fillColor="rgba(239,68,68,0.4)"
                     hapticOnComplete="error"
-                    className="items-center justify-center px-5 h-[44px]"
+                    className="items-center justify-center px-4 h-[44px]"
                     accessibilityLabel="החזק להתנתקות"
                   >
                     <View className="flex-row items-center gap-2">
-                      <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+                      <View
+                        className="w-7 h-7 rounded-full items-center justify-center"
+                        style={{ backgroundColor: 'rgba(239,68,68,0.14)' }}
+                        importantForAccessibility="no"
+                      >
+                        <Ionicons name="log-out-outline" size={15} color="#ef4444" />
+                      </View>
                       <Text className="typo-label text-red-400">התנתקות</Text>
                     </View>
                   </HoldButton>
                   <View className="w-[1px] h-5 bg-white/15" />
                   <Pressable
-                    className="flex-row items-center justify-center gap-2 px-5 h-[44px]"
+                    className="flex-row items-center justify-center gap-2 px-4 h-[44px]"
                     onPress={() => router.navigate('/UserSetup')}
                     accessibilityRole="button"
                     accessibilityLabel="הגדרות פרופיל"
                   >
-                    <Ionicons name="settings-sharp" size={18} color="rgba(255,255,255,0.6)" />
+                    <View
+                      className="w-7 h-7 rounded-full items-center justify-center bg-white/[0.06]"
+                      importantForAccessibility="no"
+                    >
+                      <Ionicons name="settings-sharp" size={15} color="rgba(255,255,255,0.6)" />
+                    </View>
                     <Text className="typo-label text-white/50">הגדרות</Text>
                   </Pressable>
                 </View>
@@ -391,67 +402,86 @@ export default function ProfileScreen() {
             </AnimatedCard>
           </View>
         )}
-        <View className="mb-8 px-6 space-y-4 items-start">
-          {/* מידע על הנוסחה - בולט פחות מהמשפטי */}
-          {/* הפרדה ויזואלית קטנה */}
-          <View className="border-t border-background-800 my-2 w-1/4 self-center opacity-30" />
-
+        <View className="mb-8 px-6 mt-6">
           {/* מדיניות פרטיות ותנאי שימוש */}
-          <Text className="typo-label text-background-400">
-            {'בהמשך השימוש הינך מסכים ל'}
-            <Text
-              onPress={() => router.push('/privacy-policy')}
-              className="text-lime-400 font-semibold"
-              accessibilityRole="link"
-              accessibilityLabel="מדיניות הפרטיות"
-              accessibilityHint="פותח את מסך מדיניות הפרטיות"
-            >
-              {'מדיניות הפרטיות'}
-            </Text>
-            {' ול'}
-            <Text
-              onPress={() => router.push('/privacy-policy?tab=terms')}
-              className="text-lime-400 font-semibold"
-              accessibilityRole="link"
-              accessibilityLabel="תנאי השימוש"
-              accessibilityHint="פותח את מסך תנאי השימוש"
-            >
-              {'תנאי השימוש'}
-            </Text>
-            {' שלנו'}
-          </Text>
+          <AnimatedCard delay={900} className="self-center">
+            <View className="flex-row items-center bg-white/5 rounded-full border border-white/10 overflow-hidden">
+              <Pressable
+                className="items-center justify-center px-5 h-[44px]"
+                onPress={() => router.push('/privacy-policy')}
+                accessibilityRole="link"
+                accessibilityLabel="מדיניות הפרטיות"
+                accessibilityHint="פותח את מסך מדיניות הפרטיות"
+              >
+                <Text className="typo-label text-lime-400">מדיניות הפרטיות</Text>
+              </Pressable>
+              <View className="w-[1px] h-5 bg-white/10" />
+              <Pressable
+                className="items-center justify-center px-5 h-[44px]"
+                onPress={() => router.push('/privacy-policy?tab=terms')}
+                accessibilityRole="link"
+                accessibilityLabel="תנאי השימוש"
+                accessibilityHint="פותח את מסך תנאי השימוש"
+              >
+                <Text className="typo-label text-lime-400">תנאי השימוש</Text>
+              </Pressable>
+            </View>
+          </AnimatedCard>
 
           {/* תמיכה */}
-          <Text className="typo-label text-background-400">
-            {'נתקלת בבעיה? '}
-            <Text
-              onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
-              className="text-lime-400 font-semibold"
-              accessibilityRole="link"
-              accessibilityLabel="צרו קשר עם התמיכה שלנו"
-              accessibilityHint="פותח את אפליקציית המייל לפנייה לתמיכה"
-            >
-              {'צרו קשר עם התמיכה שלנו'}
+          <AnimatedCard delay={950}>
+            <Text className="typo-label text-background-400 text-center mt-4">
+              {'נתקלת בבעיה? '}
+              <Text
+                onPress={() => Linking.openURL('mailto:bodybuddysupport@gmail.com')}
+                className="text-lime-400 font-semibold"
+                accessibilityRole="link"
+                accessibilityLabel="צרו קשר עם התמיכה שלנו"
+                accessibilityHint="פותח את אפליקציית המייל לפנייה לתמיכה"
+              >
+                {'צרו קשר עם התמיכה שלנו'}
+              </Text>
             </Text>
-          </Text>
+          </AnimatedCard>
 
-          {/* מחיקת חשבון */}
-          <Pressable
-            onPress={handleDeleteAccount}
-            disabled={deleteAccountMutation.isPending}
-            className="min-h-[44px] py-2 justify-center"
-            accessibilityRole="button"
-            accessibilityLabel="מחיקת חשבון לצמיתות"
-            accessibilityHint="פותח חלון אישור למחיקת החשבון וכל המידע לצמיתות. הפעולה בלתי הפיכה"
-            accessibilityState={{
-              disabled: deleteAccountMutation.isPending,
-              busy: deleteAccountMutation.isPending,
-            }}
-          >
-            <Text className="typo-label text-red-400/70">
-              {deleteAccountMutation.isPending ? 'מוחק חשבון...' : 'מחיקת חשבון לצמיתות'}
-            </Text>
-          </Pressable>
+          {/* אזור סכנה — מחיקת חשבון */}
+          <AnimatedCard delay={1000}>
+            <Pressable
+              onPress={handleDeleteAccount}
+              disabled={deleteAccountMutation.isPending}
+              className="flex-row items-center gap-3 mt-6 p-4 rounded-3xl"
+              style={{ backgroundColor: 'rgba(239,68,68,0.045)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.22)' }}
+              accessibilityRole="button"
+              accessibilityLabel="מחיקת חשבון לצמיתות"
+              accessibilityHint="פותח חלון אישור למחיקת החשבון וכל המידע לצמיתות. הפעולה בלתי הפיכה"
+              accessibilityState={{
+                disabled: deleteAccountMutation.isPending,
+                busy: deleteAccountMutation.isPending,
+              }}
+            >
+              <View
+                className="w-9 h-9 rounded-full items-center justify-center"
+                style={{ backgroundColor: 'rgba(239,68,68,0.15)' }}
+                importantForAccessibility="no"
+              >
+                <Ionicons name="trash-outline" size={16} color="#ef4444" />
+              </View>
+              <View className="flex-1 items-start">
+                <Text className="typo-body-primary text-red-400 text-right">
+                  {deleteAccountMutation.isPending ? 'מוחק חשבון...' : 'מחיקת חשבון'}
+                </Text>
+                <Text className="typo-caption text-background-400 mt-0.5 text-right">
+                  פעולה זו בלתי הפיכה ותמחק את כל הנתונים שלך
+                </Text>
+              </View>
+              <Ionicons
+                name="chevron-back"
+                size={15}
+                color="rgba(239,68,68,0.55)"
+                importantForAccessibility="no"
+              />
+            </Pressable>
+          </AnimatedCard>
         </View>
       </ScrollView>
 
