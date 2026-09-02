@@ -1,7 +1,7 @@
 import { colors } from '@/colors';
+import type { PrivacyPolicyContent as PrivacyPolicyContentType } from '@/src/types/privacyPolicy';
 import ActionButton from '@/src/ui/ActionButton';
 import BodyBuddyLoadingIcon from '@/src/ui/BodyBuddyLoadingIcon';
-import type { PrivacyPolicyContent as PrivacyPolicyContentType } from '@/src/types/privacyPolicy';
 import { Ionicons } from '@expo/vector-icons';
 import { format, parseISO } from 'date-fns';
 import { ReactNode, useRef, useState } from 'react';
@@ -62,11 +62,11 @@ export default function PrivacyPolicyContent({
 }: PrivacyPolicyContentProps) {
   const [language, setLanguage] = useState<PolicyLanguage>('he');
   const sections = language === 'he' ? data?.content_he : data?.content_en;
-  const changesSummary =
-    language === 'he' ? data?.changes_summary_he : data?.changes_summary_en;
+  const changesSummary = language === 'he' ? data?.changes_summary_he : data?.changes_summary_en;
 
   const scrollViewRef = useRef<ScrollView>(null);
   const sectionOffsets = useRef<Record<number, number>>({});
+  const [scrollWidth, setScrollWidth] = useState<number>();
 
   const scrollToSection = (sectionNumber: number) => {
     const y = sectionOffsets.current[sectionNumber];
@@ -142,9 +142,14 @@ export default function PrivacyPolicyContent({
 
       <ScrollView
         ref={scrollViewRef}
-        className="px-5 py-4"
-        contentContainerClassName="items-center"
-        contentContainerStyle={{ gap: 14 }}
+        onLayout={(e) => setScrollWidth(e.nativeEvent.layout.width)}
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          gap: 14,
+          paddingHorizontal: 20,
+          paddingVertical: 16,
+          width: scrollWidth,
+        }}
       >
         {changesSummary && changesSummary.length > 0 && (
           <View
@@ -162,7 +167,7 @@ export default function PrivacyPolicyContent({
               >
                 <Ionicons name="sparkles" size={14} color={colors.lime[300]} />
               </View>
-              <Text className="typo-h4 text-lime-300">
+              <Text className="typo-body-primary text-lime-300">
                 {language === 'en' ? "What's new in this version" : 'מה השתנה בגרסה זו'}
               </Text>
             </View>
@@ -176,13 +181,13 @@ export default function PrivacyPolicyContent({
                 );
                 const text = (
                   <Text
-                    className={`typo-label text-background-400 flex-1 leading-5 ${language === 'en' ? 'text-right' : ''}`}
+                    className={`typo-label text-background-400 flex-1 leading-5 text-left ${language === 'en' ? 'text-right' : ''}`}
                   >
                     {renderChangeText(change, scrollToSection)}
                   </Text>
                 );
                 return (
-                  <View key={changeIndex} className="flex-row items-start gap-2">
+                  <View key={changeIndex} className="flex-row items-start gap-2 text-left">
                     {language === 'en' ? (
                       <>
                         {text}
@@ -222,13 +227,13 @@ export default function PrivacyPolicyContent({
                 {language === 'en' ? (
                   <>
                     <View className="flex-1 h-px bg-lime-500/40" importantForAccessibility="no" />
-                    {numberBadge}
                     <Text className="typo-h4 text-white">{section.title}</Text>
+                    {numberBadge}
                   </>
                 ) : (
                   <>
-                    <Text className="typo-h4 text-white">{section.title}</Text>
                     {numberBadge}
+                    <Text className="typo-h4 text-white">{section.title}</Text>
                     <View className="flex-1 h-px bg-lime-500/40" importantForAccessibility="no" />
                   </>
                 )}
@@ -236,7 +241,7 @@ export default function PrivacyPolicyContent({
               {section.body.map((paragraph, paragraphIndex) => (
                 <Text
                   key={paragraphIndex}
-                  className={`typo-label text-background-400  mb-2 leading-5 ${language === 'en' ? 'text-right' : ''}`}
+                  className={`typo-label text-background-400  mb-2 leading-5 text-left ${language === 'en' ? 'text-right' : ''}`}
                 >
                   {paragraph}
                 </Text>
