@@ -388,7 +388,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
                   item.kind === 'section-header' ? `section-header-${index}` : item.exercise.exerciseId
                 }
                 getItemType={(item) => item.kind}
-                // estimatedItemSize={110}
+                drawDistance={600}
                 onEndReached={handleEndReached}
                 onEndReachedThreshold={0.5}
                 ListEmptyComponent={listEmptyComponent}
