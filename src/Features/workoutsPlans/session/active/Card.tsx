@@ -2,39 +2,45 @@ import { Exercise } from '@/src/types/exercise';
 import DumbbellAnimation from '@/src/ui/Animations/DumbbellAnimation';
 import { describeInputFields } from '@/src/utils/formatExerciseMetrics';
 import { Image } from 'expo-image';
-import { useVideoPlayer, VideoView } from 'expo-video';
+import { VideoView } from 'expo-video';
+import type { VideoPlayer } from 'expo-video';
 import { useEffect, useMemo, useRef } from 'react';
 import { Control } from 'react-hook-form';
-import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Failds from './Failds';
 
 interface CardProps {
   item: Exercise;
   isActive: boolean;
-  activeId: string;
+  videoPlayer?: VideoPlayer | null;
   control: Control<any>;
 }
 
-const Card = ({ item, isActive, activeId, control }: CardProps) => {
-  const { width, height } = useWindowDimensions();
+const ActiveExerciseVideo = ({
+  name,
+  player,
+}: {
+  name: string;
+  player: VideoPlayer;
+}) => {
+  return (
+    <View style={styles.videoFrame}>
+      <VideoView
+        style={StyleSheet.absoluteFill}
+        player={player}
+        contentFit="contain"
+        nativeControls={false}
+        useExoShutter={false}
+        accessibilityLabel={`סרטון הדגמה לתרגיל ${name}`}
+      />
+    </View>
+  );
+};
+
+const Card = ({ item, isActive, videoPlayer, control }: CardProps) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typeLabel = useMemo(() => describeInputFields(item?.input_fields ?? []), [item?.input_fields]);
-
-  const player = useVideoPlayer(item?.videoUrl ?? null, (player) => {
-    player.loop = true;
-    player.muted = true;
-    player.audioMixingMode = 'mixWithOthers';
-  });
-
-  useEffect(() => {
-    if (!item?.videoUrl) return;
-    if (isActive) {
-      player.play();
-    } else {
-      player.pause();
-    }
-  }, [isActive, item?.videoUrl, player]);
 
   useEffect(() => {
     return () => {
@@ -81,14 +87,15 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
       >
         <View className="items-center bg-background-850 border border-white/10 rounded-2xl px-4 py-2 gap-3">
           <View className={`${item.videoUrl ? 'bg-black' : 'bg-white'} items-center justify-center rounded-2xl overflow-hidden w-full`}>
-            {item.videoUrl ? (
-              <VideoView
-                style={{ width: '100%', height: 200 }}
-                player={player}
-                contentFit="contain"
-                nativeControls={false}
-                accessibilityLabel={`סרטון הדגמה לתרגיל ${item.name_he}`}
-              />
+            {item.videoUrl && isActive ? (
+              videoPlayer ? (
+                <ActiveExerciseVideo
+                  name={item.name_he || item.name || ''}
+                  player={videoPlayer}
+                />
+              ) : (
+                <View style={styles.videoFrame} />
+              )
             ) : item.imageUrls?.[0] ? (
               <Image
                 source={{ uri: item.imageUrls[0] }}
@@ -108,5 +115,13 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  videoFrame: {
+    width: '100%',
+    height: 200,
+    backgroundColor: 'black',
+  },
+});
 
 export default Card;
