@@ -1,17 +1,39 @@
-import { create } from 'zustand';
-import { User, Session, Subscription } from '@supabase/supabase-js';
+import { logError } from '@/src/lib/logger';
 import { supabase } from '@/supabase_client';
+import { Session, Subscription, User } from '@supabase/supabase-js';
+import { create } from 'zustand';
+
+const AUTH_INITIALIZATION_TIMEOUT_MS = 12_000;
+const AUTH_CONNECTION_ERROR = 'לא הצלחנו להתחבר. בדוק את חיבור האינטרנט שלך ונסה שוב.';
+
+const withTimeout = <T>(promise: PromiseLike<T>, timeoutMs: number): Promise<T> =>
+  new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(
+      () => reject(new Error('Auth initialization timed out')),
+      timeoutMs
+    );
+
+    Promise.resolve(promise).then(
+      (value) => {
+        clearTimeout(timeoutId);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      }
+    );
+  });
 
 interface AuthState {
-  // State
   user: User | null;
   session: Session | null;
   isLoading: boolean;
   isInitialized: boolean;
+  initializationError: string | null;
   pendingAuthUrl: string | null;
   _authSubscription: Subscription | null;
 
-  // Actions
   setUser: (user: User | null) => void;
   setSession: (session: Session | null) => void;
   setLoading: (loading: boolean) => void;
@@ -21,48 +43,34 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  // Initial State
   user: null,
   session: null,
   isLoading: false,
   isInitialized: false,
+  initializationError: null,
   pendingAuthUrl: null,
   _authSubscription: null,
 
-  // Actions
   setUser: (user) => set({ user }),
   setSession: (session) => set({ session }),
   setLoading: (loading) => set({ isLoading: loading }),
   setPendingAuthUrl: (url) => set({ pendingAuthUrl: url }),
   clearAuth: () => set({ user: null, session: null }),
 
-  // Initialize: טעינת session קיים + listener לשינויים
   initialize: async () => {
-    // ביטול listener קודם למניעת דליפת זיכרון
     get()._authSubscription?.unsubscribe();
+    set({
+      isLoading: true,
+      isInitialized: false,
+      initializationError: null,
+      _authSubscription: null,
+    });
 
-    set({ isLoading: true });
-
-    // טעינת session קיים מAsyncStorage
     const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
-
-    if (error) {
-      // טוקן לא תקין (למשל, יוזר נמחק מה-DB) — ניקוי SecureStore
-      await supabase.auth.signOut();
-    } else if (session) {
-      set({
-        user: session.user,
-        session,
-      });
-    }
-
-    // Listener לשינויי auth state (login/logout/refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'TOKEN_REFRESHED' && !session) {
-        supabase.auth.signOut();
+        void supabase.auth.signOut();
         return;
       }
       if (event === 'SIGNED_OUT') {
@@ -72,9 +80,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({
         user: session?.user ?? null,
         session: session ?? null,
+        initializationError: null,
       });
     });
 
-    set({ isLoading: false, isInitialized: true, _authSubscription: subscription });
+    try {
+      // getSession refreshes an expired token when needed, which may require a network connection.
+      const {
+        data: { session },
+        error,
+      } = await withTimeout(supabase.auth.getSession(), AUTH_INITIALIZATION_TIMEOUT_MS);
+
+      if (error) throw error;
+
+      set({
+        user: session?.user ?? null,
+        session: session ?? null,
+        initializationError: null,
+      });
+    } catch (error) {
+      logError(error, 'authInitialization');
+      set({ initializationError: AUTH_CONNECTION_ERROR });
+    } finally {
+      set({
+        isLoading: false,
+        isInitialized: true,
+        _authSubscription: subscription,
+      });
+    }
   },
 }));
