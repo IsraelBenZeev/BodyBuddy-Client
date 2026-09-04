@@ -22,6 +22,14 @@ interface ErrorResponse {
   error: Error | null;
 }
 
+interface PasswordRecoveryResponse {
+  error: Error | null;
+}
+
+const PASSWORD_RECOVERY_URL = process.env.EXPO_PUBLIC_PASSWORD_RECOVERY_URL ?? '';
+const DELETE_ACCOUNT_URL = process.env.EXPO_PUBLIC_DELETE_ACCOUNT_URL ?? '';
+
+
 // Email/Password Authentication
 export const signUpWithEmail = async (email: string, password: string): Promise<AuthResponse> => {
   try {
@@ -48,6 +56,62 @@ export const signInWithEmail = async (email: string, password: string): Promise<
   } catch (error) {
     logError(error, 'signInWithEmail');
     return { data: null, error: error as Error };
+  }
+};
+
+export const sendPasswordRecoveryEmail = async (email: string): Promise<PasswordRecoveryResponse> => {
+  try {
+    // Existing installs can reuse the configured account server URL until a dedicated URL is added.
+    const recoveryUrl = PASSWORD_RECOVERY_URL || (DELETE_ACCOUNT_URL
+      ? new URL('/auth/password-recovery', DELETE_ACCOUNT_URL).toString()
+      : '');
+    if (!recoveryUrl) throw new Error('חסרה כתובת שרת לאיפוס סיסמה');
+
+    const response = await fetch(recoveryUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) throw new Error(`password recovery request failed: ${response.status}`);
+    return { error: null };
+  } catch (error) {
+    logError(error, 'sendPasswordRecoveryEmail');
+    return { error: error as Error };
+  }
+};
+
+export const completePasswordRecovery = async (url: string): Promise<PasswordRecoveryResponse> => {
+  try {
+    const isPKCE = url.includes('code=') && !url.includes('access_token');
+
+    if (isPKCE) {
+      const { error } = await supabase.auth.exchangeCodeForSession(url);
+      if (error) throw error;
+      return { error: null };
+    }
+
+    const tokens = parseTokensFromRedirectUrl(url);
+    if (!tokens) throw new Error('קישור האיפוס אינו תקין או שפג תוקפו');
+
+    const { error } = await supabase.auth.setSession(tokens);
+    if (error) throw error;
+
+    return { error: null };
+  } catch (error) {
+    logError(error, 'completePasswordRecovery');
+    return { error: error as Error };
+  }
+};
+
+export const updatePassword = async (password: string): Promise<PasswordRecoveryResponse> => {
+  try {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
+    return { error: null };
+  } catch (error) {
+    logError(error, 'updatePassword');
+    return { error: error as Error };
   }
 };
 

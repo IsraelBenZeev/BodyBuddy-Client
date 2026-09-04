@@ -119,7 +119,7 @@ export default function RegisterScreen() {
               errorStyle={{
                 color: colors.red[400],
                 fontSize: 14,
-                textAlign: 'right',
+                textAlign: 'left',
                 marginTop: 4,
               }}
             />

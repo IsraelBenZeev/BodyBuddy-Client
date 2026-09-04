@@ -57,6 +57,11 @@ export default function LoginScreen() {
     [router]
   );
 
+  const handleNavigateToForgotPassword = useCallback(
+    () => router.push('/auth/forgot-password' as never),
+    [router]
+  );
+
   const onSubmit = async (formData: LoginFormData) => {
     setLoading(true);
     const { data, error } = await signInWithEmail(formData.email, formData.password);
@@ -185,6 +190,14 @@ export default function LoginScreen() {
                 marginTop: 4,
               }}
             />
+            <Pressable
+              onPress={handleNavigateToForgotPassword}
+              className="self-start -mt-4 mb-6"
+              accessibilityRole="button"
+              accessibilityLabel="שכחת סיסמה"
+            >
+              <Text className="typo-body text-lime-400 font-semibold">שכחת סיסמה?</Text>
+            </Pressable>
             {/* Login Button */}
             <View className="mb-4">
               <ActionButton
