@@ -5,7 +5,9 @@ import { WorkoutPlan } from '@/src/types/workout';
 import CustomCarousel from '@/src/ui/CustomCarousel';
 import ActionButton from '@/src/ui/ActionButton';
 import * as Crypto from 'expo-crypto';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { createVideoPlayer } from 'expo-video';
+import type { VideoPlayer } from 'expo-video';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Text, View } from 'react-native';
 import Card from './Card';
@@ -30,6 +32,15 @@ const TimerDisplay = memo(() => {
     }, []);
     return <Text className="typo-h2 text-lime-500 font-mono">{formatTime(totalTime)}</Text>;
 });
+TimerDisplay.displayName = 'TimerDisplay';
+
+const setupWorkoutVideoPlayer = (videoUrl: string) => {
+    const player = createVideoPlayer({ uri: videoUrl, useCaching: true });
+    player.loop = true;
+    player.muted = true;
+    player.audioMixingMode = 'mixWithOthers';
+    return player;
+};
 
 interface Props {
     setIsStart: (value: boolean) => void;
@@ -43,6 +54,12 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
     const { data: exercises, isLoading } = useGetExercisesByIds(workoutPlan.exercise_ids);
     const [activeIndex, setActiveIndex] = useState(0);
     const activeExercise = exercises?.[activeIndex];
+    const [activeVideoPlayer, setActiveVideoPlayer] = useState<{
+        exerciseId: string;
+        player: VideoPlayer;
+    } | null>(null);
+    const videoPlayersRef = useRef<Map<string, VideoPlayer>>(new Map());
+    const releaseTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
     const { control, handleSubmit } = useForm<SessionFormData>({
         defaultValues: {
             notes: '',
@@ -52,6 +69,86 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
 
     const { mutateAsync: createSession, isPending: isPendingCreateSession } = useSessionCreateWorkout(user_id, workoutPlan.id as string);
     const { mutateAsync: createExerciseLog, isPending: isPendingCreateExerciseLog } = useSessionCreateExerciseLog(user_id, workoutPlan.id as string);
+
+    useEffect(() => {
+        if (!exercises?.length) {
+            setActiveVideoPlayer(null);
+            return;
+        }
+
+        const desiredIndexes = [activeIndex, activeIndex + 1, activeIndex - 1]
+            .filter((index) => index >= 0 && index < exercises.length);
+        const desiredIds = new Set<string>();
+
+        desiredIndexes.forEach((index) => {
+            const exercise = exercises[index];
+            if (!exercise?.videoUrl) return;
+
+            desiredIds.add(exercise.exerciseId);
+            if (!videoPlayersRef.current.has(exercise.exerciseId)) {
+                videoPlayersRef.current.set(
+                    exercise.exerciseId,
+                    setupWorkoutVideoPlayer(exercise.videoUrl)
+                );
+            }
+        });
+
+        const activeExercise = exercises[activeIndex];
+        const nextActivePlayer = activeExercise?.videoUrl
+            ? videoPlayersRef.current.get(activeExercise.exerciseId)
+            : null;
+
+        setActiveVideoPlayer(
+            nextActivePlayer && activeExercise
+                ? { exerciseId: activeExercise.exerciseId, player: nextActivePlayer }
+                : null
+        );
+
+        videoPlayersRef.current.forEach((player, exerciseId) => {
+            try {
+                if (exerciseId === activeExercise?.exerciseId) {
+                    player.play();
+                } else {
+                    player.pause();
+                }
+            } catch (error) {
+                console.warn('Video player control failed:', error);
+            }
+        });
+
+        videoPlayersRef.current.forEach((player, exerciseId) => {
+            if (desiredIds.has(exerciseId)) return;
+
+            videoPlayersRef.current.delete(exerciseId);
+            const releaseTimer = setTimeout(() => {
+                try {
+                    player.release();
+                } catch (error) {
+                    console.warn('Video player release failed:', error);
+                }
+                const timerIndex = releaseTimersRef.current.indexOf(releaseTimer);
+                if (timerIndex >= 0) releaseTimersRef.current.splice(timerIndex, 1);
+            }, 300);
+            releaseTimersRef.current.push(releaseTimer);
+        });
+    }, [activeIndex, exercises]);
+
+    useEffect(() => {
+        const releaseTimers = releaseTimersRef.current;
+        const videoPlayers = videoPlayersRef.current;
+
+        return () => {
+            releaseTimers.forEach(clearTimeout);
+            videoPlayers.forEach((player) => {
+                try {
+                    player.release();
+                } catch (error) {
+                    console.warn('Video player release failed:', error);
+                }
+            });
+            videoPlayers.clear();
+        };
+    }, []);
 
     const saveSession = async (data: SessionFormData, idSession: string) => {
         const completedAt = new Date().toISOString();
@@ -121,9 +218,18 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
     }, [createSession, createExerciseLog, triggerSuccess]);
 
     const handleIndexChange = useCallback((index: number) => setActiveIndex(index), []);
-    const renderItem = useCallback((item: any, isActive: boolean, _isSwiped: boolean, activeId: string) => (
-        <Card item={item} isActive={isActive} activeId={activeId} control={control} />
-    ), [control]);
+    const renderItem = useCallback((item: any, isActive: boolean) => (
+        <Card
+            item={item}
+            isActive={isActive}
+            videoPlayer={
+                isActive && activeVideoPlayer && item.exerciseId === activeVideoPlayer.exerciseId
+                    ? activeVideoPlayer.player
+                    : null
+            }
+            control={control}
+        />
+    ), [activeVideoPlayer, control]);
 
     if (isLoading)
         return (

@@ -3,7 +3,6 @@ import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
-  runOnJS,
   SharedValue, // הוספנו את הטיפוס הזה
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -116,24 +115,16 @@ const CustomCarousel = ({
     scrollRef.current?.scrollTo({ x: clampedIndex * TOTAL_ITEM_SIZE, animated: true });
   };
 
-  const updateActiveId = (id: string | number) => {
-    if (activeId !== id) setActiveId(id);
-  };
-
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollX.value = event.contentOffset.x;
-      const index = Math.round(event.contentOffset.x / TOTAL_ITEM_SIZE);
-      if (data[index]) {
-        runOnJS(updateActiveId)(data[index][keyField]);
-      }
     },
   });
   useEffect(() => {
     if (data.length > 0 && activeId === null) {
       setActiveId(data[0][keyField]);
     }
-  }, [data]);
+  }, [activeId, data, keyField]);
   const isFirst = currentIndex <= 0;
   const isLast = currentIndex >= data.length - 1;
 
@@ -155,22 +146,20 @@ const CustomCarousel = ({
           const offset = event.nativeEvent.contentOffset.x;
           const index = Math.round(offset / TOTAL_ITEM_SIZE);
 
-          console.log("index: ", index);
-
           if (data[index]) {
             const id = data[index][keyField];
 
-            // 1. עדכון ה-ID הפנימי של הקרוסלה (במידה ויש runOnJS)
-            runOnJS(setActiveId)(id);
-            runOnJS(setCurrentIndex)(index);
+            // 1. עדכון ה-ID הפנימי של הקרוסלה
+            setActiveId(id);
+            setCurrentIndex(index);
 
             // 2. שליחת האינדקס וה-ID חזרה ל-Session
             if (onIndexChange) {
-              runOnJS(onIndexChange)(index);
+              onIndexChange(index);
             }
 
             if (onSelect) {
-              runOnJS(onSelect)(id);
+              onSelect(id);
             }
           }
         }}

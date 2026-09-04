@@ -16,7 +16,7 @@ export default function PrivacyPolicyScreen() {
   const active = activeTab === 'privacy' ? privacyPolicy : termsOfService;
 
   return (
-    <View className="flex-1 items-center justify-center bg-black/60 px-6">
+    <View className="flex-1 items-center justify-center bg-black/90 px-6">
       <View className="w-full gap-3">
         <View
           className="flex-row self-center rounded-full border border-white/10 overflow-hidden bg-white/5"

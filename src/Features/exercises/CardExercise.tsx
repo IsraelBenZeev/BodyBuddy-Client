@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface CardExerciseProps {
   item: Exercise;
@@ -21,7 +21,6 @@ interface CardExerciseProps {
 
 const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerciseProps) => {
   const [imgError, setImgError] = useState(false);
-  const [imgLoading, setImgLoading] = useState(true);
   const router = useRouter();
   const isSelectedId = useWorkoutStore((state) => state.selectedExerciseIds.has(item.exerciseId));
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
@@ -79,27 +78,14 @@ const CardExerciseInner = ({ item, favorites, toggleFavorite, mode }: CardExerci
         ) : (
           <>
             <Image
-              source={imageSource}
+              source={{ uri: imageSource }}
               style={styles.image}
               contentFit="cover"
-              transition={400}
+              transition={120}
               cachePolicy="memory-disk"
-              onLoadStart={() => setImgLoading(true)}
-              onLoad={() => setImgLoading(false)}
-              onError={() => {
-                setImgError(true);
-                setImgLoading(false);
-              }}
+              recyclingKey={item.exerciseId}
+              onError={() => setImgError(true)}
             />
-            {imgLoading && (
-              <View
-                className="absolute inset-0 items-center justify-center"
-                pointerEvents="none"
-                importantForAccessibility="no"
-              >
-                <ActivityIndicator size="small" color={colors.lime[500]} />
-              </View>
-            )}
           </>
         )}
 
