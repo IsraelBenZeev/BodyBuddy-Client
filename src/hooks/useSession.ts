@@ -1,25 +1,27 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     createSession,
     createSessionExerciseLogs,
     getAllUserSessions,
     getExerciseLogsByExerciseId,
+    getLatestWorkoutPlanExerciseSets,
     getSessionExerciseLogs,
-    getSessions,
+    getSessionsPage,
 } from '../service/sessionService';
 import { useUIStore } from '../store/useUIStore';
 import { ExerciseSetDBType, SessionDBType } from '../types/session';
-const keyCashSessions = ['sessions'];
-export const useGetSessions = (user_id: string, workoutPlanId: string) => {
-  return useQuery({
-    queryKey: [keyCashSessions, workoutPlanId, user_id],
-    queryFn: async () => await getSessions(user_id, workoutPlanId),
+const SESSIONS_PAGE_SIZE = 20;
+const sessionsQueryKey = (workoutPlanId: string, userId: string) => ['sessions', workoutPlanId, userId] as const;
+
+export const useInfiniteSessions = (userId: string | undefined, workoutPlanId: string | undefined) => {
+  return useInfiniteQuery({
+    queryKey: sessionsQueryKey(workoutPlanId ?? '', userId ?? ''),
+    queryFn: ({ pageParam }) => getSessionsPage(userId!, workoutPlanId!, pageParam, SESSIONS_PAGE_SIZE),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === SESSIONS_PAGE_SIZE ? allPages.length + 1 : undefined,
     staleTime: Infinity,
-    enabled: !!user_id && !!workoutPlanId,
-    select: (data) => {
-      if (!data) return [];
-      return data as SessionDBType[];
-    },
+    enabled: !!userId && !!workoutPlanId,
   });
 };
 export const useSessionCreateWorkout = (user_id: string, workoutPlanId: string) => {
@@ -27,7 +29,7 @@ export const useSessionCreateWorkout = (user_id: string, workoutPlanId: string) 
   return useMutation({
     mutationFn: async ({ session }: { session: SessionDBType }) => await createSession(session),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [keyCashSessions, workoutPlanId, user_id] });
+      queryClient.invalidateQueries({ queryKey: sessionsQueryKey(workoutPlanId, user_id) });
       queryClient.invalidateQueries({ queryKey: ['userWorkoutStats', user_id] });
     },
     onError: (error) => {
@@ -43,8 +45,9 @@ export const useSessionCreateExerciseLog = (user_id: string, workoutPlanId: stri
       await createSessionExerciseLogs(exerciseLog),
     onSuccess: (_data, variables) => {
       triggerSuccess('האימון נשמר בהצלחה', 'success');
-      queryClient.invalidateQueries({ queryKey: [keyCashSessions, workoutPlanId, user_id] });
+      queryClient.invalidateQueries({ queryKey: sessionsQueryKey(workoutPlanId, user_id) });
       queryClient.invalidateQueries({ queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, user_id] });
+      queryClient.invalidateQueries({ queryKey: ['latestWorkoutPlanExerciseSets', workoutPlanId, user_id] });
       const uniqueExerciseIds = [...new Set(variables.exerciseLog.map((log) => log.exercise_id))];
       uniqueExerciseIds.forEach((exerciseId) => {
         queryClient.invalidateQueries({ queryKey: ['exerciseHistory', exerciseId, user_id] });
@@ -62,6 +65,32 @@ export const useGetExerciseHistory = (userId: string, exerciseId: string) => {
     queryFn: () => getExerciseLogsByExerciseId(userId, exerciseId),
     staleTime: Infinity,
     enabled: !!userId && !!exerciseId,
+  });
+};
+
+export const useLatestWorkoutPlanExerciseSets = (
+  userId: string | undefined,
+  workoutPlanId: string | undefined
+) => {
+  return useQuery({
+    queryKey: ['latestWorkoutPlanExerciseSets', workoutPlanId, userId],
+    queryFn: () => getLatestWorkoutPlanExerciseSets(userId!, workoutPlanId!),
+    staleTime: Infinity,
+    enabled: !!userId && !!workoutPlanId,
+    select: (sets) => {
+      const setsByExercise = sets.reduce<Record<string, ExerciseSetDBType[]>>((accumulator, set) => {
+        if (!accumulator[set.exercise_id]) accumulator[set.exercise_id] = [];
+        accumulator[set.exercise_id].push(set);
+        return accumulator;
+      }, {});
+
+      return Object.fromEntries(
+        Object.entries(setsByExercise).map(([exerciseId, exerciseSets]) => [
+          exerciseId,
+          exerciseSets.sort((a, b) => a.set_number - b.set_number).map((set) => set.values ?? {}),
+        ])
+      ) as Record<string, Record<string, number>[]>;
+    },
   });
 };
 

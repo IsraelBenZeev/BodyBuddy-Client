@@ -1,47 +1,68 @@
-import { useGetSessions } from "@/src/hooks/useSession";
-import { SessionDBType } from "@/src/types/session";
-import { Dispatch, SetStateAction, memo, useEffect, useRef } from "react";
-import { Text, View } from "react-native";
-import SessionReviewCard from "./SessionReviewCard";
+import { useInfiniteSessions } from '@/src/hooks/useSession';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import { SessionDBType } from '@/src/types/session';
+import { FlashList } from '@shopify/flash-list';
+import { Dispatch, memo, SetStateAction, useCallback, useMemo } from 'react';
+import { Text, useWindowDimensions, View } from 'react-native';
+import SessionReviewCard from './SessionReviewCard';
+
 interface Props {
-    selectedSession: SessionDBType | null;
-    setSelectedSession: Dispatch<SetStateAction<SessionDBType | null>>;
-    workoutPlanId: string;
-    sheetRef: any;
+  setSelectedSession: Dispatch<SetStateAction<SessionDBType | null>>;
+  workoutPlanId: string;
+  sheetRef: any;
 }
 
-const History = ({ selectedSession, setSelectedSession, workoutPlanId, sheetRef }: Props) => {
-    // const sheetRef = useRef<any>(null);
-    const user = useAuthStore((state) => state.user);
-    const { data: sessionsData, isLoading: isLoadingSessions } = useGetSessions(user?.id as string, workoutPlanId);
+const History = ({ setSelectedSession, workoutPlanId, sheetRef }: Props) => {
+  const user = useAuthStore((state) => state.user);
+  const { height } = useWindowDimensions();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isLoadingSessions,
+  } = useInfiniteSessions(user?.id, workoutPlanId);
+  const sessions = useMemo(() => data?.pages.flat() ?? [], [data]);
 
-    // useEffect(() => {
-    //     if (selectedSession && selectedSession !== "") {
-    //         setTimeout(() => {
-    //             sheetRef.current?.snapToIndex(1);
-    //         }, 50);
-    //     }
-    // }, [selectedSession]);
-    const sessionsCount = sessionsData?.length || 0;
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      void fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-    if (isLoadingSessions) return <Text>Loading...</Text>;
-    return (
-        <View className="pb-24">
-            <Text className="typo-body-primary text-white text-left mb-3">
-                {`סה"כ ${sessionsCount} אימונים בוצעו`}
-            </Text>
-            {sessionsCount > 0 ? (
-                <View>
-                    {sessionsData?.map((session) => (
-                        <SessionReviewCard key={session.id} session={session} setSelectedSession={setSelectedSession} sheetRef={sheetRef} />
-                    ))}
-                </View>
-            ) : (
-                <Text className="typo-h2 text-white text-left">אין אימונים עדיין</Text>
-            )}
-        </View>
-    );
+  const renderItem = useCallback(
+    ({ item }: { item: SessionDBType }) => (
+      <SessionReviewCard session={item} setSelectedSession={setSelectedSession} sheetRef={sheetRef} />
+    ),
+    [setSelectedSession, sheetRef]
+  );
+
+  if (isLoadingSessions) return <Text>טוען היסטוריית אימונים...</Text>;
+
+  return (
+    <View className="pb-24">
+      <Text className="typo-body-primary text-white text-left mb-3">{`${sessions.length} אימונים נטענו`}</Text>
+      <FlashList
+        data={sessions}
+        renderItem={renderItem}
+        keyExtractor={(session, index) => session.id ?? `session-${index}`}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
+        style={{ height: Math.max(320, height * 0.52) }}
+        contentContainerStyle={{ paddingBottom: 24 }}
+        ListEmptyComponent={<Text className="typo-h2 text-white text-left">אין אימונים עדיין</Text>}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View className="py-6 items-center">
+              <Text className="typo-body text-lime-400">טוען אימונים נוספים...</Text>
+            </View>
+          ) : null
+        }
+      />
+    </View>
+  );
 };
 
 export default memo(History);

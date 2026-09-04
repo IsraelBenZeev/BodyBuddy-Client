@@ -6,26 +6,35 @@ import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 
 interface OptionalFieldToggleProps {
   label: string;
+  enabled?: boolean;
   defaultEnabled?: boolean;
   onToggle?: (enabled: boolean) => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const OptionalFieldToggle = ({ label, defaultEnabled = false, onToggle, children }: OptionalFieldToggleProps) => {
-  const [enabled, setEnabled] = useState(defaultEnabled);
+const OptionalFieldToggle = ({
+  label,
+  enabled: controlledEnabled,
+  defaultEnabled = false,
+  onToggle,
+  children,
+}: OptionalFieldToggleProps) => {
+  const [uncontrolledEnabled, setUncontrolledEnabled] = useState(defaultEnabled);
+  const enabled = controlledEnabled ?? uncontrolledEnabled;
 
   const handleToggle = () => {
     const next = !enabled;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setEnabled(next);
+    if (controlledEnabled === undefined) setUncontrolledEnabled(next);
     onToggle?.(next);
   };
 
   return (
-    <View className="w-full gap-3">
+    <View className="flex items-center w-full gap-3 justify-end">
       <Pressable
         onPress={handleToggle}
-        className="flex-row items-start gap-2"
+        className="w-full items-start gap-2"
+        style={{ direction: 'ltr', flexDirection: 'row-reverse', justifyContent: 'flex-start' }}
         hitSlop={8}
         accessibilityRole="checkbox"
         accessibilityLabel={label}
@@ -39,13 +48,14 @@ const OptionalFieldToggle = ({ label, defaultEnabled = false, onToggle, children
           {enabled && <MaterialCommunityIcons name="check-bold" size={16} color="black" />}
         </View>
         <Text
-          className={`typo-body-primary flex-1 flex-shrink ${enabled ? 'text-lime-300' : 'text-zinc-400'}`}
+          className={`typo-body-primary flex-shrink ${enabled ? 'text-lime-300' : 'text-zinc-400'}`}
+          style={{ writingDirection: 'rtl', textAlign: 'right' }}
         >
           {label}
         </Text>
       </Pressable>
 
-      {enabled && (
+      {enabled && children && (
         <Animated.View entering={SlideInUp.duration(250)} exiting={SlideOutUp.duration(200)} className="items-center">
           {children}
         </Animated.View>

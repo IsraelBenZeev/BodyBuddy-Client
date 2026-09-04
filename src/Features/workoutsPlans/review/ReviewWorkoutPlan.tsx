@@ -120,7 +120,6 @@ const ReviewWorkoutPlan = ({ workoutPlan, setIsStart }: Props) => {
                 <History
                   workoutPlanId={workoutPlan.id as string}
                   setSelectedSession={setSelectedSession}
-                  selectedSession={selectedSession}
                   sheetRef={sheetRef}
                 />
               ),

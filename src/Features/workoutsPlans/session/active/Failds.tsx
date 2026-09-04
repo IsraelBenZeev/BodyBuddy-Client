@@ -1,7 +1,7 @@
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { Exercise, InputFieldDefinition } from '@/src/types/exercise';
 import AppButton from '@/src/ui/PressableOpacity';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Control, useFieldArray } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
@@ -23,9 +23,21 @@ interface Props {
     control: Control<any>;
     item: Exercise;
     onScrollBottom: () => void;
+    defaultSets?: Record<string, number>[];
+    onAddSetReady?: (addSet: () => void) => void;
+    optionalFieldVisibility: Record<string, boolean>;
+    onOptionalFieldVisibilityChange: (fieldId: string, enabled: boolean) => void;
 }
 
-const Failds = ({ control, item, onScrollBottom }: Props) => {
+const Failds = ({
+    control,
+    item,
+    onScrollBottom,
+    defaultSets = [],
+    onAddSetReady,
+    optionalFieldVisibility,
+    onOptionalFieldVisibilityChange,
+}: Props) => {
     const completedTimes = useWorkoutStore((state) => state.completedTimes[item.exerciseId] ?? EMPTY_TIMES);
     const setSetDone = useWorkoutStore((state) => state.setSetDone);
     const addSetTime = useWorkoutStore((state) => state.addSetTime);
@@ -36,13 +48,13 @@ const Failds = ({ control, item, onScrollBottom }: Props) => {
         name: `exercises.${item.exerciseId}.sets`,
     });
 
-    const handleAddSet = () => {
+    const handleAddSet = useCallback(() => {
         const currentExercises = control._formValues.exercises?.[item.exerciseId]?.sets;
         const lastSetValues = currentExercises?.[fields.length - 1];
-        append(buildSetValues(item.input_fields, lastSetValues));
+        append(buildSetValues(item.input_fields, defaultSets[fields.length] || lastSetValues));
         addSetTime(item.exerciseId);
         onScrollBottom();
-    };
+    }, [addSetTime, append, control, defaultSets, fields.length, item.exerciseId, item.input_fields, onScrollBottom]);
 
     const handleRemoveSet = (index: number) => {
         remove(index);
@@ -51,10 +63,15 @@ const Failds = ({ control, item, onScrollBottom }: Props) => {
 
     useEffect(() => {
         if (fields.length === 0) {
-            append(buildSetValues(item.input_fields));
-            addSetTime(item.exerciseId);
+            const initialSets = defaultSets.length > 0 ? defaultSets : [undefined];
+            append(initialSets.map((setValues) => buildSetValues(item.input_fields, setValues)));
+            initialSets.forEach(() => addSetTime(item.exerciseId));
         }
-    }, []);
+    }, [addSetTime, append, defaultSets, fields.length, item.exerciseId, item.input_fields]);
+
+    useEffect(() => {
+        onAddSetReady?.(handleAddSet);
+    }, [handleAddSet, onAddSetReady]);
 
     return (
         <View className="w-full gap-4">
@@ -73,7 +90,7 @@ const Failds = ({ control, item, onScrollBottom }: Props) => {
                                     : 'bg-background-800/80 border-white/5 opacity-80'
                             }`}
                         >
-                            <View className="flex-row items-center justify-between mr-2">
+                            <View className="flex-row items-center justify-end gap-3">
                                 <Text className="typo-caption-bold text-white">סט {index + 1}</Text>
                                 <PremiumCheck
                                     checked={isDone}
@@ -89,6 +106,8 @@ const Failds = ({ control, item, onScrollBottom }: Props) => {
                                     control={control}
                                     basePath={`exercises.${item.exerciseId}.sets.${index}`}
                                     fields={item.input_fields}
+                                    optionalFieldVisibility={optionalFieldVisibility}
+                                    onOptionalFieldVisibilityChange={onOptionalFieldVisibilityChange}
                                 />
                                 <View className="justify-end items-center">
                                     <AppButton
@@ -113,7 +132,7 @@ const Failds = ({ control, item, onScrollBottom }: Props) => {
                     </View>
                 );
             })}
-            <AppButton
+            {!onAddSetReady && <AppButton
                 onPress={handleAddSet}
                 className="bg-lime-500/10 border border-lime-500/50 py-3 rounded-2xl flex-row justify-center items-center"
                 haptic="medium"
@@ -121,7 +140,7 @@ const Failds = ({ control, item, onScrollBottom }: Props) => {
                 accessibilityLabel="הוסף סט"
             >
                 <Text className="typo-body-primary text-lime-500 ml-2">הוסף סט</Text>
-            </AppButton>
+            </AppButton>}
         </View>
     );
 };

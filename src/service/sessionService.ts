@@ -1,18 +1,26 @@
 import { logError } from '@/src/lib/logger';
 import { supabase } from '../../supabase_client';
 import { ExerciseSetDBType, SessionDBType } from '../types/session';
-export const getSessions = async (userId: string, workoutPlanId: string) => {
+export const getSessionsPage = async (
+    userId: string,
+    workoutPlanId: string,
+    page: number,
+    pageSize: number,
+): Promise<SessionDBType[]> => {
     try {
+        const from = (page - 1) * pageSize;
+        const to = from + pageSize - 1;
         const { data, error } = await supabase
             .from('sessions')
-            .select()
+            .select('id, user_id, workout_plan_id, started_at, completed_at, total_time, notes')
             .eq('user_id', userId)
             .eq('workout_plan_id', workoutPlanId)
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: false })
+            .range(from, to);
         if (error) throw error;
-        return data;
+        return (data ?? []) as SessionDBType[];
     } catch (error) {
-        logError(error, 'getSessions');
+        logError(error, 'getSessionsPage');
         throw error;
     }
 }
@@ -92,6 +100,31 @@ export const createSessionExerciseLogs = async (exerciseLogs: ExerciseSetDBType[
         return data;
     } catch (error) {
         logError(error, 'createSessionExerciseLogs');
+        throw error;
+    }
+};
+
+type LatestSessionWithExerciseSets = {
+    exercise_sets: ExerciseSetDBType[] | null;
+};
+
+export const getLatestWorkoutPlanExerciseSets = async (
+    userId: string,
+    workoutPlanId: string,
+): Promise<ExerciseSetDBType[]> => {
+    try {
+        const { data, error } = await supabase
+            .from('sessions')
+            .select('exercise_sets(*)')
+            .eq('user_id', userId)
+            .eq('workout_plan_id', workoutPlanId)
+            .order('completed_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        if (error) throw error;
+        return (data as LatestSessionWithExerciseSets | null)?.exercise_sets ?? [];
+    } catch (error) {
+        logError(error, 'getLatestWorkoutPlanExerciseSets');
         throw error;
     }
 };
