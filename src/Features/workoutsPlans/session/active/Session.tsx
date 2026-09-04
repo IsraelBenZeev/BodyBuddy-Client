@@ -42,6 +42,7 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
     const user_id = user?.id as string;
     const { data: exercises, isLoading } = useGetExercisesByIds(workoutPlan.exercise_ids);
     const [activeIndex, setActiveIndex] = useState(0);
+    const activeExercise = exercises?.[activeIndex];
     const { control, handleSubmit } = useForm<SessionFormData>({
         defaultValues: {
             notes: '',
@@ -143,8 +144,11 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
                 </View>
             </View>
 
-            <View className="px-6 items-start mb-4">
-                <Text className="typo-body-small text-zinc-400">
+            <View className="px-3 mb-3 flex-row items-center justify-between gap-4">
+                <Text className="typo-h3 text-white flex-1 text-left" numberOfLines={1}>
+                    {activeExercise?.name_he || ''}
+                </Text>
+                <Text className="typo-body-small text-zinc-400 shrink-0" numberOfLines={1}>
                     תרגיל {activeIndex + 1} מתוך {exercises?.length}
                 </Text>
             </View>

@@ -35,7 +35,6 @@ const bodyParts = [
   'back',
   'upper legs',
   'waist',
-  'chest',
 ];
 interface FormProps {
   mode: modeAddWorkoutPlan;

@@ -5,7 +5,7 @@ import { Image } from 'expo-image';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEffect, useMemo, useRef } from 'react';
 import { Control } from 'react-hook-form';
-import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import Failds from './Failds';
 
 interface CardProps {
@@ -16,7 +16,6 @@ interface CardProps {
 }
 
 const Card = ({ item, isActive, activeId, control }: CardProps) => {
-  const { width, height } = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typeLabel = useMemo(() => describeInputFields(item?.input_fields ?? []), [item?.input_fields]);
@@ -52,14 +51,11 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
 
   return (
     <View className="bg-background-900 p-2">
-      <View className="justify-center w-full px-6 items-end">
+      {/* <View className="w-full px-6 mb-3 flex-row items-center justify-between gap-3">
         <Text className="typo-caption-bold text-lime-500 uppercase tracking-widest mb-2">
           {item.bodyParts_he || ''}
         </Text>
-        <Text className="typo-h3 text-white mb-2">
-          {item.name_he || ''}
-        </Text>
-        <View className="mb-6">
+        <View>
           {!!typeLabel && (
             <View
               className="bg-white/5 border border-white/10 rounded-full px-3 py-1"
@@ -70,7 +66,7 @@ const Card = ({ item, isActive, activeId, control }: CardProps) => {
             </View>
           )}
         </View>
-      </View>
+      </View> */}
 
       <ScrollView
         ref={scrollViewRef}

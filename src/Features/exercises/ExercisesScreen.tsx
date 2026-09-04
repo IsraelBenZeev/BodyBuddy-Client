@@ -53,6 +53,13 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     user?.id as string,
     selectedPartsArray
   );
+  const shouldLoadPickerCardio = mode === 'picker' && selectedPartsArray.includes('cardio');
+  const {
+    data: cardioData,
+    fetchNextPage: fetchNextCardioPage,
+    hasNextPage: hasNextCardioPage,
+    isFetchingNextPage: isFetchingNextCardioPage,
+  } = useExercises(user?.id as string, ['cardio'], shouldLoadPickerCardio);
   const [showTooltip, setShowTooltip] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string | 'all'>('all');
@@ -66,13 +73,16 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const { data: customExercises = [] } = useUserCustomExercises(user?.id);
   const allExercises = useMemo(() => {
     const catalog = data?.pages.flatMap((page) => page.exercises) ?? [];
+    const cardioCatalog = cardioData?.pages.flatMap((page) => page.exercises) ?? [];
     // Custom exercises aren't fetched per body part like the catalog is — filter here so a
     // custom "chest" exercise doesn't leak into the "abs"/"back" screens too.
     const matchingCustom = customExercises.filter((exercise) =>
       exercise.bodyParts.some((part) => selectedPartsArray.includes(part as BodyPart))
     );
-    return [...catalog, ...matchingCustom];
-  }, [data, customExercises, selectedPartsArray]);
+    return Array.from(
+      new Map([...catalog, ...cardioCatalog, ...matchingCustom].map((exercise) => [exercise.exerciseId, exercise])).values()
+    );
+  }, [data, cardioData, customExercises, selectedPartsArray]);
 
   const selectedPartsText = useMemo(
     () => selectedPartsArray.map((part) => partsBodyHebrew[part]).join(', '),
@@ -96,8 +106,9 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   }, [allExercises]);
 
   const uniqueBodyParts = useMemo(() => {
+    if (mode === 'picker') return Array.from(new Set(selectedPartsArray));
     return Array.from(exerciseIndex.keys()).filter((k) => k !== 'all') as BodyPart[];
-  }, [exerciseIndex]);
+  }, [exerciseIndex, mode, selectedPartsArray]);
 
   const handleSetSelectedFilter = useCallback((filter: string | 'all') => {
     setSelectedFilter(filter);
@@ -168,10 +179,22 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   }, [filteredExercises]);
 
   const handleEndReached = useCallback(() => {
+    if (deferredFilter === 'cardio' && hasNextCardioPage && !isFetchingNextCardioPage) {
+      fetchNextCardioPage();
+      return;
+    }
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [
+    deferredFilter,
+    hasNextCardioPage,
+    isFetchingNextCardioPage,
+    fetchNextCardioPage,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  ]);
 
   const listEmptyComponent = useMemo(() => {
     if (allExercises.length === 0) {

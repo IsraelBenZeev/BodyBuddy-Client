@@ -41,18 +41,13 @@ const Failds = ({ control, item, onScrollBottom }: Props) => {
         const lastSetValues = currentExercises?.[fields.length - 1];
         append(buildSetValues(item.input_fields, lastSetValues));
         addSetTime(item.exerciseId);
+        onScrollBottom();
     };
 
     const handleRemoveSet = (index: number) => {
         remove(index);
         removeSetTime(item.exerciseId, index);
     };
-
-    useEffect(() => {
-        if (fields.length > 0) {
-            onScrollBottom();
-        }
-    }, [fields.length]);
 
     useEffect(() => {
         if (fields.length === 0) {

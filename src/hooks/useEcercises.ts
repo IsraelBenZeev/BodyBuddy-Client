@@ -12,7 +12,7 @@ import { BodyPart } from '../types/bodtPart';
 import { CreateCustomExercisePayload } from '../types/customExercise';
 import { Exercise } from '../types/exercise';
 const limit = 30;
-export const useExercises = (user_id: string, bodyParts: BodyPart[]) => {
+export const useExercises = (user_id: string, bodyParts: BodyPart[], enabled = true) => {
   return useInfiniteQuery({
     queryKey: ['exercises', [...bodyParts].sort()],
     queryFn: ({ pageParam = 1 }) => getExercisesByBodyParts(bodyParts, pageParam, limit),
@@ -21,6 +21,7 @@ export const useExercises = (user_id: string, bodyParts: BodyPart[]) => {
       return lastPage.exercises.length < limit ? undefined : allPages.length + 1;
     },
     staleTime: Infinity,
+    enabled,
   });
 };
 

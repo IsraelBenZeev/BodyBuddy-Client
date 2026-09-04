@@ -238,11 +238,11 @@ const ExerciseScreen = ({ exerciseId }: { exerciseId: string }) => {
 
 const styles = StyleSheet.create({
   imageWrapper: {
-    width: '90%',
+    width: '95%',
     height: 280,
     backgroundColor: 'black',
     borderRadius: 32,
-    padding: 15,
+    padding: 8,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: colors.lime[500],

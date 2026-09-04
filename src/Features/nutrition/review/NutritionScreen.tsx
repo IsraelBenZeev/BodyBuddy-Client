@@ -18,7 +18,6 @@ import {
 } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
-import ActionButton from '@/src/ui/ActionButton';
 import BackGround from '@/src/ui/BackGround';
 import Loading from '@/src/ui/Loading';
 import NotSignedInMessage from '@/src/ui/NotSignedInMessage';
@@ -288,16 +287,19 @@ const NutritionScreen = () => {
                 <Text className="typo-label text-background-400 text-left">
                   {isOverCals ? 'חרגת מהיעד' : 'נותר להיום'}
                 </Text>
-                <ActionButton
+                <Pressable
                   onPress={handleOpenManualCalories}
-                  label={goals.isManualCalories ? 'יעד ידני' : 'עריכת יעד'}
-                  iconName="create-outline"
-                  variant="outline"
-                  size="sm"
-                  className=''
+                  hitSlop={10}
+                  className="px-1 py-2"
+                  style={({ pressed }) => ({ opacity: pressed ? 0.55 : 1 })}
+                  accessibilityRole="button"
                   accessibilityLabel="עריכת יעד קלוריות יומי"
                   accessibilityHint="פותח חלון להזנת יעד קלוריות ידני או חזרה לחישוב אוטומטי"
-                />
+                >
+                  <Text className="typo-caption-bold text-lime-500">
+                    {goals.isManualCalories ? 'עריכת יעד ידני' : 'עריכת יעד'}
+                  </Text>
+                </Pressable>
               </View>
 
               <View className="items-center mb-4">
