@@ -39,6 +39,18 @@ type ExerciseListItem =
   | { kind: 'exercise'; exercise: Exercise }
   | { kind: 'section-header'; label: string };
 
+const HEBREW_LETTER_PATTERN = /[\u0590-\u05FF]/;
+
+const getValidSubBodyPartLabels = (exercise: Exercise) => {
+  return exercise.subBodyParts_he
+    .map((label, index) => ({
+      label: label?.trim(),
+      key: exercise.subBodyParts?.[index]?.trim(),
+    }))
+    .filter(({ label, key }) => !!label && !!key && !HEBREW_LETTER_PATTERN.test(key))
+    .map(({ label }) => label);
+};
+
 const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
@@ -122,7 +134,6 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
     [favorites, toggleFavMutate]
   );
 
-  const deferredFilter = useDeferredValue(selectedFilter);
   const deferredSubBodyPart = useDeferredValue(selectedSubBodyPart);
   const deferredSearch = useDeferredValue(searchQuery);
 
@@ -131,17 +142,16 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   // עברית ("כתף אחורית"), ואם מקבצים לפי המפתח האנגלי מקבלים שני צ'יפים כפולים במקום אחד
   const subBodyPartIndex = useMemo(() => {
     const index = new Map<string, typeof allExercises>();
-    const base = exerciseIndex.get(deferredFilter) ?? exerciseIndex.get('all') ?? [];
+    const base = exerciseIndex.get(selectedFilter) ?? exerciseIndex.get('all') ?? [];
     index.set('all', base);
     for (const exercise of base) {
-      for (const label of exercise.subBodyParts_he) {
-        if (!label) continue;
+      for (const label of getValidSubBodyPartLabels(exercise)) {
         if (!index.has(label)) index.set(label, []);
         index.get(label)!.push(exercise);
       }
     }
     return index;
-  }, [exerciseIndex, deferredFilter]);
+  }, [exerciseIndex, selectedFilter]);
 
   const uniqueSubBodyParts = useMemo<FilterChipItem[]>(
     () =>
@@ -179,7 +189,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
   }, [filteredExercises]);
 
   const handleEndReached = useCallback(() => {
-    if (deferredFilter === 'cardio' && hasNextCardioPage && !isFetchingNextCardioPage) {
+    if (selectedFilter === 'cardio' && hasNextCardioPage && !isFetchingNextCardioPage) {
       fetchNextCardioPage();
       return;
     }
@@ -187,7 +197,7 @@ const ExercisesScreen = ({ bodyParts, mode }: ExercisesScreenProps) => {
       fetchNextPage();
     }
   }, [
-    deferredFilter,
+    selectedFilter,
     hasNextCardioPage,
     isFetchingNextCardioPage,
     fetchNextCardioPage,

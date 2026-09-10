@@ -5,6 +5,7 @@ import { FlashList } from '@shopify/flash-list';
 import { Dispatch, memo, SetStateAction, useCallback, useMemo } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import SessionReviewCard from './SessionReviewCard';
+import Loading from '@/src/ui/Loading';
 
 interface Props {
   setSelectedSession: Dispatch<SetStateAction<SessionDBType | null>>;
@@ -32,12 +33,22 @@ const History = ({ setSelectedSession, workoutPlanId, sheetRef }: Props) => {
 
   const renderItem = useCallback(
     ({ item }: { item: SessionDBType }) => (
-      <SessionReviewCard session={item} setSelectedSession={setSelectedSession} sheetRef={sheetRef} />
+      <SessionReviewCard
+        session={item}
+        setSelectedSession={setSelectedSession}
+        sheetRef={sheetRef}
+      />
     ),
     [setSelectedSession, sheetRef]
   );
 
-  if (isLoadingSessions) return <Text>טוען היסטוריית אימונים...</Text>;
+  if (isLoadingSessions)
+    return (
+      // <View className="py-6 bd">
+        <Text className="typo-body text-white text-left">טוען היסטוריית אימונים...</Text>
+        // <Loading size={35} />
+      // </View>
+    );
 
   return (
     <View className="pb-24">

@@ -52,12 +52,12 @@ const GraphData = ({ logs, fields }: Props) => {
     [logs]
   );
 
-  const sortByDate = (a: [string, number], b: [string, number]) => {
+  const sortByDate = useCallback((a: [string, number], b: [string, number]) => {
     const dateA = sessionDateMap.get(a[0]);
     const dateB = sessionDateMap.get(b[0]);
     if (dateA && dateB) return new Date(dateA).getTime() - new Date(dateB).getTime();
     return a[0].localeCompare(b[0]);
-  };
+  }, [sessionDateMap]);
 
   // מקסימום פר-session לכל שדה מספרי, פלוס ספירת סטים (טאב סינתטי)
   const dataByKey = useMemo(() => {
@@ -70,7 +70,7 @@ const GraphData = ({ logs, fields }: Props) => {
         } else {
           const v = l.values[field.key];
           if (v === undefined) return;
-          if (!s[l.session_id] || v > s[l.session_id]) s[l.session_id] = v;
+          if (s[l.session_id] === undefined || v > s[l.session_id]) s[l.session_id] = v;
         }
       });
       result[field.key] = Object.entries(s)
@@ -78,23 +78,25 @@ const GraphData = ({ logs, fields }: Props) => {
         .map(([, value], i) => ({ index: i + 1, value }));
     });
     return result;
-  }, [logs, sessionDateMap, tabFields]);
+  }, [logs, sortByDate, tabFields]);
 
   const handleTabPress = useCallback((key: string) => setActiveKey(key), []);
 
   const currentData: DataPoint[] = dataByKey[activeKey] ?? [];
 
-  if (!logs || logs.length === 0 || currentData.length === 0) return null;
+  if (!logs || logs.length === 0) return null;
+
+  const hasCurrentData = currentData.length > 0;
 
   const containerPadding = 32;
   const innerWidth = Math.max(
     screenWidth - containerPadding - PAD.left - PAD.right,
-    currentData.length * MIN_POINT_SPACING
+    Math.max(1, currentData.length) * MIN_POINT_SPACING
   );
   const svgWidth = innerWidth + PAD.left + PAD.right;
   const chartH = CHART_HEIGHT - PAD.top - PAD.bottom;
 
-  const maxVal = Math.max(...currentData.map((d) => d.value));
+  const maxVal = hasCurrentData ? Math.max(...currentData.map((d) => d.value)) : 0;
   const range = maxVal || 1;
 
   const getX = (i: number) =>
@@ -102,14 +104,16 @@ const GraphData = ({ logs, fields }: Props) => {
   const getY = (val: number) => PAD.top + chartH - (val / range) * chartH;
 
   const svgPts = currentData.map((d, i) => ({ x: getX(i), y: getY(d.value) }));
-  const linePath = buildCurvePath(svgPts);
+  const linePath = hasCurrentData ? buildCurvePath(svgPts) : '';
   const areaPath =
-    linePath +
-    ` L ${svgPts[svgPts.length - 1].x} ${PAD.top + chartH}` +
-    ` L ${svgPts[0].x} ${PAD.top + chartH} Z`;
+    hasCurrentData
+      ? linePath +
+        ` L ${svgPts[svgPts.length - 1].x} ${PAD.top + chartH}` +
+        ` L ${svgPts[0].x} ${PAD.top + chartH} Z`
+      : '';
 
   return (
-    <View className="mb-4">
+    <View className="mb-4 w-full">
       <View className="flex-row gap-2 mb-4">
         {tabFields.map((field) => (
           <Pressable
@@ -135,68 +139,79 @@ const GraphData = ({ logs, fields }: Props) => {
         ))}
       </View>
 
-      <View className="bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden" style={{ height: CHART_HEIGHT }}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={16}>
-          <Svg width={svgWidth} height={CHART_HEIGHT}>
-            <Defs>
-              <LinearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0%" stopColor={colors.lime[500]} stopOpacity="0.4" />
-                <Stop offset="100%" stopColor={colors.lime[500]} stopOpacity="0.01" />
-              </LinearGradient>
-            </Defs>
+      <View
+        className="w-full bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden"
+        style={{ height: CHART_HEIGHT }}
+      >
+        {hasCurrentData ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={16}>
+            <Svg width={svgWidth} height={CHART_HEIGHT}>
+              <Defs>
+                <LinearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0%" stopColor={colors.lime[500]} stopOpacity="0.4" />
+                  <Stop offset="100%" stopColor={colors.lime[500]} stopOpacity="0.01" />
+                </LinearGradient>
+              </Defs>
 
-            {svgPts.map(({ x }, i) => (
-              <SvgLine
-                key={`grid-${i}`}
-                x1={x}
-                y1={PAD.top}
-                x2={x}
-                y2={PAD.top + chartH}
-                stroke={colors.background[700]}
-                strokeWidth="1"
+              {svgPts.map(({ x }, i) => (
+                <SvgLine
+                  key={`grid-${i}`}
+                  x1={x}
+                  y1={PAD.top}
+                  x2={x}
+                  y2={PAD.top + chartH}
+                  stroke={colors.background[700]}
+                  strokeWidth="1"
+                />
+              ))}
+
+              <Path d={areaPath} fill="url(#areaGrad)" />
+
+              <Path
+                d={linePath}
+                fill="none"
+                stroke={colors.lime[500]}
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
-            ))}
 
-            <Path d={areaPath} fill="url(#areaGrad)" />
+              {svgPts.map(({ x, y }, i) => (
+                <React.Fragment key={`pt-${i}`}>
+                  <Circle cx={x} cy={y} r={5} fill={colors.lime[500]} />
+                  <SvgText
+                    x={x}
+                    y={y - 12}
+                    textAnchor="middle"
+                    fill={colors.background[300]}
+                    fontSize="11"
+                  >
+                    {activeField ? formatFieldValue(activeField, currentData[i].value) : currentData[i].value}
+                  </SvgText>
+                </React.Fragment>
+              ))}
 
-            <Path
-              d={linePath}
-              fill="none"
-              stroke={colors.lime[500]}
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {svgPts.map(({ x, y }, i) => (
-              <React.Fragment key={`pt-${i}`}>
-                <Circle cx={x} cy={y} r={5} fill={colors.lime[500]} />
+              {currentData.map((d, i) => (
                 <SvgText
-                  x={x}
-                  y={y - 12}
+                  key={`xl-${i}`}
+                  x={getX(i)}
+                  y={CHART_HEIGHT - 6}
                   textAnchor="middle"
-                  fill={colors.background[300]}
+                  fill={colors.background[400]}
                   fontSize="11"
                 >
-                  {activeField ? formatFieldValue(activeField, currentData[i].value) : currentData[i].value}
+                  {d.index}
                 </SvgText>
-              </React.Fragment>
-            ))}
-
-            {currentData.map((d, i) => (
-              <SvgText
-                key={`xl-${i}`}
-                x={getX(i)}
-                y={CHART_HEIGHT - 6}
-                textAnchor="middle"
-                fill={colors.background[400]}
-                fontSize="11"
-              >
-                {d.index}
-              </SvgText>
-            ))}
-          </Svg>
-        </ScrollView>
+              ))}
+            </Svg>
+          </ScrollView>
+        ) : (
+          <View className="flex-1 items-center justify-center px-6">
+            <Text className="typo-body text-zinc-500 text-center">
+              אין נתונים להצגה עבור {activeField?.label ?? 'המדד הזה'}
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );

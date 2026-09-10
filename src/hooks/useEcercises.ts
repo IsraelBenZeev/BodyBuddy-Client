@@ -30,21 +30,29 @@ export const useGetExercisesByIds = (ids: string[]) => {
 
   return useQuery({
     queryKey: ['exercises', 'byIds', ids],
-    queryFn: () => getExerciseByIds(ids),
+    queryFn: async () => {
+      if (ids.length === 0) return [];
+
+      const exercises = await getExerciseByIds(ids);
+      const exercisesById = new Map(exercises.map((exercise) => [exercise.exerciseId, exercise]));
+      return ids.map((id) => exercisesById.get(id)).filter(Boolean) as Exercise[];
+    },
     // כאן הקסם קורה:
     initialData: () => {
       // מחפשים במטמון הקיים תרגילים שמתאימים ל-IDs שלנו
+      if (ids.length === 0) return [];
+
       const allExercises = queryClient.getQueryData<Exercise[]>(['exercises']);
       if (!allExercises) return undefined;
 
-      const filtered = allExercises.filter(ex => ids.includes(ex.exerciseId));
+      const exerciseById = new Map(allExercises.map((exercise) => [exercise.exerciseId, exercise]));
+      const filtered = ids.map((id) => exerciseById.get(id)).filter(Boolean) as Exercise[];
 
       // מחזירים נתונים מהמטמון רק אם מצאנו את הכל
       return filtered.length === ids.length ? filtered : undefined;
     },
-    placeholderData: keepPreviousData,
+    placeholderData: ids.length > 0 ? keepPreviousData : undefined,
     staleTime: Infinity,
-    enabled: ids.length > 0,
   });
 };
 

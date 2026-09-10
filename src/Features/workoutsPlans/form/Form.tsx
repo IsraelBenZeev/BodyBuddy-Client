@@ -67,6 +67,7 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
   });
   const selectedIds = useWorkoutStore((state) => state.selectedExerciseIds);
   const toggleExercise = useWorkoutStore((state) => state.toggleExercise);
+  const setSelectedExercises = useWorkoutStore((state) => state.setSelectedExercises);
   const resetExercise = useWorkoutStore((state) => state.clearAllExercises);
   const editInitialized = useRef(false);
 
@@ -79,12 +80,9 @@ const Form = ({ mode, workout_plan_id }: FormProps) => {
       !editInitialized.current
     ) {
       editInitialized.current = true;
-      resetExercise();
-      if (workoutPlanData.exercise_ids.length > 0) {
-        toggleExercise(workoutPlanData.exercise_ids);
-      }
+      setSelectedExercises(workoutPlanData.exercise_ids);
     }
-  }, [mode, isLoadingWorkoutPlan, workoutPlanData]);
+  }, [mode, isLoadingWorkoutPlan, workoutPlanData, setSelectedExercises]);
 
   const {
     mutate: createWorkoutPlan,

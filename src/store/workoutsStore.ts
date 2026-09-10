@@ -3,6 +3,7 @@ import { create } from 'zustand';
 interface WorkoutsState {
   selectedExerciseIds: Set<string>;
   toggleExercise: (id: string | string[]) => void;
+  setSelectedExercises: (ids: string[]) => void;
   isExerciseSelected: (id: string) => boolean;
   clearAllExercises: () => void;
   completedTimes: { [exerciseId: string]: (number | null)[] };
@@ -28,6 +29,7 @@ export const useWorkoutStore = create<WorkoutsState>((set, get) => ({
       return { selectedExerciseIds: newSet };
     });
   },
+  setSelectedExercises: (ids) => set({ selectedExerciseIds: new Set(ids) }),
   isExerciseSelected: (id) => get().selectedExerciseIds.has(id),
   clearAllExercises: () => set({ selectedExerciseIds: new Set() }),
   completedTimes: {},
