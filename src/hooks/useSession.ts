@@ -1,22 +1,28 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-    createSession,
-    createSessionExerciseLogs,
-    getAllUserSessions,
-    getExerciseLogsByExerciseId,
-    getLatestWorkoutPlanExerciseSets,
-    getSessionExerciseLogs,
-    getSessionsPage,
+  createSession,
+  createSessionExerciseLogs,
+  getAllUserSessions,
+  getExerciseLogsByExerciseId,
+  getLatestWorkoutPlanExerciseSets,
+  getSessionExerciseLogs,
+  getSessionsPage,
+  saveWorkoutSession,
 } from '../service/sessionService';
 import { useUIStore } from '../store/useUIStore';
 import { ExerciseSetDBType, SessionDBType } from '../types/session';
 const SESSIONS_PAGE_SIZE = 20;
-const sessionsQueryKey = (workoutPlanId: string, userId: string) => ['sessions', workoutPlanId, userId] as const;
+const sessionsQueryKey = (workoutPlanId: string, userId: string) =>
+  ['sessions', workoutPlanId, userId] as const;
 
-export const useInfiniteSessions = (userId: string | undefined, workoutPlanId: string | undefined) => {
+export const useInfiniteSessions = (
+  userId: string | undefined,
+  workoutPlanId: string | undefined
+) => {
   return useInfiniteQuery({
     queryKey: sessionsQueryKey(workoutPlanId ?? '', userId ?? ''),
-    queryFn: ({ pageParam }) => getSessionsPage(userId!, workoutPlanId!, pageParam, SESSIONS_PAGE_SIZE),
+    queryFn: ({ pageParam }) =>
+      getSessionsPage(userId!, workoutPlanId!, pageParam, SESSIONS_PAGE_SIZE),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === SESSIONS_PAGE_SIZE ? allPages.length + 1 : undefined,
@@ -37,6 +43,40 @@ export const useSessionCreateWorkout = (user_id: string, workoutPlanId: string) 
     },
   });
 };
+
+export const useSaveWorkoutSession = (userId: string, workoutPlanId: string) => {
+  const queryClient = useQueryClient();
+  const { triggerSuccess } = useUIStore();
+
+  return useMutation({
+    mutationFn: async ({
+      session,
+      exerciseSets,
+    }: {
+      session: SessionDBType;
+      exerciseSets: ExerciseSetDBType[];
+    }) => await saveWorkoutSession(session, exerciseSets),
+    onSuccess: (_data, variables) => {
+      triggerSuccess('האימון נשמר בהצלחה', 'success');
+      queryClient.invalidateQueries({ queryKey: sessionsQueryKey(workoutPlanId, userId) });
+      queryClient.invalidateQueries({ queryKey: ['userWorkoutStats', userId] });
+      queryClient.invalidateQueries({
+        queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['latestWorkoutPlanExerciseSets', workoutPlanId, userId],
+      });
+      const uniqueExerciseIds = [...new Set(variables.exerciseSets.map((set) => set.exercise_id))];
+      uniqueExerciseIds.forEach((exerciseId) => {
+        queryClient.invalidateQueries({ queryKey: ['exerciseHistory', exerciseId, userId] });
+      });
+    },
+    onError: (error) => {
+      console.error('Mutation Error - Workout Session:', error);
+    },
+  });
+};
+
 export const useSessionCreateExerciseLog = (user_id: string, workoutPlanId: string) => {
   const queryClient = useQueryClient();
   const { triggerSuccess } = useUIStore();
@@ -46,8 +86,12 @@ export const useSessionCreateExerciseLog = (user_id: string, workoutPlanId: stri
     onSuccess: (_data, variables) => {
       triggerSuccess('האימון נשמר בהצלחה', 'success');
       queryClient.invalidateQueries({ queryKey: sessionsQueryKey(workoutPlanId, user_id) });
-      queryClient.invalidateQueries({ queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, user_id] });
-      queryClient.invalidateQueries({ queryKey: ['latestWorkoutPlanExerciseSets', workoutPlanId, user_id] });
+      queryClient.invalidateQueries({
+        queryKey: ['exercisesWorkoutPlanIds', workoutPlanId, user_id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['latestWorkoutPlanExerciseSets', workoutPlanId, user_id],
+      });
       const uniqueExerciseIds = [...new Set(variables.exerciseLog.map((log) => log.exercise_id))];
       uniqueExerciseIds.forEach((exerciseId) => {
         queryClient.invalidateQueries({ queryKey: ['exerciseHistory', exerciseId, user_id] });
@@ -78,11 +122,14 @@ export const useLatestWorkoutPlanExerciseSets = (
     staleTime: Infinity,
     enabled: !!userId && !!workoutPlanId,
     select: (sets) => {
-      const setsByExercise = sets.reduce<Record<string, ExerciseSetDBType[]>>((accumulator, set) => {
-        if (!accumulator[set.exercise_id]) accumulator[set.exercise_id] = [];
-        accumulator[set.exercise_id].push(set);
-        return accumulator;
-      }, {});
+      const setsByExercise = sets.reduce<Record<string, ExerciseSetDBType[]>>(
+        (accumulator, set) => {
+          if (!accumulator[set.exercise_id]) accumulator[set.exercise_id] = [];
+          accumulator[set.exercise_id].push(set);
+          return accumulator;
+        },
+        {}
+      );
 
       return Object.fromEntries(
         Object.entries(setsByExercise).map(([exerciseId, exerciseSets]) => [

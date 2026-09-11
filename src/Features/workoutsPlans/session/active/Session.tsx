@@ -1,22 +1,22 @@
 import { useGetExercisesByIds } from '@/src/hooks/useEcercises';
-import { useLatestWorkoutPlanExerciseSets, useSessionCreateExerciseLog, useSessionCreateWorkout } from '@/src/hooks/useSession';
-import { ExerciseSetDBType, SessionFormData } from '@/src/types/session';
-import { WorkoutPlan } from '@/src/types/workout';
-import ActionButton from '@/src/ui/ActionButton';
-import * as Crypto from 'expo-crypto';
-import { createVideoPlayer } from 'expo-video';
-import type { VideoPlayer } from 'expo-video';
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Dimensions, FlatList, ListRenderItemInfo, Text, View, ViewToken } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import AppButton from '@/src/ui/PressableOpacity';
-import Card from './Card';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { useLatestWorkoutPlanExerciseSets, useSaveWorkoutSession } from '@/src/hooks/useSession';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useUIStore } from '@/src/store/useUIStore';
 import { useWorkoutStore } from '@/src/store/workoutsStore';
 import { Exercise } from '@/src/types/exercise';
+import { ExerciseSetDBType, SessionFormData } from '@/src/types/session';
+import { WorkoutPlan } from '@/src/types/workout';
+import ActionButton from '@/src/ui/ActionButton';
+import AppButton from '@/src/ui/PressableOpacity';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Crypto from 'expo-crypto';
+import type { VideoPlayer } from 'expo-video';
+import { createVideoPlayer } from 'expo-video';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Dimensions, FlatList, ListRenderItemInfo, Text, View, ViewToken } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import Card from './Card';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const EXERCISE_CARD_WIDTH = SCREEN_WIDTH * 0.95;
@@ -57,10 +57,8 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
   const triggerSuccess = useUIStore((state) => state.triggerSuccess);
   const user_id = user?.id as string;
   const { data: exercises, isLoading } = useGetExercisesByIds(workoutPlan.exercise_ids);
-  const { data: exerciseHistoryDefaults = {}, isLoading: isHistoryLoading } = useLatestWorkoutPlanExerciseSets(
-    user?.id,
-    workoutPlan.id
-  );
+  const { data: exerciseHistoryDefaults = {}, isLoading: isHistoryLoading } =
+    useLatestWorkoutPlanExerciseSets(user?.id, workoutPlan.id);
   const [activeIndex, setActiveIndex] = useState(0);
   const activeExercise = exercises?.[activeIndex];
   const exerciseListRef = useRef<FlatList<Exercise>>(null);
@@ -73,7 +71,9 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
       }
     }
   ).current;
-  const [optionalFieldVisibility, setOptionalFieldVisibility] = useState<Record<string, boolean>>({});
+  const [optionalFieldVisibility, setOptionalFieldVisibility] = useState<Record<string, boolean>>(
+    {}
+  );
   const [activeVideoPlayer, setActiveVideoPlayer] = useState<{
     exerciseId: string;
     player: VideoPlayer;
@@ -87,12 +87,8 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
     },
   });
 
-  const { mutateAsync: createSession, isPending: isPendingCreateSession } = useSessionCreateWorkout(
-    user_id,
-    workoutPlan.id as string
-  );
-  const { mutateAsync: createExerciseLog, isPending: isPendingCreateExerciseLog } =
-    useSessionCreateExerciseLog(user_id, workoutPlan.id as string);
+  const { mutateAsync: saveWorkoutSession, isPending: isPendingSaveWorkoutSession } =
+    useSaveWorkoutSession(user_id, workoutPlan.id as string);
   const hasHistoryDefaults = Object.values(exerciseHistoryDefaults).some((sets) => sets.length > 0);
   const [isHistoryNoticeVisible, setIsHistoryNoticeVisible] = useState(true);
   const [historyNoticeSeconds, setHistoryNoticeSeconds] = useState(5);
@@ -205,31 +201,8 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
     }
   }, [activeVideoPlayer]);
 
-  const saveSession = useCallback(
-    async (data: SessionFormData, idSession: string) => {
-      const completedAt = new Date().toISOString();
-      const startTime = new Date(data.started_at).getTime();
-      const endTime = new Date(completedAt).getTime();
-      const durationInSeconds = Math.floor((endTime - startTime) / 1000);
-      const finalData = {
-        user_id: user_id,
-        workout_plan_id: workoutPlan.id as string,
-        started_at: data.started_at,
-        completed_at: completedAt,
-        total_time: durationInSeconds,
-        notes: data.notes || '',
-        id: idSession,
-      };
-
-      await createSession({
-        session: finalData,
-      });
-    },
-    [createSession, user_id, workoutPlan.id]
-  );
-
-  const saveExerciseLog = useCallback(
-    async (data: SessionFormData, idSession: string) => {
+  const buildExerciseSets = useCallback(
+    (data: SessionFormData, idSession: string): ExerciseSetDBType[] => {
       const exerciseCompletedTimes = useWorkoutStore.getState().completedTimes;
       const allSets: ExerciseSetDBType[] = [];
       Object.entries(data.exercises).forEach(([exerciseId, exerciseDetails]) => {
@@ -257,28 +230,41 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
           });
         });
       });
-      await createExerciseLog({
-        exerciseLog: allSets,
-      });
+      return allSets;
     },
-    [createExerciseLog, user_id, workoutPlan.id]
+    [user_id, workoutPlan.id]
   );
 
   const onSubmit = useCallback(
     async (data: SessionFormData) => {
       try {
         const idSession = Crypto.randomUUID();
-        await saveSession(data, idSession);
-        await saveExerciseLog(data, idSession);
+        const completedAt = new Date().toISOString();
+        const startTime = new Date(data.started_at).getTime();
+        const endTime = new Date(completedAt).getTime();
+        const durationInSeconds = Math.floor((endTime - startTime) / 1000);
+        const session: SessionDBType = {
+          id: idSession,
+          user_id,
+          workout_plan_id: workoutPlan.id as string,
+          started_at: data.started_at,
+          completed_at: completedAt,
+          total_time: durationInSeconds,
+          notes: data.notes || '',
+        };
+
+        await saveWorkoutSession({
+          session,
+          exerciseSets: buildExerciseSets(data, idSession),
+        });
         useWorkoutStore.getState().clearCompletedTimes();
         setIsStart(false);
-        triggerSuccess('האימון נשמר!', 'success');
       } catch (error) {
         console.error('שגיאה בתהליך השמירה:', error);
         triggerSuccess('שגיאה בשמירת האימון', 'failed');
       }
     },
-    [saveExerciseLog, saveSession, setIsStart, triggerSuccess]
+    [buildExerciseSets, saveWorkoutSession, setIsStart, user_id, workoutPlan.id]
   );
 
   const handleOptionalFieldVisibilityChange = useCallback((fieldId: string, enabled: boolean) => {
@@ -324,7 +310,14 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
         </View>
       );
     },
-    [activeIndex, activeVideoPlayer, control, exerciseHistoryDefaults, handleOptionalFieldVisibilityChange, optionalFieldVisibility]
+    [
+      activeIndex,
+      activeVideoPlayer,
+      control,
+      exerciseHistoryDefaults,
+      handleOptionalFieldVisibilityChange,
+      optionalFieldVisibility,
+    ]
   );
 
   if (isLoading || isHistoryLoading)
@@ -405,7 +398,10 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
             direction: 'ltr',
           }}
         />
-        <View className="absolute top-20 left-4 right-4 flex-row justify-between" pointerEvents="box-none">
+        <View
+          className="absolute top-20 left-4 right-4 flex-row justify-between"
+          pointerEvents="box-none"
+        >
           <AppButton
             onPress={() => scrollToExercise(activeIndex - 1)}
             disabled={activeIndex === 0}
@@ -444,8 +440,8 @@ const Session = ({ setIsStart, workoutPlan }: Props) => {
           variant="outline"
           size="md"
           fullWidth
-          disabled={isPendingCreateSession || isPendingCreateExerciseLog}
-          loading={isPendingCreateSession || isPendingCreateExerciseLog}
+          disabled={isPendingSaveWorkoutSession}
+          loading={isPendingSaveWorkoutSession}
           accessibilityLabel="סיים אימון"
         />
       </View>
