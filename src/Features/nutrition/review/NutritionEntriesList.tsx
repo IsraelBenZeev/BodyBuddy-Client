@@ -99,7 +99,8 @@ const MacroBar = React.memo(function MacroBar({ entry }: { entry: NutritionEntry
   return (
     <View className="flex-row border-t border-background-700 px-4 py-2.5 items-center justify-around ">
       <Text className="typo-caption text-background-500">
-        קלוריות <Text className="typo-caption-bold text-lime-400">{Math.round(entry.calories)}</Text>
+        קלוריות{' '}
+        <Text className="typo-caption-bold text-lime-400">{Math.round(entry.calories)}</Text>
       </Text>
       <View className="w-[1px] h-3 bg-background-600" />
       <Text className="typo-caption text-background-500">
@@ -129,38 +130,36 @@ const FoodEntryRow = React.memo(function FoodEntryRow({
   onPress,
 }: FoodEntryRowProps) {
   const handleDelete = useCallback(() => {
-    Alert.alert(
-      'הסרה מהיומן',
-      `האם להסיר את "${entry.food_name}" מהיומן?`,
-      [
-        { text: 'ביטול', style: 'cancel' },
-        { text: 'הסר', style: 'destructive', onPress: () => onDelete(entry.id) },
-      ]
-    );
+    Alert.alert('הסרה מהיומן', `האם להסיר את "${entry.food_name}" מהיומן?`, [
+      { text: 'ביטול', style: 'cancel' },
+      { text: 'הסר', style: 'destructive', onPress: () => onDelete(entry.id) },
+    ]);
   }, [onDelete, entry.id, entry.food_name]);
 
   return (
-    <Pressable
-      onPress={onPress}
-      className="bg-background-800 rounded-2xl border border-background-600 overflow-hidden "
-      accessibilityRole="button"
-      accessibilityLabel={`פרטי ${entry.food_name}`}
-      accessibilityHint="לחץ לפרטים מלאים"
-    >
+    <View className="bg-background-800 rounded-2xl border border-background-600 overflow-hidden ">
       <View className="flex-row items-center p-3.5">
         <View className="bg-background-700 rounded-xl w-12 h-12 items-center justify-center mr-1">
           <Ionicons name="nutrition-outline" size={22} color={colors.orange[400]} />
         </View>
         <View className="flex-1 mr-2 items-start">
-          <Text className="typo-body-primary text-white text-left" numberOfLines={2}>
-            {formatEntryPortionLine(entry)}
-          </Text>
-          {entry.source === 'ai' && (
+          <Pressable
+            onPress={onPress}
+            className="min-h-[44px] justify-center"
+            accessibilityRole="button"
+            accessibilityLabel={`פרטי ${entry.food_name}`}
+            accessibilityHint="לחץ לפרטים מלאים"
+          >
+            <Text className="typo-body-primary text-white text-left" numberOfLines={2}>
+              {formatEntryPortionLine(entry)}
+            </Text>
+          </Pressable>
+          {/* {entry.source === 'ai' && (
             <View className="flex-row items-center gap-1 bg-lime-500/15 border border-lime-500/30 rounded-full px-2 py-0.5 mt-1">
               <View className="w-1 h-1 rounded-full bg-lime-400" />
               <Text className="typo-caption text-lime-400">AI</Text>
             </View>
-          )}
+          )} */}
         </View>
         <View className="items-center mx-2">
           <Text className="typo-h4 text-white">{Math.round(entry.calories)}</Text>
@@ -169,16 +168,15 @@ const FoodEntryRow = React.memo(function FoodEntryRow({
         <Pressable
           onPress={handleDelete}
           disabled={isDeleting}
-          className="bg-red-500/10 rounded-xl p-2"
+          className="bg-red-500/10 rounded-xl p-2 min-h-[44px] min-w-[44px] items-center justify-center"
           accessibilityRole="button"
           accessibilityLabel={`מחק ${entry.food_name}`}
-          hitSlop={8}
         >
           <Ionicons name="trash-outline" size={18} color={colors.red[500]} />
         </Pressable>
       </View>
       <MacroBar entry={entry} />
-    </Pressable>
+    </View>
   );
 });
 
@@ -195,7 +193,9 @@ const SingleEntryCard = React.memo(function SingleEntryCard({
   isDeleting: boolean;
   onPress: () => void;
 }) {
-  return <FoodEntryRow entry={entry} onDelete={onDelete} isDeleting={isDeleting} onPress={onPress} />;
+  return (
+    <FoodEntryRow entry={entry} onDelete={onDelete} isDeleting={isDeleting} onPress={onPress} />
+  );
 });
 
 // —— כרטיס ארוחה ——
@@ -226,37 +226,37 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
   const totalCarbs = Math.round(entries.reduce((s, e) => s + (e.carbs || 0), 0));
 
   const handleDeleteGroup = useCallback(() => {
-    Alert.alert(
-      'מחיקת ארוחה',
-      `האם למחוק את "${groupName}" (${entries.length} פריטים)?`,
-      [
-        { text: 'ביטול', style: 'cancel' },
-        { text: 'מחק', style: 'destructive', onPress: () => onDeleteGroup?.(groupId) },
-      ]
-    );
+    Alert.alert('מחיקת ארוחה', `האם למחוק את "${groupName}" (${entries.length} פריטים)?`, [
+      { text: 'ביטול', style: 'cancel' },
+      { text: 'מחק', style: 'destructive', onPress: () => onDeleteGroup?.(groupId) },
+    ]);
   }, [onDeleteGroup, groupId, groupName, entries.length]);
 
   return (
     <View className="bg-background-800 rounded-3xl border border-white/5 overflow-hidden shadow-lg mb-4">
-      <Pressable
-        onPress={onPressGroup}
-        className="flex-row items-center gap-3 px-4 py-4 bg-background-700/30 border-b border-white/5"
-        accessibilityRole="button"
-        accessibilityLabel={`פרטי ארוחה ${groupName}`}
-        accessibilityHint="לחץ לפרטים מלאים"
-      >
+      <View className="flex-row items-center gap-3 px-4 py-4 bg-background-700/30 border-b border-white/5 ">
         <View className="bg-lime-500/10 rounded-xl w-12 h-12 items-center justify-center">
           <Ionicons name="restaurant" size={22} color="#84cc16" />
         </View>
         <View className="flex-1 items-start">
           <View className="flex-row items-center gap-2 flex-1">
-            <Text className="typo-body-primary text-white shrink" numberOfLines={1}>{groupName}</Text>
-            {entries[0]?.source === 'ai' && (
+            <Pressable
+              onPress={onPressGroup}
+              className="min-h-[44px] justify-center"
+              accessibilityRole="button"
+              accessibilityLabel={`פרטי ארוחה ${groupName}`}
+              accessibilityHint="לחץ לפרטים מלאים"
+            >
+              <Text className="typo-body-primary text-white shrink" numberOfLines={1}>
+                {groupName}
+              </Text>
+            </Pressable>
+            {/* {entries[0]?.source === 'ai' && (
               <View className="flex-row items-center gap-1 bg-lime-500/15 border border-lime-500/30 rounded-full px-2 py-0.5">
                 <View className="w-1 h-1 rounded-full bg-lime-400" />
                 <Text className="typo-caption text-lime-400">AI</Text>
               </View>
-            )}
+            )} */}
           </View>
           <Text className="typo-caption text-gray-400 mt-0.5">
             {entries.length} פריטים •{' '}
@@ -267,16 +267,15 @@ const GroupBlockCard = React.memo(function GroupBlockCard({
           <Pressable
             onPress={handleDeleteGroup}
             disabled={isDeletingGroup}
-            className="bg-red-500/20 rounded-xl p-2.5 flex-row items-center"
+            className="bg-red-500/20 rounded-xl p-2.5 min-h-[44px] min-w-[44px] flex-row items-center justify-center"
             accessibilityRole="button"
             accessibilityLabel={`מחק ארוחה ${groupName}`}
-            hitSlop={8}
           >
             <Ionicons name="trash-outline" size={18} color={colors.red[500]} />
-            <Text className="typo-caption-bold text-red-400 mt-0.5"> מחק</Text>
+            {/* <Text className="typo-caption-bold text-red-400 mt-0.5">מחק</Text> */}
           </Pressable>
         )}
-      </Pressable>
+      </View>
 
       {entries.map((entry) => (
         <View key={entry.id} className="px-4 py-2">

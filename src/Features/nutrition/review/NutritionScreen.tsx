@@ -2,8 +2,9 @@ import { colors } from '@/colors';
 import AddOptionsFab from '@/src/Features/nutrition/add/AddOptionsFab';
 import CameraAIModal from '@/src/Features/nutrition/add/ai/CameraAIModal';
 import ModalAddFoods from '@/src/Features/nutrition/add/ModalAddFoods';
-import ManualCaloriesModal from '@/src/Features/nutrition/review/ManualCaloriesModal';
 import MacroPieChart from '@/src/Features/nutrition/review/MacroPieChart';
+import ManualCaloriesModal from '@/src/Features/nutrition/review/ManualCaloriesModal';
+import ManualProteinModal from '@/src/Features/nutrition/review/ManualProteinModal';
 import NutritionEntriesList from '@/src/Features/nutrition/review/NutritionEntriesList';
 import ProgressStats from '@/src/Features/nutrition/review/ProgressStats';
 import {
@@ -15,6 +16,7 @@ import {
   useProfile,
   useUpdateManualDailyCalories,
   useUpdateProfileDisplaySettings,
+  useUpdateProteinPerKg,
 } from '@/src/hooks/useProfile';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { DEFAULT_PROTEIN_PER_KG } from '@/src/types/profile';
@@ -32,8 +34,8 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
-  NativeSyntheticEvent,
   NativeScrollEvent,
+  NativeSyntheticEvent,
   Pressable,
   ScrollView,
   Text,
@@ -97,6 +99,9 @@ const NutritionScreen = () => {
   const { mutate: updateDisplaySettings } = useUpdateProfileDisplaySettings(user?.id ?? '');
   const { mutate: updateManualCalories, isPending: isSavingManualCalories } =
     useUpdateManualDailyCalories(user?.id ?? '');
+  const { mutate: updateProteinPerKg, isPending: isSavingProteinPerKg } = useUpdateProteinPerKg(
+    user?.id ?? ''
+  );
   const { data: entries = [], isLoading: isEntriesLoading } = useNutritionEntries(user?.id, today);
 
   const { mutate: deleteEntry, isPending: isDeleting } = useDeleteNutritionEntry(
@@ -156,9 +161,12 @@ const NutritionScreen = () => {
   }, [updateDisplaySettings]);
 
   const [isManualCaloriesModalOpen, setIsManualCaloriesModalOpen] = useState(false);
+  const [isManualProteinModalOpen, setIsManualProteinModalOpen] = useState(false);
 
   const handleOpenManualCalories = useCallback(() => setIsManualCaloriesModalOpen(true), []);
   const handleCloseManualCalories = useCallback(() => setIsManualCaloriesModalOpen(false), []);
+  const handleOpenManualProtein = useCallback(() => setIsManualProteinModalOpen(true), []);
+  const handleCloseManualProtein = useCallback(() => setIsManualProteinModalOpen(false), []);
 
   const handleSaveManualCalories = useCallback(
     (value: number) => {
@@ -170,6 +178,13 @@ const NutritionScreen = () => {
   const handleResetManualCalories = useCallback(() => {
     updateManualCalories(null, { onSuccess: () => setIsManualCaloriesModalOpen(false) });
   }, [updateManualCalories]);
+
+  const handleSaveManualProtein = useCallback(
+    (value: number) => {
+      updateProteinPerKg(value, { onSuccess: () => setIsManualProteinModalOpen(false) });
+    },
+    [updateProteinPerKg]
+  );
 
   if (!user) {
     return (
@@ -245,36 +260,40 @@ const NutritionScreen = () => {
               />
             </View>
 
-            {motivationData && (() => {
-              const motivationColor =
-                motivationData.severity === 'danger'
-                  ? colors.red[400]
-                  : motivationData.severity === 'warning'
-                    ? colors.orange[400]
-                    : colors.lime[500];
-              return (
-                <View
-                  className="rounded-3xl p-4 mb-4"
-                  style={{
-                    borderWidth: 1,
-                    backgroundColor: motivationData.severity
-                      ? toRgba(motivationColor, 0.08)
-                      : 'rgba(255,255,255,0.03)',
-                    borderColor: motivationData.severity
-                      ? toRgba(motivationColor, 0.3)
-                      : 'rgba(255,255,255,0.05)',
-                  }}
-                >
-                  <View className="flex-row items-center justify-center gap-2">
-                    <Ionicons name={motivationData.icon} size={22} color={motivationColor} />
-                    <Text className="typo-body-primary flex-1 text-left" style={{ color: motivationColor }}>
-                      {motivationData.message}
-                    </Text>
+            {motivationData &&
+              (() => {
+                const motivationColor =
+                  motivationData.severity === 'danger'
+                    ? colors.red[400]
+                    : motivationData.severity === 'warning'
+                      ? colors.orange[400]
+                      : colors.lime[500];
+                return (
+                  <View
+                    className="rounded-3xl p-4 mb-4"
+                    style={{
+                      borderWidth: 1,
+                      backgroundColor: motivationData.severity
+                        ? toRgba(motivationColor, 0.08)
+                        : 'rgba(255,255,255,0.03)',
+                      borderColor: motivationData.severity
+                        ? toRgba(motivationColor, 0.3)
+                        : 'rgba(255,255,255,0.05)',
+                    }}
+                  >
+                    <View className="flex-row items-center justify-center gap-2">
+                      <Ionicons name={motivationData.icon} size={22} color={motivationColor} />
+                      <Text
+                        className="typo-body-primary flex-1 text-left"
+                        style={{ color: motivationColor }}
+                      >
+                        {motivationData.message}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              );
-            })()}
-
+                );
+              })()}
+            {/* 
             <View
               className="rounded-3xl px-3 py-2 mb-4"
               style={{
@@ -303,7 +322,14 @@ const NutritionScreen = () => {
               </View>
 
               <View className="items-center mb-4">
-                <Text style={{ fontSize: 35, fontWeight: '700', color: remainingAccentColor, lineHeight: 40 }}>
+                <Text
+                  style={{
+                    fontSize: 35,
+                    fontWeight: '700',
+                    color: remainingAccentColor,
+                    lineHeight: 40,
+                  }}
+                >
                   {(isOverCals ? overageCals : remainingCals).toLocaleString('he-IL')}
                 </Text>
                 <Text className="typo-body text-background-400">
@@ -311,21 +337,27 @@ const NutritionScreen = () => {
                 </Text>
               </View>
 
-              <View style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginBottom: 16 }} />
+              <View
+                style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginBottom: 16 }}
+              />
 
               <View className="flex-row justify-around">
                 <View className="items-center gap-1 ">
-                  <Text className="typo-h3" style={{ color: colors.orange[400] }}>{remainingCarbs}g</Text>
+                  <Text className="typo-h3" style={{ color: colors.orange[400] }}>
+                    {remainingCarbs}g
+                  </Text>
                   <Text className="typo-caption text-background-400">פחמימות</Text>
                 </View>
                 <View style={{ width: 1, backgroundColor: 'rgba(255,255,255,0.07)' }} />
                 <View className="items-center gap-1">
-                  <Text className="typo-h3" style={{ color: 'rgb(234, 179, 8)' }}>{remainingFat}g</Text>
+                  <Text className="typo-h3" style={{ color: 'rgb(234, 179, 8)' }}>
+                    {remainingFat}g
+                  </Text>
                   <Text className="typo-caption text-background-400">שומנים</Text>
                 </View>
               </View>
-            </View>
-
+            </View> */}
+            {/* 
             <ProgressStats
               label="קלוריות"
               consumed={dailyConsumed.calories_consumed}
@@ -333,11 +365,16 @@ const NutritionScreen = () => {
               unit="קק״ל"
               color={colors.lime[500]}
               iconName="flame-outline"
-            />
+            /> */}
 
             <MacroPieChart
               proteinConsumed={dailyConsumed.protein_consumed}
               proteinGoal={goals.protein}
+              caloriesConsumed={dailyConsumed.calories_consumed}
+              caloriesGoal={goals.calories}
+              isManualCalories={goals.isManualCalories}
+              onEditCalories={handleOpenManualCalories}
+              onEditProtein={handleOpenManualProtein}
             />
 
             {showCarbsBar && (
@@ -414,13 +451,20 @@ const NutritionScreen = () => {
                   >
                     <Ionicons name="eye-outline" size={13} color={colors.background[400]} />
                     <Text className="typo-caption text-background-400">הצג עוד</Text>
-                    <Ionicons name="chevron-down-outline" size={11} color={colors.background[400]} />
+                    <Ionicons
+                      name="chevron-down-outline"
+                      size={11}
+                      color={colors.background[400]}
+                    />
                   </Pressable>
                 ) : (
                   <View className="flex-row items-center gap-2">
                     {!showCarbsBar && (
                       <Pressable
-                        onPress={() => { toggleCarbsBar(); setShowFieldOptions(false); }}
+                        onPress={() => {
+                          toggleCarbsBar();
+                          setShowFieldOptions(false);
+                        }}
                         className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full"
                         style={{
                           backgroundColor: toRgba(colors.orange[400], 0.12),
@@ -431,12 +475,17 @@ const NutritionScreen = () => {
                         accessibilityLabel="הצג פחמימות"
                       >
                         <Ionicons name="nutrition-outline" size={13} color={colors.orange[400]} />
-                        <Text className="typo-caption" style={{ color: colors.orange[400] }}>פחמימות</Text>
+                        <Text className="typo-caption" style={{ color: colors.orange[400] }}>
+                          פחמימות
+                        </Text>
                       </Pressable>
                     )}
                     {!showFatBar && (
                       <Pressable
-                        onPress={() => { toggleFatBar(); setShowFieldOptions(false); }}
+                        onPress={() => {
+                          toggleFatBar();
+                          setShowFieldOptions(false);
+                        }}
                         className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full"
                         style={{
                           backgroundColor: 'rgba(234,179,8,0.12)',
@@ -447,7 +496,9 @@ const NutritionScreen = () => {
                         accessibilityLabel="הצג שומנים"
                       >
                         <Ionicons name="water-outline" size={13} color={'rgb(234,179,8)'} />
-                        <Text className="typo-caption" style={{ color: 'rgb(234,179,8)' }}>שומנים</Text>
+                        <Text className="typo-caption" style={{ color: 'rgb(234,179,8)' }}>
+                          שומנים
+                        </Text>
                       </Pressable>
                     )}
                     <Pressable
@@ -489,7 +540,7 @@ const NutritionScreen = () => {
           </View>
         </ScrollView>
         <Animated.View
-          pointerEvents={isButtonVisible ? 'auto' : 'none'}
+          pointerEvents={isButtonVisible ? 'box-none' : 'none'}
           style={{
             position: 'absolute',
             right: 16,
@@ -531,6 +582,14 @@ const NutritionScreen = () => {
         onResetToAuto={handleResetManualCalories}
         onCancel={handleCloseManualCalories}
         isSaving={isSavingManualCalories}
+      />
+
+      <ManualProteinModal
+        visible={isManualProteinModalOpen}
+        initialValue={profile?.protein_per_kg ?? DEFAULT_PROTEIN_PER_KG}
+        onSave={handleSaveManualProtein}
+        onCancel={handleCloseManualProtein}
+        isSaving={isSavingProteinPerKg}
       />
     </BackGround>
   );
