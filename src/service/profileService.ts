@@ -27,19 +27,16 @@ export const getProfile = async (userId: string): Promise<Profile | null> => {
 /** עדכון הגדרות תצוגה בלבד (שדות show_*) */
 export const updateProfileDisplaySettings = async (
   userId: string,
-  settings: ProfileDisplaySettings,
+  settings: ProfileDisplaySettings
 ): Promise<void> => {
-  const { error } = await supabase
-    .from('profiles')
-    .update(settings)
-    .eq('user_id', userId);
+  const { error } = await supabase.from('profiles').update(settings).eq('user_id', userId);
   if (error) throw error;
 };
 
 /** עדכון יעד קלוריות ידני – null מחזיר לחישוב אוטומטי */
 export const updateManualDailyCalories = async (
   userId: string,
-  manualDailyCalories: number | null,
+  manualDailyCalories: number | null
 ): Promise<void> => {
   const { error } = await supabase
     .from('profiles')
@@ -48,10 +45,19 @@ export const updateManualDailyCalories = async (
   if (error) throw error;
 };
 
+/** עדכון מכפיל החלבון לגרם לכל ק״ג משקל */
+export const updateProteinPerKg = async (userId: string, proteinPerKg: number): Promise<void> => {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ protein_per_kg: proteinPerKg })
+    .eq('user_id', userId);
+  if (error) throw error;
+};
+
 /** יצירה או עדכון פרופיל */
 export const createOrUpdateProfile = async (
   userId: string,
-  payload: CreateProfilePayload,
+  payload: CreateProfilePayload
 ): Promise<Profile> => {
   try {
     // נסה לעדכון קיים

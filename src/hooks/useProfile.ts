@@ -4,6 +4,7 @@ import {
   getProfile,
   updateManualDailyCalories,
   updateProfileDisplaySettings,
+  updateProteinPerKg,
 } from '../service/profileService';
 import { useUIStore } from '../store/useUIStore';
 import { CreateProfilePayload, Profile } from '../types/profile';
@@ -68,14 +69,37 @@ export const useUpdateManualDailyCalories = (userId: string) => {
   });
 };
 
+/** עדכון מכפיל החלבון עם optimistic update */
+export const useUpdateProteinPerKg = (userId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (proteinPerKg: number) => updateProteinPerKg(userId, proteinPerKg),
+    onMutate: async (proteinPerKg) => {
+      await queryClient.cancelQueries({ queryKey: ['profile', userId] });
+      const previous = queryClient.getQueryData<Profile | null>(['profile', userId]);
+      queryClient.setQueryData<Profile | null>(['profile', userId], (old) =>
+        old ? { ...old, protein_per_kg: proteinPerKg } : old
+      );
+      return { previous };
+    },
+    onError: (_err, _proteinPerKg, context) => {
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(['profile', userId], context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', userId] });
+    },
+  });
+};
+
 /** יצירה/עדכון פרופיל – mutation עם invalidation */
 export const useCreateOrUpdateProfile = (userId: string) => {
   const queryClient = useQueryClient();
   const { triggerSuccess } = useUIStore();
 
   return useMutation({
-    mutationFn: (payload: CreateProfilePayload) =>
-      createOrUpdateProfile(userId, payload),
+    mutationFn: (payload: CreateProfilePayload) => createOrUpdateProfile(userId, payload),
     onSuccess: () => {
       triggerSuccess('הפרופיל נשמר בהצלחה', 'success');
       queryClient.invalidateQueries({ queryKey: ['profile', userId] });
